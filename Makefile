@@ -4,7 +4,7 @@ MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
 SRC =	$(SRC_DIR)/misc/Interval.d\
-	$(SRC_DIR)/misc/Interval.d
+	$(SRC_DIR)/misc/Array2DHashSet.d
 
 BUILD_DIR = build
 MODEL_DIR = model

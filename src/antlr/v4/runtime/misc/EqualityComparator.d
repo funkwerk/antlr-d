@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,38 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.misc.Array2DHashSet;
+module antlr.v4.runtime.misc.EqualityComparator;
 
-import std.conv;
-
-// Class Template Array2DHashSet
+// Interface Template EqualityComparator
 /**
  * @uml
- * {@link Set} implementation with closed hashing (open addressing).
+ * This interface provides an abstract concept of object equality independent of
+ *  {@link Object#equals} (object equality) and the {@code ==} operator
+ *  (reference equality). It can be used to provide algorithm-specific unordered
+ *  comparisons without requiring changes to the object itself.
+ *
+ * @author Sam Harwell
  */
-class Array2DHashSet(T)
+interface EqualityComparator(T)
 {
 
-    public static const int INITAL_CAPACITY = 16;
+    /**
+     * @uml
+     * This method returns a hash code for the specified object.
+     *
+     *  @param obj The object.
+     *  @return The hash code for {@code obj}.
+     */
+    public int hashCode(T obj);
 
-    public static const undefined INITAL_BUCKET_CAPACITY = 8;
-
-    public static const double LOAD_FACTOR = 0.75;
-
-    private T[][] buckets;
-
-    private int n = 0;
-
-    private int threshold = to!int(INITAL_CAPACITY * LOAD_FACTOR);
-
-    public int currentPrime;
+    /**
+     * @uml
+     * This method tests if two objects are equal.
+     *
+     *  @param a The first object to compare.
+     *  @param b The second object to compare.
+     *  @return {@code true} if {@code a} equals {@code b}, otherwise {@code false}.
+     */
+    public bool equals(T a, T b);
 
 }

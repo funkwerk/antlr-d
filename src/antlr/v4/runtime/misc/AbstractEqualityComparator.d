@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,30 +28,17 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.misc.Array2DHashSet;
+module antlr.v4.runtime.misc.AbstractEqualityComparator;
 
-import std.conv;
-
-// Class Template Array2DHashSet
+// Class Template AbstractEqualityComparator
 /**
  * @uml
- * {@link Set} implementation with closed hashing (open addressing).
+ * This abstract base class is provided so performance-critical applications can
+ * use virtual- instead of interface-dispatch when calling comparator methods.
+ *
+ * @author Sam Harwell
  */
-class Array2DHashSet(T)
+abstract class AbstractEqualityComparator(T) : EqualityComparator!(T)
 {
-
-    public static const int INITAL_CAPACITY = 16;
-
-    public static const undefined INITAL_BUCKET_CAPACITY = 8;
-
-    public static const double LOAD_FACTOR = 0.75;
-
-    private T[][] buckets;
-
-    private int n = 0;
-
-    private int threshold = to!int(INITAL_CAPACITY * LOAD_FACTOR);
-
-    public int currentPrime;
 
 }

@@ -52,6 +52,6 @@ class Array2DHashSet(T)
 
     private int threshold = to!int(INITAL_CAPACITY * LOAD_FACTOR);
 
-    public int currentPrime;
+    public undefined currentPrime;
 
 }

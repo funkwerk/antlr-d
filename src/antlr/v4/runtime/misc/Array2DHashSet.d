@@ -58,9 +58,21 @@ class Array2DHashSet(T)
 
     private int initialBucketCapacity = INITAL_BUCKET_CAPACITY;
 
+    /**
+     * @uml
+     * UnitTest:
+     * auto ar = new Array2DHashSet;
+     * assert(ar !is null);
+     */
     public this()
     {
         this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+    }
+
+    unittest
+    {
+        auto ar = new Array2DHashSet;
+        assert(ar !is null);
     }
 
     public this(AbstractEqualityComparator!(T) comparator)
@@ -76,6 +88,36 @@ class Array2DHashSet(T)
         this.comparator = comparator;
         this.buckets = createBuckets(initialCapacity);
         this.initialBucketCapacity = initialBucketCapacity;
+    }
+
+    /**
+     * @uml
+     * Return an array of {@code T} with length {@code capacity}.
+     *
+     *  @param capacity the length of the array to return
+     *  @return the newly constructed array
+     */
+    public T[] createBucket(int capacity)
+    {
+        return cast(T[][])new Object[capacity][];
+    }
+
+    /**
+     * @uml
+     * @property
+     * UnitTest:
+     * auto ar = new Array2DHashSet;
+     * assert(ar.isEmpty);
+     */
+    public @property bool isEmpty()
+    {
+        return n == 0;
+    }
+
+    unittest
+    {
+        auto ar = new Array2DHashSet;
+        assert(ar.isEmpty);
     }
 
 }

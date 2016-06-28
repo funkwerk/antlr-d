@@ -46,12 +46,36 @@ class Array2DHashSet(T)
 
     public static const double LOAD_FACTOR = 0.75;
 
+    private AbstractEqualityComparator!(T) comparator;
+
     private T[][] buckets;
 
     private int n = 0;
 
     private int threshold = to!int(INITAL_CAPACITY * LOAD_FACTOR);
 
-    public int currentPrime;
+    private int currentPrime = 1;
+
+    private int initialBucketCapacity = INITAL_BUCKET_CAPACITY;
+
+    public this()
+    {
+        this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+    }
+
+    public this(AbstractEqualityComparator!(T) comparator)
+    {
+        this(comparator, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+    }
+
+    public this(AbstractEqualityComparator!(T) comparator, int initialCapacity, int initialBucketCapacity)
+    {
+        if (comparator is null) {
+            comparator = ObjectEqualityComparator.INSTANCE;
+        }
+        this.comparator = comparator;
+        this.buckets = createBuckets(initialCapacity);
+        this.initialBucketCapacity = initialBucketCapacity;
+    }
 
 }

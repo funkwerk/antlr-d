@@ -191,7 +191,7 @@ class Array2DHashSet(T)
         int hash = MurmurHash.initialize();
         foreach (bucket; buckets) {
             if (bucket is null ) continue;
-            for (o; bucket) {
+            foreach (o; bucket) {
                 if (o is null ) break;
                 hash = MurmurHash.update(hash, comparator.hashCode(o));
             }

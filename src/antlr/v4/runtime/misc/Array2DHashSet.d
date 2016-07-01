@@ -92,6 +92,72 @@ class Array2DHashSet(T)
 
     /**
      * @uml
+     * Add {@code o} to set if not there; return existing value if already
+     * there. This method performs the same operation as {@link #add} aside from
+     * the return value.
+     */
+    public T getOrAdd(T o)
+    {
+        if ( n > threshold ) expand();
+        return getOrAddImpl(o);
+    }
+
+    public T getOrAddImpl(T o)
+    {
+        int b = getBucket(o);
+        T[] bucket = buckets[b];
+
+        // NEW BUCKET
+        if (bucket is null ) {
+            bucket = createBucket(initialBucketCapacity);
+            bucket[0] = o;
+            buckets[b] = bucket;
+            n++;
+            return o;
+        }
+
+        // LOOK FOR IT IN BUCKET
+        for (int i=0; i<bucket.length; i++) {
+            T existing = bucket[i];
+            if (existing is null ) { // empty slot; not there, add.
+                bucket[i] = o;
+                n++;
+                return o;
+            }
+            if ( comparator.equals(existing, o) ) return existing; // found existing, quit
+        }
+
+        // FULL BUCKET, expand and add to end
+        int oldLength = bucket.length;
+        bucket = Arrays.copyOf(bucket, bucket.length * 2);
+        buckets[b] = bucket;
+        bucket[oldLength] = o; // add to end
+        n++;
+        return o;
+    }
+
+    public T get(T o)
+    {
+        if ( o is null ) return o;
+        int b = getBucket(o);
+        T[] bucket = buckets[b];
+        if ( bucket is null ) return null; // no bucket
+        foreach (T e; bucket) {
+            if ( e is null ) return null; // empty slot; not there
+            if ( comparator.equals(e, o) ) return e;
+        }
+        return null;
+    }
+
+    public int getBucket(T o)
+    {
+        int hash = comparator.hashCode(o);
+        int b = hash & (buckets.length-1); // assumes len is power of 2
+        return b;
+    }
+
+    /**
+     * @uml
      * Return an array of {@code T} with length {@code capacity}.
      *
      *  @param capacity the length of the array to return
@@ -118,6 +184,31 @@ class Array2DHashSet(T)
     {
         auto ar = new Array2DHashSet;
         assert(ar.isEmpty);
+    }
+
+    public int hashCode()
+    {
+        int hash = MurmurHash.initialize();
+        foreach (bucket; buckets) {
+            if (bucket is null ) continue;
+            for (o; bucket) {
+                if (o is null ) break;
+                hash = MurmurHash.update(hash, comparator.hashCode(o));
+            }
+        }
+
+        hash = MurmurHash.finish(hash, size());
+        return hash;
+    }
+
+    public bool equals(T o)
+    {
+    if (o == this) return true;
+                if ( !(o instanceof Array2DHashSet) ) return false;
+                Array2DHashSet<?> other = (Array2DHashSet<?>)o;
+                if ( other.size() != size() ) return false;
+                boolean same = this.containsAll(other);
+                return same;
     }
 
 }

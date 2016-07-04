@@ -36,6 +36,14 @@ import std.conv;
 /**
  * @author Sam Harwell
  */
+
+abstract class HashableObject : Object {
+    public int hashCode() {
+        assert(false, "function not implementd!");
+        return 1;
+    }
+}
+    
 class MurmurHash
 {
 
@@ -50,7 +58,7 @@ class MurmurHash
     public static int initialize()
     {
         auto mh = new MurmurHash;
-        return mh.initialize(DEFAULT_SEED);
+        return initialize(DEFAULT_SEED);
     }
 
     /**
@@ -60,7 +68,7 @@ class MurmurHash
      *  @param seed the seed
      *  @return the intermediate hash value
      */
-    public int initialize(int seed)
+    public static int initialize(int seed)
     {
         return seed;
     }
@@ -103,10 +111,9 @@ class MurmurHash
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
      */
-    public static int update(int hash, Object value)
+    public static int update(int hash, HashableObject value)
     {
-        auto v = new MurmurHash;
-        return update(hash, value !is null ? v.hashCode!int(value) : 0);
+        return update(hash, value !is null ? value.hashCode() : 0);
     }
 
     /**
@@ -141,8 +148,7 @@ class MurmurHash
      */
     public static T hashCode(T)(T[] data, int seed)
     {
-        auto mh = new MurmurHash;
-        int hash = mh.initialize(seed);
+        int hash = initialize(seed);
         foreach (T value; data) {
             hash = update(hash, value);
         }

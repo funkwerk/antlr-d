@@ -204,7 +204,7 @@ class Array2DHashSet(T)
     public bool equals(T o)
     {
     if (o == this) return true;
-                if ( !(o instanceof Array2DHashSet) ) return false;
+                if (typeof(o) !is Array2DHashSet) return false;
                 Array2DHashSet<?> other = (Array2DHashSet<?>)o;
                 if ( other.size() != size() ) return false;
                 boolean same = this.containsAll(other);

@@ -30,6 +30,8 @@
 
 module antlr.v4.runtime.misc.MurmurHash;
 
+import std.conv;
+
 // Class MurmurHash
 /**
  * @author Sam Harwell
@@ -37,7 +39,7 @@ module antlr.v4.runtime.misc.MurmurHash;
 class MurmurHash
 {
 
-    public static const undefined DEFAULT_SEED = 0;
+    public static const int DEFAULT_SEED = 0;
 
     /**
      * @uml
@@ -47,7 +49,8 @@ class MurmurHash
      */
     public static int initialize()
     {
-        return initialize(DEFAULT_SEED);
+        auto mh = new MurmurHash;
+        return mh.initialize(DEFAULT_SEED);
     }
 
     /**
@@ -72,18 +75,6 @@ class MurmurHash
      */
     public static int update(int hash, int value)
     {
-    }
-
-    /**
-     * @uml
-     * Update the intermediate hash value for the next input {@code value}.
-     *
-     *  @param hash the intermediate hash value
-     *  @param value the value to add to the current hash
-     *  @return the updated intermediate hash value
-     */
-    public static int update(int hash, Object value)
-    {
         immutable int c1 = 0xCC9E2D51;
         immutable int c2 = 0x1B873593;
         immutable int r1 = 15;
@@ -101,6 +92,21 @@ class MurmurHash
         hash = hash * m + n;
 
         return hash;
+
+    }
+
+    /**
+     * @uml
+     * Update the intermediate hash value for the next input {@code value}.
+     *
+     *  @param hash the intermediate hash value
+     *  @param value the value to add to the current hash
+     *  @return the updated intermediate hash value
+     */
+    public static int update(int hash, Object value)
+    {
+        auto v = new MurmurHash;
+        return update(hash, value !is null ? v.hashCode!int(value) : 0);
     }
 
     /**
@@ -114,6 +120,13 @@ class MurmurHash
      */
     public static int finish(int hash, int numberOfWords)
     {
+        hash = hash ^ (numberOfWords * 4);
+        hash = hash ^ (hash >>> 16);
+        hash = hash * 0x85EBCA6B;
+        hash = hash ^ (hash >>> 13);
+        hash = hash * 0xC2B2AE35;
+        hash = hash ^ (hash >>> 16);
+        return hash;
     }
 
     /**
@@ -126,8 +139,16 @@ class MurmurHash
      *  @param seed the seed for the MurmurHash algorithm
      *  @return the hash code of the data
      */
-    public static T hashCode(T[] data, int seed)
+    public static T hashCode(T)(T[] data, int seed)
     {
+        auto mh = new MurmurHash;
+        int hash = mh.initialize(seed);
+        foreach (T value; data) {
+            hash = update(hash, value);
+        }
+
+        hash = finish(hash, to!int(data.length));
+        return hash;
     }
 
 }

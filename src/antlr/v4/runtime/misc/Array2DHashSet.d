@@ -156,36 +156,6 @@ class Array2DHashSet(T)
         return b;
     }
 
-    /**
-     * @uml
-     * Return an array of {@code T} with length {@code capacity}.
-     *
-     *  @param capacity the length of the array to return
-     *  @return the newly constructed array
-     */
-    public T[] createBucket(int capacity)
-    {
-        return cast(T[][])new Object[capacity][];
-    }
-
-    /**
-     * @uml
-     * @property
-     * UnitTest:
-     * auto ar = new Array2DHashSet;
-     * assert(ar.isEmpty);
-     */
-    public @property bool isEmpty()
-    {
-        return n == 0;
-    }
-
-    unittest
-    {
-        auto ar = new Array2DHashSet;
-        assert(ar.isEmpty);
-    }
-
     public int hashCode()
     {
         int hash = MurmurHash.initialize();
@@ -208,6 +178,56 @@ class Array2DHashSet(T)
                 if ( o.sizeof() != sizeof() ) return false;
                 boolean same = this.containsAll(other);
                 return same;
+    }
+
+    /**
+     * @uml
+     * Return an array of {@code T} with length {@code capacity}.
+     *
+     *  @param capacity the length of the array to return
+     *  @return the newly constructed array
+     */
+    public T[] createBucket(int capacity)
+    {
+        return cast(T[][])new Object[capacity][];
+    }
+
+    public void expand()
+    {
+    }
+
+    public void add(T t)
+    {
+    }
+
+    public int size()
+    {
+    }
+
+    /**
+     * @uml
+     * @property
+     * UnitTest:
+     * auto ar = new Array2DHashSet;
+     * assert(ar.isEmpty);
+     */
+    public @property bool isEmpty()
+    {
+        return n == 0;
+    }
+
+    unittest
+    {
+        auto ar = new Array2DHashSet;
+        assert(ar.isEmpty);
+    }
+
+    public bool contains(Object o)
+    {
+    }
+
+    public bool containsFast(T obj)
+    {
     }
 
 }

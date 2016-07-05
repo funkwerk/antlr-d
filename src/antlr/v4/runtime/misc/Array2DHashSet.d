@@ -205,8 +205,7 @@ class Array2DHashSet(T)
     {
     if (o == this) return true;
                 if (typeof(o) !is Array2DHashSet) return false;
-                Array2DHashSet<?> other = (Array2DHashSet<?>)o;
-                if ( other.size() != size() ) return false;
+                if ( o.sizeof() != sizeof() ) return false;
                 boolean same = this.containsAll(other);
                 return same;
     }

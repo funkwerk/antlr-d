@@ -12,7 +12,7 @@ SRC =	$(SRC_DIR)/misc/Interval.d\
 BUILD_DIR = build
 MODEL_DIR = model
 
-TEST_FLAGS = --main -unittest
+TEST_FLAGS = --main -unittest -Isrc
 GENERATOR_FLAGS = -b
 
 RDMD = rdmd

@@ -31,19 +31,12 @@
 module antlr.v4.runtime.misc.MurmurHash;
 
 import std.conv;
+import antlr.v4.runtime.misc.HashableObject;
 
 // Class MurmurHash
 /**
  * @author Sam Harwell
  */
-
-abstract class HashableObject : Object {
-    public int hashCode() {
-        assert(false, "function not implementd!");
-        return 1;
-    }
-}
-    
 class MurmurHash
 {
 

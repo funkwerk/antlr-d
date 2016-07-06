@@ -283,4 +283,20 @@ class Array2DHashSet(T)
         return get(obj) != null;
     }
 
+    public void iterator()
+    {
+    }
+
+    public T[] toArray()
+    {
+    }
+
+    public U[] toArray(U)(U[] a)
+    {
+    }
+
+    public bool remove(Object o)
+    {
+    }
+
 }

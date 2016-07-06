@@ -194,14 +194,61 @@ class Array2DHashSet(T)
 
     public void expand()
     {
+        T[][] old = buckets;
+        currentPrime += 4;
+        int newCapacity = buckets.length * 2;
+        T[][] newTable = createBuckets(newCapacity);
+        int[] newBucketLengths = new int[newTable.length];
+        buckets = newTable;
+        threshold = to!int(newCapacity * LOAD_FACTOR);
+//              System.out.println("new size="+newCapacity+", thres="+threshold);
+        // rehash all existing entries
+        int oldSize = size();
+        foreach (T[] bucket; old) {
+            if ( bucket==null ) {
+                continue;
+            }
+
+            foreach (T o; bucket) {
+                if (o is null ) {
+                    break;
+                }
+
+                int b = getBucket(o);
+                int bucketLength = newBucketLengths[b];
+                T[] newBucket;
+                if (bucketLength == 0) {
+                    // new bucket
+                    newBucket = createBucket(initialBucketCapacity);
+                    newTable[b] = newBucket;
+                }
+                else {
+                    newBucket = newTable[b];
+                    if (bucketLength == newBucket.length) {
+                        // expand
+                        newBucket = Arrays.copyOf(newBucket, newBucket.length * 2);
+                        newTable[b] = newBucket;
+                    }
+                }
+
+                newBucket[bucketLength] = o;
+                newBucketLengths[b]++;
+            }
+        }
+
+        assert(n == oldSize);
+
     }
 
     public void add(T t)
     {
+        T existing = getOrAdd(t);
+        return existing==t;
     }
 
     public int size()
     {
+        return n;
     }
 
     /**
@@ -224,10 +271,16 @@ class Array2DHashSet(T)
 
     public bool contains(Object o)
     {
+        return containsFast(asElementType(o));
     }
 
     public bool containsFast(T obj)
     {
+        if (obj == null) {
+            return false;
+        }
+
+        return get(obj) != null;
     }
 
 }

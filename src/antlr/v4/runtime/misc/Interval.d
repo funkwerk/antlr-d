@@ -41,7 +41,7 @@ import std.conv;
 class Interval
 {
 
-    public static const int INTERVAL_POOL_MAX_VALUE = 1000;
+    public static immutable int INTERVAL_POOL_MAX_VALUE = 1000;
 
     public static const Interval INVALID = new Interval(-1, -2);
 

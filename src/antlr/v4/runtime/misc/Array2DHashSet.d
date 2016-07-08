@@ -339,4 +339,67 @@ class Array2DHashSet(T)
         return removeFast(asElementType(o));
     }
 
+    public bool removeFast(T obj)
+    {
+	if (obj is null) {
+            return false;
+        }
+
+        int b = getBucket(obj);
+        T[] bucket = buckets[b];
+        if (bucket is null) {
+            // no bucket
+            return false;
+        }
+
+        for (int i=0; i<bucket.length; i++) {
+            T e = bucket[i];
+            if (e is null) {
+                // empty slot; not there
+                return false;
+            }
+
+            if ( comparator.equals(e, obj) ) {          // found it
+                // shift all elements to the right down one
+                // System.arraycopy(bucket, i+1, bucket, i, bucket.length-i-1);
+                // bucket[bucket.length - 1] = null;
+                bucket = bucket[1..$];
+                n--;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool containsAll(C)(C[] collection)
+    {
+	if (typeof(collection) == Array2DHashSet) {
+            auto s = collection;
+            foreach (Object[] bucket; s.buckets) {
+                if (bucket is null) continue;
+                foreach (Object o; bucket) {
+                    if (o is null) break;
+                    if (!this.containsFast(asElementType(o))) return false;
+                }
+            }
+        }
+        else {
+            foreach (Object o; collection) {
+                if (!this.containsFast(asElementType(o))) return false;
+            }
+        }
+        return true;
+    }
+
+    public bool addAll(T[] c)
+    {
+        boolean changed = false;
+        foreach (T o; c) {
+            T existing = getOrAdd(o);
+            if (existing!=o) changed=true;
+        }
+        return changed;
+    }
+
 }

@@ -285,18 +285,58 @@ class Array2DHashSet(T)
 
     public void iterator()
     {
+        return toArray().dup;
     }
 
     public T[] toArray()
     {
+        T[] a = createBucket(size());
+        int i = 0;
+        foreach (T[] bucket; buckets) {
+            if (bucket is null) {
+                continue;
+            }
+
+            foreach (T o; bucket) {
+                if (o is null) {
+                    break;
+                }
+
+                a[i++] = o;
+            }
+        }
+
+        return a;
     }
 
     public U[] toArray(U)(U[] a)
     {
+        if (a.length < size()) {
+            a = Arrays.copyOf(a, size());
+        }
+
+        int i = 0;
+        foreach (T[] bucket; buckets) {
+            if (bucket is null) {
+                continue;
+            }
+
+            foreach (T o; bucket) {
+                if (o is null) {
+                    break;
+                }
+
+                // array store will check this
+                U targetElement = cast(U)o;
+                a[i++] = targetElement;
+            }
+        }
+        return a;
     }
 
     public bool remove(Object o)
     {
+        return removeFast(asElementType(o));
     }
 
 }

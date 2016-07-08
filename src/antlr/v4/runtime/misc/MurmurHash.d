@@ -40,7 +40,7 @@ import antlr.v4.runtime.misc.HashableObject;
 class MurmurHash
 {
 
-    public static const int DEFAULT_SEED = 0;
+    public static immutable int DEFAULT_SEED = 0;
 
     /**
      * @uml

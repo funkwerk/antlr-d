@@ -40,11 +40,11 @@ import std.conv;
 class Array2DHashSet(T)
 {
 
-    public static const int INITAL_CAPACITY = 16;
+    public static immutable int INITAL_CAPACITY = 16;
 
-    public static const undefined INITAL_BUCKET_CAPACITY = 8;
+    public static immutable undefined INITAL_BUCKET_CAPACITY = 8;
 
-    public static const double LOAD_FACTOR = 0.75;
+    public static immutable double LOAD_FACTOR = 0.75;
 
     private AbstractEqualityComparator!(T) comparator;
 

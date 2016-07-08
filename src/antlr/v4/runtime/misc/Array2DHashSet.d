@@ -42,7 +42,7 @@ class Array2DHashSet(T)
 
     public static immutable int INITAL_CAPACITY = 16;
 
-    public static immutable undefined INITAL_BUCKET_CAPACITY = 8;
+    public static immutable int INITAL_BUCKET_CAPACITY = 8;
 
     public static immutable double LOAD_FACTOR = 0.75;
 

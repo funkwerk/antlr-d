@@ -402,4 +402,122 @@ class Array2DHashSet(T)
         return changed;
     }
 
+    public bool retainAll(T[] c)
+    {
+        int newsize = 0;
+        foreach (T[] bucket; buckets) {
+            if (bucket is null) {
+                continue;
+            }
+
+            int i;
+            int j;
+            for (i = 0, j = 0; i < bucket.length; i++) {
+                if (bucket[i] is null) {
+                    break;
+                }
+
+                if (!c.contains(bucket[i])) {
+                    // removed
+                    continue;
+                }
+
+                // keep
+                if (i != j) {
+                    bucket[j] = bucket[i];
+                }
+
+                j++;
+                newsize++;
+            }
+
+            newsize += j;
+
+            while (j < i) {
+                bucket[j] = null;
+                j++;
+            }
+        }
+
+        bool changed = newsize != n;
+        n = newsize;
+        return changed;
+    }
+
+    public bool removeAll(T[] c)
+    {
+        bool changed = false;
+        foreach (Object o; c) {
+            changed |= removeFast(asElementType(o));
+        }
+        return changed;
+    }
+
+    public void clear()
+    {
+        buckets = createBuckets(INITAL_CAPACITY);
+        n = 0;
+    }
+
+    public string toString()
+    {
+        if ( size()==0 ) return "{}";
+
+        auto buf = appender!string;
+        buf.put('{');
+        boolean first = true;
+        foreach (T[] bucket; buckets) {
+            if (bucket is null) continue;
+            foreach (T o; bucket) {
+                if (o is null) break;
+                if ( first ) first=false;
+                else buf.put(", ");
+                buf.put(o.toString());
+            }
+        }
+        buf.put('}');
+        return buf.data;
+    }
+
+    public bool toTableString()
+    {
+        auto buf = appender!string;
+        foreach (T[] bucket; buckets) {
+            if (bucket is null) {
+                buf.put("null\n");
+                continue;
+            }
+            buf.put('[');
+            bool first = true;
+            foreach (T o; bucket) {
+                if (first) first = false;
+                else buf.put(" ");
+                if (o is null) buf.put("_");
+                else buf.put(o.toString());
+            }
+            buf.put("]\n");
+        }
+        return buf.data;
+
+    }
+
+    /**
+     * @uml
+     * Return {@code o} as an instance of the element type {@code T}. If
+     *  {@code o} is non-null but known to not be an instance of {@code T}, this
+     *  method returns {@code null}. The base implementation does not perform any
+     *  type checks; override this method to provide strong type checks for the
+     *  {@link #contains} and {@link #remove} methods to ensure the arguments to
+     *  the {@link EqualityComparator} for the set always have the expected
+     *  types.
+     *
+     *  @param o the object to try and cast to the element type of the set
+     *  @return {@code o} if it could be an instance of {@code T}, otherwise
+     *  {@code null}.
+     */
+    public T asElementType(Object o)
+    {
+        return cast(T)o;
+    }
+
 }

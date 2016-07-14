@@ -31,6 +31,9 @@
 module antlr.v4.runtime.misc.Array2DHashSet;
 
 import std.conv;
+import std.stdio;
+import antlr.v4.runtime.misc.AbstractEqualityComparator;
+import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class Template Array2DHashSet
 /**
@@ -178,18 +181,6 @@ class Array2DHashSet(T)
                 if ( o.sizeof() != sizeof() ) return false;
                 boolean same = this.containsAll(other);
                 return same;
-    }
-
-    /**
-     * @uml
-     * Return an array of {@code T} with length {@code capacity}.
-     *
-     *  @param capacity the length of the array to return
-     *  @return the newly constructed array
-     */
-    public T[] createBucket(int capacity)
-    {
-        return cast(T[][])new Object[capacity][];
     }
 
     public void expand()
@@ -459,7 +450,14 @@ class Array2DHashSet(T)
         n = 0;
     }
 
-    public string toString()
+    /**
+     * @uml
+     * @override
+     * UnitTest:
+     * auto ar = new Array2DHashSet;
+     * assert(ar.toString != "jj");
+     */
+    public override string toString()
     {
         if ( size()==0 ) return "{}";
 
@@ -477,6 +475,12 @@ class Array2DHashSet(T)
         }
         buf.put('}');
         return buf.data;
+    }
+
+    unittest
+    {
+        auto ar = new Array2DHashSet;
+        assert(ar.toString != "jj");
     }
 
     public bool toTableString()
@@ -520,4 +524,26 @@ class Array2DHashSet(T)
         return cast(T)o;
     }
 
+    public T[][] createBuckets(int capacity)
+    {
+        return cast(T[][])new Object[capacity][];
+    }
+
+    /**
+     * @uml
+     * Return an array of {@code T} with length {@code capacity}.
+     *
+     *  @param capacity the length of the array to return
+     *  @return the newly constructed array
+     */
+    public T[] createBucket(int capacity)
+    {
+        return cast(T[][])new Object[capacity][];
+    }
+
 }
+    unittest
+    {
+        auto ar = new Array2DHashSet!int;
+        assert(ar.toString);
+    }

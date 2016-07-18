@@ -9,6 +9,8 @@ import antlr.v4.runtime.misc.AbstractEqualityComparator;
 class ObjectEqualityComparator : AbstractEqualityComparator!Object
 {
 
+    public static const ObjectEqualityComparator INSTANCE = new ObjectEqualityComparator();
+
     public int hashCode(Object obj)
     {
         if (obj is null) {
@@ -32,7 +34,16 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
             return b is null;
         }
 
-        return a.equals(b);
+        return a.opEquals(b);
+    }
+
+    public bool equals(int a, int b)
+    {
+        if (a is null) {
+            return b is null;
+        }
+
+        return a.opEquals(b);
     }
 
 }

@@ -33,8 +33,10 @@ module antlr.v4.runtime.misc.Array2DHashSet;
 import std.conv;
 import std.stdio;
 import std.algorithm;
+import std.array;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import antlr.v4.runtime.misc.ObjectEqualityComparator;
+import antlr.v4.runtime.misc.MurmurHash;
 
 // Class Template Array2DHashSet
 /**
@@ -55,7 +57,7 @@ class Array2DHashSet(T)
 
     private ObjectEqualityComparator comparator;
 
-    private T[][] buckets;
+    private T*[][] buckets;
 
     private int n = 0;
 
@@ -114,12 +116,12 @@ class Array2DHashSet(T)
     public T getOrAddImpl(T o)
     {
         int b = getBucket(o);
-        T[] bucket = buckets[b];
+        T*[] bucket = buckets[b];
 
         // NEW BUCKET
         if (bucket is null ) {
             bucket = createBucket(initialBucketCapacity);
-            bucket[0] = o;
+            *bucket[0] = o;
             buckets[b] = bucket;
             n++;
             return o;
@@ -127,34 +129,34 @@ class Array2DHashSet(T)
 
         // LOOK FOR IT IN BUCKET
         for (int i=0; i<bucket.length; i++) {
-            T existing = bucket[i];
-            if (existing == 0) { // empty slot; not there, add.
-                bucket[i] = o;
+            T* existing = bucket[i];
+            if (existing is null) { // empty slot; not there, add.
+                *bucket[i] = o;
                 n++;
                 return o;
             }
-            if (comparator.equals(existing, o))
-                return existing; // found existing, quit
+            if (comparator.equals(*existing, o))
+                return *existing; // found existing, quit
         }
 
         // FULL BUCKET, expand and add to end
         auto oldLength = bucket.length;
         bucket.length = bucket.length * 2;
         buckets[b] = bucket;
-        bucket[oldLength] = o; // add to end
+        *bucket[oldLength] = o; // add to end
         n++;
         return o;
     }
 
-    public T get(T o)
-    {
-        if (!o) return o;
+    public T* get(T o)
+    { 
         int b = getBucket(o);
-        T[] bucket = buckets[b];
-        if (bucket is null) return null; // no bucket
-        foreach (T e; bucket) {
-            if (!e) return null; // empty slot; not there
-            if ( comparator.equals(e, o) ) return e;
+        T*[] bucket = buckets[b];
+        if (bucket == null)
+            return null; // no bucket
+        foreach (e; bucket) {
+            if (e is null) return null; // empty slot; not there
+            if ( comparator.equals(*e, o) ) return e;
         }
         return null;
     }
@@ -162,7 +164,7 @@ class Array2DHashSet(T)
     public int getBucket(T o)
     {
         int hash = comparator.hashCode(o);
-        int b = hash & (buckets.length-1); // assumes len is power of 2
+        int b = hash & to!int((buckets.length-1)); // assumes len is power of 2
         return b;
     }
 
@@ -184,7 +186,7 @@ class Array2DHashSet(T)
     public bool equals(T o)
     {
         if (o == this) return true;
-        if (typeof(o) !is Array2DHashSet) return false;
+        if (typeof(o) !is typeof(Array2DHashSet)) return false;
         if ( o.sizeof() != sizeof() ) return false;
         bool same = this.containsAll(o);
         return same;
@@ -344,20 +346,20 @@ class Array2DHashSet(T)
         }
 
         int b = getBucket(obj);
-        T[] bucket = buckets[b];
+        T*[] bucket = buckets[b];
         if (bucket is null) {
             // no bucket
             return false;
         }
 
         for (int i=0; i<bucket.length; i++) {
-            T e = bucket[i];
-            if (e) {
+            T* e = bucket[i];
+            if (e is null) {
                 // empty slot; not there
                 return false;
             }
 
-            if ( comparator.equals(e, obj) ) {          // found it
+            if ( comparator.equals(*e, obj) ) {          // found it
                 // shift all elements to the right down one
                 // System.arraycopy(bucket, i+1, bucket, i, bucket.length-i-1);
                 // bucket[bucket.length - 1] = null;
@@ -406,7 +408,7 @@ class Array2DHashSet(T)
     public bool retainAll(T[] c)
     {
         int newsize = 0;
-        foreach (T[] bucket; buckets) {
+        foreach (T*[] bucket; buckets) {
             if (bucket is null) {
                 continue;
             }
@@ -418,7 +420,7 @@ class Array2DHashSet(T)
                     break;
                 }
 
-                if (!c.find(bucket[i])) {
+                if (!c.find(*bucket[i])) {
                     // removed
                     continue;
                 }
@@ -448,7 +450,7 @@ class Array2DHashSet(T)
     public bool removeAll(T[] c)
     {
         bool changed = false;
-        foreach (Object o; c) {
+        foreach (o; c) {
             changed |= removeFast(asElementType(o));
         }
         return changed;
@@ -473,14 +475,14 @@ class Array2DHashSet(T)
 
         auto buf = appender!string;
         buf.put('{');
-        boolean first = true;
-        foreach (T[] bucket; buckets) {
+        bool first = true;
+        foreach (T*[] bucket; buckets) {
             if (bucket is null) continue;
-            foreach (T o; bucket) {
+            foreach (T* o; bucket) {
                 if (o is null) break;
                 if ( first ) first=false;
                 else buf.put(", ");
-                buf.put(o.toString());
+                buf.put(to!string(o));
             }
         }
         buf.put('}');
@@ -493,21 +495,21 @@ class Array2DHashSet(T)
         assert(ar.toString != "jj");
     }
 
-    public bool toTableString()
+    public string toTableString()
     {
         auto buf = appender!string;
-        foreach (T[] bucket; buckets) {
+        foreach (T*[] bucket; buckets) {
             if (bucket is null) {
                 buf.put("null\n");
                 continue;
             }
             buf.put('[');
             bool first = true;
-            foreach (T o; bucket) {
+            foreach (T* o; bucket) {
                 if (first) first = false;
                 else buf.put(" ");
                 if (o is null) buf.put("_");
-                else buf.put(o.toString());
+                else buf.put(to!string(o));
             }
             buf.put("]\n");
         }
@@ -529,14 +531,14 @@ class Array2DHashSet(T)
      *  @return {@code o} if it could be an instance of {@code T}, otherwise
      *  {@code null}.
      */
-    public T asElementType(Object o)
+    public T asElementType(T o)
     {
         return cast(T)o;
     }
 
-    public T[][] createBuckets(int capacity)
+    public T*[][] createBuckets(int capacity)
     {
-        return cast(T[][])new Object[capacity][];
+        return cast(T*[][])new Object*[capacity][];
     }
 
     /**
@@ -546,9 +548,9 @@ class Array2DHashSet(T)
      *  @param capacity the length of the array to return
      *  @return the newly constructed array
      */
-    public T[] createBucket(int capacity)
+    public T*[] createBucket(int capacity)
     {
-        return cast(T[])new Object[capacity];
+        return cast(T*[])new Object[capacity];
     }
 
 }

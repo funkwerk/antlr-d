@@ -28,27 +28,15 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.atn.ATNState;
+module antlr.v4.runtime.atn.ATNType;
 
-import antlr.v4.runtime.atn.SerializationNames;
-
-// Class ATNState
+// Enum ATNType
 /**
  * @uml
- * The following images show the relation of states and
- * {@link ATNState#transitions} for various grammar constructs.
+ * Represents the type of recognizer an ATN applies to.
  */
-abstract class ATNState
+enum ATNType
 {
-
-    public static immutable int INITIAL_NUM_TRANSITIONS = 4;
-
-    public static immutable int INVALID_STATE_NUMBER = -1;
-
-    /**
-     * @uml
-     * Which ATN are we in?
-     */
-    public ATN atn = null;
-
+    LEXER,
+    PARSER,
 }

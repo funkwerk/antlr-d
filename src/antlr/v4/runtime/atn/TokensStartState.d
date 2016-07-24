@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,27 +28,26 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.atn.ATNState;
+module antlr.v4.runtime.atn.TokensStartState;
 
-import antlr.v4.runtime.atn.SerializationNames;
+import antlr.v4.runtime.atn.DecisionState;
+import StateNames : TOKEN_START;
 
-// Class ATNState
+// Class TokensStartState
 /**
  * @uml
- * The following images show the relation of states and
- * {@link ATNState#transitions} for various grammar constructs.
+ * The Tokens rule start state linking to each lexer rule start state
  */
-abstract class ATNState
+class TokensStartState : DecisionState
 {
-
-    public static immutable int INITIAL_NUM_TRANSITIONS = 4;
-
-    public static immutable int INVALID_STATE_NUMBER = -1;
 
     /**
      * @uml
-     * Which ATN are we in?
+     * @override
      */
-    public ATN atn = null;
+    public override int getStateType()
+    {
+        return TOKEN_START;
+    }
 
 }

@@ -31,7 +31,7 @@
 module antlr.v4.runtime.atn.TokensStartState;
 
 import antlr.v4.runtime.atn.DecisionState;
-import StateNames : TOKEN_START;
+import antlr.v4.runtime.atn.StateNames : StateNames;
 
 // Class TokensStartState
 /**
@@ -47,7 +47,7 @@ class TokensStartState : DecisionState
      */
     public override int getStateType()
     {
-        return TOKEN_START;
+        return StateNames.StateNames.TOKEN_START;
     }
 
 }

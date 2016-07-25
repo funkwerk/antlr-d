@@ -30,7 +30,8 @@
 
 module antlr.v4.runtime.atn.ATNState;
 
-import antlr.v4.runtime.atn.SerializationNames;
+import StateNames;
+import antlr.v4.runtime.atn.ATN;
 
 // Class ATNState
 /**
@@ -50,5 +51,7 @@ abstract class ATNState
      * Which ATN are we in?
      */
     public ATN atn = null;
+
+    abstract public int getStateType();
 
 }

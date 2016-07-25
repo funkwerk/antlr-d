@@ -3,8 +3,10 @@
 MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
-SRC =	$(SRC_DIR)/misc/Interval.d\
-	$(SRC_DIR)/misc/Array2DHashSet.d\
+SRC_ATN = $(SRC_DIR)/atn
+SRC =	$(SRC_ATN)/ATN.d\
+	$(SRC_ATN)/ATNState.d\
+	$(SRC_DIR)/misc/Interval.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
 	$(SRC_DIR)/misc/EqualityComparator.d\
 	$(SRC_DIR)/misc/MurmurHash.d

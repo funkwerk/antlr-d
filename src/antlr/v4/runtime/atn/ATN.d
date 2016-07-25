@@ -30,6 +30,12 @@
 
 module antlr.v4.runtime.atn.ATN;
 
+import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.ATNType;
+import antlr.v4.runtime.atn.DecisionState;
+import antlr.v4.runtime.atn.RuleStartState;
+import antlr.v4.runtime.atn.TokensStartState;
+
 // Class ATN
 /**
  * Class implementation adapted from Java code
@@ -94,8 +100,14 @@ class ATN
 
     public TokensStartState modeToStartState;
 
-    public void newOperation()
+    /**
+     * @uml
+     * Used for runtime deserialization of ATNs from strings
+     */
+    public this(ATNType grammarType, int maxTokenType)
     {
+        this.grammarType = grammarType;
+        this.maxTokenType = maxTokenType;
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,46 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.atn.TokensStartState;
+module antlr.v4.runtime.atn.LexerAction;
 
-import antlr.v4.runtime.atn.DecisionState;
-import antlr.v4.runtime.atn.StateNames : StateNames;
+import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.atn.LexerActionType;
 
-// Class TokensStartState
+// Interface LexerAction
 /**
  * @uml
- * The Tokens rule start state linking to each lexer rule start state
+ * Represents a single action which can be executed following the successful
+ * match of a lexer rule. Lexer actions are used for both embedded action syntax
+ * and ANTLR 4's new lexer command syntax.
  */
-class TokensStartState : DecisionState
+interface LexerAction
 {
 
     /**
      * @uml
-     * @override
+     * Gets the serialization type of the lexer action.
+     *
+     *  @return The serialization type of the lexer action.
      */
-    public override int getStateType()
-    {
-        return StateNames.TOKEN_START;
-    }
+    public LexerActionType getActionType();
+
+    /**
+     * @uml
+     * Gets whether the lexer action is position-dependent. Position-dependent
+     *          * actions may have different semantics depending on the {@link CharStream}
+     *          * index at the time the action is executed.
+     *          *
+     *          * <p>Many lexer commands, including {@code type}, {@code skip}, and
+     *          * {@code more}, do not check the input index during their execution.
+     *          * Actions like this are position-independent, and may be stored more
+     *          * efficiently as part of the {@link LexerATNConfig#lexerActionExecutor}.</p>
+     *          *
+     *          * @return {@code true} if the lexer action semantics can be affected by the
+     * position of the input {@link CharStream} at the time it is executed;
+     * otherwise, {@code false}.
+     */
+    public bool isPositionDependent();
+
+    public void execute(Lexer lexer);
 
 }

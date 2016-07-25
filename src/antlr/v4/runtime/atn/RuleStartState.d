@@ -2,6 +2,7 @@ module antlr.v4.runtime.atn.RuleStartState;
 
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.StateNames : StateNames;
 
 // Class RuleStartState
 /**
@@ -20,6 +21,7 @@ class RuleStartState : ATNState
      */
     public override int getStateType()
     {
+        return StateNames.RULE_START;
     }
 
 }

@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.atn.ATNState;
 
-import StateNames;
+import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.ATN;
 
 // Class ATNState

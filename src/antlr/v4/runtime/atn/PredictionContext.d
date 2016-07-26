@@ -4,7 +4,11 @@ module antlr.v4.runtime.atn.PredictionContext;
 /**
  * TODO add class description
  */
-abstract class PredictionContext
+class PredictionContext
 {
+
+    public static immutable int INITIAL_HASH = 1;
+
+    public int globalNodeCount = 0;
 
 }

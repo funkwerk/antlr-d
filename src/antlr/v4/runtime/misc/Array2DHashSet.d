@@ -148,17 +148,8 @@ class Array2DHashSet(T)
         return o;
     }
 
-    public T* get(T o)
-    { 
-        int b = getBucket(o);
-        T*[] bucket = buckets[b];
-        if (bucket == null)
-            return null; // no bucket
-        foreach (e; bucket) {
-            if (e is null) return null; // empty slot; not there
-            if ( comparator.equals(*e, o) ) return e;
-        }
-        return null;
+    public T get(T o)
+    {
     }
 
     public int getBucket(T o)
@@ -495,26 +486,8 @@ class Array2DHashSet(T)
         assert(ar.toString != "jj");
     }
 
-    public string toTableString()
+    public bool toTableString()
     {
-        auto buf = appender!string;
-        foreach (T*[] bucket; buckets) {
-            if (bucket is null) {
-                buf.put("null\n");
-                continue;
-            }
-            buf.put('[');
-            bool first = true;
-            foreach (T* o; bucket) {
-                if (first) first = false;
-                else buf.put(" ");
-                if (o is null) buf.put("_");
-                else buf.put(to!string(o));
-            }
-            buf.put("]\n");
-        }
-        return buf.data;
-
     }
 
     /**
@@ -531,9 +504,8 @@ class Array2DHashSet(T)
      *  @return {@code o} if it could be an instance of {@code T}, otherwise
      *  {@code null}.
      */
-    public T asElementType(T o)
+    public T asElementType(Object o)
     {
-        return cast(T)o;
     }
 
     public T*[][] createBuckets(int capacity)
@@ -548,9 +520,8 @@ class Array2DHashSet(T)
      *  @param capacity the length of the array to return
      *  @return the newly constructed array
      */
-    public T*[] createBucket(int capacity)
+    public T[] createBucket(int capacity)
     {
-        return cast(T*[])new Object[capacity];
     }
 
 }

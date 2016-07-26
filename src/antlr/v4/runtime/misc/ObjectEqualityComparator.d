@@ -11,18 +11,8 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
 
     public static const ObjectEqualityComparator INSTANCE = new ObjectEqualityComparator();
 
-    public T hashCode(T)(T* obj)
+    public int hashCode(Object obj)
     {
-        if (obj is null) {
-            return 0;
-        }
-
-        return obj.toHash();
-    }
-
-    public int hashCode(int obj)
-    {
-        return obj.toHash();
     }
 
     /**
@@ -33,21 +23,8 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
      *  this method returns the result of
      *  {@code a.}{@link Object#equals equals}{@code (b)}.
      */
-    public bool equals(T)(T a, T b)
+    public bool equals(Object a, Object b)
     {
-        if (a is null) {
-            return b is null;
-        }
-
-        return *a == *b;
-    }
-    public bool equals(int a, int b)
-    {
-        if (a is null) {
-            return b is null;
-        }
-
-        return a.opEquals(b);
     }
 
 }

@@ -33,6 +33,7 @@ module antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.atn.Predicate;
 
 // Class ATNConfig
 /**
@@ -101,7 +102,7 @@ class ATNConfig
      */
     public int reachesIntoOuterContext;
 
-    public SemanticContext semanticContext;
+    public const SemanticContext semanticContext;
 
     /**
      * @uml
@@ -116,17 +117,32 @@ class ATNConfig
         this.reachesIntoOuterContext = old.reachesIntoOuterContext;
     }
 
-    public this(ATNState state, int alt, PredictionContext context, SemanticContext semanticContext)
+    public this(ATNState state, int alt, PredictionContext context)
     {
-        this(state, alt, context, SemanticContext.NONE);
+        this(state, alt, context, new Predicate());
     }
 
-    public this(ATNState state, int alt, PredictionContext context)
+    public this(ATNState state, int alt, PredictionContext context, const SemanticContext semanticContext)
     {
         this.state = state;
         this.alt = alt;
         this.context = context;
         this.semanticContext = semanticContext;
+    }
+
+    public this(ATNConfig c, ATNState state)
+    {
+        //this.semanticContext = c.semanticContext;
+        this(c, state, c.context, c.semanticContext);
+    }
+
+    public this(ATNConfig c, ATNState state, PredictionContext context, const SemanticContext semanticContext)
+    {
+        this.state = state;
+        this.alt = c.alt;
+        this.context = context;
+        this.semanticContext = semanticContext;
+        this.reachesIntoOuterContext = c.reachesIntoOuterContext;
     }
 
 }

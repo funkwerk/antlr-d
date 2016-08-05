@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.atn.ATNState;
 
+import std.conv;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.ATN;
 
@@ -52,6 +53,17 @@ abstract class ATNState
      */
     public ATN atn = null;
 
+    public int stateNumber = INVALID_STATE_NUMBER;
+
     abstract public int getStateType();
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return to!string(stateNumber);
+    }
 
 }

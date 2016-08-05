@@ -30,10 +30,12 @@
 
 module antlr.v4.runtime.atn.ATNConfig;
 
+import std.array;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.Predicate;
+import antlr.v4.runtime.misc.MurmurHash;
 
 // Class ATNConfig
 /**
@@ -136,6 +138,11 @@ class ATNConfig
         this(c, state, c.context, c.semanticContext);
     }
 
+    public this(ATNConfig c, ATNState state, PredictionContext context)
+    {
+        this(c, state, context, c.semanticContext);
+    }
+
     public this(ATNConfig c, ATNState state, PredictionContext context, const SemanticContext semanticContext)
     {
         this.state = state;
@@ -143,6 +150,109 @@ class ATNConfig
         this.context = context;
         this.semanticContext = semanticContext;
         this.reachesIntoOuterContext = c.reachesIntoOuterContext;
+    }
+
+    /**
+     * @uml
+     * This method gets the value of the {@link #reachesIntoOuterContext} field
+     * as it existed prior to the introduction of the
+     * {@link #isPrecedenceFilterSuppressed} method.
+     */
+    public int getOuterContextDepth()
+    {
+        return reachesIntoOuterContext & ~SUPPRESS_PRECEDENCE_FILTER;
+    }
+
+    public bool isPrecedenceFilterSuppressed()
+    {
+        return (reachesIntoOuterContext & SUPPRESS_PRECEDENCE_FILTER) != 0;
+    }
+
+    public void setPrecedenceFilterSuppressed(bool value)
+    {
+        if (value) {
+            this.reachesIntoOuterContext |= 0x40000000;
+        }
+        else {
+            this.reachesIntoOuterContext &= ~SUPPRESS_PRECEDENCE_FILTER;
+        }
+    }
+
+    /**
+     * @uml
+     * @override
+     * An ATN configuration is equal to another if both have
+     * the same state, they predict the same alternative, and
+     * syntactic/semantic contexts are the same.
+     */
+    public override bool opEquals(Object o)
+    {
+        if (typeid(typeof(o)) != typeid(ATNConfig*)) {
+            return false;
+        }
+
+        return this.opEquals(cast(ATNConfig)o);
+    }
+
+    public bool opEquals(ATNConfig other)
+    {
+        if (this is other) {
+            return true;
+        } else if (other is null) {
+            return false;
+        }
+
+        return this.state.stateNumber == other.state.stateNumber
+            && this.alt == other.alt
+            && (this.context is other.context || (this.context !is null && this.context.equals(other.context)))
+            && this.semanticContext.equals(other.semanticContext)
+            && this.isPrecedenceFilterSuppressed() == other.isPrecedenceFilterSuppressed();
+
+    }
+
+    public int hashCode()
+    {
+        int hashCode = MurmurHash.initialize(7);
+        hashCode = MurmurHash.update(hashCode, state.stateNumber);
+        hashCode = MurmurHash.update(hashCode, alt);
+        hashCode = MurmurHash.update(hashCode, context);
+        hashCode = MurmurHash.update(hashCode, semanticContext);
+        hashCode = MurmurHash.finish(hashCode, 4);
+        return hashCode;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return toString(true);
+    }
+
+    public string toString(bool showAlt)
+    {
+        auto buf = appender!string;
+        buf.put('(');
+        buf.put(state.toString);
+        if ( showAlt ) {
+            buf.put(",");
+            buf.put(to!string(alt));
+        }
+        if ( context!=null ) {
+            buf.put(",[");
+            buf.put(context.toString());
+            buf.put("]");
+        }
+        if ( semanticContext!=null && semanticContext != SemanticContext.NONE ) {
+            buf.put(",");
+            buf.put(semanticContext);
+        }
+        if ( getOuterContextDepth()>0 ) {
+            buf.put(",up=").put(getOuterContextDepth());
+        }
+        buf.put(')');
+        return buf.data;
     }
 
 }

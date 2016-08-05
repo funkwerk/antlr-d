@@ -22,17 +22,20 @@ RDMD = rdmd
 DMD = dmd
 GENERATOR = axmi2d
 
+all : generate unittest
+.PHONY : all
 
-.PHONY:	generate
-generate:
+
+.PHONY :	generate
+generate :
 	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
 
 
-.PHONY: unittest
-unittest:
+.PHONY : unittest
+unittest :
 	$(foreach src, $(SRC), $(RDMD) $(TEST_FLAGS) $(src);)
 
 
-.PHONY: clean
-clean:
+.PHONY : clean
+clean :
 	rm -rf $(BUILD_DIR)

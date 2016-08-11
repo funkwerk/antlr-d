@@ -35,6 +35,13 @@ import antlr.v4.runtime.atn.Predicate;
 // Class SemanticContext
 /**
  * TODO add class description
+ * @uml
+ * A tree structure used to record the semantic context in which
+ * an ATN configuration is valid.  It's either a single predicate,
+ * a conjunction {@code p1&&p2}, or a sum of products {@code p1||p2}.
+ *
+ * <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
+ * {@link SemanticContext} within the scope of this outer class.</p>
  */
 class SemanticContext
 {

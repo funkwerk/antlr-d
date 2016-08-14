@@ -10,7 +10,8 @@ SRC =	$(SRC_ATN)/ATN.d\
 	$(SRC_DIR)/misc/Interval.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
 	$(SRC_DIR)/misc/EqualityComparator.d\
-	$(SRC_DIR)/misc/MurmurHash.d
+	$(SRC_DIR)/misc/MurmurHash.d\
+	$(SRC_DIR)/misc/DoubleKeyMap
 
 BUILD_DIR = build
 MODEL_DIR = model
@@ -39,3 +40,5 @@ unittest :
 .PHONY : clean
 clean :
 	rm -rf $(BUILD_DIR)
+	rm -rf $(SRC_DIR)/**/*\.d_orig $(SRC_DIR)/**/*\.d~
+	rm -rf model/DRuntime.zargo~

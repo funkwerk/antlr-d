@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -45,9 +45,17 @@ import std.stdio;
  * t1.put(7,1,12);
  * t1.put(7,1,13);
  * auto x = t1.get(7,1);
- * writefln("%1$s", x);
+ * assert(x == 13);
  * x = t1.get(7,2);
- * writefln("%1$s", x);
+ * assert(x.isNull);
+ *
+ * auto y = t1.get(7);
+ * writefln("%1$s", y);
+ * y = t1.get(6);
+ * writefln("%1$s", y.length);
+ * t1.put(7,4,71);
+ * y = t1.get(7);
+ * writefln("%1$s", y);
  */
 class DoubleKeyMap(K1, K2, V)
 {
@@ -59,7 +67,6 @@ class DoubleKeyMap(K1, K2, V)
         Nullable!V value;
         value = v;
         data[k1][k2] = value;
-        writefln("end of put data=%1$s %2$s", data, typeid(typeof(data)));
         return v;
     }
 
@@ -76,7 +83,7 @@ class DoubleKeyMap(K1, K2, V)
     public V[K2] get(K1 k1)
     {
         if (k1 !in data) {
-            V[K1] v;
+            V[K2] v;
             return v;
         }
         return data[k1];
@@ -124,7 +131,18 @@ unittest
     t1.put(7,1,12);
     t1.put(7,1,13);
     auto x = t1.get(7,1);
-    writefln("%1$s", x);
+    assert(x == 13);
     x = t1.get(7,2);
-    writefln("%1$s", x);
+    assert(x.isNull);
+
+    auto y = t1.get(7);
+    int[int] c;
+    c[1] = 13;
+    assert(c == y);
+    y = t1.get(6);
+    assert(y.length == 0);
+    t1.put(7,4,71);
+    c[4] = 71;
+    y = t1.get(7);
+    assert(y == c);
 }

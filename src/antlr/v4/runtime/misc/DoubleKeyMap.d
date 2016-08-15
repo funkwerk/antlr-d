@@ -50,12 +50,19 @@ import std.stdio;
  * assert(x.isNull);
  *
  * auto y = t1.get(7);
- * writefln("%1$s", y);
+ * int[int] c;
+ * c[1] = 13;
+ * assert(c == y);
  * y = t1.get(6);
- * writefln("%1$s", y.length);
+ * assert(y.length == 0);
  * t1.put(7,4,71);
+ * c[4] = 71;
  * y = t1.get(7);
- * writefln("%1$s", y);
+ * assert(y == c);
+ *
+ * auto kx = t1.keySet;
+ * auto kk = [7];
+ * assert(kk == kx);
  */
 class DoubleKeyMap(K1, K2, V)
 {
@@ -117,9 +124,11 @@ class DoubleKeyMap(K1, K2, V)
      */
     public K2[] keySet(K1 k1)
     {
+        if (k1 !in data) {
+            K2[] v;
+            return v;
+        }
         V[K2] data2 = data[k1];
-        if (data2 is null)
-            return cast(K2[])null;
         return data2.keys;
     }
 
@@ -145,4 +154,13 @@ unittest
     c[4] = 71;
     y = t1.get(7);
     assert(y == c);
+
+    auto kx = t1.keySet;
+    auto kk = [7];
+    assert(kk == kx);
+
+    auto tx = t1.keySet(8);
+    assert(tx == []);
+    tx = t1.keySet(7);
+    assert(tx == [4, 1]);
 }

@@ -63,6 +63,11 @@ import std.stdio;
  * auto kx = t1.keySet;
  * auto kk = [7];
  * assert(kk == kx);
+ *
+ * auto tx = t1.keySet(8);
+ * assert(tx == []);
+ * tx = t1.keySet(7);
+ * assert(tx == [4, 1]);
  */
 class DoubleKeyMap(K1, K2, V)
 {
@@ -98,7 +103,7 @@ class DoubleKeyMap(K1, K2, V)
 
     /**
      * @uml
-     * get all secondary keys associated with a primary key
+     * Get all values associated with a primary key.
      */
     public V[] values(K1 k1)
     {
@@ -120,7 +125,7 @@ class DoubleKeyMap(K1, K2, V)
 
     /**
      * @uml
-     * get all secondary keys associated with a primary key
+     * Get all secondary keys associated with a primary key.
      */
     public K2[] keySet(K1 k1)
     {

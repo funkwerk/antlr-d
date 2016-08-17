@@ -31,7 +31,6 @@
 module antlr.v4.runtime.misc.DoubleKeyMap;
 
 import std.typecons;
-import std.stdio;
 
 // Class Template DoubleKeyMap
 /**
@@ -59,6 +58,11 @@ import std.stdio;
  * c[4] = 71;
  * y = t1.get(7);
  * assert(y == c);
+ *
+ * auto v1 = t1.values(7);
+ * assert(v1 == [71, 13]);
+ * v1 = t1.values(0);
+ * assert(v1 == []);
  *
  * auto kx = t1.keySet;
  * auto kk = [7];
@@ -107,9 +111,14 @@ class DoubleKeyMap(K1, K2, V)
      */
     public V[] values(K1 k1)
     {
+        V[] va;
+        if (k1 !in data) {
+                return va; // []
+            }
         V[K2] data2 = data[k1];
-        if (data2 is null)
-            return cast(V[])null;
+        if (!data2) {
+            return va;
+        }
         return data2.values;
 
     }
@@ -159,6 +168,11 @@ unittest
     c[4] = 71;
     y = t1.get(7);
     assert(y == c);
+
+    auto v1 = t1.values(7);
+    assert(v1 == [71, 13]);
+    v1 = t1.values(0);
+    assert(v1 == []);
 
     auto kx = t1.keySet;
     auto kk = [7];

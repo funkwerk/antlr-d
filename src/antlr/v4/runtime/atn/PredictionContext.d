@@ -1,6 +1,8 @@
 module antlr.v4.runtime.atn.PredictionContext;
 
+import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
+import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 
 // Class PredictionContext
@@ -114,39 +116,105 @@ abstract class PredictionContext
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
-                                          PredictionContext mergeCache)
+        DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
     {
-        assert(a !is null && b !is null); // must be empty context, never null
+    }
 
-        // share same graph if both same
-        if (a is b || a.equals(b))
-            return a;
+    /**
+     * @uml
+     * Merge two {@link SingletonPredictionContext} instances.
+     *
+     * <p>Stack tops equal, parents merge is same; return left graph.<br>
+     * <embed src="images/SingletonMerge_SameRootSamePar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Same stack top, parents differ; merge parents giving array node, then
+     * remainders of those graphs. A new root node is created to point to the
+     * merged parents.<br>
+     * <embed src="images/SingletonMerge_SameRootDiffPar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Different stack tops pointing to same parent. Make array node for the
+     * root where both element in the root point to the same (original)
+     * parent.<br>
+     * <embed src="images/SingletonMerge_DiffRootSamePar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Different stack tops pointing to different parents. Make array node for
+     * the root where each element points to the corresponding original
+     * parent.<br>
+     * <embed src="images/SingletonMerge_DiffRootDiffPar.svg" type="image/svg+xml"/></p>
+     *
+     *  @param a the first {@link SingletonPredictionContext}
+     *  @param b the second {@link SingletonPredictionContext}
+     *  @param rootIsWildcard {@code true} if this is a local-context merge,
+     *  otherwise false to indicate a full-context merge
+     *  @param mergeCache
+     */
+    public static void mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
+                                       bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+    {
+        if (mergeCache !is null ) {
+            PredictionContext previous = mergeCache.get(a, b);
+            if (previous) return previous;
+            previous = mergeCache.get(b, a);
+            if (previous) return previous;
+        }
 
-        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*) &&
-            typeid(typeof(b)) == typeid(SingletonPredictionContext*))
-            {
-                return mergeSingletons(cast(SingletonPredictionContext)a,
-                                       cast(SingletonPredictionContext)b,
-                                       rootIsWildcard, mergeCache);
+        PredictionContext rootMerge = mergeRoot(a, b, rootIsWildcard);
+        if ( rootMerge!=null ) {
+            if ( mergeCache!=null ) mergeCache.put(a, b, rootMerge);
+            return rootMerge;
+        }
+
+        if (a.returnState == b.returnState) { // a == b
+            PredictionContext parent = merge(a.parent, b.parent, rootIsWildcard, mergeCache);
+            // if parent is same as existing a or b parent or reduced to a parent, return it
+            if ( parent == a.parent ) return a; // ax + bx = ax, if a=b
+            if ( parent == b.parent ) return b; // ax + bx = bx, if a=b
+            // else: ax + ay = a'[x,y]
+            // merge parents x and y, giving array node with x,y then remainders
+            // of those graphs.  dup a, a' points at merged array
+            // new joined parent so create new singleton pointing to it, a'
+            PredictionContext a_ = SingletonPredictionContext.create(parent, a.returnState);
+            if ( mergeCache!=null ) mergeCache.put(a, b, a_);
+            return a_;
+        }
+        else { // a != b payloads differ
+            // see if we can collapse parents due to $+x parents if local ctx
+            PredictionContext singleParent = null;
+            if ( a==b || (a.parent!=null && a.parent.equals(b.parent)) ) { // ax + bx = [a,b]x
+                singleParent = a.parent;
             }
-
-        // At least one of a or b is array
-        // If one is $ and rootIsWildcard, return $ as * wildcard
-        if ( rootIsWildcard ) {
-            if (typeid(typeof(a)) == typeid(EmptyPredictionContext*)) return a;
-            if (typeid(typeof(b)) == typeid(EmptyPredictionContext*)) return b;
+            if ( singleParent!=null ) {     // parents are same
+                // sort payloads and use same parent
+                int[] payloads = {a.returnState, b.returnState};
+                if ( a.returnState > b.returnState ) {
+                    payloads[0] = b.returnState;
+                    payloads[1] = a.returnState;
+                }
+                PredictionContext[] parents = {singleParent, singleParent};
+                PredictionContext a_ = new ArrayPredictionContext(parents, payloads);
+                if ( mergeCache!=null ) mergeCache.put(a, b, a_);
+                return a_;
+            }
+            // parents differ and can't merge them. Just pack together
+            // into array; can't merge.
+            // ax + by = [ax,by]
+            int[] payloads = {a.returnState, b.returnState};
+            PredictionContext[] parents = {a.parent, b.parent};
+            if ( a.returnState > b.returnState ) { // sort by payload
+                payloads[0] = b.returnState;
+                payloads[1] = a.returnState;
+                parents.length = 0;
+                parents = b.parent ~ a.parent;
+            }
+            PredictionContext a_ = new ArrayPredictionContext(parents, payloads);
+            if ( mergeCache!=null ) mergeCache.put(a, b, a_);
+            return a_;
         }
+    }
 
-        // convert singleton so both are arrays to normalize
-        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*)) {
-            a = new ArrayPredictionContext(cast(SingletonPredictionContext)a);
-        }
-        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*)) {
-            b = new ArrayPredictionContext(cast(SingletonPredictionContext)b);
-        }
-        return mergeArrays(cast(ArrayPredictionContext) a, cast(ArrayPredictionContext) b,
-                           rootIsWildcard, mergeCache);
-
+    public string[] oStrings(Recognizer!(void, void) recognizer, PredictionContext stop,
+        int currentState)
+    {
     }
 
 }

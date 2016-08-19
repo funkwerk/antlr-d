@@ -4,6 +4,7 @@ import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.misc.DoubleKeyMap;
+import antlr.v4.runtime.misc.MurmurHash;
 
 // Class PredictionContext
 /**
@@ -116,7 +117,7 @@ abstract class PredictionContext
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
-        DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+                                          DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
     {
     }
 
@@ -148,7 +149,7 @@ abstract class PredictionContext
      *  otherwise false to indicate a full-context merge
      *  @param mergeCache
      */
-    public static void mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
+    public static PredictionContext mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
                                        bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
     {
         if (mergeCache !is null ) {
@@ -213,8 +214,68 @@ abstract class PredictionContext
     }
 
     public string[] oStrings(Recognizer!(void, void) recognizer, PredictionContext stop,
-        int currentState)
+                             int currentState)
     {
+
+    outer:
+        for (int perm = 0; ; perm++) {
+            int offset = 0;
+            boolean last = true;
+            PredictionContext p = this;
+            int stateNumber = currentState;
+            StringBuilder localBuffer = new StringBuilder();
+            localBuffer.append("[");
+            while ( !p.isEmpty() && p != stop ) {
+                int index = 0;
+                if (p.size() > 0) {
+                    int bits = 1;
+                    while ((1 << bits) < p.size()) {
+                        bits++;
+                    }
+
+                    int mask = (1 << bits) - 1;
+                    index = (perm >> offset) & mask;
+                    last &= index >= p.size() - 1;
+                    if (index >= p.size()) {
+                        continue outer;
+                    }
+                    offset += bits;
+                }
+
+                if ( recognizer!=null ) {
+                    if (localBuffer.length() > 1) {
+                        // first char is '[', if more than that this isn't the first rule
+                        localBuffer.append(' ');
+                    }
+
+                    ATN atn = recognizer.getATN();
+                    ATNState s = atn.states.get(stateNumber);
+                    String ruleName = recognizer.getRuleNames()[s.ruleIndex];
+                    localBuffer.append(ruleName);
+                }
+                else if ( p.getReturnState(index)!= EMPTY_RETURN_STATE) {
+                    if ( !p.isEmpty() ) {
+                        if (localBuffer.length() > 1) {
+                            // first char is '[', if more than that this isn't the first rule
+                            localBuffer.append(' ');
+                        }
+
+                        localBuffer.append(p.getReturnState(index));
+                    }
+                }
+                stateNumber = p.getReturnState(index);
+                p = p.getParent(index);
+            }
+            localBuffer.append("]");
+            result.add(localBuffer.toString());
+
+            if (last) {
+                break;
+            }
+        }
+
+        return result.toArray(new String[result.size()]);
+
     }
 
 }

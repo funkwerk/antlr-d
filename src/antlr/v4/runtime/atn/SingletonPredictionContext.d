@@ -36,4 +36,36 @@ class SingletonPredictionContext : PredictionContext
         return new SingletonPredictionContext(parent, returnState);
     }
 
+    /**
+     * @uml
+     * @override
+     */
+    public override PredictionContext getParent(int index)
+    {
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getReturnState(int index)
+    {
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool opEquals(Object o)
+    {
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+    }
+
 }

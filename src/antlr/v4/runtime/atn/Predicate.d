@@ -59,6 +59,9 @@ class Predicate : SemanticContext
 
     public this(int ruleIndex, int predIndex, bool isCtxDependent)
     {
+        this.ruleIndex = ruleIndex;
+        this.predIndex = predIndex;
+        this.isCtxDependent = isCtxDependent;
     }
 
     /**
@@ -67,13 +70,12 @@ class Predicate : SemanticContext
      */
     public override bool eval(Recognizer!(void, void) parser, SemanticContext parserCallStack)
     {
+        RuleContext localctx = isCtxDependent ? parserCallStack : null;
+        return parser.sempred(localctx, ruleIndex, predIndex);
+
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override int hashCode()
+    public int hashCode()
     {
         int hashCode = MurmurHash.initialize();
         hashCode = MurmurHash.update(hashCode, ruleIndex);
@@ -87,8 +89,14 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool opEquals()
+    public override bool opEquals(Object obj)
     {
+        if (typeid(typeof(obj)) != typeid(Predicate*)) return false;
+        if ( this is obj ) return true;
+        Predicate p = cast(Predicate)obj;
+        return this.ruleIndex == p.ruleIndex &&
+            this.predIndex == p.predIndex &&
+            this.isCtxDependent == p.isCtxDependent;
     }
 
     /**
@@ -97,6 +105,7 @@ class Predicate : SemanticContext
      */
     public override string toString()
     {
+        return "{" ~ ruleIndex ~ ":" ~ predIndex ~ "}?";
     }
 
 }

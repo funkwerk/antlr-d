@@ -205,8 +205,9 @@ class ATNConfig
 
         return this.state.stateNumber == other.state.stateNumber
             && this.alt == other.alt
-            && (this.context is other.context || (this.context !is null && this.context.equals(other.context)))
-            && this.semanticContext.equals(other.semanticContext)
+            && (this.context is other.context ||
+                (this.context !is null && this.context.opEquals(other.context)))
+            && this.semanticContext.opEquals(other.semanticContext)
             && this.isPrecedenceFilterSuppressed() == other.isPrecedenceFilterSuppressed();
 
     }

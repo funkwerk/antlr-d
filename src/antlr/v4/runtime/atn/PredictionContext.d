@@ -1,6 +1,39 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.atn.PredictionContext;
 
-import antlr.v4.runtime.Recognizer;
+import std.array;
+import antlr.v4.runtime.atn.Recognizer;
+import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.misc.DoubleKeyMap;
@@ -18,7 +51,7 @@ abstract class PredictionContext
      * Represents {@code $} in local context prediction, which means wildcard.
      * {@code *+x = *}.
      */
-    public static const EmptyPredictionContext EMPTY;
+    public static EmptyPredictionContext EMPTY;
 
     /**
      * @uml
@@ -91,7 +124,11 @@ abstract class PredictionContext
         return cachedHashCode;
     }
 
-    abstract public bool opEquals();
+    /**
+     * @uml
+     * @override
+     */
+    abstract public override bool opEquals(Object obj);
 
     private static int calculateEmptyHashCode()
     {
@@ -119,6 +156,34 @@ abstract class PredictionContext
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
                                           DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
     {
+        assert(a !is null && b !is null); // must be empty context, never null
+
+        // share same graph if both same
+        if (a == b || a.equals(b) ) return a;
+
+        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*) &&
+            typeid(typeof(b)) == typeid(SingletonPredictionContext*)) {
+            return mergeSingletons(cast(SingletonPredictionContext)a,
+                                   cast(SingletonPredictionContext)b,
+                                   rootIsWildcard, mergeCache);
+        }
+
+        // At least one of a or b is array
+        // If one is $ and rootIsWildcard, return $ as * wildcard
+        if ( rootIsWildcard ) {
+            if (typeid(typeof(a)) == typeid(EmptyPredictionContext*)) return a;
+            if (typeid(typeof(b)) == typeid(EmptyPredictionContext*)) return b;
+        }
+
+        // convert singleton so both are arrays to normalize
+        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*)) {
+            a = new ArrayPredictionContext(cast(SingletonPredictionContext)a);
+        }
+        if (typeid(typeof(b)) == typeid(SingletonPredictionContext*)) {
+            b = new ArrayPredictionContext(cast(SingletonPredictionContext)b);
+        }
+        return mergeArrays(cast(ArrayPredictionContext) a, cast(ArrayPredictionContext) b,
+                           rootIsWildcard, mergeCache);
     }
 
     /**
@@ -150,7 +215,7 @@ abstract class PredictionContext
      *  @param mergeCache
      */
     public static PredictionContext mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
-                                       bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+                                                    bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
     {
         if (mergeCache !is null ) {
             PredictionContext previous = mergeCache.get(a, b);
@@ -160,8 +225,8 @@ abstract class PredictionContext
         }
 
         PredictionContext rootMerge = mergeRoot(a, b, rootIsWildcard);
-        if ( rootMerge!=null ) {
-            if ( mergeCache!=null ) mergeCache.put(a, b, rootMerge);
+        if ( rootMerge !is null ) {
+            if (mergeCache !is null ) mergeCache.put(a, b, rootMerge);
             return rootMerge;
         }
 
@@ -208,74 +273,14 @@ abstract class PredictionContext
                 parents = b.parent ~ a.parent;
             }
             PredictionContext a_ = new ArrayPredictionContext(parents, payloads);
-            if ( mergeCache!=null ) mergeCache.put(a, b, a_);
+            if (mergeCache !is null ) mergeCache.put(a, b, a_);
             return a_;
         }
     }
 
-    public string[] oStrings(Recognizer!(void, void) recognizer, PredictionContext stop,
-                             int currentState)
+    public string[] toStrings(Recognizer!(void, void) recognizer, PredictionContext stop,
+        int currentState)
     {
-
-    outer:
-        for (int perm = 0; ; perm++) {
-            int offset = 0;
-            boolean last = true;
-            PredictionContext p = this;
-            int stateNumber = currentState;
-            StringBuilder localBuffer = new StringBuilder();
-            localBuffer.append("[");
-            while ( !p.isEmpty() && p != stop ) {
-                int index = 0;
-                if (p.size() > 0) {
-                    int bits = 1;
-                    while ((1 << bits) < p.size()) {
-                        bits++;
-                    }
-
-                    int mask = (1 << bits) - 1;
-                    index = (perm >> offset) & mask;
-                    last &= index >= p.size() - 1;
-                    if (index >= p.size()) {
-                        continue outer;
-                    }
-                    offset += bits;
-                }
-
-                if ( recognizer!=null ) {
-                    if (localBuffer.length() > 1) {
-                        // first char is '[', if more than that this isn't the first rule
-                        localBuffer.append(' ');
-                    }
-
-                    ATN atn = recognizer.getATN();
-                    ATNState s = atn.states.get(stateNumber);
-                    String ruleName = recognizer.getRuleNames()[s.ruleIndex];
-                    localBuffer.append(ruleName);
-                }
-                else if ( p.getReturnState(index)!= EMPTY_RETURN_STATE) {
-                    if ( !p.isEmpty() ) {
-                        if (localBuffer.length() > 1) {
-                            // first char is '[', if more than that this isn't the first rule
-                            localBuffer.append(' ');
-                        }
-
-                        localBuffer.append(p.getReturnState(index));
-                    }
-                }
-                stateNumber = p.getReturnState(index);
-                p = p.getParent(index);
-            }
-            localBuffer.append("]");
-            result.add(localBuffer.toString());
-
-            if (last) {
-                break;
-            }
-        }
-
-        return result.toArray(new String[result.size()]);
-
     }
 
 }

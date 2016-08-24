@@ -118,7 +118,7 @@ class MurmurHash
      *  @param numberOfWords the number of integer values added to the hash
      *  @return the final hash result
      */
-    public static int finish(int hash, int numberOfWords)
+    public static int finish(int hash, size_t numberOfWords)
     {
         hash = hash ^ (numberOfWords * 4);
         hash = hash ^ (hash >>> 16);

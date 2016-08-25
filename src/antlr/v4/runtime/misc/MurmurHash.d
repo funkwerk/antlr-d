@@ -120,7 +120,7 @@ class MurmurHash
      */
     public static int finish(int hash, size_t numberOfWords)
     {
-        hash = hash ^ (numberOfWords * 4);
+        hash = hash ^ (cast(int)numberOfWords * 4);
         hash = hash ^ (hash >>> 16);
         hash = hash * 0x85EBCA6B;
         hash = hash ^ (hash >>> 13);

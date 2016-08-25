@@ -37,6 +37,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
+import antlr.v4.runtime.atn.ArrayPredictionContext;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.MurmurHash;
 
@@ -271,7 +272,8 @@ abstract class PredictionContext
                 payloads[0] = b.returnState;
                 payloads[1] = a.returnState;
                 parents.length = 0;
-                parents = b.parent ~ a.parent;
+                parents ~= b.parent;
+                parents ~= a.parent;
             }
             PredictionContext a_ = new ArrayPredictionContext(parents, payloads);
             if (mergeCache !is null ) mergeCache.put(a, b, a_);

@@ -101,7 +101,7 @@ abstract class PredictionContext
         this.cachedHashCode = cachedHashCode;
     }
 
-    abstract public int size();
+    abstract public size_t size();
 
     abstract public PredictionContext getParent(int index);
 

@@ -58,7 +58,7 @@ class EmptyPredictionContext : SingletonPredictionContext
      * @uml
      * @override
      */
-    public override int size()
+    public override size_t size()
     {
         return 1;
     }

@@ -32,7 +32,7 @@ module antlr.v4.runtime.atn.PredictionContext;
 
 import std.array;
 import std.conv;
-import antlr.v4.runtime.atn.Recognizer;
+import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;

@@ -31,7 +31,7 @@
 module antlr.v4.runtime.atn.Predicate;
 
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.Recognizer;;
+import antlr.v4.runtime.Recognizer;
 
 // Class Predicate
 /**

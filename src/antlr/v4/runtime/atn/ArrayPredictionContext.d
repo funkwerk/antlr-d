@@ -92,7 +92,11 @@ class ArrayPredictionContext : PredictionContext
         return returnStates[0] == EMPTY_RETURN_STATE;
     }
 
-    public size_t size()
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t size()
     {
         return returnStates.length;
     }

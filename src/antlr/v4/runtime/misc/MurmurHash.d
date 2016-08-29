@@ -31,7 +31,6 @@
 module antlr.v4.runtime.misc.MurmurHash;
 
 import std.conv;
-import antlr.v4.runtime.misc.HashableObject;
 
 // Class MurmurHash
 /**
@@ -104,7 +103,7 @@ class MurmurHash
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
      */
-    public static int update(int hash, HashableObject value)
+    public static int update(U)(int hash, U value)
     {
         return update(hash, value !is null ? value.hashCode() : 0);
     }

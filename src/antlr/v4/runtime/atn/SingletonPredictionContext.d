@@ -22,7 +22,7 @@ class SingletonPredictionContext : PredictionContext
 
     public this(PredictionContext parent, int returnState)
     {
-        super(parent !is null ? calculateHashCode([parent], [returnState]) : calculateEmptyHashCode());
+        super(parent !is null ? calculateHashCode(parent, returnState) : calculateEmptyHashCode);
         assert(returnState != ATNState.INVALID_STATE_NUMBER);
         this.parent = parent;
         this.returnState = returnState;

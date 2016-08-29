@@ -118,7 +118,7 @@ abstract class PredictionContext
 
     public bool hasEmptyPath()
     {
-        return getReturnState(size() - 1) == EMPTY_RETURN_STATE;
+        return getReturnState(to!int(size() - 1)) == EMPTY_RETURN_STATE;
     }
 
     public int hashCode()
@@ -139,8 +139,29 @@ abstract class PredictionContext
         return hash;
     }
 
+    public int calculateHashCode(PredictionContext parent, int returnState)
+    {
+        int hash = MurmurHash.initialize(INITIAL_HASH);
+        hash = MurmurHash.update!PredictionContext(hash, parent);
+        hash = MurmurHash.update(hash, returnState);
+        hash = MurmurHash.finish(hash, 2);
+        return hash;
+    }
+
     public static int calculateHashCode(PredictionContext[] parents, int[] returnStates)
     {
+        int hash = MurmurHash.initialize(INITIAL_HASH);
+
+        foreach (parent; parents) {
+            hash = MurmurHash.update!PredictionContext(hash, parent);
+        }
+
+        foreach (returnState; returnStates) {
+            hash = MurmurHash.update(hash, returnState);
+        }
+
+        hash = MurmurHash.finish(hash, 2 * parents.length);
+        return hash;
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,

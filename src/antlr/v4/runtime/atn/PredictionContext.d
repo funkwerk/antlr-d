@@ -96,7 +96,7 @@ abstract class PredictionContext
         EMPTY = new EmptyPredictionContext();
     }
 
-    private this(int cachedHashCode)
+    public this(int cachedHashCode)
     {
         this.cachedHashCode = cachedHashCode;
     }
@@ -132,7 +132,7 @@ abstract class PredictionContext
      */
     abstract public override bool opEquals(Object obj);
 
-    private static int calculateEmptyHashCode()
+    public static int calculateEmptyHashCode()
     {
         int hash = MurmurHash.initialize(INITIAL_HASH);
         hash = MurmurHash.finish(hash, 0);
@@ -141,18 +141,6 @@ abstract class PredictionContext
 
     public static int calculateHashCode(PredictionContext[] parents, int[] returnStates)
     {
-        int hash = MurmurHash.initialize(INITIAL_HASH);
-
-        foreach (PredictionContext parent; parents) {
-            hash = MurmurHash.update(hash, parent);
-        }
-
-        foreach (int returnState; returnStates) {
-            hash = MurmurHash.update(hash, returnState);
-        }
-
-        hash = MurmurHash.finish(hash, 2 * parents.length);
-        return hash;
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,

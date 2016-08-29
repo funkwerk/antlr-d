@@ -9,8 +9,6 @@ import antlr.v4.runtime.atn.ATN;
 class Recognizer(U, V)
 {
 
-    public ATN getATN()
-    {
-    }
+    abstract public ATN getATN();
 
 }

@@ -42,7 +42,8 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
  * TODO add class description
  * @uml
  * UnitTest:
- * auto apc = new ArrayPredictionContext();
+ * auto spc = new SingletonPredictionContext();
+ * auto apc = new ArrayPredictionContext(spc);
  * writefln("********************++%1$s", apc);
  */
 class ArrayPredictionContext : PredictionContext
@@ -178,6 +179,7 @@ class ArrayPredictionContext : PredictionContext
 
 unittest
 {
-    auto apc = new ArrayPredictionContext();
+    auto spc = new SingletonPredictionContext();
+    auto apc = new ArrayPredictionContext(spc);
     writefln("********************++%1$s", apc);
 }

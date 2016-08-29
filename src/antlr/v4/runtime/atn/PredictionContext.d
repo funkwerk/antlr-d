@@ -33,6 +33,7 @@ module antlr.v4.runtime.atn.PredictionContext;
 import std.array;
 import std.conv;
 import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
@@ -99,6 +100,25 @@ abstract class PredictionContext
     public this(int cachedHashCode)
     {
         this.cachedHashCode = cachedHashCode;
+    }
+
+    public PredictionContext[] fromRuleContext(ATN atn, RuleContext outerContext)
+    {
+        if (outerContext is null) outerContext = RuleContext.EMPTY;
+
+        // if we are in RuleContext of start rule, s, then PredictionContext
+        // is EMPTY. Nobody called us. (if we are empty, return empty)
+        if ( outerContext.parent is null || outerContext == RuleContext.EMPTY ) {
+            return PredictionContext.EMPTY;
+        }
+
+        // If we have a parent, convert it to a PredictionContext graph
+        PredictionContext parent = EMPTY;
+        parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
+
+        ATNState state = atn.states.get(outerContext.invokingState);
+        RuleTransition transition = cast(RuleTransition)state.transition(0);
+        return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
     }
 
     abstract public size_t size();

@@ -28,55 +28,13 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.ParseTree;
+module antlr.v4.runtime.Parser;
 
-import antlr.v4.runtime.tree.SyntaxTree;
-
-// Interface ParseTree
+// Class Parser
 /**
- * TODO add interface description
- * @uml
- * An interface to access the tree of {@link RuleContext} objects created
- *  *  during a parse that makes the data structure look like a simple parse tree.
- * This node represents both internal nodes, rule invocations,
- * and leaf nodes, token matches.
- *
- * <p>The payload is either a {@link Token} or a {@link RuleContext} object.</p>
+ * TODO add class description
  */
-interface ParseTree :SyntaxTree
+abstract class Parser
 {
-
-    /**
-     * @uml
-     * @override
-     */
-    public override ParseTree getParent();
-
-    /**
-     * @uml
-     * @override
-     */
-    public override ParseTree getChild(int i);
-
-    /**
-     * @uml
-     * The {@link ParseTreeVisitor} needs a double dispatch method.
-     */
-    public T accept(T)(ParseTreeVisitor!U visitor);
-
-    /**
-     * @uml
-     * Return the combined text of all leaf nodes. Does not get any
-     * off-channel tokens (if any) so won't return whitespace and
-     * comments if they are sent to parser on hidden channel.
-     */
-    public string getText();
-
-    /**
-     * @uml
-     * Specialize toStringTree so that it can print out more information
-     * based upon the parser.
-     */
-    public string toStringTree(Parser parser);
 
 }

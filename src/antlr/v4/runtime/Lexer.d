@@ -4,7 +4,7 @@ module antlr.v4.runtime.Lexer;
 /**
  * TODO add class description
  */
-class Lexer
+abstract class Lexer
 {
 
 }

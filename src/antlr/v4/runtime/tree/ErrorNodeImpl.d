@@ -28,31 +28,35 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.ParseTreeListener;
+module antlr.v4.runtime.tree.ErrorNodeImpl;
 
-// Interface ParseTreeListener
+import antlr.v4.runtime.tree.TerminalNodeImpl;
+import antlr.v4.runtime.tree.ErrorNode;
+
+// Class ErrorNodeImpl
 /**
  * @uml
- * This interface describes the minimal core of methods triggered
- * by {@link ParseTreeWalker}. E.g.,
- *
- *     ParseTreeWalker walker = new ParseTreeWalker();
- *          walker.walk(myParseTreeListener, myParseTree); <-- triggers events in your listener
- *
- * If you want to trigger events in multiple listeners during a single
- * ree walk, you can use the ParseTreeDispatcher object available at
- *
- *         https://github.com/antlr/antlr4/issues/841
+ * Represents a token that was consumed during resynchronization
+ * rather than during a valid match operation. For example,
+ * we will create this kind of a node during single token insertion
+ * and deletion as well as during "consume until error recovery set"
+ * upon no viable alternative exceptions.
  */
-interface ParseTreeListener
+class ErrorNodeImpl : TerminalNodeImpl, ErrorNode
 {
 
-    public TerminalNode visitTerminal(undefined node);
+    public this(Token token)
+    {
+        super(token);
+    }
 
-    public ErrorNode visitErrorNode(undefined node);
-
-    public void enterEveryRule(ParserRuleContext ctx);
-
-    public void exitEveryRule(ParserRuleContext ctx);
+    /**
+     * @uml
+     * @override
+     */
+    public override V accept(V, U)(ParseTreeVisitor!U visitor)
+    {
+        return visitor.visitErrorNode(this);
+    }
 
 }

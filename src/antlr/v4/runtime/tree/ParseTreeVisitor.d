@@ -28,31 +28,65 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.ParseTreeListener;
+module antlr.v4.runtime.tree.ParseTreeVisitor;
 
-// Interface ParseTreeListener
+// Class Template ParseTreeVisitor
 /**
+ * TODO add class description
  * @uml
- * This interface describes the minimal core of methods triggered
- * by {@link ParseTreeWalker}. E.g.,
+ * This interface defines the basic notion of a parse tree visitor. Generated
+ * visitors implement this interface and the {@code XVisitor} interface for
+ * grammar {@code X}.
  *
- *     ParseTreeWalker walker = new ParseTreeWalker();
- *          walker.walk(myParseTreeListener, myParseTree); <-- triggers events in your listener
- *
- * If you want to trigger events in multiple listeners during a single
- * ree walk, you can use the ParseTreeDispatcher object available at
- *
- *         https://github.com/antlr/antlr4/issues/841
+ *  @param <T> The return type of the visit operation. Use {@link Void} for
+ *  operations with no return type.
  */
-interface ParseTreeListener
+abstract class ParseTreeVisitor(T)
 {
 
-    public TerminalNode visitTerminal(undefined node);
+    /**
+     * @uml
+     * Visit a parse tree, and return a user-defined result of the operation.
+     *
+     *  @param tree The {@link ParseTree} to visit.
+     *  @return The result of visiting the parse tree.
+     */
+    public T visit(ParseTree tree)
+    {
+    }
 
-    public ErrorNode visitErrorNode(undefined node);
+    /**
+     * @uml
+     * Visit the children of a node, and return a user-defined result of the
+     * operation.
+     *
+     *  @param node The {@link RuleNode} whose children should be visited.
+     *  @return The result of visiting the children of the node.
+     */
+    public T visitChildren(RuleNode node)
+    {
+    }
 
-    public void enterEveryRule(ParserRuleContext ctx);
+    /**
+     * @uml
+     * Visit a terminal node, and return a user-defined result of the operation.
+     *
+     *  @param node The {@link TerminalNode} to visit.
+     *  @return The result of visiting the node.
+     */
+    public T visitTerminal(TerminalNode node)
+    {
+    }
 
-    public void exitEveryRule(ParserRuleContext ctx);
+    /**
+     * @uml
+     * Visit an error node, and return a user-defined result of the operation.
+     *
+     *  @param node The {@link ErrorNode} to visit.
+     *  @return The result of visiting the node.
+     */
+    public T visitErrorNode(ErrorNode node)
+    {
+    }
 
 }

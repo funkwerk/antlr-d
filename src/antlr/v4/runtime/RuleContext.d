@@ -7,7 +7,7 @@ import antlr.v4.runtime.ParserRuleContext;
 /**
  * TODO add class description
  */
-class RuleContext : RuleNode
+class RuleContext
 {
 
     public ParserRuleContext EMPTY;

@@ -1,4 +1,4 @@
-module TokenSource;
+module antlr.v4.runtime.TokenSource;
 
 // Interface TokenSource
 /**

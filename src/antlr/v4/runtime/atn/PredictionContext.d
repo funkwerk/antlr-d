@@ -39,6 +39,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.MurmurHash;
 
@@ -104,12 +105,14 @@ abstract class PredictionContext
 
     public PredictionContext[] fromRuleContext(ATN atn, RuleContext outerContext)
     {
-        if (outerContext is null) outerContext = RuleContext.EMPTY;
+        if (outerContext is null)
+            outerContext = new RuleContext().EMPTY;
 
         // if we are in RuleContext of start rule, s, then PredictionContext
         // is EMPTY. Nobody called us. (if we are empty, return empty)
-        if ( outerContext.parent is null || outerContext == RuleContext.EMPTY ) {
-            return PredictionContext.EMPTY;
+        if ( outerContext.parent is null ||
+             outerContext == new RuleContext().EMPTY ) {
+            return PredictionContext().EMPTY;
         }
 
         // If we have a parent, convert it to a PredictionContext graph

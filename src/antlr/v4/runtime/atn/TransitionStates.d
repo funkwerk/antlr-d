@@ -3,8 +3,10 @@ module antlr.v4.runtime.atn.TransitionStates;
 // Enum TransitionStates
 /**
  * TODO add enumeration class description
+ * @uml
+ * Type: ushort
  */
-enum TransitionStates
+enum TransitionStates : ushort
 {
     INVALID,
     EPSILON,

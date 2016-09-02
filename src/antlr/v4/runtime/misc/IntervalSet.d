@@ -23,10 +23,13 @@ class IntervalSet : IntSet
 
     public bool isReadonly()
     {
+        return readonly;
     }
 
     public void setReadonly(bool readonly)
     {
+        // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
+        this.readonly = readonly;
     }
 
 }

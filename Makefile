@@ -9,6 +9,7 @@ SRC =	$(SRC_ATN)/ATN.d\
 	$(SRC_ATN)/ATNConfig.d\
 	$(SRC_ATN)/PredictionContext.d\
 	$(SRC_ATN)/ArrayPredictionContext.d\
+	$(SRC_ATN)/EpsilonTransition.d\
 	$(SRC_DIR)/misc/Interval.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
 	$(SRC_DIR)/misc/EqualityComparator.d\

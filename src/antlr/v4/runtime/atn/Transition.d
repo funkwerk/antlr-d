@@ -54,20 +54,6 @@ import antlr.v4.runtime.misc.IntervalSet;
  * on the other hand need to update the labels as it adds transitions to
  * the states. We'll use the term Edge for the DFA to distinguish them from
  * ATN transitions.</p>
- *
- * UnitTest:
- * auto tr = new Transition();
- * assert(tr.serializationNames == ["INVALID",
- *                                  "EPSILON",
- *                                  "RANGE",
- *                                  "RULE",
- *                                  "PREDICATE",
- *                                  "ATOM",
- *                                  "ACTION",
- *                                  "SET",
- *                                  "NOT_SET",
- *                                  "WILDCARD",
- *                                  "PRECEDENCE"]);
  */
 abstract class Transition
 {
@@ -93,16 +79,10 @@ abstract class Transition
         serializationTypes[typeid(PredicateTransition)] = TransitionStates.PREDICATE;
     }
 
-    private this(ATNState target)
+    public this(ATNState target)
     {
-        assert(target);
-        this.target = target;
     }
 
-    /**
-     * @uml
-     * Only for unittest required.
-     */
     public this()
     {
     }
@@ -131,20 +111,4 @@ abstract class Transition
 
     abstract public bool matches(int symbol, int minVocabSymbol, int maxVocabSymbol);
 
-}
-
-unittest
-{
-    auto tr = new Transition();
-    assert(tr.serializationNames == ["INVALID",
-                                     "EPSILON",
-                                     "RANGE",
-                                     "RULE",
-                                     "PREDICATE",
-                                     "ATOM",
-                                     "ACTION",
-                                     "SET",
-                                     "NOT_SET",
-                                     "WILDCARD",
-                                     "PRECEDENCE"]);
 }

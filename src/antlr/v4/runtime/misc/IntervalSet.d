@@ -1,5 +1,8 @@
 module antlr.v4.runtime.misc.IntervalSet;
 
+import std.container.rbtree;
+import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.misc.IntegerList;
 import antlr.v4.runtime.misc.IntSet;
 import antlr.v4.runtime.misc.Interval;
 
@@ -20,17 +23,72 @@ import antlr.v4.runtime.misc.Interval;
 class IntervalSet : IntSet
 {
 
-    public static IntervalSet COMPLETE_CHAR_SET;
-
-    public static IntervalSet EMPTY_SET;
+    private bool readonly;
 
     /**
      * @uml
-     * The list of sorted, disjoint intervals.
+     * @override
      */
-    public Interval[] intervals;
+    public override string toString()
+    {
+    }
 
-    private bool readonly;
+    public string toString(bool elemAreChar)
+    {
+    }
+
+    public string toString(Vocabulary vocabulary)
+    {
+    }
+
+    public string elementName(Vocabulary vocabulary, int a)
+    {
+    }
+
+    public int size()
+    {
+        int n = 0;
+        int numIntervals = intervals.size();
+        if (numIntervals == 1) {
+            Interval firstInterval = this.intervals.get(0);
+            return firstInterval.b - firstInterval.a + 1;
+        }
+        for (int i = 0; i < numIntervals; i++) {
+            Interval I = intervals.get(i);
+            n += (I.b - I.a + 1);
+        }
+        return n;
+    }
+
+    public IntegerList toIntegerList()
+    {
+    }
+
+    public int[] toList()
+    {
+    }
+
+    public RedBlackTree!int toSet()
+    {
+    }
+
+    /**
+     * @uml
+     * Get the ith element of ordered set.  Used only by RandomPhrase so
+     * don't bother to implement if you're not doing that for a new
+     * ANTLR code gen target.
+     */
+    public int get(int i)
+    {
+    }
+
+    public int[] toArray()
+    {
+    }
+
+    public void remove(int el)
+    {
+    }
 
     public bool isReadonly()
     {
@@ -41,14 +99,6 @@ class IntervalSet : IntSet
     {
         // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
         this.readonly = readonly;
-    }
-
-    public this(Interval[] intervals)
-    {
-    }
-
-    public this(IntervalSet set)
-    {
     }
 
 }

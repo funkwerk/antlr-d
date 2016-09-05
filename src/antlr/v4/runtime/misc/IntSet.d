@@ -43,4 +43,26 @@ interface IntSet
      */
     public IntSet and(IntSet a);
 
+    public IntSet complement(IntSet elements);
+
+    public IntSet or(IntSet a);
+
+    public IntSet subtract(IntSet a);
+
+    private int size();
+
+    public bool isNil();
+
+    public bool opEquals(Object obj);
+
+    public int getSingleElement();
+
+    public bool contains(int el);
+
+    public void remove(int el);
+
+    public int[] toList();
+
+    public string toString();
+
 }

@@ -1,6 +1,7 @@
 module antlr.v4.runtime.misc.IntervalSet;
 
 import antlr.v4.runtime.misc.IntSet;
+import antlr.v4.runtime.misc.Interval;
 
 // Class IntervalSet
 /**
@@ -19,6 +20,16 @@ import antlr.v4.runtime.misc.IntSet;
 class IntervalSet : IntSet
 {
 
+    public static IntervalSet COMPLETE_CHAR_SET;
+
+    public static IntervalSet EMPTY_SET;
+
+    /**
+     * @uml
+     * The list of sorted, disjoint intervals.
+     */
+    public Interval[] intervals;
+
     private bool readonly;
 
     public bool isReadonly()
@@ -30,6 +41,14 @@ class IntervalSet : IntSet
     {
         // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
         this.readonly = readonly;
+    }
+
+    public this(Interval[] intervals)
+    {
+    }
+
+    public this(IntervalSet set)
+    {
     }
 
 }

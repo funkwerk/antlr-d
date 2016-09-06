@@ -7,4 +7,6 @@ module antlr.v4.runtime.IntStream;
 class IntStream
 {
 
+    public static immutable int EOF = -1;
+
 }

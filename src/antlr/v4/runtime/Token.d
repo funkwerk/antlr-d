@@ -1,5 +1,7 @@
 module antlr.v4.runtime.Token;
 
+import antlr.v4.runtime.IntStream;
+
 // Class Token
 /**
  * TODO add class description
@@ -22,7 +24,7 @@ class Token
 
     public static immutable int MIN_USER_TOKEN_TYPE = 1;
 
-    public static const undefined EOF = IntStream.IntStream.EOF;
+    public static const int EOF = IntStream.EOF;
 
     /**
      * @uml
@@ -51,7 +53,7 @@ class Token
      *
      *  @see Token#getChannel()
      */
-    public static immutable undefined MIN_USER_CHANNEL_VALUE = 2;
+    public static immutable int MIN_USER_CHANNEL_VALUE = 2;
 
     /**
      * @uml

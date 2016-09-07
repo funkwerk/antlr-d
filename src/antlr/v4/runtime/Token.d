@@ -59,35 +59,27 @@ class Token
      * @uml
      * Get the text of the token.
      */
-    public string getText()
-    {
-    }
+    abstract public string getText();
 
     /**
      * @uml
      * Get the token type of the token
      */
-    public int getType()
-    {
-    }
+    abstract public int getType();
 
     /**
      * @uml
      * The line number on which the 1st character of this token was matched,
      * line=1..n
      */
-    public int getLine()
-    {
-    }
+    abstract public int getLine();
 
     /**
      * @uml
      * The index of the first character of this token relative to the
      * beginning of the line at which it occurs, 0..n-1
      */
-    public int getCharPositionInLine()
-    {
-    }
+    abstract public int getCharPositionInLine();
 
     /**
      * @uml
@@ -95,42 +87,32 @@ class Token
      * on a different channel, but the parser only "tunes" to a single channel.
      * The parser ignores everything not on DEFAULT_CHANNEL.
      */
-    public int getChannel()
-    {
-    }
+    abstract public int getChannel();
 
     /**
      * @uml
      * The starting character index of the token
      * This method is optional; return -1 if not implemented.
      */
-    public int getStartIndex()
-    {
-    }
+    abstract public int getStartIndex();
 
     /**
      * @uml
      * The last character index of the token.
      * This method is optional; return -1 if not implemented.
      */
-    public int getStopIndex()
-    {
-    }
+    abstract public int getStopIndex();
 
     /**
      * @uml
      * Gets the {@link TokenSource} which created this token.
      */
-    public void getTokenSource()
-    {
-    }
+    abstract public void getTokenSource();
 
     /**
      * @uml
      * Gets the {@link CharStream} from which this token was derived.
      */
-    public void getInputStream()
-    {
-    }
+    abstract public void getInputStream();
 
 }

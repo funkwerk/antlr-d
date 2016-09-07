@@ -40,75 +40,28 @@ class IntervalSet : IntSet
 
     /**
      * @uml
-     * @override
+     * Create a set with a single element, el.
      */
-    public override string toString()
+    public static IntervalSet of(int a)
     {
-        return toString(false);
+        IntervalSet s = new IntervalSet();
+        s.add(a);
+        return s;
     }
 
-    public string toString(bool elemAreChar)
+    /**
+     * @uml
+     * Create a set with all ints within range [a..b] (inclusive)
+     */
+    public static IntervalSet of(int a, int b)
     {
-        auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
-            return "{}";
-        }
-        if (this.size() > 1) {
-            buf.put("{");
-        };
-        foreach (int index, I; this.intervals) {
-            int a = I.a;
-            int b = I.b;
-            if (a == b) {
-                if (a == Token.EOF) buf.put("<EOF>");
-                else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
-                else buf.put(to!string(a));
-            }
-            else {
-                if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
-                else buf.put(to!string(a) ~ ".." ~ to!string(b));
-            }
-            if (index + 1 < intervals.length) {
-                buf.put(", "); //  not last element
-            }
-        }
-        if (this.size() > 1) {
-            buf.put("}");
-        }
-        return buf.data;
-
+        IntervalSet s = new IntervalSet();
+        s.add(a,b);
+        return s;
     }
 
-    public string toString(Vocabulary vocabulary)
+    public void clear()
     {
-        auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
-            return "{}";
-        }
-        if (size() > 1) {
-            buf.put("{");
-        }
-        foreach (int index, I; this.intervals) {
-            int a = I.a;
-            int b = I.b;
-            if ( a==b ) {
-                buf.put(elementName(vocabulary, a));
-            }
-            else {
-                for (int i=a; i<=b; i++) {
-                    if ( i>a ) buf.put(", ");
-                    buf.put(elementName(vocabulary, i));
-                }
-            }
-            if (index + 1 < intervals.length) {
-                buf.put(", ");
-            }
-        }
-        if (size() > 1) {
-            buf.put("}");
-        }
-        return buf.data;
-
     }
 
     /**
@@ -284,6 +237,136 @@ class IntervalSet : IntSet
     {
         // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
         this.readonly = readonly;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return toString(false);
+    }
+
+    public string toString(bool elemAreChar)
+    {
+        auto buf = appender!string;
+        if (intervals is null || intervals.length == 0) {
+            return "{}";
+        }
+        if (this.size() > 1) {
+            buf.put("{");
+        };
+        foreach (int index, I; this.intervals) {
+            int a = I.a;
+            int b = I.b;
+            if (a == b) {
+                if (a == Token.EOF) buf.put("<EOF>");
+                else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
+                else buf.put(to!string(a));
+            }
+            else {
+                if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
+                else buf.put(to!string(a) ~ ".." ~ to!string(b));
+            }
+            if (index + 1 < intervals.length) {
+                buf.put(", "); //  not last element
+            }
+        }
+        if (this.size() > 1) {
+            buf.put("}");
+        }
+        return buf.data;
+
+    }
+
+    public string toString(Vocabulary vocabulary)
+    {
+        auto buf = appender!string;
+        if (intervals is null || intervals.length == 0) {
+            return "{}";
+        }
+        if (size() > 1) {
+            buf.put("{");
+        }
+        foreach (int index, I; this.intervals) {
+            int a = I.a;
+            int b = I.b;
+            if ( a==b ) {
+                buf.put(elementName(vocabulary, a));
+            }
+            else {
+                for (int i=a; i<=b; i++) {
+                    if ( i>a ) buf.put(", ");
+                    buf.put(elementName(vocabulary, i));
+                }
+            }
+            if (index + 1 < intervals.length) {
+                buf.put(", ");
+            }
+        }
+        if (size() > 1) {
+            buf.put("}");
+        }
+        return buf.data;
+
+    }
+
+    public bool contains(int el)
+    {
+        auto n = intervals.length;
+        for (auto i = 0; i < n; i++) {
+            Interval I = intervals[i];
+            int a = I.a;
+            int b = I.b;
+            if (el < a) {
+                break; // list is sorted and el is before this interval; not here
+            }
+            if (el >= a && el <= b) {
+                return true; // found in this interval
+            }
+        }
+        return false;
+    }
+
+    public bool isNil()
+    {
+        return intervals is null || intervals.length == 0;
+    }
+
+    public int getSingleElement()
+    {
+        if (intervals !is null && intervals.length == 1 ) {
+            Interval I = intervals[0];
+            if (I.a == I.b) {
+                return I.a;
+            }
+        }
+        return Token.INVALID_TYPE;
+    }
+
+    public int getMaxElement()
+    {
+        if (isNil) {
+            return Token.INVALID_TYPE;
+        }
+        Interval last = intervals[$-1];
+        return last.b;
+    }
+
+    /**
+     * @uml
+     * Returns the minimum value contained in the set.
+     *
+     *  @return the minimum value contained in the set. If the set is empty, this
+     *  method returns {@link Token#INVALID_TYPE}.
+     */
+    public int getMinElement()
+    {
+        if (isNil) {
+            return Token.INVALID_TYPE;
+        }
+        return intervals[0].a;
     }
 
 }

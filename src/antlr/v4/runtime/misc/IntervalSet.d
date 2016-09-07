@@ -82,7 +82,7 @@ class IntervalSet : IntSet
     public string toString(Vocabulary vocabulary)
     {
         auto buf = appender!string;
-        if (intervals is null || this.intervals.isEmpty() ) {
+        if (intervals is null || intervals.length == 0) {
             return "{}";
         }
         if (size() > 1) {
@@ -111,6 +111,35 @@ class IntervalSet : IntSet
 
     }
 
+    /**
+     * @uml
+     * Add a single element to the set.  An isolated element is stored
+     * as a range el..el.
+     * @override
+     */
+    public override void add(int el)
+    {
+        assert(!readonly, "can't alter readonly IntervalSet");
+        add(el, el);
+    }
+
+    /**
+     * @uml
+     * Add interval; i.e., add all integers from a to b to set.
+     * If b&lt;a, do nothing.
+     * Keep list in sorted order (by left range value).
+     * If overlap, combine ranges.  For example,
+     * If this is {1..5, 10..20}, adding 6..7 yields
+     * {1..5, 6..7, 10..20}.  Adding 4..8 yields {1..8, 10..20}.
+     */
+    public void add(int a, int b)
+    {
+    }
+
+    public void add(Interval addition)
+    {
+    }
+
     public string elementName(Vocabulary vocabulary, int a)
     {
         if (a == Token.EOF) {
@@ -127,12 +156,12 @@ class IntervalSet : IntSet
     public int size()
     {
         int n = 0;
-        int numIntervals = intervals.size();
+        auto numIntervals = intervals.length;
         if (numIntervals == 1) {
-            Interval firstInterval = intervals.get(0);
+            Interval firstInterval = intervals[0];
             return firstInterval.b - firstInterval.a + 1;
         }
-        for (int i = 0; i < numIntervals; i++) {
+        for (auto i = 0; i < numIntervals; i++) {
             Interval I = intervals[i];
             n += (I.b - I.a + 1);
         }
@@ -141,13 +170,13 @@ class IntervalSet : IntSet
 
     public IntegerList toIntegerList()
     {
-        IntegerList values = new IntegerList(size());
-        int n = intervals.size();
-        for (int i = 0; i < n; i++) {
+        IntegerList values = new IntegerList();
+        auto n = intervals.length;
+        for (auto i = 0; i < n; i++) {
             Interval I = intervals[i];
             int a = I.a;
             int b = I.b;
-            for (int v=a; v<=b; v++) {
+            for (int v = a; v <= b; v++) {
                 values.add(v);
             }
         }
@@ -157,12 +186,12 @@ class IntervalSet : IntSet
     public int[] toList()
     {
         int[] values;
-        int n = intervals.size();
-        for (int i = 0; i < n; i++) {
-            Interval I = intervals.get(i);
+        auto n = intervals.length;
+        for (auto i = 0; i < n; i++) {
+            Interval I = intervals[i];
             int a = I.a;
             int b = I.b;
-            for (int v =a ; v <= b; v++) {
+            for (int v = a ; v <= b; v++) {
                 values ~= v;
             }
         }
@@ -190,14 +219,14 @@ class IntervalSet : IntSet
      */
     public int get(int i)
     {
-        int n = intervals.size();
-        int index = 0;
-        for (int j = 0; j < n; j++) {
-            Interval I = intervals.get(j);
+        auto n = intervals.length;
+        ulong index = 0;
+        for (ulong j = 0; j < n; j++) {
+            Interval I = intervals[j];
             int a = I.a;
             int b = I.b;
-            for (int v=a; v<=b; v++) {
-                if ( index==i ) {
+            for (int v = a; v <= b; v++) {
+                if (to!int(index) == i ) {
                     return v;
                 }
                 index++;
@@ -214,17 +243,17 @@ class IntervalSet : IntSet
     public void remove(int el)
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        int n = intervals.size();
-        for (int i = 0; i < n; i++) {
-            Interval I = intervals.get(i);
+        auto n = intervals.length;
+        for (ulong i = 0; i < n; i++) {
+            Interval I = intervals[i];
             int a = I.a;
             int b = I.b;
-            if ( el<a ) {
+            if (el < a) {
                 break; // list is sorted and el is before this interval; not here
             }
-            // if whole interval x..x, rm
-            if ( el==a && el==b ) {
-                intervals.remove(i);
+            // if whole interval x..x, remove i
+            if (el == a && el == b ) {
+                intervals = intervals[0..i] ~ intervals[i+1..$];
                 break;
             }
             // if on left edge x..b, adjust left
@@ -238,7 +267,7 @@ class IntervalSet : IntSet
                 break;
             }
             // if in middle a..x..b, split interval
-            if ( el>a && el<b ) { // found in this interval
+            if (el >a && el < b) { // found in this interval
                 int oldb = I.b;
                 I.b = el-1;      // [a..x-1]
                 add(el+1, oldb); // add [x+1..b]

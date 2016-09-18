@@ -38,6 +38,22 @@ class IntervalSet : IntSet
      */
     private Interval[] intervals;
 
+    public this()
+    {
+    }
+
+    public this(Interval[] intervals)
+    {
+    }
+
+    public this(IntervalSet set)
+    {
+    }
+
+    public this(int[] els ...)
+    {
+    }
+
     /**
      * @uml
      * Create a set with a single element, el.
@@ -174,7 +190,7 @@ class IntervalSet : IntSet
     {
         auto n = intervals.length;
         ulong index = 0;
-        for (ulong j = 0; j < n; j++) {
+        for (auto j = 0; j < n; j++) {
             Interval I = intervals[j];
             int a = I.a;
             int b = I.b;
@@ -197,7 +213,7 @@ class IntervalSet : IntSet
     {
         assert(!readonly, "can't alter readonly IntervalSet");
         auto n = intervals.length;
-        for (ulong i = 0; i < n; i++) {
+        for (auto i = 0; i < n; i++) {
             Interval I = intervals[i];
             int a = I.a;
             int b = I.b;
@@ -367,6 +383,108 @@ class IntervalSet : IntSet
             return Token.INVALID_TYPE;
         }
         return intervals[0].a;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool opEquals(Object obj)
+    {
+        if (obj is null || (typeid(typeof(obj)) != typeid(IntervalSet*))) {
+            return false;
+        }
+        IntervalSet other = cast(IntervalSet)obj;
+        return intervals == other.intervals;
+
+    }
+
+    public IntervalSet subtract(IntSet a)
+    {
+    }
+
+    /**
+     * @uml
+     * Compute the set difference between two interval sets. The specific
+     * operation is {@code left - right}. If either of the input sets is
+     * {@code null}, it is treated as though it was an empty set.
+     */
+    public IntervalSet subtract(IntervalSet left, IntervalSet right)
+    {
+        if (left is null || left.size == 0) {
+            return new IntervalSet();
+        }
+
+        IntervalSet result = new IntervalSet(left);
+        if (right is null || right.size == 0) {
+            // right set has no elements; just return the copy of the current set
+            return result;
+        }
+
+        int resultI = 0;
+        int rightI = 0;
+        while (resultI < result.intervals.length && rightI < right.intervals.length) {
+            Interval resultInterval = result.intervals[resultI];
+            Interval rightInterval = right.intervals[rightI];
+
+            // operation: (resultInterval - rightInterval) and update indexes
+
+            if (rightInterval.b < resultInterval.a) {
+                rightI++;
+                continue;
+            }
+
+            if (rightInterval.a > resultInterval.b) {
+                resultI++;
+                continue;
+            }
+
+            Interval beforeCurrent = null;
+            Interval afterCurrent = null;
+            if (rightInterval.a > resultInterval.a) {
+                beforeCurrent = new Interval(resultInterval.a, rightInterval.a - 1);
+            }
+
+            if (rightInterval.b < resultInterval.b) {
+                afterCurrent = new Interval(rightInterval.b + 1, resultInterval.b);
+            }
+
+            if (beforeCurrent !is null) {
+                if (afterCurrent !is null) {
+                    // split the current interval into two
+                    result.intervals[resultI] = beforeCurrent;
+                    result.intervals ~= afterCurrent;
+                    resultI++;
+                    rightI++;
+                    continue;
+                }
+                else {
+                    // replace the current interval
+                    result.intervals[resultI] = beforeCurrent;
+                    resultI++;
+                    continue;
+                }
+            }
+            else {
+                if (afterCurrent !is null) {
+                    // replace the current interval
+                    result.intervals[resultI] = afterCurrent;
+                    rightI++;
+                    continue;
+                }
+                else {
+                    // remove the current interval (thus no need to increment resultI)
+                    //result.intervals.remove(resultI);
+                    result.intervals = result.intervals[0..resultI].dup ~
+                        result.intervals[resultI+1..$].dup;
+                    continue;
+                }
+            }
+        }
+        // If rightI reached right.intervals.size(), no more intervals to subtract from result.
+        // If resultI reached result.intervals.size(), we would be subtracting from an empty set.
+        // Either way, we are done.
+        return result;
     }
 
 }

@@ -11,6 +11,7 @@ SRC =	$(SRC_ATN)/ATN.d\
 	$(SRC_ATN)/ArrayPredictionContext.d\
 	$(SRC_ATN)/EpsilonTransition.d\
 	$(SRC_DIR)/misc/Interval.d\
+	$(SRC_DIR)/misc/IntervalSet.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
 	$(SRC_DIR)/misc/EqualityComparator.d\
 	$(SRC_DIR)/misc/MurmurHash.d\

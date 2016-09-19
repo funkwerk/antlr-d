@@ -7,4 +7,8 @@ module antlr.v4.runtime.Lexer;
 abstract class Lexer
 {
 
+    public static immutable int MIN_CHAR_VALUE = char.min;
+
+    public static immutable int MAX_CHAR_VALUE = char.max;
+
 }

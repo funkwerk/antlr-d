@@ -1,8 +1,10 @@
 module antlr.v4.runtime.misc.IntervalSet;
 
+import std.stdio;
 import std.conv;
 import std.array;
 import std.container.rbtree;
+import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.misc.IntegerList;
@@ -40,18 +42,42 @@ class IntervalSet : IntSet
 
     public this()
     {
+        COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
+        COMPLETE_CHAR_SET.setReadonly(true);
+        EMPTY_SET = new IntervalSet();
+        EMPTY_SET.setReadonly(true);
     }
 
     public this(Interval[] intervals)
     {
+        this.intervals = intervals;
     }
 
     public this(IntervalSet set)
     {
+        this();
+        addAll(set);
     }
 
+    /**
+     * @uml
+     * UnitTest:
+     * auto t = new Interval(7, 9);
+     */
     public this(int[] els ...)
     {
+        if (els)
+            {
+                foreach (int e; els) add(e);
+            }
+    }
+
+    unittest
+    {
+        auto t = new Interval(7, 9);
+        writefln("t = %1$s", t);
+        auto ts = new IntervalSet(1, 4, 7);
+        writefln("t = %1$s", ts);
     }
 
     /**
@@ -107,6 +133,28 @@ class IntervalSet : IntSet
 
     public void add(Interval addition)
     {
+    }
+
+    public IntervalSet addAll(IntSet set)
+    {
+        if (set is null) {
+            return this;
+        }
+        if (typeid(typeof(set)) == typeid(IntervalSet*)) {
+            IntervalSet other = cast(IntervalSet)set;
+            // walk set and add each interval
+            auto n = other.intervals.length;
+            for (auto i = 0; i < n; i++) {
+                Interval I = other.intervals[i];
+                this.add(I.a,I.b);
+            }
+        }
+        else {
+            foreach (int value; set.toList) {
+                add(value);
+            }
+        }
+        return this;
     }
 
     public string elementName(Vocabulary vocabulary, int a)
@@ -401,6 +449,17 @@ class IntervalSet : IntSet
 
     public IntervalSet subtract(IntSet a)
     {
+        if (!a) {
+            return new IntervalSet(this);
+        }
+
+        if (typeid(typeof(a)) != typeid(IntervalSet*)) {
+            return subtract(this, cast(IntervalSet)a);
+        }
+
+        IntervalSet other = new IntervalSet();
+        other.addAll(a);
+        return subtract(this, other);
     }
 
     /**
@@ -485,6 +544,99 @@ class IntervalSet : IntSet
         // If resultI reached result.intervals.size(), we would be subtracting from an empty set.
         // Either way, we are done.
         return result;
+    }
+
+    public IntervalSet or(IntSet a)
+    {
+        IntervalSet o = new IntervalSet();
+        o.addAll(this);
+        o.addAll(a);
+        return o;
+    }
+
+    public IntervalSet and(IntSet other)
+    {
+        if (other is null ) { //|| !(other instanceof IntervalSet) ) {
+            return null; // nothing in common with null set
+        }
+
+        auto myIntervals = this.intervals;
+        auto theirIntervals = (cast(IntervalSet)other).intervals;
+        IntervalSet intersection;
+        auto mySize = myIntervals.length;
+        auto theirSize = theirIntervals.length;
+        int i = 0;
+        int j = 0;
+        // iterate down both interval lists looking for nondisjoint intervals
+        while (i < mySize && j < theirSize) {
+            Interval mine = myIntervals[i];
+            Interval theirs = theirIntervals[j];
+            //System.out.println("mine="+mine+" and theirs="+theirs);
+            if (mine.startsBeforeDisjoint(theirs) ) {
+                // move this iterator looking for interval that might overlap
+                i++;
+            }
+            else if ( theirs.startsBeforeDisjoint(mine) ) {
+                // move other iterator looking for interval that might overlap
+                j++;
+            }
+            else if ( mine.properlyContains(theirs) ) {
+                // overlap, add intersection, get next theirs
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                j++;
+            }
+            else if (theirs.properlyContains(mine)) {
+                // overlap, add intersection, get next mine
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                i++;
+            }
+            else if ( !mine.disjoint(theirs) ) {
+                // overlap, add intersection
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                // Move the iterator of lower range [a..b], but not
+                // the upper range as it may contain elements that will collide
+                // with the next iterator. So, if mine=[0..115] and
+                // theirs=[115..200], then intersection is 115 and move mine
+                // but not theirs as theirs may collide with the next range
+                // in thisIter.
+                // move both iterators to next ranges
+                if ( mine.startsAfterNonDisjoint(theirs) ) {
+                    j++;
+                }
+                else if ( theirs.startsAfterNonDisjoint(mine) ) {
+                    i++;
+                }
+            }
+        }
+        if (intersection is null) {
+            return new IntervalSet();
+        }
+        return intersection;
+    }
+
+    public IntervalSet complement(IntSet vocabulary)
+    {
+        if (vocabulary is null || vocabulary.isNil) {
+            return null; // nothing in common with null set
+        }
+        IntervalSet vocabularyIS;
+        if (typeid(typeof(vocabulary)) == typeid(IntervalSet*)) {
+            vocabularyIS = cast(IntervalSet)vocabulary;
+        }
+        else {
+            vocabularyIS = new IntervalSet();
+            vocabularyIS.addAll(vocabulary);
+        }
+        return vocabularyIS.subtract(this);
     }
 
 }

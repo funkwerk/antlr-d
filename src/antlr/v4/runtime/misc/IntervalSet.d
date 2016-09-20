@@ -62,25 +62,22 @@ class IntervalSet : IntSet
     /**
      * @uml
      * UnitTest:
-     * auto t = new Interval(7, 9);
-     * writefln("t = %1$s", t);
-     * auto ts = new IntervalSet(1, 4, 7);
-     * writefln("t = %1$s", ts);
+     * auto ts = new IntervalSet(99, 77, 8, 7, 78);
+     * assert("{7..8, 77..78, 99}" == ts.toString);
      */
     public this(int[] els ...)
     {
         if (els)
             {
-                foreach (int e; els) add(e);
+                foreach (int e; els)
+                    add(e);
             }
     }
 
     unittest
     {
-        auto t = new Interval(7, 9);
-        writefln("t = %1$s", t);
-        auto ts = new IntervalSet(1, 4, 7);
-        writefln("t = %1$s", ts);
+        auto ts = new IntervalSet(99, 77, 8, 7, 78);
+        assert("{7..8, 77..78, 99}" == ts.toString);
     }
 
     /**
@@ -141,8 +138,9 @@ class IntervalSet : IntSet
     protected void add(Interval addition)
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        //System.out.println("add "+addition+" to "+intervals.toString());
-        if (addition.b < addition.a ) {
+        debug (Interval)
+            writefln("add %1$s to %2$s", addition, intervals);
+        if (addition.b < addition.a ) {            writefln("ccccccc");
             return;
         }
         // find position in list
@@ -174,7 +172,7 @@ class IntervalSet : IntSet
             }
             if (addition.startsBeforeDisjoint(r)) {
                 // insert before r
-                intervals = intervals[0..index-1] ~ addition ~
+                intervals = intervals[0..index] ~ addition ~
                     intervals[index..$];
                 return;
             }
@@ -185,6 +183,14 @@ class IntervalSet : IntSet
         intervals ~= addition;
     }
 
+    /**
+     * @uml
+     * UnitTest:
+     * auto ts = new IntervalSet(99, 77, 8, 7, 78, 9, 11);
+     * auto s = new IntervalSet(10, 12);
+     * ts.addAll(s);
+     * assert("{7..12, 77..78, 99}" == ts.toString);
+     */
     public IntervalSet addAll(IntSet set)
     {
         if (set is null) {
@@ -205,6 +211,14 @@ class IntervalSet : IntSet
             }
         }
         return this;
+    }
+
+    unittest
+    {
+        auto ts = new IntervalSet(99, 77, 8, 7, 78, 9, 11);
+        auto s = new IntervalSet(10, 12);
+        ts.addAll(s);
+        assert("{7..12, 77..78, 99}" == ts.toString);
     }
 
     public string elementName(Vocabulary vocabulary, int a)
@@ -351,79 +365,6 @@ class IntervalSet : IntSet
     {
         // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
         this.readonly = readonly;
-    }
-
-    /**
-     * @uml
-     * @override
-     */
-    public override string toString()
-    {
-        return toString(false);
-    }
-
-    public string toString(bool elemAreChar)
-    {
-        auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
-            return "{}";
-        }
-        if (this.size() > 1) {
-            buf.put("{");
-        };
-        foreach (int index, I; this.intervals) {
-            int a = I.a;
-            int b = I.b;
-            if (a == b) {
-                if (a == Token.EOF) buf.put("<EOF>");
-                else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
-                else buf.put(to!string(a));
-            }
-            else {
-                if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
-                else buf.put(to!string(a) ~ ".." ~ to!string(b));
-            }
-            if (index + 1 < intervals.length) {
-                buf.put(", "); //  not last element
-            }
-        }
-        if (this.size() > 1) {
-            buf.put("}");
-        }
-        return buf.data;
-
-    }
-
-    public string toString(Vocabulary vocabulary)
-    {
-        auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
-            return "{}";
-        }
-        if (size() > 1) {
-            buf.put("{");
-        }
-        foreach (int index, I; this.intervals) {
-            int a = I.a;
-            int b = I.b;
-            if ( a==b ) {
-                buf.put(elementName(vocabulary, a));
-            }
-            else {
-                for (int i=a; i<=b; i++) {
-                    if ( i>a ) buf.put(", ");
-                    buf.put(elementName(vocabulary, i));
-                }
-            }
-            if (index + 1 < intervals.length) {
-                buf.put(", ");
-            }
-        }
-        if (size() > 1) {
-            buf.put("}");
-        }
-        return buf.data;
-
     }
 
     public bool contains(int el)
@@ -687,6 +628,79 @@ class IntervalSet : IntSet
             vocabularyIS.addAll(vocabulary);
         }
         return vocabularyIS.subtract(this);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return toString(false);
+    }
+
+    public string toString(bool elemAreChar)
+    {
+        auto buf = appender!string;
+        if (intervals is null || intervals.length == 0) {
+            return "{}";
+        }
+        if (this.size() > 1) {
+            buf.put("{");
+        };
+        foreach (int index, I; this.intervals) {
+            int a = I.a;
+            int b = I.b;
+            if (a == b) {
+                if (a == Token.EOF) buf.put("<EOF>");
+                else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
+                else buf.put(to!string(a));
+            }
+            else {
+                if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
+                else buf.put(to!string(a) ~ ".." ~ to!string(b));
+            }
+            if (index + 1 < intervals.length) {
+                buf.put(", "); //  not last element
+            }
+        }
+        if (this.size() > 1) {
+            buf.put("}");
+        }
+        return buf.data;
+
+    }
+
+    public string toString(Vocabulary vocabulary)
+    {
+        auto buf = appender!string;
+        if (intervals is null || intervals.length == 0) {
+            return "{}";
+        }
+        if (size() > 1) {
+            buf.put("{");
+        }
+        foreach (int index, I; this.intervals) {
+            int a = I.a;
+            int b = I.b;
+            if ( a==b ) {
+                buf.put(elementName(vocabulary, a));
+            }
+            else {
+                for (int i=a; i<=b; i++) {
+                    if ( i>a ) buf.put(", ");
+                    buf.put(elementName(vocabulary, i));
+                }
+            }
+            if (index + 1 < intervals.length) {
+                buf.put(", ");
+            }
+        }
+        if (size() > 1) {
+            buf.put("}");
+        }
+        return buf.data;
+
     }
 
 }

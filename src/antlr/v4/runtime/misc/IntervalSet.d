@@ -63,6 +63,9 @@ class IntervalSet : IntSet
      * @uml
      * UnitTest:
      * auto t = new Interval(7, 9);
+     * writefln("t = %1$s", t);
+     * auto ts = new IntervalSet(1, 4, 7);
+     * writefln("t = %1$s", ts);
      */
     public this(int[] els ...)
     {
@@ -104,6 +107,8 @@ class IntervalSet : IntSet
 
     public void clear()
     {
+        assert(!readonly, "can't alter readonly IntervalSet");
+        intervals.length = 0;
     }
 
     /**
@@ -129,10 +134,55 @@ class IntervalSet : IntSet
      */
     public void add(int a, int b)
     {
+        assert(!readonly, "can't alter readonly IntervalSet");
+        add(Interval.of(a ,b));
     }
 
-    public void add(Interval addition)
+    protected void add(Interval addition)
     {
+        assert(!readonly, "can't alter readonly IntervalSet");
+        //System.out.println("add "+addition+" to "+intervals.toString());
+        if (addition.b < addition.a ) {
+            return;
+        }
+        // find position in list
+        // Use iterators as we modify list in place
+        foreach (int index, ref el; intervals) {
+            Interval r = el;
+            if (addition.equals(r)) {
+                return;
+            }
+            if (addition.adjacent(r) || !addition.disjoint(r)) {
+                // next to each other, make a single larger interval
+                Interval bigger = addition.unionInterval(r);
+                el = bigger;
+                // make sure we didn't just create an interval that
+                // should be merged with next interval in list
+                while (index++ < intervals.length) {
+                    Interval next = intervals[index];
+                    if (!bigger.adjacent(next) && bigger.disjoint(next)) {
+                        break;
+                    }
+
+                    // if we bump up against or overlap next, merge
+                    intervals = intervals[0..index] ~ intervals[index+1..$];   // remove this one
+                    index--; // move backwards to what we just set
+                    intervals[index] = bigger.unionInterval(next); // set to 3 merged ones
+                    index++; // first call to next after previous duplicates the result
+                }
+                return;
+            }
+            if (addition.startsBeforeDisjoint(r)) {
+                // insert before r
+                intervals = intervals[0..index-1] ~ addition ~
+                    intervals[index..$];
+                return;
+            }
+            // if disjoint and after r, a future iteration will handle it
+        }
+        // ok, must be after last interval (and disjoint from last interval)
+        // just add it
+        intervals ~= addition;
     }
 
     public IntervalSet addAll(IntSet set)

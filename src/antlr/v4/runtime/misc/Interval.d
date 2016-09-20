@@ -73,14 +73,14 @@ class Interval
      * Interval object with a..a in it.  On Java.g4, 218623 IntervalSets
      * have a..a (set with 1 element).
      */
-    public Interval of(int a, int b)
+    public static Interval of(int a, int b)
     {
         // cache just a..a
         if ( a!=b || a<0 || a>INTERVAL_POOL_MAX_VALUE ) {
-            return new Interval(a,b);
+            return new Interval(a, b);
         }
-        if ( cache[a] is null ) {
-            cache[a] = new Interval(a,a);
+        if (cache[a] is null) {
+            cache[a] = new Interval(a, a);
         }
         return cache[a];
     }

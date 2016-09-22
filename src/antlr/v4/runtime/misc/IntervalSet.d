@@ -74,7 +74,8 @@ class IntervalSet : IntSet
     {
         COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
         COMPLETE_CHAR_SET.setReadonly(true);
-        EMPTY_SET = new IntervalSet();
+        EMPTY_SET = new IntervalSet(1);
+        EMPTY_SET.clear;
         EMPTY_SET.setReadonly(true);
     }
 
@@ -85,8 +86,7 @@ class IntervalSet : IntSet
 
     public this(IntervalSet set)
     {
-        this(1);
-        this.clear;
+        this();
         addAll(set);
     }
 
@@ -217,45 +217,6 @@ class IntervalSet : IntSet
 
     /**
      * @uml
-     * combine all sets in the array returned the or'd value
-     * UnitTest:
-     * IntervalSet ts;
-     * auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
-     * auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
-     * auto ts3 = new IntervalSet(55, 44);
-     * IntervalSet[] tl;
-     * tl ~= ts1;
-     * tl ~= ts2;
-     * tl ~= ts3;
-     * auto r = ts.or(tl);
-     * assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
-     */
-    public static IntervalSet or(IntervalSet[] sets)
-    {
-        IntervalSet r = new IntervalSet(1);
-        r.clear;
-        foreach (IntervalSet s; sets) {
-            r.addAll(s);
-        }
-        return r;
-    }
-
-    unittest
-    {
-        IntervalSet ts;
-        auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
-        auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
-        auto ts3 = new IntervalSet(55, 44);
-        IntervalSet[] tl;
-        tl ~= ts1;
-        tl ~= ts2;
-        tl ~= ts3;
-        auto r = ts.or(tl);
-        assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
-    }
-
-    /**
-     * @uml
      * UnitTest:
      * auto ts = new IntervalSet(99, 77, 8, 7, 78, 9, 11);
      * auto s = new IntervalSet(10, 12);
@@ -320,8 +281,7 @@ class IntervalSet : IntSet
         if (vocabulary is null || vocabulary.isNil) {
             return null; // nothing in common with null set
         }
-        IntervalSet vocabularyIS = new IntervalSet(1);
-        vocabularyIS.clear;
+        IntervalSet vocabularyIS = new IntervalSet();
         vocabularyIS.addAll(vocabulary);
         return vocabularyIS.subtract(this);
     }
@@ -333,6 +293,266 @@ class IntervalSet : IntSet
         }
         IntervalSet vocabularyIS = vocabulary;
         return vocabularyIS.subtract(this);
+    }
+
+    public IntervalSet subtract(IntSet a)
+    {
+        if (!a) {
+            return new IntervalSet(this);
+        }
+        if (typeid(typeof(a)) == typeid(IntervalSet*)) {        assert(false);
+            return subtract(this, cast(IntervalSet)a);
+        }
+
+        IntervalSet other = new IntervalSet();
+        other.addAll(a);
+        return subtract(this, other);
+    }
+
+    public IntervalSet or(IntSet a)
+    {
+        IntervalSet o = new IntervalSet();
+        o.addAll(this);
+        o.addAll(a);
+        return o;
+    }
+
+    /**
+     * @uml
+     * UnitTest:
+     * auto ta = new IntervalSet(11, 10, 8, 7, 78);
+     * auto tb = new IntervalSet(12, 10, 8, 7, 79);
+     * auto tand = ta.and(tb);
+     * assert("{7..8, 10}" == tand.toString);
+     */
+    public IntervalSet and(IntSet other)
+    {
+        if (other is null ) { //|| !(other instanceof IntervalSet) ) {
+            return null; // nothing in common with null set
+        }
+
+        auto myIntervals = this.intervals;
+        auto theirIntervals = (cast(IntervalSet)other).intervals;
+        IntervalSet intersection;
+        auto mySize = myIntervals.length;
+        auto theirSize = theirIntervals.length;
+        int i = 0;
+        int j = 0;
+        // iterate down both interval lists looking for nondisjoint intervals
+        while (i < mySize && j < theirSize) {
+            Interval mine = myIntervals[i];
+            Interval theirs = theirIntervals[j];
+            //System.out.println("mine="+mine+" and theirs="+theirs);
+            if (mine.startsBeforeDisjoint(theirs) ) {
+                // move this iterator looking for interval that might overlap
+                i++;
+            }
+            else if ( theirs.startsBeforeDisjoint(mine) ) {
+                // move other iterator looking for interval that might overlap
+                j++;
+            }
+            else if ( mine.properlyContains(theirs) ) {
+                // overlap, add intersection, get next theirs
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                j++;
+            }
+            else if (theirs.properlyContains(mine)) {
+                // overlap, add intersection, get next mine
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                i++;
+            }
+            else if ( !mine.disjoint(theirs) ) {
+                // overlap, add intersection
+                if (intersection is null) {
+                    intersection = new IntervalSet();
+                }
+                intersection.add(mine.intersection(theirs));
+                // Move the iterator of lower range [a..b], but not
+                // the upper range as it may contain elements that will collide
+                // with the next iterator. So, if mine=[0..115] and
+                // theirs=[115..200], then intersection is 115 and move mine
+                // but not theirs as theirs may collide with the next range
+                // in thisIter.
+                // move both iterators to next ranges
+                if ( mine.startsAfterNonDisjoint(theirs) ) {
+                    j++;
+                }
+                else if ( theirs.startsAfterNonDisjoint(mine) ) {
+                    i++;
+                }
+            }
+        }
+        if (intersection is null) {
+            return new IntervalSet();
+        }
+        return intersection;
+    }
+
+    unittest
+    {
+        auto ta = new IntervalSet(11, 10, 8, 7, 78);
+        auto tb = new IntervalSet(12, 10, 8, 7, 79);
+        auto tand = ta.and(tb);
+        assert("{7..8, 10}" == tand.toString);
+    }
+
+    public bool contains(int el)
+    {
+        foreach (I; intervals) {
+            int a = I.a;
+            int b = I.b;
+            if (el < a) {
+                break; // list is sorted and el is before this interval; not here
+            }
+            if (el >= a && el <= b) {
+                return true; // found in this interval
+            }
+        }
+        return false;
+    }
+
+    public bool isNil()
+    {
+        return intervals is null || intervals.length == 0;
+    }
+
+    public int getSingleElement()
+    {
+        if (intervals !is null && intervals.length == 1 ) {
+            Interval I = intervals[0];
+            if (I.a == I.b) {
+                return I.a;
+            }
+        }
+        return Token.INVALID_TYPE;
+    }
+
+    /**
+     * @uml
+     * combine all sets in the array returned the or'd value
+     * UnitTest:
+     * IntervalSet ts;
+     * auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
+     * auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
+     * auto ts3 = new IntervalSet(55, 44);
+     * IntervalSet[] tl;
+     * tl ~= ts1;
+     * tl ~= ts2;
+     * tl ~= ts3;
+     * auto r = ts.or(tl);
+     * assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
+     */
+    public static IntervalSet or(IntervalSet[] sets)
+    {
+        IntervalSet r = new IntervalSet(1);
+        r.clear;
+        foreach (IntervalSet s; sets) {
+            r.addAll(s);
+        }
+        return r;
+    }
+
+    unittest
+    {
+        IntervalSet ts;
+        auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
+        auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
+        auto ts3 = new IntervalSet(55, 44);
+        IntervalSet[] tl;
+        tl ~= ts1;
+        tl ~= ts2;
+        tl ~= ts3;
+        auto r = ts.or(tl);
+        assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
+    }
+
+    /**
+     * @uml
+     * Compute the set difference between two interval sets. The specific
+     * operation is {@code left - right}. If either of the input sets is
+     * {@code null}, it is treated as though it was an empty set.
+     */
+    public IntervalSet subtract(IntervalSet left, IntervalSet right)
+    {
+        if (left is null || left.size == 0) {
+            return new IntervalSet();
+        }
+        IntervalSet result = new IntervalSet(left);
+        if (right is null || right.isNil) {
+            // right set has no elements; just return the copy of the current set
+            return result;
+        }
+
+        int resultI = 0;
+        int rightI = 0;
+        while (resultI < result.intervals.length && rightI < right.intervals.length) {
+            Interval resultInterval = result.intervals[resultI];
+            Interval rightInterval = right.intervals[rightI];
+
+            // operation: (resultInterval - rightInterval) and update indexes
+
+            if (rightInterval.b < resultInterval.a) {
+                rightI++;
+                continue;
+            }
+
+            if (rightInterval.a > resultInterval.b) {
+                resultI++;
+                continue;
+            }
+
+            Interval beforeCurrent = null;
+            Interval afterCurrent = null;
+            if (rightInterval.a > resultInterval.a) {
+                beforeCurrent = new Interval(resultInterval.a, rightInterval.a - 1);
+            }
+
+            if (rightInterval.b < resultInterval.b) {
+                afterCurrent = new Interval(rightInterval.b + 1, resultInterval.b);
+            }
+
+            if (beforeCurrent !is null) {
+                if (afterCurrent !is null) {
+                    // split the current interval into two
+                    result.intervals[resultI] = beforeCurrent;
+                    result.intervals ~= afterCurrent;
+                    resultI++;
+                    rightI++;
+                    continue;
+                }
+                else {
+                    // replace the current interval
+                    result.intervals[resultI] = beforeCurrent;
+                    resultI++;
+                    continue;
+                }
+            }
+            else {
+                if (afterCurrent !is null) {
+                    // replace the current interval
+                    result.intervals[resultI] = afterCurrent;
+                    rightI++;
+                    continue;
+                }
+                else {
+                    // remove the current interval (thus no need to increment resultI)
+                    //result.intervals.remove(resultI);
+                    result.intervals = result.intervals[0..resultI].dup ~
+                        result.intervals[resultI+1..$].dup;
+                    continue;
+                }
+            }
+        }
+        // If rightI reached right.intervals.size(), no more intervals to subtract from result.
+        // If resultI reached result.intervals.size(), we would be subtracting from an empty set.
+        // Either way, we are done.
+        return result;
     }
 
     public string elementName(Vocabulary vocabulary, int a)
@@ -481,39 +701,6 @@ class IntervalSet : IntSet
         this.readonly = readonly;
     }
 
-    public bool contains(int el)
-    {
-        auto n = intervals.length;
-        for (auto i = 0; i < n; i++) {
-            Interval I = intervals[i];
-            int a = I.a;
-            int b = I.b;
-            if (el < a) {
-                break; // list is sorted and el is before this interval; not here
-            }
-            if (el >= a && el <= b) {
-                return true; // found in this interval
-            }
-        }
-        return false;
-    }
-
-    public bool isNil()
-    {
-        return intervals is null || intervals.length == 0;
-    }
-
-    public int getSingleElement()
-    {
-        if (intervals !is null && intervals.length == 1 ) {
-            Interval I = intervals[0];
-            if (I.a == I.b) {
-                return I.a;
-            }
-        }
-        return Token.INVALID_TYPE;
-    }
-
     public int getMaxElement()
     {
         if (isNil) {
@@ -550,181 +737,6 @@ class IntervalSet : IntSet
         IntervalSet other = cast(IntervalSet)obj;
         return intervals == other.intervals;
 
-    }
-
-    public IntervalSet subtract(IntSet a)
-    {
-        if (!a) {
-            return new IntervalSet(this);
-        }
-        if (typeid(typeof(a)) == typeid(IntervalSet*)) {        assert(false);
-            return subtract(this, cast(IntervalSet)a);
-        }
-
-        IntervalSet other = new IntervalSet(1);
-        other.clear;
-        other.addAll(a);
-        return subtract(this, other);
-    }
-
-    /**
-     * @uml
-     * Compute the set difference between two interval sets. The specific
-     * operation is {@code left - right}. If either of the input sets is
-     * {@code null}, it is treated as though it was an empty set.
-     */
-    public IntervalSet subtract(IntervalSet left, IntervalSet right)
-    {
-        if (left is null || left.size == 0) {
-            return new IntervalSet();
-        }
-        IntervalSet result = new IntervalSet(left);
-        if (right is null || right.isNil) {
-            // right set has no elements; just return the copy of the current set
-            return result;
-        }
-
-        int resultI = 0;
-        int rightI = 0;
-        while (resultI < result.intervals.length && rightI < right.intervals.length) {
-            Interval resultInterval = result.intervals[resultI];
-            Interval rightInterval = right.intervals[rightI];
-
-            // operation: (resultInterval - rightInterval) and update indexes
-
-            if (rightInterval.b < resultInterval.a) {
-                rightI++;
-                continue;
-            }
-
-            if (rightInterval.a > resultInterval.b) {
-                resultI++;
-                continue;
-            }
-
-            Interval beforeCurrent = null;
-            Interval afterCurrent = null;
-            if (rightInterval.a > resultInterval.a) {
-                beforeCurrent = new Interval(resultInterval.a, rightInterval.a - 1);
-            }
-
-            if (rightInterval.b < resultInterval.b) {
-                afterCurrent = new Interval(rightInterval.b + 1, resultInterval.b);
-            }
-
-            if (beforeCurrent !is null) {
-                if (afterCurrent !is null) {
-                    // split the current interval into two
-                    result.intervals[resultI] = beforeCurrent;
-                    result.intervals ~= afterCurrent;
-                    resultI++;
-                    rightI++;
-                    continue;
-                }
-                else {
-                    // replace the current interval
-                    result.intervals[resultI] = beforeCurrent;
-                    resultI++;
-                    continue;
-                }
-            }
-            else {
-                if (afterCurrent !is null) {
-                    // replace the current interval
-                    result.intervals[resultI] = afterCurrent;
-                    rightI++;
-                    continue;
-                }
-                else {
-                    // remove the current interval (thus no need to increment resultI)
-                    //result.intervals.remove(resultI);
-                    result.intervals = result.intervals[0..resultI].dup ~
-                        result.intervals[resultI+1..$].dup;
-                    continue;
-                }
-            }
-        }
-        // If rightI reached right.intervals.size(), no more intervals to subtract from result.
-        // If resultI reached result.intervals.size(), we would be subtracting from an empty set.
-        // Either way, we are done.
-        return result;
-    }
-
-    public IntervalSet or(IntSet a)
-    {
-        IntervalSet o = new IntervalSet();
-        o.addAll(this);
-        o.addAll(a);
-        return o;
-    }
-
-    public IntervalSet and(IntSet other)
-    {
-        if (other is null ) { //|| !(other instanceof IntervalSet) ) {
-            return null; // nothing in common with null set
-        }
-
-        auto myIntervals = this.intervals;
-        auto theirIntervals = (cast(IntervalSet)other).intervals;
-        IntervalSet intersection;
-        auto mySize = myIntervals.length;
-        auto theirSize = theirIntervals.length;
-        int i = 0;
-        int j = 0;
-        // iterate down both interval lists looking for nondisjoint intervals
-        while (i < mySize && j < theirSize) {
-            Interval mine = myIntervals[i];
-            Interval theirs = theirIntervals[j];
-            //System.out.println("mine="+mine+" and theirs="+theirs);
-            if (mine.startsBeforeDisjoint(theirs) ) {
-                // move this iterator looking for interval that might overlap
-                i++;
-            }
-            else if ( theirs.startsBeforeDisjoint(mine) ) {
-                // move other iterator looking for interval that might overlap
-                j++;
-            }
-            else if ( mine.properlyContains(theirs) ) {
-                // overlap, add intersection, get next theirs
-                if (intersection is null) {
-                    intersection = new IntervalSet();
-                }
-                intersection.add(mine.intersection(theirs));
-                j++;
-            }
-            else if (theirs.properlyContains(mine)) {
-                // overlap, add intersection, get next mine
-                if (intersection is null) {
-                    intersection = new IntervalSet();
-                }
-                intersection.add(mine.intersection(theirs));
-                i++;
-            }
-            else if ( !mine.disjoint(theirs) ) {
-                // overlap, add intersection
-                if (intersection is null) {
-                    intersection = new IntervalSet();
-                }
-                intersection.add(mine.intersection(theirs));
-                // Move the iterator of lower range [a..b], but not
-                // the upper range as it may contain elements that will collide
-                // with the next iterator. So, if mine=[0..115] and
-                // theirs=[115..200], then intersection is 115 and move mine
-                // but not theirs as theirs may collide with the next range
-                // in thisIter.
-                // move both iterators to next ranges
-                if ( mine.startsAfterNonDisjoint(theirs) ) {
-                    j++;
-                }
-                else if ( theirs.startsAfterNonDisjoint(mine) ) {
-                    i++;
-                }
-            }
-        }
-        if (intersection is null) {
-            return new IntervalSet();
-        }
-        return intersection;
     }
 
     /**

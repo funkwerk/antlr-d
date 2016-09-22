@@ -85,7 +85,8 @@ class IntervalSet : IntSet
 
     public this(IntervalSet set)
     {
-        this();
+        this(1);
+        this.clear;
         addAll(set);
     }
 
@@ -127,8 +128,9 @@ class IntervalSet : IntSet
      */
     public static IntervalSet of(int a, int b)
     {
-        IntervalSet s = new IntervalSet();
-        s.add(a,b);
+        IntervalSet s = new IntervalSet(1);
+        s.clear;
+        s.add(a, b);
         return s;
     }
 
@@ -288,6 +290,49 @@ class IntervalSet : IntSet
         auto s = new IntervalSet(10, 12);
         ts.addAll(s);
         assert("{7..12, 77..78, 99}" == ts.toString);
+    }
+
+    /**
+     * @uml
+     * UnitTest:
+     * auto ts = new IntervalSet(11, 10, 8, 7, 78);
+     * IntervalSet tn = ts.complement(1, 200);
+     * assert("{1..6, 9, 12..77, 79..200}" == tn.toString);
+     */
+    public IntervalSet complement(int minElement, int maxElement)
+    {
+        return this.complement(IntervalSet.of(minElement, maxElement));
+    }
+
+    unittest
+    {
+        auto ts = new IntervalSet(11, 10, 8, 7, 78);
+        IntervalSet tn = ts.complement(1, 200);
+        assert("{1..6, 9, 12..77, 79..200}" == tn.toString);
+    }
+
+    /**
+     * @uml
+     * {@inheritDoc}
+     */
+    public IntervalSet complement(IntSet vocabulary)
+    {
+        if (vocabulary is null || vocabulary.isNil) {
+            return null; // nothing in common with null set
+        }
+        IntervalSet vocabularyIS = new IntervalSet(1);
+        vocabularyIS.clear;
+        vocabularyIS.addAll(vocabulary);
+        return vocabularyIS.subtract(this);
+    }
+
+    public IntervalSet complement(IntervalSet vocabulary)
+    {
+        if (vocabulary is null || vocabulary.isNil) {
+            return null; // nothing in common with null set
+        }
+        IntervalSet vocabularyIS = vocabulary;
+        return vocabularyIS.subtract(this);
     }
 
     public string elementName(Vocabulary vocabulary, int a)
@@ -512,12 +557,12 @@ class IntervalSet : IntSet
         if (!a) {
             return new IntervalSet(this);
         }
-
-        if (typeid(typeof(a)) != typeid(IntervalSet*)) {
+        if (typeid(typeof(a)) == typeid(IntervalSet*)) {        assert(false);
             return subtract(this, cast(IntervalSet)a);
         }
 
-        IntervalSet other = new IntervalSet();
+        IntervalSet other = new IntervalSet(1);
+        other.clear;
         other.addAll(a);
         return subtract(this, other);
     }
@@ -533,9 +578,8 @@ class IntervalSet : IntSet
         if (left is null || left.size == 0) {
             return new IntervalSet();
         }
-
         IntervalSet result = new IntervalSet(left);
-        if (right is null || right.size == 0) {
+        if (right is null || right.isNil) {
             // right set has no elements; just return the copy of the current set
             return result;
         }
@@ -681,22 +725,6 @@ class IntervalSet : IntSet
             return new IntervalSet();
         }
         return intersection;
-    }
-
-    public IntervalSet complement(IntSet vocabulary)
-    {
-        if (vocabulary is null || vocabulary.isNil) {
-            return null; // nothing in common with null set
-        }
-        IntervalSet vocabularyIS;
-        if (typeid(typeof(vocabulary)) == typeid(IntervalSet*)) {
-            vocabularyIS = cast(IntervalSet)vocabulary;
-        }
-        else {
-            vocabularyIS = new IntervalSet();
-            vocabularyIS.addAll(vocabulary);
-        }
-        return vocabularyIS.subtract(this);
     }
 
     /**

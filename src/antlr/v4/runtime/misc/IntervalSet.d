@@ -67,8 +67,9 @@ class IntervalSet : IntSet
     /**
      * @uml
      * The list of sorted, disjoint intervals.
+     * @read
      */
-    private Interval[] intervals;
+    private Interval[] intervals_;
 
     public this()
     {
@@ -81,7 +82,7 @@ class IntervalSet : IntSet
 
     public this(Interval[] intervals)
     {
-        this.intervals = intervals;
+        this.intervals_ = intervals;
     }
 
     public this(IntervalSet set)
@@ -137,7 +138,7 @@ class IntervalSet : IntSet
     public void clear()
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        intervals.length = 0;
+        intervals_.length = 0;
     }
 
     /**
@@ -171,13 +172,13 @@ class IntervalSet : IntSet
     {
         assert(!readonly, "can't alter readonly IntervalSet");
         debug (Interval)
-            writefln("add %1$s to %2$s", addition, intervals);
+            writefln("add %1$s to %2$s", addition, intervals_);
         if (addition.b < addition.a ) {            writefln("ccccccc");
             return;
         }
         // find position in list
         // Use iterators as we modify list in place
-        foreach (int index, ref el; intervals) {
+        foreach (int index, ref el; intervals_) {
             Interval r = el;
             if (addition.equals(r)) {
                 return;
@@ -188,31 +189,31 @@ class IntervalSet : IntSet
                 el = bigger;
                 // make sure we didn't just create an interval that
                 // should be merged with next interval in list
-                while (++index < intervals.length) {
-                    Interval next = intervals[index];
+                while (++index < intervals_.length) {
+                    Interval next = intervals_[index];
                     if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                         break;
                     }
 
                     // if we bump up against or overlap next, merge
-                    intervals = intervals[0..index] ~ intervals[index+1..$];   // remove this one
+                    intervals_ = intervals_[0..index] ~ intervals_[index+1..$];   // remove this one
                     index--; // move backwards to what we just set
-                    intervals[index] = bigger.unionInterval(next); // set to 3 merged ones
+                    intervals_[index] = bigger.unionInterval(next); // set to 3 merged ones
                     index++; // first call to next after previous duplicates the result
                 }
                 return;
             }
             if (addition.startsBeforeDisjoint(r)) {
                 // insert before r
-                intervals = intervals[0..index] ~ addition ~
-                    intervals[index..$];
+                intervals_ = intervals_[0..index] ~ addition ~
+                    intervals_[index..$];
                 return;
             }
             // if disjoint and after r, a future iteration will handle it
         }
         // ok, must be after last interval (and disjoint from last interval)
         // just add it
-        intervals ~= addition;
+        intervals_ ~= addition;
     }
 
     /**
@@ -231,9 +232,9 @@ class IntervalSet : IntSet
         if (typeid(typeof(set)) == typeid(IntervalSet*)) {
             IntervalSet other = cast(IntervalSet)set;
             // walk set and add each interval
-            auto n = other.intervals.length;
+            auto n = other.intervals_.length;
             for (auto i = 0; i < n; i++) {
-                Interval I = other.intervals[i];
+                Interval I = other.intervals_[i];
                 this.add(I.a,I.b);
             }
         }
@@ -331,8 +332,8 @@ class IntervalSet : IntSet
             return null; // nothing in common with null set
         }
 
-        auto myIntervals = this.intervals;
-        auto theirIntervals = (cast(IntervalSet)other).intervals;
+        auto myIntervals = this.intervals_;
+        auto theirIntervals = (cast(IntervalSet)other).intervals_;
         IntervalSet intersection;
         auto mySize = myIntervals.length;
         auto theirSize = theirIntervals.length;
@@ -404,7 +405,7 @@ class IntervalSet : IntSet
 
     public bool contains(int el)
     {
-        foreach (I; intervals) {
+        foreach (I; intervals_) {
             int a = I.a;
             int b = I.b;
             if (el < a) {
@@ -419,18 +420,49 @@ class IntervalSet : IntSet
 
     public bool isNil()
     {
-        return intervals is null || intervals.length == 0;
+        return intervals_ is null || intervals_.length == 0;
     }
 
     public int getSingleElement()
     {
-        if (intervals !is null && intervals.length == 1 ) {
-            Interval I = intervals[0];
+        if (intervals_ !is null && intervals_.length == 1 ) {
+            Interval I = intervals_[0];
             if (I.a == I.b) {
                 return I.a;
             }
         }
         return Token.INVALID_TYPE;
+    }
+
+    /**
+     * @uml
+     * Returns the maximum value contained in the set.
+     *
+     *  @return the maximum value contained in the set. If the set is empty, this
+     *  method returns {@link Token#INVALID_TYPE}.
+     */
+    public int getMaxElement()
+    {
+        if (isNil) {
+            return Token.INVALID_TYPE;
+        }
+        Interval last = intervals_[$-1];
+        return last.b;
+    }
+
+    /**
+     * @uml
+     * Returns the minimum value contained in the set.
+     *
+     *  @return the minimum value contained in the set. If the set is empty, this
+     *  method returns {@link Token#INVALID_TYPE}.
+     */
+    public int getMinElement()
+    {
+        if (isNil) {
+            return Token.INVALID_TYPE;
+        }
+        return intervals_[0].a;
     }
 
     /**
@@ -491,9 +523,9 @@ class IntervalSet : IntSet
 
         int resultI = 0;
         int rightI = 0;
-        while (resultI < result.intervals.length && rightI < right.intervals.length) {
-            Interval resultInterval = result.intervals[resultI];
-            Interval rightInterval = right.intervals[rightI];
+        while (resultI < result.intervals_.length && rightI < right.intervals_.length) {
+            Interval resultInterval = result.intervals_[resultI];
+            Interval rightInterval = right.intervals_[rightI];
 
             // operation: (resultInterval - rightInterval) and update indexes
 
@@ -520,15 +552,15 @@ class IntervalSet : IntSet
             if (beforeCurrent !is null) {
                 if (afterCurrent !is null) {
                     // split the current interval into two
-                    result.intervals[resultI] = beforeCurrent;
-                    result.intervals ~= afterCurrent;
+                    result.intervals_[resultI] = beforeCurrent;
+                    result.intervals_ ~= afterCurrent;
                     resultI++;
                     rightI++;
                     continue;
                 }
                 else {
                     // replace the current interval
-                    result.intervals[resultI] = beforeCurrent;
+                    result.intervals_[resultI] = beforeCurrent;
                     resultI++;
                     continue;
                 }
@@ -536,15 +568,15 @@ class IntervalSet : IntSet
             else {
                 if (afterCurrent !is null) {
                     // replace the current interval
-                    result.intervals[resultI] = afterCurrent;
+                    result.intervals_[resultI] = afterCurrent;
                     rightI++;
                     continue;
                 }
                 else {
                     // remove the current interval (thus no need to increment resultI)
                     //result.intervals.remove(resultI);
-                    result.intervals = result.intervals[0..resultI].dup ~
-                        result.intervals[resultI+1..$].dup;
+                    result.intervals_ = result.intervals_[0..resultI].dup ~
+                        result.intervals_[resultI+1..$].dup;
                     continue;
                 }
             }
@@ -571,13 +603,13 @@ class IntervalSet : IntSet
     public int size()
     {
         int n = 0;
-        auto numIntervals = intervals.length;
+        auto numIntervals = intervals_.length;
         if (numIntervals == 1) {
-            Interval firstInterval = intervals[0];
+            Interval firstInterval = intervals_[0];
             return firstInterval.b - firstInterval.a + 1;
         }
         for (auto i = 0; i < numIntervals; i++) {
-            Interval I = intervals[i];
+            Interval I = intervals_[i];
             n += (I.b - I.a + 1);
         }
         return n;
@@ -586,9 +618,9 @@ class IntervalSet : IntSet
     public IntegerList toIntegerList()
     {
         IntegerList values = new IntegerList();
-        auto n = intervals.length;
+        auto n = intervals_.length;
         for (auto i = 0; i < n; i++) {
-            Interval I = intervals[i];
+            Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
             for (int v = a; v <= b; v++) {
@@ -601,9 +633,9 @@ class IntervalSet : IntSet
     public int[] toList()
     {
         int[] values;
-        auto n = intervals.length;
+        auto n = intervals_.length;
         for (auto i = 0; i < n; i++) {
-            Interval I = intervals[i];
+            Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
             for (int v = a ; v <= b; v++) {
@@ -616,7 +648,7 @@ class IntervalSet : IntSet
     public RedBlackTree!int toSet()
     {
         auto s = new RedBlackTree!int();
-        foreach (Interval I; intervals) {
+        foreach (Interval I; intervals_) {
             int a = I.a;
             int b = I.b;
             for (int v=a; v<=b; v++) {
@@ -634,10 +666,10 @@ class IntervalSet : IntSet
      */
     public int get(int i)
     {
-        auto n = intervals.length;
+        auto n = intervals_.length;
         ulong index = 0;
         for (auto j = 0; j < n; j++) {
-            Interval I = intervals[j];
+            Interval I = intervals_[j];
             int a = I.a;
             int b = I.b;
             for (int v = a; v <= b; v++) {
@@ -658,9 +690,9 @@ class IntervalSet : IntSet
     public void remove(int el)
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        auto n = intervals.length;
+        auto n = intervals_.length;
         for (auto i = 0; i < n; i++) {
-            Interval I = intervals[i];
+            Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
             if (el < a) {
@@ -668,7 +700,7 @@ class IntervalSet : IntSet
             }
             // if whole interval x..x, remove i
             if (el == a && el == b ) {
-                intervals = intervals[0..i] ~ intervals[i+1..$];
+                intervals_ = intervals_[0..i] ~ intervals_[i+1..$];
                 break;
             }
             // if on left edge x..b, adjust left
@@ -701,30 +733,6 @@ class IntervalSet : IntSet
         this.readonly = readonly;
     }
 
-    public int getMaxElement()
-    {
-        if (isNil) {
-            return Token.INVALID_TYPE;
-        }
-        Interval last = intervals[$-1];
-        return last.b;
-    }
-
-    /**
-     * @uml
-     * Returns the minimum value contained in the set.
-     *
-     *  @return the minimum value contained in the set. If the set is empty, this
-     *  method returns {@link Token#INVALID_TYPE}.
-     */
-    public int getMinElement()
-    {
-        if (isNil) {
-            return Token.INVALID_TYPE;
-        }
-        return intervals[0].a;
-    }
-
     /**
      * @uml
      * @override
@@ -735,7 +743,7 @@ class IntervalSet : IntSet
             return false;
         }
         IntervalSet other = cast(IntervalSet)obj;
-        return intervals == other.intervals;
+        return intervals_ == other.intervals_;
 
     }
 
@@ -751,13 +759,13 @@ class IntervalSet : IntSet
     public string toString(bool elemAreChar)
     {
         auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
+        if (intervals_ is null || intervals_.length == 0) {
             return "{}";
         }
         if (this.size() > 1) {
             buf.put("{");
         };
-        foreach (int index, I; this.intervals) {
+        foreach (int index, I; this.intervals_) {
             int a = I.a;
             int b = I.b;
             if (a == b) {
@@ -769,7 +777,7 @@ class IntervalSet : IntSet
                 if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
                 else buf.put(to!string(a) ~ ".." ~ to!string(b));
             }
-            if (index + 1 < intervals.length) {
+            if (index + 1 < intervals_.length) {
                 buf.put(", "); //  not last element
             }
         }
@@ -783,13 +791,13 @@ class IntervalSet : IntSet
     public string toString(Vocabulary vocabulary)
     {
         auto buf = appender!string;
-        if (intervals is null || intervals.length == 0) {
+        if (intervals_ is null || intervals_.length == 0) {
             return "{}";
         }
         if (size() > 1) {
             buf.put("{");
         }
-        foreach (int index, I; this.intervals) {
+        foreach (int index, I; this.intervals_) {
             int a = I.a;
             int b = I.b;
             if ( a==b ) {
@@ -801,7 +809,7 @@ class IntervalSet : IntSet
                     buf.put(elementName(vocabulary, i));
                 }
             }
-            if (index + 1 < intervals.length) {
+            if (index + 1 < intervals_.length) {
                 buf.put(", ");
             }
         }
@@ -810,6 +818,11 @@ class IntervalSet : IntSet
         }
         return buf.data;
 
+    }
+
+    public final Interval[] intervals()
+    {
+        return this.intervals_.dup;
     }
 
 }

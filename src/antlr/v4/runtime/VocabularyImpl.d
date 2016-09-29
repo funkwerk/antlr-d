@@ -65,9 +65,9 @@ class VocabularyImpl : Vocabulary
      * {@link #getLiteralName(int)} and {@link #getSymbolicName(int)}, and the
      * value from {@code tokenNames} for the display names.</p>
      *
-     * @param tokenNames The token names, or {@code null} if no token names are
+     *  @param tokenNames The token names, or {@code null} if no token names are
      * available.
-     * @return A {@link Vocabulary} instance which uses {@code tokenNames} for
+     *  @return A {@link Vocabulary} instance which uses {@code tokenNames} for
      * the display names of tokens.
      */
     public static Vocabulary fromTokenNames(string[] tokenNames)

@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.atn.Predicate;
 
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.Recognizer;
 
@@ -68,11 +69,8 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(void, void) parser, SemanticContext parserCallStack)
+    public override bool eval(Recognizer!(void, ATNSimulator) parser, SemanticContext parserCallStack)
     {
-        RuleContext localctx = isCtxDependent ? parserCallStack : null;
-        return parser.sempred(localctx, ruleIndex, predIndex);
-
     }
 
     public int hashCode()

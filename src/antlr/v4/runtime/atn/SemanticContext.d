@@ -32,6 +32,7 @@ module antlr.v4.runtime.atn.SemanticContext;
 
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.atn.ATNSimulator;
 
 // Class SemanticContext
 /**
@@ -49,9 +50,9 @@ class SemanticContext
 
     public static SemanticContext NONE;
 
-    abstract public bool eval(Recognizer!(void, void) parser, SemanticContext parserCallStack);
+    abstract public bool eval(Recognizer!(void, ATNSimulator) parser, SemanticContext parserCallStack);
 
-    public SemanticContext evalPrecedence(Recognizer!(void, void) parser, RuleContext parserCallStack)
+    public SemanticContext evalPrecedence(Recognizer!(void, ATNSimulator) parser, RuleContext parserCallStack)
     {
     }
 

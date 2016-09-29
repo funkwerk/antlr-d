@@ -32,6 +32,7 @@ module antlr.v4.runtime.Recognizer;
 
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 
 // Class Template Recognizer
@@ -55,17 +56,59 @@ class Recognizer(U, V)
 
     abstract public ATN getATN();
 
+    /**
+     * @uml
+     * Used to print out token names like ID during debugging and
+     * error reporting.  The generated parsers implement a method
+     * that overrides this to point to their String[] tokenNames.
+     *
+     *  @deprecated Use {@link #getVocabulary()} instead.
+     */
+    abstract public string[] getTokenNames();
+
     abstract public string[] getRuleNames();
 
     /**
      * @uml
-     * Get the vocabulary used by the recognizer.
+     * et the vocabulary used by the recognizer.
      *
      *  @return A {@link Vocabulary} instance providing information about the
      *  vocabulary used by the grammar.
      */
     public Vocabulary getVocabulary()
     {
+        return VocabularyImpl.fromTokenNames(getTokenNames());
+    }
+
+    /**
+     * @uml
+     * Get a map from token names to token types.
+     * <p>Used for XPath and tree pattern compilation.</p>
+     */
+    public int[string] getTokenTypeMap()
+    {
+        Vocabulary vocabulary = getVocabulary();
+        int[string] result = tokenTypeMapCache[vocabulary];
+        if (result is null) {
+            int[string] result1;
+            result = result1;
+            for (int i = 0; i < getATN.maxTokenType; i++) {
+                string literalName = vocabulary.getLiteralName(i);
+                if (literalName !is null) {
+                    result.put(literalName, i);
+                }
+
+                String symbolicName = vocabulary.getSymbolicName(i);
+                if (symbolicName != null) {
+                    result.put(symbolicName, i);
+                }
+            }
+
+            result.put("EOF", Token.EOF);
+            result = Collections.unmodifiableMap(result);
+            tokenTypeMapCache.put(vocabulary, result);
+        }
+        return result;
     }
 
 }

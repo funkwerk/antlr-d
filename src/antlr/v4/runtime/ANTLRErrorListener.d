@@ -75,7 +75,7 @@ interface ANTLRErrorListener
      *        the parser was able to recover in line without exiting the
      *        surrounding rule.
      */
-    public void syntaxError(Recognizer!(void, ATNSimulator) recognizer, Object offendingSymbol,
+    public void syntaxError(Recognizer!(int, ATNSimulator) recognizer, Object offendingSymbol,
         int line, int charPositionInLine, string msg, RecognitionException e);
 
 }

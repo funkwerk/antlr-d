@@ -50,9 +50,9 @@ class SemanticContext
 
     public static SemanticContext NONE;
 
-    abstract public bool eval(Recognizer!(void, ATNSimulator) parser, SemanticContext parserCallStack);
+    abstract public bool eval(Recognizer!(int, ATNSimulator) parser, SemanticContext parserCallStack);
 
-    public SemanticContext evalPrecedence(Recognizer!(void, ATNSimulator) parser, RuleContext parserCallStack)
+    public SemanticContext evalPrecedence(Recognizer!(int, ATNSimulator) parser, RuleContext parserCallStack)
     {
     }
 

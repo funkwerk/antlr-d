@@ -69,7 +69,7 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(void, ATNSimulator) parser, SemanticContext parserCallStack)
+    public override bool eval(Recognizer!(int, ATNSimulator) parser, SemanticContext parserCallStack)
     {
     }
 

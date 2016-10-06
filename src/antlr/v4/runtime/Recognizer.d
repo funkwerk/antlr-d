@@ -31,6 +31,7 @@
 module antlr.v4.runtime.Recognizer;
 
 import antlr.v4.runtime.ANTLRErrorListener;
+import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
@@ -95,18 +96,18 @@ class Recognizer(U, V)
             for (int i = 0; i < getATN.maxTokenType; i++) {
                 string literalName = vocabulary.getLiteralName(i);
                 if (literalName !is null) {
-                    result.put(literalName, i);
+                    result[literalName] = i;
                 }
 
-                String symbolicName = vocabulary.getSymbolicName(i);
+                string symbolicName = vocabulary.getSymbolicName(i);
                 if (symbolicName != null) {
-                    result.put(symbolicName, i);
+                    result[symbolicName] = i;
                 }
             }
 
-            result.put("EOF", Token.EOF);
-            result = Collections.unmodifiableMap(result);
-            tokenTypeMapCache.put(vocabulary, result);
+            result["EOF"] = Token.EOF;
+            result.rehash; // for faster lookups
+            tokenTypeMapCache[vocabulary] = result;
         }
         return result;
     }

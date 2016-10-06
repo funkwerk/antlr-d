@@ -314,7 +314,7 @@ abstract class PredictionContext
         }
     }
 
-    public string[] toStrings(Recognizer!(void, ATNSimulator) recognizer, PredictionContext stop,
+    public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,
         int currentState)
     {
     }

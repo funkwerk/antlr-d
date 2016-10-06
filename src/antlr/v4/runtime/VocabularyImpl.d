@@ -1,7 +1,10 @@
 module antlr.v4.runtime.VocabularyImpl;
 
-import antlr.v4.runtime.Vocabulary;
 import std.conv;
+import std.ascii;
+import std.algorithm.comparison;
+import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.Token;
 
 // Class VocabularyImpl
 /**
@@ -14,7 +17,7 @@ class VocabularyImpl : Vocabulary
      * @uml
      * @final
      */
-    public static const string[] EMPTY_NAMES;
+    public const string[] EMPTY_NAMES;
 
     public string[] literalNames;
 
@@ -27,6 +30,42 @@ class VocabularyImpl : Vocabulary
      * @final
      */
     private int maxTokenType;
+
+    public static VocabularyImpl EMPTY_VOCABULARY =
+        new VocabularyImpl(
+                           to!(string[])(EMPTY_NAMES),
+                           to!(string[])(EMPTY_NAMES),
+                           to!(string[])(EMPTY_NAMES)
+                           );
+
+    /**
+     * @uml
+     * Constructs a new instance of {@link VocabularyImpl} from the specified
+     * literal, symbolic, and display token names.
+     *
+     *  @param literalNames The literal names assigned to tokens, or {@code null}
+     * if no literal names are assigned.
+     *  @param symbolicNames The symbolic names assigned to tokens, or
+     *  {@code null} if no symbolic names are assigned.
+     *  @param displayNames The display names assigned to tokens, or {@code null}
+     * to use the values in {@code literalNames} and {@code symbolicNames} as
+     * the source of display names, as described in
+     *  {@link #getDisplayName(int)}.
+     *
+     *  @see #getLiteralName(int)
+     *  @see #getSymbolicName(int)
+     *  @see #getDisplayName(int)
+     */
+    public this(string[] literalNames, string[] symbolicNames, string[] displayNames)
+    {
+        this.literalNames = literalNames !is null ? literalNames : to!(string[])(EMPTY_NAMES);
+        this.symbolicNames = symbolicNames !is null ? symbolicNames : to!(string[])(EMPTY_NAMES);
+        this.displayNames = displayNames !is null ? displayNames : to!(string[])(EMPTY_NAMES);
+        // See note here on -1 part: https://github.com/antlr/antlr4/pull/1146
+        this.maxTokenType =
+            max(to!int(this.displayNames.length),
+                max(to!int(this.literalNames.length), to!int(this.symbolicNames.length))) - 1;
+    }
 
     public int getMaxTokenType()
     {
@@ -47,7 +86,7 @@ class VocabularyImpl : Vocabulary
             return literalName;
         }
 
-        String symbolicName = getSymbolicName(tokenType);
+        string symbolicName = getSymbolicName(tokenType);
         if (symbolicName != null) {
             return symbolicName;
         }
@@ -76,21 +115,21 @@ class VocabularyImpl : Vocabulary
             return EMPTY_VOCABULARY;
         }
 
-        string[] literalNames = Arrays.copyOf(tokenNames, tokenNames.length);
-        string[] symbolicNames = Arrays.copyOf(tokenNames, tokenNames.length);
+        string[] literalNames = tokenNames.dup;
+        string[] symbolicNames = tokenNames.dup;
         for (int i = 0; i < tokenNames.length; i++) {
-            String tokenName = tokenNames[i];
+            string tokenName = tokenNames[i];
             if (tokenName == null) {
                 continue;
             }
 
-            if (!tokenName.isEmpty()) {
-                char firstChar = tokenName.charAt(0);
+            if (tokenName.length > 0) {
+                char firstChar = tokenName[0];
                 if (firstChar == '\'') {
                     symbolicNames[i] = null;
                     continue;
                 }
-                else if (Character.isUpperCase(firstChar)) {
+                else if (isUpper(firstChar)) {
                     literalNames[i] = null;
                     continue;
                 }
@@ -102,6 +141,19 @@ class VocabularyImpl : Vocabulary
         }
 
         return new VocabularyImpl(literalNames, symbolicNames, tokenNames);
+    }
+
+    public string getSymbolicName(int tokenType)
+    {
+        if (tokenType >= 0 && tokenType < symbolicNames.length) {
+                        return symbolicNames[tokenType];
+                }
+
+                if (tokenType == Token.EOF) {
+                        return "EOF";
+                }
+
+                return null;
     }
 
 }

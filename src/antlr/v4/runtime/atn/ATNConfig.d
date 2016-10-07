@@ -130,7 +130,7 @@ class ATNConfig
         this.state = state;
         this.alt = alt;
         this.context = context;
-        this.semanticContext = semanticContext;
+        this.semanticContext = cast(SemanticContext) semanticContext;
     }
 
     public this(ATNConfig c, ATNState state)
@@ -149,7 +149,7 @@ class ATNConfig
         this.state = state;
         this.alt = c.alt;
         this.context = context;
-        this.semanticContext = semanticContext;
+        this.semanticContext = cast(SemanticContext) semanticContext;
         this.reachesIntoOuterContext = c.reachesIntoOuterContext;
     }
 

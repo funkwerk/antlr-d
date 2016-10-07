@@ -13,11 +13,7 @@ import antlr.v4.runtime.Token;
 class VocabularyImpl : Vocabulary
 {
 
-    /**
-     * @uml
-     * @final
-     */
-    public const string[] EMPTY_NAMES;
+    public string[] EMPTY_NAMES;
 
     public string[] literalNames;
 
@@ -31,12 +27,7 @@ class VocabularyImpl : Vocabulary
      */
     private int maxTokenType;
 
-    public static VocabularyImpl EMPTY_VOCABULARY =
-        new VocabularyImpl(
-                           to!(string[])(EMPTY_NAMES),
-                           to!(string[])(EMPTY_NAMES),
-                           to!(string[])(EMPTY_NAMES)
-                           );
+    public static const VocabularyImpl EMPTY_VOCABULARY = new VocabularyImpl(null, null, null);
 
     /**
      * @uml
@@ -56,7 +47,9 @@ class VocabularyImpl : Vocabulary
      *  @see #getSymbolicName(int)
      *  @see #getDisplayName(int)
      */
-    public this(string[] literalNames, string[] symbolicNames, string[] displayNames)
+    public this(string[] literalNames,
+                string[] symbolicNames,
+                string[] displayNames)
     {
         this.literalNames = literalNames !is null ? literalNames : to!(string[])(EMPTY_NAMES);
         this.symbolicNames = symbolicNames !is null ? symbolicNames : to!(string[])(EMPTY_NAMES);
@@ -112,7 +105,8 @@ class VocabularyImpl : Vocabulary
     public static Vocabulary fromTokenNames(string[] tokenNames)
     {
         if (tokenNames is null || tokenNames.length == 0) {
-            return EMPTY_VOCABULARY;
+            // return EMPTY_VOCABULARY;
+            return new VocabularyImpl(null, null, null);
         }
 
         string[] literalNames = tokenNames.dup;

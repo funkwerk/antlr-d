@@ -96,20 +96,21 @@ class IntervalSet : IntSet
      * UnitTest:
      * auto ts = new IntervalSet(99, 77, 8, 7, 78);
      * assert("{7..8, 77..78, 99}" == ts.toString);
+     * ts = new IntervalSet(12);
+     * assert("12" == ts.toString);
      */
     public this(int[] els ...)
     {
-        if (els)
-            {
-                foreach (int e; els)
-                    add(e);
-            }
+        foreach (int e; els)
+            add(e);
     }
 
     unittest
     {
         auto ts = new IntervalSet(99, 77, 8, 7, 78);
         assert("{7..8, 77..78, 99}" == ts.toString);
+        ts = new IntervalSet(12);
+        assert("12" == ts.toString);
     }
 
     /**

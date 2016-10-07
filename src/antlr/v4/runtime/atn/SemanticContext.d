@@ -45,7 +45,7 @@ import antlr.v4.runtime.atn.ATNSimulator;
  * <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
  * {@link SemanticContext} within the scope of this outer class.</p>
  */
-class SemanticContext
+abstract class SemanticContext
 {
 
     public static SemanticContext NONE;

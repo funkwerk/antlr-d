@@ -71,7 +71,7 @@ class IntervalSet : IntSet
      */
     private Interval[] intervals_;
 
-    public this()
+    protected this()
     {
         COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
         COMPLETE_CHAR_SET.setReadonly(true);
@@ -174,7 +174,7 @@ class IntervalSet : IntSet
         assert(!readonly, "can't alter readonly IntervalSet");
         debug (Interval)
             writefln("add %1$s to %2$s", addition, intervals_);
-        if (addition.b < addition.a ) {            writefln("ccccccc");
+        if (addition.b < addition.a ) {
             return;
         }
         // find position in list

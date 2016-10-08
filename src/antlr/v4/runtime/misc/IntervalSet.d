@@ -664,8 +664,10 @@ class IntervalSet : IntSet
      * Get the ith element of ordered set.  Used only by RandomPhrase so
      * don't bother to implement if you're not doing that for a new
      * ANTLR code gen target.
+     * @safe
+     * @pure
      */
-    public int get(int i)
+    public int get(int i) @safe pure
     {
         auto n = intervals_.length;
         ulong index = 0;
@@ -723,29 +725,37 @@ class IntervalSet : IntSet
         }
     }
 
-    public bool isReadonly()
+    /**
+     * @uml
+     * @safe
+     * @pure
+     */
+    public bool isReadonly() @safe pure
     {
         return readonly;
     }
 
-    public void setReadonly(bool readonly)
+    /**
+     * @uml
+     * @safe
+     * @pure
+     */
+    public void setReadonly(bool readonly) @safe pure
     {
-        // if (this.readonly && !readonly ) throw new IllegalStateException("can't alter readonly IntervalSet");
+        assert(!this.readonly, "can't alter readonly IntervalSet");
         this.readonly = readonly;
     }
 
     /**
      * @uml
      * @override
+     * @pure
+     * @safe
      */
-    public override bool opEquals(Object obj)
+    public override bool opEquals(Object obj) @safe pure
     {
-        if (obj is null || (typeid(typeof(obj)) != typeid(IntervalSet*))) {
-            return false;
-        }
         IntervalSet other = cast(IntervalSet)obj;
         return intervals_ == other.intervals_;
-
     }
 
     /**

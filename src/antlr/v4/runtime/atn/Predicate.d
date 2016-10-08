@@ -30,9 +30,12 @@
 
 module antlr.v4.runtime.atn.Predicate;
 
+import std.conv;
 import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RuleContext;
 
 // Class Predicate
 /**
@@ -71,6 +74,8 @@ class Predicate : SemanticContext
      */
     public override bool eval(Recognizer!(int, ATNSimulator) parser, SemanticContext parserCallStack)
     {
+        RuleContext localctx = isCtxDependent ? cast(RuleContext)parserCallStack : null;
+        return parser.sempred(localctx, ruleIndex, predIndex);
     }
 
     public int hashCode()
@@ -103,7 +108,7 @@ class Predicate : SemanticContext
      */
     public override string toString()
     {
-        return "{" ~ ruleIndex ~ ":" ~ predIndex ~ "}?";
+        return "{" ~ to!string(ruleIndex) ~ ":" ~ to!string(predIndex) ~ "}?";
     }
 
 }

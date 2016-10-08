@@ -315,8 +315,63 @@ abstract class PredictionContext
     }
 
     public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,
-        int currentState)
+                              int currentState)
     {
+        string[] result;
+    outer:
+        for (int perm = 0; ; perm++) {
+            int offset = 0;
+            bool last = true;
+            PredictionContext p = this;
+            int stateNumber = currentState;
+            auto localBuffer = appender!string;
+            localBuffer.put("[");
+            while (!p.isEmpty() && p != stop) {
+                int index = 0;
+                if (p.size > 0) {
+                    int bits = 1;
+                    while ((1 << bits) < p.size) {
+                        bits++;
+                    }
+                    int mask = (1 << bits) - 1;
+                    index = (perm >> offset) & mask;
+                    last &= index >= p.size - 1;
+                    if (index >= p.size) {
+                        continue outer;
+                    }
+                    offset += bits;
+                }
+                if (recognizer !is null) {
+                    if (localBuffer.data.length > 1) {
+                        // first char is '[', if more than that this isn't the first rule
+                        localBuffer.put(' ');
+                    }
+                    ATN atn = recognizer.getATN();
+                    ATNState s = atn.states.get(stateNumber);
+                    string ruleName = recognizer.getRuleNames()[s.ruleIndex];
+                    localBuffer.put(ruleName);
+                }
+                else if ( p.getReturnState(index)!= EMPTY_RETURN_STATE) {
+                    if ( !p.isEmpty ) {
+                        if (localBuffer.data.length > 1) {
+                            // first char is '[', if more than that this isn't the first rule
+                            localBuffer.put(' ');
+                        }
+
+                        localBuffer.put(to!string(p.getReturnState(index)));
+                    }
+                }
+                stateNumber = p.getReturnState(index);
+                p = p.getParent(index);
+            }
+            localBuffer.put("]");
+            result ~= localBuffer.data;
+
+            if (last) {
+                break;
+            }
+        }
+        return result;
     }
 
 }

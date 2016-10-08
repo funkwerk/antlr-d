@@ -31,6 +31,7 @@
 module antlr.v4.runtime.Recognizer;
 
 import antlr.v4.runtime.ANTLRErrorListener;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
@@ -110,6 +111,16 @@ class Recognizer(U, V)
             tokenTypeMapCache[vocabulary] = result;
         }
         return result;
+    }
+
+    /**
+     * @uml
+     * subclass needs to override these if there are sempreds or actions
+     * that the ATN interp needs to execute
+     */
+    public bool sempred(RuleContext _localctx, int ruleIndex, int actionIndex)
+    {
+        return true;
     }
 
 }

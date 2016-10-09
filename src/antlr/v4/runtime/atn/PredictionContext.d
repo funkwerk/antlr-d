@@ -104,7 +104,7 @@ abstract class PredictionContext
         this.cachedHashCode = cachedHashCode;
     }
 
-    public PredictionContext[] fromRuleContext(ATN atn, RuleContext outerContext)
+    public PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
     {
         if (outerContext is null)
             outerContext = new RuleContext().EMPTY;
@@ -113,14 +113,14 @@ abstract class PredictionContext
         // is EMPTY. Nobody called us. (if we are empty, return empty)
         if ( outerContext.parent is null ||
              outerContext == new RuleContext().EMPTY ) {
-            return PredictionContext().EMPTY;
+            return PredictionContext.EMPTY;
         }
 
         // If we have a parent, convert it to a PredictionContext graph
         PredictionContext parent = EMPTY;
         parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
 
-        ATNState state = atn.states.get(outerContext.invokingState);
+        ATNState state = atn.states[outerContext.invokingState];
         RuleTransition transition = cast(RuleTransition)state.transition(0);
         return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
     }

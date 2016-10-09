@@ -32,7 +32,9 @@ module antlr.v4.runtime.atn.ATNState;
 
 import std.conv;
 import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.misc.IntervalSet;
 
 // Class ATNState
 /**
@@ -55,15 +57,87 @@ abstract class ATNState
 
     public int stateNumber = INVALID_STATE_NUMBER;
 
+    /**
+     * @uml
+     * at runtime, we don't have Rule objects
+     */
+    public int ruleIndex;
+
+    public bool epsilonOnlyTransitions = false;
+
+    /**
+     * @uml
+     * Track the transitions emanating from this ATN state.
+     */
+    protected Transition[] transitions;
+
+    /**
+     * @uml
+     * Used to cache lookahead during parsing, not used during construction
+     */
+    public IntervalSet nextTokenWithinRule;
+
     abstract public int getStateType();
 
     /**
      * @uml
+     * @pure
+     * @safe
+     */
+    public int hashCode() @safe pure
+    {
+        return stateNumber;
+    }
+
+    /**
+     * @uml
+     * @pure
+     * @safe
+     */
+    public bool equals(Object o) @safe pure
+    {
+        return stateNumber==(cast(ATNState)o).stateNumber;
+    }
+
+    /**
+     * @uml
+     * @pure
+     * @safe
+     */
+    public bool isNonGreedyExitState() @safe pure
+    {
+        return false;
+    }
+
+    /**
+     * @uml
+     * @pure
+     * @safe
      * @override
      */
-    public override string toString()
+    public override string toString() @safe pure
     {
         return to!string(stateNumber);
+    }
+
+    /**
+     * @uml
+     * @pure
+     * @safe
+     */
+    public Transition[] getTransitions() @safe pure
+    {
+        return transitions.dup;
+    }
+
+    /**
+     * @uml
+     * @pure
+     * @safe
+     */
+    public int getNumberOfTransitions() @safe pure
+    {
+        return to!int(transitions.length);
     }
 
 }

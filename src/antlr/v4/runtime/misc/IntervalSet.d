@@ -198,9 +198,8 @@ class IntervalSet : IntSet
                     }
                     // if we bump up against or overlap next, merge 
                     intervals_ = intervals_.remove(index); 
-                    index--; // move backwards to what we just set
-                    intervals_[index] = bigger.unionInterval(next); // set to 3 merged ones
-                    index++; // first call to next after previous duplicates the result
+                    // move backwards to what we just set
+                    intervals_[index-1] = bigger.unionInterval(next); // set to 3 merged ones
                 }
                 return;
             }

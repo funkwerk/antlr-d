@@ -33,6 +33,7 @@ module antlr.v4.runtime.misc.IntervalSet;
 import std.stdio;
 import std.conv;
 import std.array;
+import std.algorithm;
 import std.container.rbtree;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Vocabulary;
@@ -71,7 +72,7 @@ class IntervalSet : IntSet
      */
     private Interval[] intervals_;
 
-    public this()
+    protected this()
     {
         COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
         COMPLETE_CHAR_SET.setReadonly(true);
@@ -174,7 +175,7 @@ class IntervalSet : IntSet
         assert(!readonly, "can't alter readonly IntervalSet");
         debug (Interval)
             writefln("add %1$s to %2$s", addition, intervals_);
-        if (addition.b < addition.a ) {            writefln("ccccccc");
+        if (addition.b < addition.a ) {
             return;
         }
         // find position in list
@@ -195,9 +196,8 @@ class IntervalSet : IntSet
                     if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                         break;
                     }
-
-                    // if we bump up against or overlap next, merge
-                    intervals_ = intervals_[0..index] ~ intervals_[index+1..$];   // remove this one
+                    // if we bump up against or overlap next, merge 
+                    intervals_ = intervals_.remove(index); 
                     index--; // move backwards to what we just set
                     intervals_[index] = bigger.unionInterval(next); // set to 3 merged ones
                     index++; // first call to next after previous duplicates the result

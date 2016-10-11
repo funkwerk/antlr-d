@@ -30,7 +30,9 @@
 
 module antlr.v4.runtime.atn.ATNState;
 
+import std.stdio;
 import std.conv;
+import std.array;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ATN;
@@ -138,6 +140,57 @@ abstract class ATNState
     public int getNumberOfTransitions() @safe pure
     {
         return to!int(transitions.length);
+    }
+
+    /**
+     * @uml
+     * @safe
+     */
+    public void addTransition(Transition e) @safe
+    {
+        transitions ~= e;
+    }
+
+    public void addTransition(int index, Transition e)
+    {
+        if (transitions.length == 0) {
+            epsilonOnlyTransitions = e.isEpsilon;
+        }
+        else
+            if (epsilonOnlyTransitions != e.isEpsilon()) {
+                stderr.writefln("ATN state %1$s has both epsilon and non-epsilon transitions.\n", stateNumber);
+                epsilonOnlyTransitions = false;
+            }
+        transitions.insertInPlace(index, e);
+    }
+
+    public Transition transition(int i)
+    {
+        return transitions[i];
+    }
+
+    public void setTransition(int i, Transition e)
+    {
+        transitions[i] = e;
+    }
+
+    public Transition removeTransition(int index)
+    {
+        auto t = transitions[index];
+        transitions = transitions[0..index] ~ transitions[index+1..$];
+        return t;
+    }
+
+    abstract public int getStateType();
+
+    public bool onlyHasEpsilonTransitions()
+    {
+        return epsilonOnlyTransitions;
+    }
+
+    public void setRuleIndex(int ruleIndex)
+    {
+        this.ruleIndex = ruleIndex;
     }
 
 }

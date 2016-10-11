@@ -33,6 +33,7 @@ module antlr.v4.runtime.misc.IntervalSet;
 import std.stdio;
 import std.conv;
 import std.array;
+import std.algorithm;
 import std.container.rbtree;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Vocabulary;
@@ -195,12 +196,10 @@ class IntervalSet : IntSet
                     if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                         break;
                     }
-
-                    // if we bump up against or overlap next, merge
-                    intervals_ = intervals_[0..index] ~ intervals_[index+1..$];   // remove this one
-                    index--; // move backwards to what we just set
-                    intervals_[index] = bigger.unionInterval(next); // set to 3 merged ones
-                    index++; // first call to next after previous duplicates the result
+                    // if we bump up against or overlap next, merge 
+                    intervals_ = intervals_.remove(index); 
+                    // move backwards to what we just set
+                    intervals_[index-1] = bigger.unionInterval(next); // set to 3 merged ones
                 }
                 return;
             }

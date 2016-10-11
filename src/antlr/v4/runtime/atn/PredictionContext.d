@@ -68,6 +68,8 @@ abstract class PredictionContext
 
     private static immutable int INITIAL_HASH = 1;
 
+    public static int globalNodeCount = 0;
+
     public int id;
 
     /**
@@ -97,6 +99,7 @@ abstract class PredictionContext
     public this()
     {
         EMPTY = new EmptyPredictionContext();
+        id = globalNodeCount++;
     }
 
     public this(int cachedHashCode)
@@ -104,7 +107,7 @@ abstract class PredictionContext
         this.cachedHashCode = cachedHashCode;
     }
 
-    public PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
+    public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
     {
         if (outerContext is null)
             outerContext = new RuleContext().EMPTY;
@@ -284,14 +287,14 @@ abstract class PredictionContext
             if (a == b || (a.parent !is null && a.parent.opEquals(b.parent))) { // ax + bx = [a,b]x
                 singleParent = a.parent;
             }
-            if (singleParent !is null) {     // parents are same
+            if (singleParent !is null) {  // parents are same
                 // sort payloads and use same parent
-                int[] payloads = {a.returnState, b.returnState};
+                int[] payloads = [a.returnState, b.returnState];
                 if ( a.returnState > b.returnState ) {
                     payloads[0] = b.returnState;
                     payloads[1] = a.returnState;
                 }
-                PredictionContext[] parents = {singleParent, singleParent};
+                PredictionContext[] parents = [singleParent, singleParent];
                 PredictionContext a_ = new ArrayPredictionContext(parents, payloads);
                 if (mergeCache !is null) mergeCache.put(a, b, a_);
                 return a_;
@@ -299,8 +302,8 @@ abstract class PredictionContext
             // parents differ and can't merge them. Just pack together
             // into array; can't merge.
             // ax + by = [ax,by]
-            int[] payloads = {a.returnState, b.returnState};
-            PredictionContext[] parents = {a.parent, b.parent};
+            int[] payloads = [a.returnState, b.returnState];
+            PredictionContext[] parents = [a.parent, b.parent];
             if ( a.returnState > b.returnState ) { // sort by payload
                 payloads[0] = b.returnState;
                 payloads[1] = a.returnState;
@@ -312,6 +315,198 @@ abstract class PredictionContext
             if (mergeCache !is null ) mergeCache.put(a, b, a_);
             return a_;
         }
+    }
+
+    /**
+     * @uml
+     * Handle case where at least one of {@code a} or {@code b} is
+     * {@link #EMPTY}. In the following diagrams, the symbol {@code $} is used
+     * to represent {@link #EMPTY}.
+     *
+     * <h2>Local-Context Merges</h2>
+     *
+     * <p>These local-context merge operations are used when {@code rootIsWildcard}
+     * is true.</p>
+     *
+     * <p>{@link #EMPTY} is superset of any graph; return {@link #EMPTY}.<br>
+     * <embed src="images/LocalMerge_EmptyRoot.svg" type="image/svg+xml"/></p>
+     *
+     * <p>{@link #EMPTY} and anything is {@code #EMPTY}, so merged parent is
+     * {@code #EMPTY}; return left graph.<br>
+     * <embed src="images/LocalMerge_EmptyParent.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Special case of last merge if local context.<br>
+     * <embed src="images/LocalMerge_DiffRoots.svg" type="image/svg+xml"/></p>
+     *
+     * <h2>Full-Context Merges</h2>
+     *
+     * <p>These full-context merge operations are used when {@code rootIsWildcard}
+     * is false.</p>
+     *
+     * <p><embed src="images/FullMerge_EmptyRoots.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Must keep all contexts; {@link #EMPTY} in array is a special value (and
+     * null parent).<br>
+     * <embed src="images/FullMerge_EmptyRoot.svg" type="image/svg+xml"/></p>
+     *
+     * <p><embed src="images/FullMerge_SameRoot.svg" type="image/svg+xml"/></p>
+     *
+     *  @param a the first {@link SingletonPredictionContext}
+     *  @param b the second {@link SingletonPredictionContext}
+     *  @param rootIsWildcard {@code true} if this is a local-context merge,
+     *  otherwise false to indicate a full-context merge
+     */
+    public static PredictionContext mergeRoot(SingletonPredictionContext a, SingletonPredictionContext b,
+                                              bool rootIsWildcard)
+    {
+        if (rootIsWildcard) {
+            if ( a == EMPTY ) return EMPTY;  // * + b = *
+            if ( b == EMPTY ) return EMPTY;  // a + * = *
+        }
+        else {
+            if ( a == EMPTY && b == EMPTY ) return EMPTY; // $ + $ = $
+            if ( a == EMPTY ) { // $ + x = [$,x]
+                int[] payloads = [b.returnState, EMPTY_RETURN_STATE];
+                PredictionContext[] parents = [b.parent, null];
+                PredictionContext joined =
+                    new ArrayPredictionContext(parents, payloads);
+                return joined;
+            }
+            if ( b == EMPTY ) { // x + $ = [$,x] ($ is always first if present)
+                int[] payloads = [a.returnState, EMPTY_RETURN_STATE];
+                PredictionContext[] parents = [a.parent, null];
+                PredictionContext joined =
+                    new ArrayPredictionContext(parents, payloads);
+                return joined;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @uml
+     * Merge two {@link ArrayPredictionContext} instances.
+     *          *
+     * <p>Different tops, different parents.<br>
+     * <embed src="images/ArrayMerge_DiffTopDiffPar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Shared top, same parents.<br>
+     * <embed src="images/ArrayMerge_ShareTopSamePar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Shared top, different parents.<br>
+     * <embed src="images/ArrayMerge_ShareTopDiffPar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Shared top, all shared parents.<br>
+     * <embed src="images/ArrayMerge_ShareTopSharePar.svg" type="image/svg+xml"/></p>
+     *
+     * <p>Equal tops, merge parents and reduce top to
+     * {@link SingletonPredictionContext}.<br>
+     * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
+     */
+    public static PredictionContext mergeArrays(ArrayPredictionContext a, ArrayPredictionContext b,
+        bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+    {
+        		if (mergeCache !is null) {
+			PredictionContext previous = mergeCache.get(a,b);
+			if ( previous !is null ) return previous;
+			previous = mergeCache.get(b,a);
+			if ( previous !is null ) return previous;
+		}
+
+		// merge sorted payloads a + b => M
+		int i = 0; // walks a
+		int j = 0; // walks b
+		int k = 0; // walks target M array
+
+		int[] mergedReturnStates =
+			new int[a.returnStates.length + b.returnStates.length];
+		PredictionContext[] mergedParents =
+			new PredictionContext[a.returnStates.length + b.returnStates.length];
+		// walk and merge to yield mergedParents, mergedReturnStates
+		while ( i<a.returnStates.length && j<b.returnStates.length ) {
+			PredictionContext a_parent = a.parents[i];
+			PredictionContext b_parent = b.parents[j];
+			if ( a.returnStates[i]==b.returnStates[j] ) {
+				// same payload (stack tops are equal), must yield merged singleton
+				int payload = a.returnStates[i];
+				// $+$ = $
+				bool both = payload == EMPTY_RETURN_STATE &&
+								a_parent is null && b_parent is null;
+				bool ax_ax = (a_parent !is null && b_parent !is null) &&
+								a_parent.opEquals(b_parent); // ax+ax -> ax
+				if (both || ax_ax ) {
+					mergedParents[k] = a_parent; // choose left
+					mergedReturnStates[k] = payload;
+				}
+				else { // ax+ay -> a'[x,y]
+					PredictionContext mergedParent =
+						merge(a_parent, b_parent, rootIsWildcard, mergeCache);
+					mergedParents[k] = mergedParent;
+					mergedReturnStates[k] = payload;
+				}
+				i++; // hop over left one as usual
+				j++; // but also skip one in right side since we merge
+			}
+			else if ( a.returnStates[i]<b.returnStates[j] ) { // copy a[i] to M
+				mergedParents[k] = a_parent;
+				mergedReturnStates[k] = a.returnStates[i];
+				i++;
+			}
+			else { // b > a, copy b[j] to M
+				mergedParents[k] = b_parent;
+				mergedReturnStates[k] = b.returnStates[j];
+				j++;
+			}
+			k++;
+		}
+
+		// copy over any payloads remaining in either array
+		if (i < a.returnStates.length) {
+			for (int p = i; p < a.returnStates.length; p++) {
+				mergedParents[k] = a.parents[p];
+				mergedReturnStates[k] = a.returnStates[p];
+				k++;
+			}
+		}
+		else {
+			for (int p = j; p < b.returnStates.length; p++) {
+				mergedParents[k] = b.parents[p];
+				mergedReturnStates[k] = b.returnStates[p];
+				k++;
+			}
+		}
+
+		// trim merged if we combined a few that had same stack tops
+		if ( k < mergedParents.length ) { // write index < last position; trim
+			if ( k == 1 ) { // for just one merged element, return singleton top
+				PredictionContext a_ =
+					SingletonPredictionContext.create(mergedParents[0],
+													  mergedReturnStates[0]);
+				if ( mergeCache !is null ) mergeCache.put(a,b,a_);
+				return a_;
+			}
+			mergedParents = Arrays.copyOf(mergedParents, k);
+			mergedReturnStates = Arrays.copyOf(mergedReturnStates, k);
+		}
+
+		PredictionContext M =
+			new ArrayPredictionContext(mergedParents, mergedReturnStates);
+
+		// if we created same array as a or b, return that instead
+		// TODO: track whether this is possible above during merge sort for speed
+		if ( M.opEquals(a) ) {
+			if ( mergeCache !is null ) mergeCache.put(a,b,a);
+			return a;
+		}
+		if ( M.opEquals(b) ) {
+			if ( mergeCache !is null ) mergeCache.put(a,b,b);
+			return b;
+		}
+
+		combineCommonParents(mergedParents);
+
+		if ( mergeCache !is null ) mergeCache.put(a,b,M);
+		return M;
     }
 
     public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,

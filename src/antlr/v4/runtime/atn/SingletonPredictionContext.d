@@ -29,7 +29,7 @@ class SingletonPredictionContext : PredictionContext
         this.id = new ContextID().instance.getNextId;
     }
 
-    public SingletonPredictionContext create(PredictionContext parent, int returnState)
+    public static SingletonPredictionContext create(PredictionContext parent, int returnState)
     {
         if (returnState == EMPTY_RETURN_STATE && parent is null ) {
             // someone can pass in the bits of an array ctx that mean $

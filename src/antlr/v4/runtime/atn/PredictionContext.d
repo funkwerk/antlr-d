@@ -41,6 +41,7 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.MurmurHash;
 
@@ -485,8 +486,8 @@ abstract class PredictionContext
 				if ( mergeCache !is null ) mergeCache.put(a,b,a_);
 				return a_;
 			}
-			mergedParents = Arrays.copyOf(mergedParents, k);
-			mergedReturnStates = Arrays.copyOf(mergedReturnStates, k);
+			mergedParents = mergedParents[0..k];
+			mergedReturnStates = mergedReturnStates[0..k];
 		}
 
 		PredictionContext M =
@@ -507,6 +508,163 @@ abstract class PredictionContext
 
 		if ( mergeCache !is null ) mergeCache.put(a,b,M);
 		return M;
+    }
+
+    /**
+     * @uml
+     * Make pass over all <em>M</em> {@code parents}; merge any {@code equals()}
+     * ones.
+     */
+    public static void combineCommonParents(PredictionContext[] parents)
+    {
+        PredictionContext[PredictionContext] uniqueParents;
+        for (int p = 0; p < parents.length; p++) {
+            PredictionContext parent = parents[p];
+            if (!(parent in uniqueParents)) { // don't replace
+                uniqueParents[parent] = parent;
+            }
+        }
+        for (int p = 0; p < parents.length; p++) {
+            parents[p] = uniqueParents[parents[p]];
+        }
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int opCmp(Object o)
+    {
+        return (cast(PredictionContext)o).id - this.id;
+    }
+
+    public static string toDOTString(PredictionContext context)
+    {
+        if (context is null) return "";
+        auto buf = appender!string;
+		buf.put("digraph G {\n");
+		buf.put("rankdir=LR;\n");
+
+		PredictionContext[] nodes = getAllContextNodes(context);
+		nodes = nodes.sort;
+		foreach (PredictionContext current; nodes) {
+			if (current.classinfo == SingletonPredictionContext.classinfo) {
+				string s = to!string(current.id);
+				buf.put("  s" ~ s);
+				string returnState = to!string(current.getReturnState(0));
+				if (current.classinfo == EmptyPredictionContext.classinfo)
+                                    returnState = "$";
+				buf.put(" [label=\"" ~ returnState ~ "\"];\n");
+				continue;
+			}
+			ArrayPredictionContext arr = cast(ArrayPredictionContext)current;
+			buf.put("  s" ~ to!string(arr.id));
+			buf.put(" [shape=box, label=\"");
+			buf.put("[");
+			bool first = true;
+			foreach (int inv; arr.returnStates) {
+				if (!first) buf.put(", ");
+				if (inv == EMPTY_RETURN_STATE) buf.put("$");
+				else buf.put(to!string(inv));
+				first = false;
+			}
+			buf.put("]");
+			buf.put("\"];\n");
+		}
+
+		foreach (PredictionContext current; nodes) {
+			if (current == EMPTY) continue;
+			for (int i = 0; i < current.size(); i++) {
+				if (current.getParent(i) is null) continue;
+				string s = to!string(current.id);
+				buf.put("  s" ~ s);
+				buf.put("->");
+				buf.put("s");
+				buf.put(to!string(current.getParent(i).id));
+				if ( current.size()>1 ) buf.put(" [label=\"parent[" ~ to!string(i) ~ "]\"];\n");
+				else buf.put(";\n");
+			}
+		}
+
+		buf.put("}\n");
+		return buf.data;
+    }
+
+    public static PredictionContext getCachedContext(PredictionContext context, PredictionContextCache contextCache,
+        PredictionContext[PredictionContext] visited)
+    {
+        if (context.isEmpty) {
+            return context;
+        }
+
+        PredictionContext existing = visited[context];
+        if (existing !is null) {
+            return existing;
+        }
+
+        existing = contextCache.get(context);
+        if (existing !is null) {
+            visited[context] = existing;
+            return existing;
+        }
+
+        bool changed = false;
+        PredictionContext[] parents = new PredictionContext[context.size()];
+        for (int i = 0; i < parents.length; i++) {
+            PredictionContext parent = getCachedContext(context.getParent(i), contextCache, visited);
+            if (changed || parent != context.getParent(i)) {
+                if (!changed) {
+                    parents = new PredictionContext[context.size()];
+                    for (int j = 0; j < context.size(); j++) {
+                        parents[j] = context.getParent(j);
+                    }
+
+                    changed = true;
+                }
+
+                parents[i] = parent;
+            }
+        }
+        PredictionContext updated;
+        if (parents.length == 0) {
+            updated = EMPTY;
+        }
+        else if (parents.length == 1) {
+            updated = SingletonPredictionContext.create(parents[0], context.getReturnState(0));
+        }
+        else {
+            ArrayPredictionContext arrayPredictionContext = cast(ArrayPredictionContext)context;
+            updated = new ArrayPredictionContext(parents, arrayPredictionContext.returnStates);
+        }
+
+        contextCache.add(updated);
+        visited[updated] = updated;
+        visited[context] = updated;
+
+        return updated;
+    }
+
+    /**
+     * @uml
+     * recursive version of Sam's getAllNodes()
+     */
+    public static PredictionContext[] getAllContextNodes(PredictionContext context)
+    {
+        PredictionContext[] nodes;
+        PredictionContext[PredictionContext] visited;
+        getAllContextNodes_(context, nodes, visited);
+        return nodes;
+    }
+
+    public static void getAllContextNodes_(PredictionContext context, PredictionContext[] nodes,
+        PredictionContext[PredictionContext] visited)
+    {
+        if (context is null || (context in visited)) return;
+        visited[context] = context;
+        nodes ~= context;
+        for (int i = 0; i < context.size; i++) {
+            getAllContextNodes_(context.getParent(i), nodes, visited);
+        }
     }
 
     public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,
@@ -542,7 +700,7 @@ abstract class PredictionContext
                         localBuffer.put(' ');
                     }
                     ATN atn = recognizer.getATN();
-                    ATNState s = atn.states.get(stateNumber);
+                    ATNState s = atn.states[stateNumber];
                     string ruleName = recognizer.getRuleNames()[s.ruleIndex];
                     localBuffer.put(ruleName);
                 }

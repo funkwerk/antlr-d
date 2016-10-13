@@ -172,14 +172,22 @@ class VocabularyImpl : Vocabulary
     public string getSymbolicName(int tokenType)
     {
         if (tokenType >= 0 && tokenType < symbolicNames.length) {
-                        return symbolicNames[tokenType];
-                }
+            return symbolicNames[tokenType];
+        }
 
-                if (tokenType == Token.EOF) {
-                        return "EOF";
-                }
+        if (tokenType == Token.EOF) {
+            return "EOF";
+        }
 
-                return null;
+        return null;
+    }
+
+    public string getLiteralName(int tokenType)
+    {
+        if (tokenType >= 0 && tokenType < literalNames.length) {
+            return literalNames[tokenType];
+        }
+        return null;
     }
 
 }

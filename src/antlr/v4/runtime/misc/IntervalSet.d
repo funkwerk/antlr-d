@@ -196,8 +196,8 @@ class IntervalSet : IntSet
                     if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                         break;
                     }
-                    // if we bump up against or overlap next, merge 
-                    intervals_ = intervals_.remove(index); 
+                    // if we bump up against or overlap next, merge
+                    intervals_ = intervals_.remove(index);
                     // move backwards to what we just set
                     intervals_[index-1] = bigger.unionInterval(next); // set to 3 merged ones
                 }

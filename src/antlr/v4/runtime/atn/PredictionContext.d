@@ -667,6 +667,11 @@ abstract class PredictionContext
         }
     }
 
+    public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, int currentState)
+    {
+        return toStrings(recognizer, EMPTY, currentState);
+    }
+
     public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,
                               int currentState)
     {

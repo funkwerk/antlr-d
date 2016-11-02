@@ -78,7 +78,11 @@ class Predicate : SemanticContext
         return parser.sempred(localctx, ruleIndex, predIndex);
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t toHash()
     {
         int hashCode = MurmurHash.initialize();
         hashCode = MurmurHash.update(hashCode, ruleIndex);

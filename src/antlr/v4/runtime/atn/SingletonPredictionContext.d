@@ -76,11 +76,11 @@ class SingletonPredictionContext : PredictionContext
         if (this == o) {
             return true;
         }
-        else if (typeid(typeof(o)) != typeid(SingletonPredictionContext*)) {
+        else if (o.classinfo != SingletonPredictionContext.classinfo) {
             return false;
         }
 
-        if (this.hashCode() != (cast(PredictionContext)o).hashCode()) {
+        if (this.toHash != (cast(PredictionContext)o).toHash) {
             return false; // can't be same if hash is different
         }
 

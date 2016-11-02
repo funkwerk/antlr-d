@@ -32,6 +32,7 @@ module antlr.v4.runtime.atn.ATNConfig;
 
 import std.array;
 import std.conv;
+import std.stdio;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
@@ -105,7 +106,7 @@ class ATNConfig
      */
     public int reachesIntoOuterContext;
 
-    public const SemanticContext semanticContext;
+    public SemanticContext semanticContext;
 
     /**
      * @uml
@@ -202,12 +203,13 @@ class ATNConfig
         } else if (other is null) {
             return false;
         }
+        writefln("----------- %1$s", this.semanticContext.classinfo);
 
         return this.state.stateNumber == other.state.stateNumber
             && this.alt == other.alt
             && (this.context is other.context ||
                 (this.context !is null && this.context.opEquals(other.context)))
-            && this.semanticContext.opEquals(other.semanticContext)
+            //&& this.semanticContext.opEquals(other.semanticContext)
             && this.isPrecedenceFilterSuppressed() == other.isPrecedenceFilterSuppressed();
 
     }
@@ -218,6 +220,7 @@ class ATNConfig
         hashCode = MurmurHash.update(hashCode, state.stateNumber);
         hashCode = MurmurHash.update(hashCode, alt);
         hashCode = MurmurHash.update(hashCode, context);
+        writefln("aaaaaaaaaaa %1$s", this.context);
         hashCode = MurmurHash.update(hashCode, semanticContext);
         hashCode = MurmurHash.finish(hashCode, 4);
         return hashCode;
@@ -248,10 +251,10 @@ class ATNConfig
         }
         if (semanticContext !is null && semanticContext != SemanticContext.NONE ) {
             buf.put(",");
-            buf.put(semanticContext);
+            //            buf.put(semanticContext);
         }
         if ( getOuterContextDepth()>0 ) {
-            buf.put(",up=").put(getOuterContextDepth());
+            //            buf.put(",up=").put(getOuterContextDepth());
         }
         buf.put(')');
         return buf.data;

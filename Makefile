@@ -19,13 +19,18 @@ SRC =	$(SRC_ATN)/ATN.d\
 
 BUILD_DIR = build
 MODEL_DIR = model
+ANTLR_DIR = antlr4
 
 TEST_FLAGS = --main -unittest -Isrc
+GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
 RDMD = rdmd
 DMD = dmd
 GENERATOR = axmi2d
+ANTLR = antlr4-antlr4-master-4.5.3
+ANTLR_TAR = $(ANTLR).tgz
+TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
 all : generate unittest
 .PHONY : all
@@ -40,6 +45,20 @@ generate :
 unittest :
 	$(foreach src, $(SRC), $(RDMD) $(TEST_FLAGS) $(src);)
 
+.PHONY : prepare_generator
+prepare_generator :
+	mkdir -p $(BUILD_DIR)
+	cd $(BUILD_DIR) && tar -xf ../$(ANTLR_DIR)/$(ANTLR_TAR)
+	cp codegen/DTarget.java $(BUILD_DIR)/$(ANTLR)/tool/src/org/antlr/v4/codegen/target
+	mkdir -p $(TARGET)
+	cp -r codegen/templates/*.stg \
+		$(TARGET)
+	cd $(BUILD_DIR)/$(ANTLR) && mvn -DskipTests install
+
+.PHONY : build_examples
+build_examples :
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
+		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
 
 .PHONY : clean
 clean :

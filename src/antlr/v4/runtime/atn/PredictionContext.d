@@ -149,7 +149,11 @@ abstract class PredictionContext
         return getReturnState(to!int(size() - 1)) == EMPTY_RETURN_STATE;
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @override
+     */
+    public int toHash()
     {
         return cachedHashCode;
     }

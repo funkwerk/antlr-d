@@ -31,6 +31,7 @@
 module antlr.v4.runtime.misc.MurmurHash;
 
 import std.conv;
+import std.stdio;
 
 // Class MurmurHash
 /**
@@ -46,8 +47,9 @@ class MurmurHash
      * Initialize the hash using the default seed value.
      *
      *  @return the intermediate hash value
+     * @safe
      */
-    public static int initialize()
+    public static int initialize() @safe nothrow
     {
         auto mh = new MurmurHash;
         return initialize(DEFAULT_SEED);
@@ -60,7 +62,7 @@ class MurmurHash
      *  @param seed the seed
      *  @return the intermediate hash value
      */
-    public static int initialize(int seed)
+    public static int initialize(int seed) @safe nothrow
     {
         return seed;
     }
@@ -73,7 +75,7 @@ class MurmurHash
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
      */
-    public static int update(int hash, int value)
+    public static int update(int hash, int value) @safe nothrow
     {
         immutable int c1 = 0xCC9E2D51;
         immutable int c2 = 0x1B873593;
@@ -103,9 +105,9 @@ class MurmurHash
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
      */
-    public static int update(U)(int hash, U value)
+    public static int update(U)(int hash, U value) @safe nothrow
     {
-        return update(hash, value !is null ? value.hashCode() : 0);
+        return update(hash, value !is null ? value.toHash : 0);
     }
 
     /**
@@ -117,7 +119,7 @@ class MurmurHash
      *  @param numberOfWords the number of integer values added to the hash
      *  @return the final hash result
      */
-    public static int finish(int hash, size_t numberOfWords)
+    public static int finish(int hash, size_t numberOfWords) @safe
     {
         hash = hash ^ (cast(int)numberOfWords * 4);
         hash = hash ^ (hash >>> 16);

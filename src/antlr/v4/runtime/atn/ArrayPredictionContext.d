@@ -133,7 +133,7 @@ class ArrayPredictionContext : PredictionContext
             return false;
         }
 
-        if (this.hashCode != o.toHash) {
+        if (this.toHash != o.toHash) {
             return false; // can't be same if hash is different
         }
 

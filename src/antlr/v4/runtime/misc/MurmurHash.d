@@ -48,6 +48,7 @@ class MurmurHash
      *
      *  @return the intermediate hash value
      * @safe
+     * @nothrow
      */
     public static int initialize() @safe nothrow
     {
@@ -61,6 +62,8 @@ class MurmurHash
      *
      *  @param seed the seed
      *  @return the intermediate hash value
+     * @safe
+     * @nothrow
      */
     public static int initialize(int seed) @safe nothrow
     {
@@ -74,6 +77,8 @@ class MurmurHash
      *  @param hash the intermediate hash value
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
+     * @safe
+     * @nothrow
      */
     public static int update(int hash, int value) @safe nothrow
     {
@@ -104,10 +109,12 @@ class MurmurHash
      *  @param hash the intermediate hash value
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
+     * @safe
+     * @nothrow
      */
     public static int update(U)(int hash, U value) @safe nothrow
     {
-        return update(hash, value !is null ? value.toHash : 0);
+        return update(hash, value !is null ? value.hashCode : 0);
     }
 
     /**
@@ -118,8 +125,25 @@ class MurmurHash
      *  @param hash the intermediate hash value
      *  @param numberOfWords the number of integer values added to the hash
      *  @return the final hash result
+     * @safe
      */
-    public static int finish(int hash, size_t numberOfWords) @safe
+    // public static int finish(int hash, int numberOfWords) @safe nothrow
+    // {
+    //     return update(hash, value !is null ? value.hashCode : 0);
+    // }
+
+    /**
+     * @uml
+     * Apply the final computation steps to the intermediate value {@code hash}
+     * to form the final result of the MurmurHash 3 hash function.
+     *
+     *  @param hash the intermediate hash value
+     *  @param numberOfWords the number of integer values added to the hash
+     *  @return the final hash result
+     * @safe
+     */
+    public static int finish(int hash, int numberOfWords) @safe nothrow
+
     {
         hash = hash ^ (cast(int)numberOfWords * 4);
         hash = hash ^ (hash >>> 16);

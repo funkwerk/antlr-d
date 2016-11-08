@@ -149,11 +149,7 @@ abstract class PredictionContext
         return getReturnState(to!int(size() - 1)) == EMPTY_RETURN_STATE;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public int toHash()
+    public int hashCode() @safe nothrow
     {
         return cachedHashCode;
     }
@@ -192,7 +188,7 @@ abstract class PredictionContext
             hash = MurmurHash.update(hash, returnState);
         }
 
-        hash = MurmurHash.finish(hash, 2 * parents.length);
+        hash = MurmurHash.finish(hash, to!int(2 * parents.length));
         return hash;
     }
 

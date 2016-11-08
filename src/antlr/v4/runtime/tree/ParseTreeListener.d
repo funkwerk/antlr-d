@@ -47,9 +47,9 @@ module antlr.v4.runtime.tree.ParseTreeListener;
 interface ParseTreeListener
 {
 
-    public TerminalNode visitTerminal(undefined node);
+    public void visitTerminal(TerminalNode node);
 
-    public ErrorNode visitErrorNode(undefined node);
+    public void visitErrorNode(ErrorNode node);
 
     public void enterEveryRule(ParserRuleContext ctx);
 

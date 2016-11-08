@@ -82,7 +82,7 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override size_t toHash()
+    public override int hashCode() @safe nothrow
     {
         int hashCode = MurmurHash.initialize();
         hashCode = MurmurHash.update(hashCode, ruleIndex);

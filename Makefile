@@ -36,7 +36,7 @@ all : generate unittest
 .PHONY : all
 
 
-.PHONY :	generate
+.PHONY : generate
 generate :
 	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
 
@@ -56,7 +56,7 @@ prepare_generator :
 	cd $(BUILD_DIR)/$(ANTLR) && mvn -DskipTests install
 
 .PHONY : build_examples
-build_examples :
+build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
 		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
 

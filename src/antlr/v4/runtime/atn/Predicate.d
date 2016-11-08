@@ -81,6 +81,8 @@ class Predicate : SemanticContext
     /**
      * @uml
      * @override
+     * @safe
+     * @nothrow
      */
     public override int hashCode() @safe nothrow
     {

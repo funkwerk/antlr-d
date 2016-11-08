@@ -126,24 +126,9 @@ class MurmurHash
      *  @param numberOfWords the number of integer values added to the hash
      *  @return the final hash result
      * @safe
-     */
-    // public static int finish(int hash, int numberOfWords) @safe nothrow
-    // {
-    //     return update(hash, value !is null ? value.hashCode : 0);
-    // }
-
-    /**
-     * @uml
-     * Apply the final computation steps to the intermediate value {@code hash}
-     * to form the final result of the MurmurHash 3 hash function.
-     *
-     *  @param hash the intermediate hash value
-     *  @param numberOfWords the number of integer values added to the hash
-     *  @return the final hash result
-     * @safe
+     * @nothrow
      */
     public static int finish(int hash, int numberOfWords) @safe nothrow
-
     {
         hash = hash ^ (cast(int)numberOfWords * 4);
         hash = hash ^ (hash >>> 16);

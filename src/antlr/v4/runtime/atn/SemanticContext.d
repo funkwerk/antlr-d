@@ -95,7 +95,13 @@ abstract class SemanticContext
         return this;
     }
 
-    public int hashCode() @safe nothrow {
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public int hashCode() @safe nothrow
+    {
         return 1;
     }
 

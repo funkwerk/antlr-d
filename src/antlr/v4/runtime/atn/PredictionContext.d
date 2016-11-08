@@ -149,6 +149,11 @@ abstract class PredictionContext
         return getReturnState(to!int(size() - 1)) == EMPTY_RETURN_STATE;
     }
 
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
     public int hashCode() @safe nothrow
     {
         return cachedHashCode;

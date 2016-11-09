@@ -48,14 +48,11 @@ ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 package <file.genPackage>;
 <endif>
 <namedActions.header>
-import org.antlr.v4.runtime.atn.*;
-import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
+import antlr.v4.runtime.atn.*;
+import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.*;
+import antlr.v4.runtime.misc.*;
+import antlr.v4.runtime.tree.*;
 
 <parser>
 >>
@@ -104,9 +101,9 @@ package <file.genPackage>;
 <endif>
 <header>
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.tree.ErrorNode;
+import antlr.v4.runtime.tree.TerminalNode;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Listener},
@@ -223,7 +220,6 @@ Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
 >>
 
 Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class <parser.name> : <superClass; null="Parser"> {
 	static { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
@@ -868,20 +864,19 @@ LexerFile(lexerFile, lexer, namedActions) ::= <<
 package <lexerFile.genPackage>;
 <endif>
 <namedActions.header>
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
-import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.*;
+import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.*;
+import antlr.v4.runtime.atn.*;
+import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.misc.*;
 
 <lexer>
 >>
 
 Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class <lexer.name> : <superClass; null="Lexer"> {
 	static { RuntimeMetaData.checkVersion("<lexerFile.ANTLRVersion>", RuntimeMetaData.VERSION); }
 

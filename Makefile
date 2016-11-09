@@ -4,7 +4,8 @@ MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
 SRC_ATN = $(SRC_DIR)/atn
-SRC =	$(SRC_ATN)/ATN.d\
+SRC =	$(SRC_DIR)/RuntimeMetaData.d\
+	$(SRC_ATN)/ATN.d\
 	$(SRC_ATN)/ATNState.d\
 	$(SRC_ATN)/ATNConfig.d\
 	$(SRC_ATN)/PredictionContext.d\

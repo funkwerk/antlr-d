@@ -48,11 +48,11 @@ ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 package <file.genPackage>;
 <endif>
 <namedActions.header>
-import antlr.v4.runtime.atn.*;
+//import antlr.v4.runtime.atn.*;
 import antlr.v4.runtime.dfa.DFA;
-import antlr.v4.runtime.*;
-import antlr.v4.runtime.misc.*;
-import antlr.v4.runtime.tree.*;
+import antlr.v4.runtime.RuntimeMetaData;
+//import antlr.v4.runtime.misc.*;
+//import antlr.v4.runtime.tree.*;
 
 <parser>
 >>
@@ -117,38 +117,38 @@ public class <file.grammarName>BaseListener : <file.grammarName>Listener {
  *
  * \<p>The default implementation does nothing.\</p>
  */
-@Override public void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { \}
+override public void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { \}
 /**
  * {@inheritDoc\}
  *
  * \<p>The default implementation does nothing.\</p>
  */
-@Override public void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { \}}; separator="\n">
+override public void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { \}}; separator="\n">
 
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void enterEveryRule(ParserRuleContext ctx) { }
+	override public void enterEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void exitEveryRule(ParserRuleContext ctx) { }
+	override public void exitEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void visitTerminal(TerminalNode node) { }
+	override public void visitTerminal(TerminalNode node) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void visitErrorNode(ErrorNode node) { }
+	override public void visitErrorNode(ErrorNode node) { }
 }
 >>
 
@@ -207,7 +207,7 @@ public class <file.grammarName>BaseVisitor\<T> : AbstractParseTreeVisitor\<T>, <
  * \<p>The default implementation returns the result of calling
  * {@link #visitChildren\} on {@code ctx\}.\</p>
  */
-@Override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
+override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
 }
 >>
 
@@ -221,7 +221,7 @@ Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
 
 Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
 public class <parser.name> : <superClass; null="Parser"> {
-	static { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
+	static this() { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -232,22 +232,22 @@ public class <parser.name> : <superClass; null="Parser"> {
 	<endif>
 	public static final int
 		<parser.rules:{r | RULE_<r.name> = <r.index>}; separator=", ", wrap, anchor>;
-	public static final string[] ruleNames = {
+	public static final string[] ruleNames = [
 		<parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor>
-	};
+	];
 
 	<vocabulary(parser.literalNames, parser.symbolicNames)>
 
-	@Override
+	override
 	public string getGrammarFileName() { return "<parser.grammarFileName; format="java-escape">"; }
 
-	@Override
+	override
 	public string[] getRuleNames() { return ruleNames; }
 
-	@Override
+	override
 	public string getSerializedATN() { return _serializedATN; }
 
-	@Override
+	override
 	public ATN getATN() { return _ATN; }
 
 	<namedActions.members>
@@ -271,20 +271,20 @@ case <f.ruleIndex>:
 >>
 
 vocabulary(literalNames, symbolicNames) ::= <<
-private static final string[] _LITERAL_NAMES = {
+private static final string[] _LITERAL_NAMES = [
 	<literalNames:{t | <t>}; null="null", separator=", ", wrap, anchor>
-};
-private static final string[] _SYMBOLIC_NAMES = {
+];
+private static final string[] _SYMBOLIC_NAMES = [
 	<symbolicNames:{t | <t>}; null="null", separator=", ", wrap, anchor>
-};
+];
 public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 /**
  * @deprecated Use {@link #VOCABULARY} instead.
  */
-@Deprecated
+deprecated
 public static final string[] tokenNames;
-static {
+static this() {
 	tokenNames = new string[_SYMBOLIC_NAMES.length];
 	for (int i = 0; i \< tokenNames.length; i++) {
 		tokenNames[i] = VOCABULARY.getLiteralName(i);
@@ -298,13 +298,13 @@ static {
 	}
 }
 
-@Override
-@Deprecated
+override
+deprecated
 public string[] getTokenNames() {
 	return tokenNames;
 }
 
-@Override
+override
 
 public Vocabulary getVocabulary() {
 	return VOCABULARY;
@@ -313,7 +313,7 @@ public Vocabulary getVocabulary() {
 
 dumpActions(recog, argFuncs, actionFuncs, sempredFuncs) ::= <<
 <if(actionFuncs)>
-@Override
+override
 public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 	switch (ruleIndex) {
 	<recog.actionFuncs.values:{f|
@@ -325,7 +325,7 @@ case <f.ruleIndex>:
 <actionFuncs.values; separator="\n">
 <endif>
 <if(sempredFuncs)>
-@Override
+override
 public bool sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 	switch (ruleIndex) {
 	<recog.sempredFuncs.values:{f|
@@ -339,7 +339,7 @@ case <f.ruleIndex>:
 >>
 
 parser_ctor(p) ::= <<
-public <p.name>(TokenStream input) {
+public this(TokenStream input) {
 	super(input);
 	_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 }
@@ -717,14 +717,14 @@ AddToLabelList(a) ::= "<ctx(a.label)>.<a.listName>.add(<labelref(a.label)>);"
 
 TokenDecl(t) ::= "<TokenLabelType()> <t.name>"
 TokenTypeDecl(t) ::= "int <t.name>;"
-TokenListDecl(t) ::= "List\<Token> <t.name> = new ArrayList\<Token>()"
+TokenListDecl(t) ::= "<Token>[] <t.name> = new ArrayList\<Token>()"
 RuleContextDecl(r) ::= "<r.ctxName> <r.name>"
-RuleContextListDecl(rdecl) ::= "List\<<rdecl.ctxName>> <rdecl.name> = new ArrayList\<<rdecl.ctxName>>()"
+RuleContextListDecl(rdecl) ::= "<rdecl.ctxName>[] <rdecl.name> = new ArrayList\<<rdecl.ctxName>>()"
 
 ContextTokenGetterDecl(t)      ::=
     "public TerminalNode <t.name>() { return getToken(<parser.name>.<t.name>, 0); }"
 ContextTokenListGetterDecl(t)  ::=
-    "public List\<TerminalNode> <t.name>() { return getTokens(<parser.name>.<t.name>); }"
+    "public TerminalNode[] <t.name>() { return getTokens(<parser.name>.<t.name>); }"
 ContextTokenListIndexedGetterDecl(t)  ::= <<
 public TerminalNode <t.name>(int i) {
 	return getToken(<parser.name>.<t.name>, i);
@@ -736,7 +736,7 @@ public <r.ctxName> <r.name>() {
 }
 >>
 ContextRuleListGetterDecl(r)   ::= <<
-public List\<<r.ctxName>\> <r.name>() {
+public <r.ctxName>[] <r.name>() {
 	return getRuleContexts(<r.ctxName>.class);
 }
 >>
@@ -771,7 +771,7 @@ public static class <struct.name> : <if(contextSuperClass)><contextSuperClass><e
 		super(parent, invokingState);
 		<struct.ctorAttrs:{a | this.<a.name> = <a.name>;}; separator="\n">
 	}
-	@Override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
+	override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
 	public <struct.name>() { }
 	public void copyFrom(<struct.name> ctx) {
@@ -794,14 +794,14 @@ public static class <struct.name> : <currentRule.name; format="cap">Context {
 >>
 
 ListenerDispatchMethod(method) ::= <<
-@Override
+override
 public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
 	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
 }
 >>
 
 VisitorDispatchMethod(method) ::= <<
-@Override
+override
 public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
 	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
 	else return visitor.visitChildren(this);
@@ -907,19 +907,19 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@Override
+	override
 	public string getGrammarFileName() { return "<lexer.grammarFileName>"; }
 
-	@Override
+	override
 	public string[] getRuleNames() { return ruleNames; }
 
-	@Override
+	override
 	public string getSerializedATN() { return _serializedATN; }
 
-	@Override
+	override
 	public string[] getModeNames() { return modeNames; }
 
-	@Override
+	override
 	public ATN getATN() { return _ATN; }
 
 	<dumpActions(lexer, "", actionFuncs, sempredFuncs)>

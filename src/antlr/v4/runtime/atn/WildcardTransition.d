@@ -28,18 +28,49 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.TerminalNode;
+module antlr.v4.runtime.atn.WildcardTransition;
 
-import antlr.v4.runtime.tree.ParseTree;
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.TransitionStates;
 
-// Interface TerminalNode
+// Class WildcardTransition
 /**
- * TODO add interface description
+ * TODO add class description
  */
-interface TerminalNode :ParseTree
+class WildcardTransition : Transition
 {
 
-    public Token getSymbol();
+    public this(ATNState target)
+    {
+        super(target);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getSerializationType()
+    {
+        return TransitionStates.WILDCARD;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool matches(int symbol, int minVocabSymbol, int maxVocabSymbol)
+    {
+        return symbol >= minVocabSymbol && symbol <= maxVocabSymbol;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return ".";
+    }
 
 }

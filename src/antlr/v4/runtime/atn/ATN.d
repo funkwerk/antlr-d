@@ -30,12 +30,15 @@
 
 module antlr.v4.runtime.atn.ATN;
 
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.RuleStartState;
+import antlr.v4.runtime.atn.LL1Analyzer;
 import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.misc.IntervalSet;
 
 // Class ATN
 /**
@@ -109,6 +112,20 @@ class ATN
     {
         this.grammarType = grammarType;
         this.maxTokenType = maxTokenType;
+    }
+
+    /**
+     * @uml
+     * Compute the set of valid tokens that can occur starting in state {@code s}.
+     * If {@code ctx} is null, the set of tokens will not include what can follow
+     * the rule surrounding {@code s}. In other words, the set will be
+     * restricted to tokens reachable staying within {@code s}'s rule.
+     */
+    public IntervalSet nextTokens(ATNState s, RuleContext ctx)
+    {
+        LL1Analyzer anal = new LL1Analyzer(this);
+        IntervalSet next = anal.LOOK(s, ctx);
+        return next;
     }
 
 }

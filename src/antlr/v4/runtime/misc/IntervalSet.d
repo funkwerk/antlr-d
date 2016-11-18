@@ -72,7 +72,7 @@ class IntervalSet : IntSet
      */
     private Interval[] intervals_;
 
-    protected this()
+    public this()
     {
         COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
         COMPLETE_CHAR_SET.setReadonly(true);

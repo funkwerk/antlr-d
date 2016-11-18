@@ -28,18 +28,21 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.TerminalNode;
+module antlr.v4.runtime.atn.AbstractPredicateTransition;
 
-import antlr.v4.runtime.tree.ParseTree;
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.ATNState;
 
-// Interface TerminalNode
+// Class AbstractPredicateTransition
 /**
- * TODO add interface description
+ * TODO add class description
  */
-interface TerminalNode :ParseTree
+class AbstractPredicateTransition : Transition
 {
 
-    public Token getSymbol();
+    public this(ATNState target)
+    {
+        super(target);
+    }
 
 }

@@ -63,7 +63,10 @@ build_examples : prepare_generator
 
 .PHONY : clean
 clean :
-	rm -rf $(BUILD_DIR)
 	rm -rf $(SRC_DIR)/**/*\.d_orig $(SRC_DIR)/**/*\.d~
 	rm -rf $(SRC_DIR)/*\.d_orig $(SRC_DIR)/*\.d~
 	rm -rf model/DRuntime.zargo~
+
+.PHONY : clobber
+clobber :
+	rm -rf $(BUILD_DIR)

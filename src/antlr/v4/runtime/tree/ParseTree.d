@@ -31,6 +31,7 @@
 module antlr.v4.runtime.tree.ParseTree;
 
 import antlr.v4.runtime.tree.SyntaxTree;
+import antlr.v4.runtime.Parser;
 
 // Interface ParseTree
 /**

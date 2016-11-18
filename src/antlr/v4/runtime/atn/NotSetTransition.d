@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,52 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.TerminalNode;
+module antlr.v4.runtime.atn.NotSetTransition;
 
-import antlr.v4.runtime.tree.ParseTree;
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.TransitionStates;
 
-// Interface TerminalNode
+// Class NotSetTransition
 /**
- * TODO add interface description
+ * TODO add class description
  */
-interface TerminalNode :ParseTree
+class NotSetTransition : SetTransition
 {
 
-    public Token getSymbol();
+    public this(ATNState target, IntervalSet set)
+    {
+        super(target, set);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getSerializationType()
+    {
+        return TransitionStates.NOT_SET;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool matches(int symbol, int minVocabSymbol, int maxVocabSymbol)
+    {
+        return symbol >= minVocabSymbol
+            && symbol <= maxVocabSymbol
+            && !super.matches(symbol, minVocabSymbol, maxVocabSymbol);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return '~' ~ super.toString();
+    }
 
 }

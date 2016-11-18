@@ -30,6 +30,10 @@
 
 module antlr.v4.runtime.tree.ParseTreeListener;
 
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.tree.ErrorNode;
+import antlr.v4.runtime.tree.TerminalNode;
+
 // Interface ParseTreeListener
 /**
  * @uml

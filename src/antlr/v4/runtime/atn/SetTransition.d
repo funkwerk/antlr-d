@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,18 +28,64 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.tree.TerminalNode;
+module antlr.v4.runtime.atn.SetTransition;
 
-import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.TransitionStates;
 
-// Interface TerminalNode
+// Class SetTransition
 /**
- * TODO add interface description
+ * TODO add class description
  */
-interface TerminalNode :ParseTree
+class SetTransition : Transition
 {
 
-    public Token getSymbol();
+    public IntervalSet set;
+
+    public this(ATNState target, IntervalSet set)
+    {
+        super(target);
+        if ( set is null ) set = IntervalSet.of(Token.INVALID_TYPE);
+        this.set = set;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getSerializationType()
+    {
+        return TransitionStates.SET;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override IntervalSet label()
+    {
+        return set;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool matches(int symbol, int minVocabSymbol, int maxVocabSymbol)
+    {
+        return set.contains(symbol);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return set.toString();
+    }
 
 }

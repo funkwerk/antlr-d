@@ -31,6 +31,7 @@
 module antlr.v4.runtime.tree.SyntaxTree;
 
 import antlr.v4.runtime.tree.Tree;
+import antlr.v4.runtime.misc.Interval;
 
 // Interface SyntaxTree
 /**

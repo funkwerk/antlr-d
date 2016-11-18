@@ -48,11 +48,18 @@ ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 package <file.genPackage>;
 <endif>
 <namedActions.header>
-//import antlr.v4.runtime.atn.*;
+import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.RuntimeMetaData;
+import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.TokenStream;
 //import antlr.v4.runtime.misc.*;
-//import antlr.v4.runtime.tree.*;
+import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.TerminalNode;
 
 <parser>
 >>
@@ -223,16 +230,16 @@ Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
 public class <parser.name> : <superClass; null="Parser"> {
 	static this() { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
-	protected static final DFA[] _decisionToDFA;
-	protected static final PredictionContextCache _sharedContextCache =
+	protected static const DFA[] _decisionToDFA;
+	protected static const PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	<if(parser.tokens)>
-	public static final int
+	public static const int
 		<parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator=", ", wrap, anchor>;
 	<endif>
-	public static final int
+	public static const int
 		<parser.rules:{r | RULE_<r.name> = <r.index>}; separator=", ", wrap, anchor>;
-	public static final string[] ruleNames = [
+	public static const string[] ruleNames = [
 		<parser.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor>
 	];
 
@@ -259,7 +266,7 @@ public class <parser.name> : <superClass; null="Parser"> {
 		switch (ruleIndex) {
 		<parser.sempredFuncs.values:{f|
 case <f.ruleIndex>:
-	return <f.name>_sempred((<f.ctxType>)_localctx, predIndex);}; separator="\n">
+	return <f.name>_sempred(cast(<f.ctxType>)_localctx, predIndex);}; separator="\n">
 		}
 		return true;
 	}
@@ -271,19 +278,19 @@ case <f.ruleIndex>:
 >>
 
 vocabulary(literalNames, symbolicNames) ::= <<
-private static final string[] _LITERAL_NAMES = [
+private static const string[] _LITERAL_NAMES = [
 	<literalNames:{t | <t>}; null="null", separator=", ", wrap, anchor>
 ];
-private static final string[] _SYMBOLIC_NAMES = [
+private static const string[] _SYMBOLIC_NAMES = [
 	<symbolicNames:{t | <t>}; null="null", separator=", ", wrap, anchor>
 ];
-public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+public static const Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 /**
  * @deprecated Use {@link #VOCABULARY} instead.
  */
 deprecated
-public static final string[] tokenNames;
+public static const string[] tokenNames;
 static this() {
 	tokenNames = new string[_SYMBOLIC_NAMES.length];
 	for (int i = 0; i \< tokenNames.length; i++) {
@@ -378,7 +385,7 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 <ruleCtx>
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=",">) throws RecognitionException {
+<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public const <endif><currentRule.ctxType> <currentRule.name>(<args; separator=",">) {
 	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, getState()<currentRule.args:{a | , <a.name>}>);
 	enterRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>);
 	<namedActions.init>
@@ -415,11 +422,11 @@ LeftRecursiveRuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,
 <ruleCtx>
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=", ">) throws RecognitionException {
+<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public const <endif><currentRule.ctxType> <currentRule.name>(<args; separator=", ">) {
 	return <currentRule.name>(0<currentRule.args:{a | , <a.name>}>);
 }
 
-private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
+private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) {
 	ParserRuleContext _parentctx = _ctx;
 	int _parentState = getState();
 	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
@@ -732,17 +739,17 @@ public TerminalNode <t.name>(int i) {
 >>
 ContextRuleGetterDecl(r)       ::= <<
 public <r.ctxName> <r.name>() {
-	return getRuleContext(<r.ctxName>.class,0);
+	return getRuleContext(<r.ctxName>,0);
 }
 >>
 ContextRuleListGetterDecl(r)   ::= <<
 public <r.ctxName>[] <r.name>() {
-	return getRuleContexts(<r.ctxName>.class);
+	return getRuleContexts(<r.ctxName>);
 }
 >>
 ContextRuleListIndexedGetterDecl(r)   ::= <<
 public <r.ctxName> <r.name>(int i) {
-	return getRuleContext(<r.ctxName>.class,i);
+	return getRuleContext(<r.ctxName>,i);
 }
 >>
 
@@ -766,8 +773,8 @@ StructDecl(struct,ctorAttrs,attrs,getters,dispatchMethods,interfaces,extensionMe
 public static class <struct.name> : <if(contextSuperClass)><contextSuperClass><else>ParserRuleContext<endif><if(interfaces)>, <interfaces; separator=", "><endif> {
 	<attrs:{a | public <a>;}; separator="\n">
 	<getters:{g | <g>}; separator="\n">
-	<if(ctorAttrs)>public <struct.name>(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }<endif>
-	public <struct.name>(ParserRuleContext parent, int invokingState<ctorAttrs:{a | , <a>}>) {
+	<if(ctorAttrs)>public this(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }<endif>
+	public this(ParserRuleContext parent, int invokingState<ctorAttrs:{a | , <a>}>) {
 		super(parent, invokingState);
 		<struct.ctorAttrs:{a | this.<a.name> = <a.name>;}; separator="\n">
 	}
@@ -796,14 +803,14 @@ public static class <struct.name> : <currentRule.name; format="cap">Context {
 ListenerDispatchMethod(method) ::= <<
 override
 public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
-	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
+	if (listener.classinfo == <parser.grammarName>Listener.classinfo) (cast(<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
 }
 >>
 
 VisitorDispatchMethod(method) ::= <<
 override
 public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
-	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
+	if (visitor.classinfo == <parser.grammarName>Visitor.classinfo) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
 	else return visitor.visitChildren(this);
 }
 >>
@@ -880,21 +887,21 @@ Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
 public class <lexer.name> : <superClass; null="Lexer"> {
 	static { RuntimeMetaData.checkVersion("<lexerFile.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
-	protected static final DFA[] _decisionToDFA;
-	protected static final PredictionContextCache _sharedContextCache =
+	protected static const DFA[] _decisionToDFA;
+	protected static const PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
-	public static final int
+	public static const int
 		<lexer.tokens:{k | <k>=<lexer.tokens.(k)>}; separator=", ", wrap, anchor>;
 	<if(lexer.channels)>
-	public static final int
+	public static const int
 		<lexer.channels:{k | <k>=<lexer.channels.(k)>}; separator=", ", wrap, anchor>;
 	<endif>
-	<rest(lexer.modes):{m| public static final int <m> = <i>;}; separator="\n">
+	<rest(lexer.modes):{m| public static const int <m> = <i>;}; separator="\n">
 	public static string[] modeNames = {
 		<lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor>
 	};
 
-	public static final string[] ruleNames = {
+	public static const string[] ruleNames = {
 		<lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor>
 	};
 
@@ -930,10 +937,10 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 SerializedATN(model) ::= <<
 <if(rest(model.segments))>
 <! requires segmented representation !>
-private static final int _serializedATNSegments = <length(model.segments)>;
-<model.segments:{segment|private static final string _serializedATNSegment<i0> =
+private static const int _serializedATNSegments = <length(model.segments)>;
+<model.segments:{segment|private static const string _serializedATNSegment<i0> =
 	"<segment; wrap={"+<\n><\t>"}>";}; separator="\n">
-public static final string _serializedATN = Utils.join(
+public static const string _serializedATN = Utils.join(
 	new string[] {
 		<model.segments:{segment | _serializedATNSegment<i0>}; separator=",\n">
 	},
@@ -941,12 +948,12 @@ public static final string _serializedATN = Utils.join(
 );
 <else>
 <! only one segment, can be inlined !>
-public static final string _serializedATN =
+public static const string _serializedATN =
 	"<model.serialized; wrap={"+<\n><\t>"}>";
 <endif>
-public static final ATN _ATN =
+public static const ATN _ATN =
 	new ATNDeserializer().deserialize(_serializedATN.toCharArray());
-static {
+static this() {
 	_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 	for (int i = 0; i \< _ATN.getNumberOfDecisions(); i++) {
 		_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);

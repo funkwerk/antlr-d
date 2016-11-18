@@ -81,6 +81,7 @@ abstract class Transition
 
     public this(ATNState target)
     {
+        this.target = target;
     }
 
     public this()

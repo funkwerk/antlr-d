@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2013 Terence Parr
+ *  Copyright (c) 2013 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,41 +28,46 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.atn.ATNSimulator;
+module antlr.v4.runtime.atn.ATNDeserializer;
 
 import std.uuid;
-import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ATNDeserializer;
-import antlr.v4.runtime.dfa.DFAState;
 
-// Class ATNSimulator
+// Class ATNDeserializer
 /**
  * TODO add class description
  */
-abstract class ATNSimulator
+class ATNDeserializer
 {
 
-    public static int SERIALIZED_VERSION;
+    public static immutable int SERIALIZED_VERSION = 3;
+
+    public static UUID BASE_SERIALIZED_UUID;
+
+    public static UUID ADDED_PRECEDENCE_TRANSITIONS;
+
+    public static UUID ADDED_LEXER_ACTIONS;
+
+    public static UUID[] SUPPORTED_UUIDS;
 
     /**
      * @uml
      * This is the current serialized UUID.
-     * deprecated Use {@link ATNDeserializer#checkCondition(boolean)} instead.
      */
     public static UUID SERIALIZED_UUID;
 
-    /**
-     * @uml
-     * Must distinguish between missing edge and edge we know leads nowhere
-     */
-    public static DFAState ERROR;
-
-    public ATN atn;
-
     public static this()
     {
-        SERIALIZED_VERSION = ATNDeserializer.SERIALIZED_VERSION;
-        SERIALIZED_UUID = ATNDeserializer.SERIALIZED_UUID;
+        /* WARNING: DO NOT MERGE THESE LINES. If UUIDs differ during a merge,
+         * resolve the conflict by generating a new ID!
+         */
+        BASE_SERIALIZED_UUID = sha1UUID("33761B2D-78BB-4A43-8B0B-4F5BEE8AACF3");
+        ADDED_PRECEDENCE_TRANSITIONS = sha1UUID("1DA0C57D-6C06-438A-9B27-10BCB3CE0F61");
+        ADDED_LEXER_ACTIONS = sha1UUID("AADB8D7E-AEEF-4415-AD2B-8204D6CF042E");
+        SUPPORTED_UUIDS ~= BASE_SERIALIZED_UUID;
+        SUPPORTED_UUIDS ~= ADDED_PRECEDENCE_TRANSITIONS;
+        SUPPORTED_UUIDS ~= ADDED_LEXER_ACTIONS;
+
+        SERIALIZED_UUID = ADDED_LEXER_ACTIONS;
     }
 
 }

@@ -28,69 +28,38 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.Parser;
+module antlr.v4.runtime.ANTLRErrorStrategy;
 
-import antlr.v4.runtime.ANTLRErrorStrategy;
-import antlr.v4.runtime.ParserRuleContext;
-import antlr.v4.runtime.Recognizer;
-import antlr.v4.runtime.TraceListener;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ATNSimulator;
-import antlr.v4.runtime.misc.IntegerStack;
+import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.Parser;
 
-// Class Parser
+// Interface ANTLRErrorStrategy
 /**
- * TODO add class description
+ * TODO add interface description
  */
-abstract class Parser : Recognizer!(Token, ATNSimulator)
+interface ANTLRErrorStrategy
 {
 
+    public void reset(Parser recognizer);
+
+    public void recoverInline(Parser recognizer);
+
+    public void recover(Parser recognizer, RecognitionException e);
+
+    public void sync(Parser recognizer);
+
+    public bool inErrorRecoveryMode(Parser recognizer);
+
+    public void reportMatch(Parser recognizer);
+
     /**
      * @uml
-     * This field maps from the serialized ATN string to the deserialized {@link ATN} with
-     * bypass alternatives.
+     * Report any kind of {@link RecognitionException}. This method is called by
+     * the default exception handler generated for a rule method.
      *
-     * @see ATNDeserializationOptions#isGenerateRuleBypassTransitions()
+     * @param recognizer the parser instance
+     * @param e the recognition exception to report
      */
-    private ATN[string] bypassAltsAtnCache;
-
-    protected ANTLRErrorStrategy _errHandler;
-
-    protected TokenStream _input;
-
-    public IntegerStack _precedenceStack;
-
-    /**
-     * @uml
-     * The {@link ParserRuleContext} object for the currently executing rule.
-     * This is always non-null during the parsing process.
-     * @read
-     * @write
-     */
-    public ParserRuleContext ctx_;
-
-    /**
-     * @uml
-     * Specifies whether or not the parser should construct a parse tree during
-     * the parsing process. The default value is {@code true}.
-     *
-     * @see #getBuildParseTree
-     * @see #setBuildParseTree
-     */
-    protected bool _buildParseTrees = true;
-
-    public TraceListener _tracer;
-
-    public final ParserRuleContext ctx()
-    {
-        return this.ctx_;
-    }
-
-    public final void ctx(ParserRuleContext ctx)
-    {
-        this.ctx_ = ctx;
-    }
+    public void reportError(Parser recognizer, RecognitionException e);
 
 }

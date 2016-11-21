@@ -4,7 +4,9 @@ MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
 SRC_ATN = $(SRC_DIR)/atn
+SRC_TREE = $(SRC_DIR)/tree
 SRC =	$(SRC_DIR)/RuntimeMetaData.d\
+	$(SRC_DIR)/Parser.d\
 	$(SRC_ATN)/ATN.d\
 	$(SRC_ATN)/ATNState.d\
 	$(SRC_ATN)/ATNConfig.d\
@@ -16,7 +18,9 @@ SRC =	$(SRC_DIR)/RuntimeMetaData.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
 	$(SRC_DIR)/misc/EqualityComparator.d\
 	$(SRC_DIR)/misc/MurmurHash.d\
-	$(SRC_DIR)/misc/DoubleKeyMap
+	$(SRC_DIR)/misc/DoubleKeyMap\
+	$(SRC_TREE)/ParseTreeListener\
+	$(SRC_DIR)/TrimToSizeListener
 
 BUILD_DIR = build
 MODEL_DIR = model

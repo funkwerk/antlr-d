@@ -14,6 +14,7 @@ SRC =	$(SRC_DIR)/RuntimeMetaData.d\
 	$(SRC_ATN)/ArrayPredictionContext.d\
 	$(SRC_ATN)/EpsilonTransition.d\
 	$(SRC_ATN)/ATNDeserializationOptions.d\
+	$(SRC_ATN)/ATNDeserializer.d\
 	$(SRC_DIR)/misc/Interval.d\
 	$(SRC_DIR)/misc/IntervalSet.d\
 	$(SRC_DIR)/misc/AbstractEqualityComparator.d\

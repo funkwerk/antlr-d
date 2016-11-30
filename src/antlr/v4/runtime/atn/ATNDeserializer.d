@@ -39,9 +39,15 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
+import antlr.v4.runtime.atn.BlockStartState;
+import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
+import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.EpsilonTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.misc.IntervalSet;
 
@@ -160,7 +166,7 @@ class ATNDeserializer
         }
 
         int p = 0;
-        int version_atn = to!int(data[p++]);
+        auto version_atn = to!int(data[p++]);
         if (version_atn != SERIALIZED_VERSION) {
             string reason = format("Could not deserialize ATN with version %d (expected %d).", version_atn, SERIALIZED_VERSION);
             assert(false, reason);
@@ -200,7 +206,7 @@ class ATNDeserializer
             }
 
             ATNState s = stateFactory(stype, ruleIndex);
-            if ( stype == ATNState.LOOP_END ) { // special case
+            if (stype == StateNames.LOOP_END) { // special case
                 int loopBackStateNumber = to!int(data[p++]);
                 int[BlockStartState][] _a;
                 _a[cast(int[BlockStartState])s] = loopBackStateNumber;
@@ -296,9 +302,9 @@ class ATNDeserializer
             int nintervals = to!int(data[p]);
             p++;
             IntervalSet set = new IntervalSet();
-            sets.add(set);
+            sets ~= set;
 
-            boolean containsEof = to!int(data[p++]) != 0;
+            bool containsEof = to!int(data[p++]) != 0;
             if (containsEof) {
                 set.add(-1);
             }
@@ -359,7 +365,7 @@ class ATNDeserializer
                 }
 
                 // block end states can only be associated to a single block start state
-                if ((cast(BlockStartState)state).endState.startState != null) {
+                if ((cast(BlockStartState)state).endState.startState !is null) {
                     throw new IllegalStateException();
                 }
 

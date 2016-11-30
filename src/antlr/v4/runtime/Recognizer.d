@@ -50,7 +50,7 @@ class Recognizer(U, V)
 
     public int[string][string[]] ruleIndexMapCache;
 
-    public ANTLRErrorListener[] _listeners;
+    public ANTLRErrorListener!(U,V)[] _listeners;
 
     protected V _interp;
 

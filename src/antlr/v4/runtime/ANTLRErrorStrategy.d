@@ -33,18 +33,18 @@ module antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Parser;
 
-// Interface ANTLRErrorStrategy
+// Interface Template ANTLRErrorStrategy
 /**
  * TODO add interface description
  */
-interface ANTLRErrorStrategy
+interface ANTLRErrorStrategy(U, V)
 {
 
     public void reset(Parser recognizer);
 
     public void recoverInline(Parser recognizer);
 
-    public void recover(Parser recognizer, RecognitionException e);
+    public void recover(Parser recognizer, RecognitionException!(U,V) e);
 
     public void sync(Parser recognizer);
 
@@ -60,6 +60,6 @@ interface ANTLRErrorStrategy
      * @param recognizer the parser instance
      * @param e the recognition exception to report
      */
-    public void reportError(Parser recognizer, RecognitionException e);
+    public void reportError(Parser recognizer, RecognitionException!(U,V) e);
 
 }

@@ -4,7 +4,17 @@ module antlr.v4.runtime.RuntimeException;
 /**
  * TODO add class description
  */
-class RuntimeException
+class RuntimeException : Exception
 {
+
+    public string elementDescription;
+
+    public this(string elementDescription)
+    {
+    }
+
+    public string msg()
+    {
+    }
 
 }

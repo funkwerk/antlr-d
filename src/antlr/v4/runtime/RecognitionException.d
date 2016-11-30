@@ -1,12 +1,16 @@
 module antlr.v4.runtime.RecognitionException;
 
 import antlr.v4.runtime.RuntimeException;
+import antlr.v4.runtime.Recognizer;
 
-// Class RecognitionException
+
+// Class Template RecognitionException
 /**
  * TODO add class description
  */
-class RecognitionException : RuntimeException
+class RecognitionException(U, V) : RuntimeException
 {
+
+    public Recognizer!(U, V) recognizer;
 
 }

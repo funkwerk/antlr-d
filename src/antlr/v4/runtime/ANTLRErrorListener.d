@@ -34,11 +34,11 @@ import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.ATNSimulator;
 
-// Interface ANTLRErrorListener
+// Interface Template ANTLRErrorListener
 /**
  * TODO add interface description
  */
-interface ANTLRErrorListener(U,V)
+interface ANTLRErrorListener(U, V)
 {
 
     /**
@@ -75,7 +75,7 @@ interface ANTLRErrorListener(U,V)
      *        the parser was able to recover in line without exiting the
      *        surrounding rule.
      */
-    public void syntaxError(Recognizer!(U,V) recognizer, Object offendingSymbol,
-                            int line, int charPositionInLine, string msg, RecognitionException!(U,V) e);
+    public void syntaxError(Recognizer!(U, V) recognizer, Object offendingSymbol, int line,
+        int charPositionInLine, string msg, RecognitionException!(U,V) e);
 
 }

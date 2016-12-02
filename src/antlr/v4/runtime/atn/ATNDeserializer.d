@@ -35,6 +35,7 @@ import std.stdio;
 import std.conv;
 import std.format;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.ATNState;
@@ -43,8 +44,12 @@ import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
+import antlr.v4.runtime.atn.LoopEndState;
+import antlr.v4.runtime.atn.PlusLoopbackState;
+import antlr.v4.runtime.atn.PlusBlockStartState;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.StarLoopbackState;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.EpsilonTransition;
@@ -195,7 +200,7 @@ class ATNDeserializer
         for (int i=0; i<nstates; i++) {
             int stype = to!int(data[p++]);
             // ignore bad type of states
-            if ( stype==ATNState.INVALID_TYPE ) {
+            if (stype == StateNames.INVALID) {
                 atn.addState(null);
                 continue;
             }

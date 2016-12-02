@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2016 Terence Parr
+ *  Copyright (c) 2016 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -28,69 +28,41 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module antlr.v4.runtime.Parser;
+module antlr.v4.runtime.atn.StarLoopEntryState;
 
-import antlr.v4.runtime.ANTLRErrorStrategy;
-import antlr.v4.runtime.ParserRuleContext;
-import antlr.v4.runtime.Recognizer;
-import antlr.v4.runtime.TraceListener;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ATNSimulator;
-import antlr.v4.runtime.misc.IntegerStack;
+import antlr.v4.runtime.atn.DecisionState;
+import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.StarLoopbackState;
 
-// Class Parser
+// Class StarLoopEntryState
 /**
  * TODO add class description
  */
-abstract class Parser : Recognizer!(Token, ATNSimulator)
+class StarLoopEntryState : DecisionState
 {
 
     /**
      * @uml
-     * This field maps from the serialized ATN string to the deserialized {@link ATN} with
-     * bypass alternatives.
+     * Indicates whether this state can benefit from a precedence DFA during SLL
+     * decision making.
      *
-     * @see ATNDeserializationOptions#isGenerateRuleBypassTransitions()
+     * <p>This is a computed property that is calculated during ATN deserialization
+     * and stored for use in {@link ParserATNSimulator} and
+     * {@link ParserInterpreter}.</p>
+     *
+     * @see DFA#isPrecedenceDfa()
      */
-    private ATN[string] bypassAltsAtnCache;
+    public StarLoopbackState loopBackState;
 
-    protected ANTLRErrorStrategy!(Token, ATNSimulator) _errHandler;
-
-    protected TokenStream _input;
-
-    public IntegerStack _precedenceStack;
+    public bool isPrecedenceDecision;
 
     /**
      * @uml
-     * The {@link ParserRuleContext} object for the currently executing rule.
-     * This is always non-null during the parsing process.
-     * @read
-     * @write
+     * @override
      */
-    public ParserRuleContext ctx_;
-
-    /**
-     * @uml
-     * Specifies whether or not the parser should construct a parse tree during
-     * the parsing process. The default value is {@code true}.
-     *
-     * @see #getBuildParseTree
-     * @see #setBuildParseTree
-     */
-    protected bool _buildParseTrees = true;
-
-    public TraceListener _tracer;
-
-    public final ParserRuleContext ctx()
+    public override int getStateType()
     {
-        return this.ctx_;
-    }
-
-    public final void ctx(ParserRuleContext ctx)
-    {
-        this.ctx_ = ctx;
+        return StateNames.STAR_LOOP_ENTRY;
     }
 
 }

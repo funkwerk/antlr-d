@@ -9,6 +9,10 @@ class RuntimeException : Exception
 
     public string elementDescription;
 
+    public this()
+    {
+    }
+
     public this(string elementDescription)
     {
     }

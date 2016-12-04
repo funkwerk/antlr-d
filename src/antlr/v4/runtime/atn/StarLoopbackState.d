@@ -11,7 +11,7 @@ import antlr.v4.runtime.atn.StarLoopEntryState;
 class StarLoopbackState : ATNState
 {
 
-    public StarLoopbackState getLoopEntryState()
+    public StarLoopEntryState getLoopEntryState()
     {
         return cast(StarLoopEntryState)transition(0).target;
     }

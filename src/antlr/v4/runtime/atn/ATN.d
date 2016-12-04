@@ -35,6 +35,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.RuleStartState;
+import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.LL1Analyzer;
 import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.LexerAction;
@@ -69,7 +70,7 @@ class ATN
      * @uml
      * Maps from rule index to stop state number.
      */
-    public RuleStartState[] ruleToStopState;
+    public RuleStopState[] ruleToStopState;
 
     public TokensStartState[string] modeNameToStartState;
 
@@ -102,7 +103,7 @@ class ATN
      */
     public LexerAction[] lexerActions;
 
-    public TokensStartState modeToStartState;
+    public TokensStartState[] modeToStartState;
 
     /**
      * @uml
@@ -126,6 +127,40 @@ class ATN
         LL1Analyzer anal = new LL1Analyzer(this);
         IntervalSet next = anal.LOOK(s, ctx);
         return next;
+    }
+
+    /**
+     * @uml
+     * Compute the set of valid tokens that can occur starting in {@code s} and
+     * staying in same rule. {@link Token#EPSILON} is in set if we reach end of
+     * rule.
+     */
+    public IntervalSet nextTokens(ATNState s)
+    {
+    }
+
+    public void addState(ATNState state)
+    {
+    }
+
+    public void removeState(ATNState state)
+    {
+    }
+
+    public int defineDecisionState(DecisionState s)
+    {
+    }
+
+    public DecisionState getDecisionState(int decision)
+    {
+    }
+
+    public int getNumberOfDecisions()
+    {
+    }
+
+    public IntervalSet getExpectedTokens(int stateNumber, RuleContext context)
+    {
     }
 
 }

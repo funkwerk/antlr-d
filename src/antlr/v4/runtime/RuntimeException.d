@@ -11,14 +11,21 @@ class RuntimeException : Exception
 
     public this()
     {
+        super("");
     }
 
     public this(string elementDescription)
     {
+        super("");
+        this.elementDescription = elementDescription;
     }
 
     public string msg()
     {
+        if (elementDescription !is null) {
+            return elementDescription;
+        }
+        return null;
     }
 
 }

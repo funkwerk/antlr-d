@@ -1,6 +1,7 @@
 module antlr.v4.runtime.CharStream;
 
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.misc.Interval;
 
 // Class CharStream
 /**
@@ -27,8 +28,6 @@ class CharStream : IntStream
      *  @throws UnsupportedOperationException if the stream does not support
      *  getting the text of the specified interval
      */
-    public string getText(Interval interval)
-    {
-    }
+    abstract public string getText(Interval interval);
 
 }

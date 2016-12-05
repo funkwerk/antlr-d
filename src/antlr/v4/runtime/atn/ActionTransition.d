@@ -1,5 +1,6 @@
 module antlr.v4.runtime.atn.ActionTransition;
 
+import std.conv; 
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.ATNState;
@@ -67,7 +68,7 @@ class ActionTransition : Transition
      */
     public override string toString()
     {
-        return "action_" ~ ruleIndex+":" ~ actionIndex;
+        return "action_" ~ to!string(ruleIndex) ~ ":" ~ to!string(actionIndex);
     }
 
 }

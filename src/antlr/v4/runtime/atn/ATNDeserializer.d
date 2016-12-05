@@ -42,6 +42,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
+import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.BasicBlockStartState;
 import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.BlockEndState;

@@ -30,6 +30,8 @@
 
 module antlr.v4.runtime.atn.ATN;
 
+import std.conv;
+import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNType;
@@ -37,6 +39,8 @@ import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.LL1Analyzer;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.misc.IntervalSet;
@@ -137,30 +141,96 @@ class ATN
      */
     public IntervalSet nextTokens(ATNState s)
     {
+        if (s.nextTokenWithinRule !is null ) return s.nextTokenWithinRule;
+        s.nextTokenWithinRule = nextTokens(s, null);
+        s.nextTokenWithinRule.setReadonly(true);
+        return s.nextTokenWithinRule;
     }
 
     public void addState(ATNState state)
     {
+        if (state !is null) {
+            state.atn = this;
+            state.stateNumber = to!int(states.length);
+        }
+        states ~= state;
     }
 
     public void removeState(ATNState state)
     {
+        states[state.stateNumber] = null; // just free mem, don't shift states in list
     }
 
     public int defineDecisionState(DecisionState s)
     {
+        decisionToState ~= s;
+        s.decision = to!int(decisionToState.length)-1;
+        return s.decision;
     }
 
     public DecisionState getDecisionState(int decision)
     {
+        if (decisionToState.length > 0) {
+            return decisionToState[decision];
+        }
+        return null;
     }
 
     public int getNumberOfDecisions()
     {
+        return to!int(decisionToState.length);
     }
 
+    /**
+     * @uml
+     * Computes the set of input symbols which could follow ATN state number
+     * {@code stateNumber} in the specified full {@code context}. This method
+     * considers the complete parser context, but does not evaluate semantic
+     * predicates (i.e. all predicates encountered during the calculation are
+     * assumed true). If a path in the ATN exists from the starting state to the
+     * {@link RuleStopState} of the outermost context without matching any
+     * symbols, {@link Token#EOF} is added to the returned set.
+     *
+     * <p>If {@code context} is {@code null}, it is treated as
+     * {@link ParserRuleContext#EMPTY}.</p>
+     *
+     *  @param stateNumber the ATN state number
+     *  @param context the full parse context
+     *  @return The set of potentially valid input symbols which could follow the
+     *  specified state in the specified context.
+     *  @throws IllegalArgumentException if the ATN does not contain a state with
+     *  number {@code stateNumber}
+     */
     public IntervalSet getExpectedTokens(int stateNumber, RuleContext context)
     {
+        if (stateNumber < 0 || stateNumber >= states.length) {
+            throw new IllegalArgumentException("Invalid state number.");
+        }
+
+        RuleContext ctx = context;
+        ATNState s = states[stateNumber];
+        IntervalSet following = nextTokens(s);
+        if (!following.contains(Token.EPSILON)) {
+            return following;
+        }
+
+        IntervalSet expected = new IntervalSet();
+        expected.addAll(following);
+        expected.remove(Token.EPSILON);
+        while (ctx !is null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
+            ATNState invokingState = states[ctx.invokingState];
+            RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
+            following = nextTokens(rt.followState);
+            expected.addAll(following);
+            expected.remove(Token.EPSILON);
+            ctx = ctx.parent;
+        }
+
+        if (following.contains(Token.EPSILON)) {
+            expected.add(Token.EOF);
+        }
+
+        return expected;
     }
 
 }

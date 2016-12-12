@@ -38,6 +38,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.misc.IntegerStack;
 
 // Class Parser
@@ -82,6 +83,57 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
     protected bool _buildParseTrees = true;
 
     public TraceListener _tracer;
+
+    /**
+     * @uml
+     * The list of {@link ParseTreeListener} listeners registered to receive
+     * events during the parse.
+     *
+     *  @see #addParseListener
+     */
+    public ParseTreeListener[] _parseListeners;
+
+    /**
+     * @uml
+     * The number of syntax errors reported during parsing. This value is
+     * incremented each time {@link #notifyErrorListeners} is called.
+     */
+    public int _syntaxErrors;
+
+    /**
+     * @uml
+     * Indicates parser has match()ed EOF token. See {@link #exitRule()}.
+     */
+    public bool matchedEOF;
+
+    public this()
+    {
+    }
+
+    public this(TokenStream input)
+    {
+        setInputStream(input);
+    }
+
+    /**
+     * @uml
+     * reset the parser's state
+     */
+    public void reset()
+    {
+        if ( getInputStream()!=null ) getInputStream().seek(0);
+        _errHandler.reset(this);
+        ctx_ = null;
+        _syntaxErrors = 0;
+        matchedEOF = false;
+        setTrace(false);
+        _precedenceStack.clear();
+        _precedenceStack.push(0);
+        ATNSimulator interpreter = getInterpreter();
+        if (interpreter != null) {
+            interpreter.reset();
+        }
+    }
 
     public final ParserRuleContext ctx()
     {

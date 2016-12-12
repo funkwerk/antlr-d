@@ -37,20 +37,6 @@ import antlr.v4.runtime.atn.ATNState;
 // Class EpsilonTransition
 /**
  * TODO add class description
- * @uml
- * UnitTest:
- * auto tr = new EpsilonTransition();
- * assert(tr.serializationNames == ["INVALID",
- *                                  "EPSILON",
- *                                  "RANGE",
- *                                  "RULE",
- *                                  "PREDICATE",
- *                                  "ATOM",
- *                                  "ACTION",
- *                                  "SET",
- *                                  "NOT_SET",
- *                                  "WILDCARD",
- *                                  "PRECEDENCE"]);
  */
 class EpsilonTransition : Transition
 {

@@ -40,10 +40,6 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
 // Class ArrayPredictionContext
 /**
  * TODO add class description
- * @uml
- * UnitTest:
- * auto spc = new SingletonPredictionContext();
- * auto apc = new ArrayPredictionContext(spc);
  */
 class ArrayPredictionContext : PredictionContext
 {

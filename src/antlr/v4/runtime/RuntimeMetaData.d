@@ -33,8 +33,6 @@ import std.string;
  * To trap any error messages issued by this code, use System.setErr()
  * in your main() startup code.
  * </p>
- * UnitTest:
- * assert("4.5" == RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
  */
 class RuntimeMetaData
 {

@@ -108,10 +108,6 @@ class Interval
      * @uml
      * @pure
      * @safe
-     * UnitTest:
-     * auto a = new Interval(1, 2);
-     * auto b = new Interval(1, 2);
-     * assert(a.equals(b), a.toString);
      */
     public bool equals(Object o) @safe pure
     {
@@ -210,12 +206,6 @@ class Interval
      * Are two intervals adjacent such as 0..41 and 42..42?
      * @pure
      * @safe
-     * UnitTest:
-     * auto a = new Interval(1 , 2);
-     * auto b = new Interval(3 , 10);
-     * assert(b.adjacent(a));
-     * assert(!b.adjacent(new Interval(1, 6)));
-     * assert(!b.adjacent(new Interval(10, 16)));
      */
     public bool adjacent(Interval other) @safe pure
     {
@@ -245,17 +235,6 @@ class Interval
      * @uml
      * Return the interval computed from combining this and other
      * @safe
-     * UnitTest:
-     * auto a = new Interval(1, 2);
-     * auto b = new Interval(3, 10);
-     * auto c = new Interval(1, 10);
-     * auto d = new Interval(7, 10);
-     * assert(b.unionInterval(a).equals(c));
-     * assert(c.unionInterval(a).equals(c));
-     * assert(a.unionInterval(c).equals(c));
-     * assert(c.unionInterval(d).equals(c));
-     * assert(d.unionInterval(c).equals(c));
-     * assert(!d.unionInterval(c).equals(d));
      */
     public Interval unionInterval(Interval other) @safe
     {

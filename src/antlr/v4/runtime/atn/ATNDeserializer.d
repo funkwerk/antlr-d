@@ -38,6 +38,7 @@ import std.traits;
 import std.algorithm: canFind;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.ATNState;

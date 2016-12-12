@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.atn.AtomTransition;
 
-import std.conv; 
+import std.conv;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.TransitionStates;

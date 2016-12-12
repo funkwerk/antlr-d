@@ -31,13 +31,14 @@
 module antlr.v4.runtime.TrimToSizeListener;
 
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 
 // Class TrimToSizeListener
 /**
  * TODO add class description
  */
-class TrimToSizeListener : ParseTreeListener
+class TrimToSizeListener : Parser, ParseTreeListener
 {
 
     public static TrimToSizeListener INSTANCE;

@@ -92,14 +92,6 @@ class IntervalSet : IntSet
         addAll(set);
     }
 
-    /**
-     * @uml
-     * UnitTest:
-     * auto ts = new IntervalSet(99, 77, 8, 7, 78);
-     * assert("{7..8, 77..78, 99}" == ts.toString);
-     * ts = new IntervalSet(12);
-     * assert("12" == ts.toString);
-     */
     public this(int[] els ...)
     {
         foreach (int e; els)
@@ -216,14 +208,6 @@ class IntervalSet : IntSet
         intervals_ ~= addition;
     }
 
-    /**
-     * @uml
-     * UnitTest:
-     * auto ts = new IntervalSet(99, 77, 8, 7, 78, 9, 11);
-     * auto s = new IntervalSet(10, 12);
-     * ts.addAll(s);
-     * assert("{7..12, 77..78, 99}" == ts.toString);
-     */
     public IntervalSet addAll(IntSet set)
     {
         if (set is null) {
@@ -254,13 +238,6 @@ class IntervalSet : IntSet
         assert("{7..12, 77..78, 99}" == ts.toString);
     }
 
-    /**
-     * @uml
-     * UnitTest:
-     * auto ts = new IntervalSet(11, 10, 8, 7, 78);
-     * IntervalSet tn = ts.complement(1, 200);
-     * assert("{1..6, 9, 12..77, 79..200}" == tn.toString);
-     */
     public IntervalSet complement(int minElement, int maxElement)
     {
         return this.complement(IntervalSet.of(minElement, maxElement));
@@ -318,14 +295,6 @@ class IntervalSet : IntSet
         return o;
     }
 
-    /**
-     * @uml
-     * UnitTest:
-     * auto ta = new IntervalSet(11, 10, 8, 7, 78);
-     * auto tb = new IntervalSet(12, 10, 8, 7, 79);
-     * auto tand = ta.and(tb);
-     * assert("{7..8, 10}" == tand.toString);
-     */
     public IntervalSet and(IntSet other)
     {
         if (other is null ) { //|| !(other instanceof IntervalSet) ) {
@@ -468,17 +437,6 @@ class IntervalSet : IntSet
     /**
      * @uml
      * combine all sets in the array returned the or'd value
-     * UnitTest:
-     * IntervalSet ts;
-     * auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
-     * auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
-     * auto ts3 = new IntervalSet(55, 44);
-     * IntervalSet[] tl;
-     * tl ~= ts1;
-     * tl ~= ts2;
-     * tl ~= ts3;
-     * auto r = ts.or(tl);
-     * assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
      */
     public static IntervalSet or(IntervalSet[] sets)
     {

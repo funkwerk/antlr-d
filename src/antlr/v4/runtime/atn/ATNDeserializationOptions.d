@@ -33,12 +33,6 @@ module antlr.v4.runtime.atn.ATNDeserializationOptions;
 // Class ATNDeserializationOptions
 /**
  * TODO add class description
- * @uml
- * UnitTest:
- * auto so = new ATNDeserializationOptions();
- * assert(!so.isReadOnly);
- * assert(so.defaultOptions.isReadOnly);
- * assert(so.defaultOptions.verifyATN);
  */
 class ATNDeserializationOptions
 {

@@ -551,7 +551,7 @@ abstract class PredictionContext
 		buf.put("rankdir=LR;\n");
 
 		PredictionContext[] nodes = getAllContextNodes(context);
-		nodes = nodes.sort;
+                nodes.sort();
 		foreach (PredictionContext current; nodes) {
 			if (current.classinfo == SingletonPredictionContext.classinfo) {
 				string s = to!string(current.id);

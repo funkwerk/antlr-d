@@ -91,6 +91,17 @@ class Token
 
     /**
      * @uml
+     * An index from 0..n-1 of the token object in the input stream.
+     * This must be valid in order to print token streams and
+     * use TokenRewriteStream.
+     *
+     * Return -1 to indicate that this token was conjured up since
+     * it doesn't have a valid index.
+     */
+    abstract public int getTokenIndex();
+
+    /**
+     * @uml
      * The starting character index of the token
      * This method is optional; return -1 if not implemented.
      */

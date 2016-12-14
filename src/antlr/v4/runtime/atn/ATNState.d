@@ -71,7 +71,7 @@ abstract class ATNState
      * @uml
      * Track the transitions emanating from this ATN state.
      */
-    protected Transition[] transitions;
+    public Transition[] transitions;
 
     /**
      * @uml

@@ -3,9 +3,9 @@ module antlr.v4.runtime.atn.StateNames;
 // Enum StateNames
 /**
  * @uml
- * Type: short
+ * Type: ushort
  */
-enum StateNames : short
+enum StateNames : ushort
 {
     INVALID,
     BASIC,

@@ -11,6 +11,12 @@ class IllegalStateException : RuntimeException
 
     public this()
     {
+        super();
+    }
+
+    public this(string elementDescription)
+    {
+        super(elementDescription);
     }
 
 }

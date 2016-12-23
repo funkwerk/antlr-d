@@ -266,7 +266,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
 
     /**
      * @uml
-     * @return {@code true} if the {@link ParserRuleContext#children} list is trimed
+     * The @return {@code true} if the {@link ParserRuleContext#children} list is trimed
      *  using the default {@link Parser.TrimToSizeListener} during the parse process.
      */
     public bool getTrimParseTree()
@@ -282,6 +282,40 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         }
 
         return listeners;
+    }
+
+    /**
+     * @uml
+     * Registers {@code listener} to receive events during the parsing process.
+     *
+     * <p>To support output-preserving grammar transformations (including but not
+     * limited to left-recursion removal, automated left-factoring, and
+     * optimized code generation), calls to listener methods during the parse
+     * may differ substantially from calls made by
+     * {@link ParseTreeWalker#DEFAULT} used after the parse is complete. In
+     * particular, rule entry and exit events may occur in a different order
+     * during the parse than after the parser. In addition, calls to certain
+     * rule entry methods may be omitted.</p>
+     *
+     * <p>With the following specific exceptions, calls to listener events are
+     * <em>deterministic</em>, i.e. for identical input the calls to listener
+     * methods will be the same.</p>
+     *
+     * <ul>
+     * <li>Alterations to the grammar used to generate code may change the
+     * behavior of the listener calls.</li>
+     * <li>Alterations to the command line options passed to ANTLR 4 when
+     * generating the parser may change the behavior of the listener calls.</li>
+     * <li>Changing the version of the ANTLR Tool used to generate the parser
+     * may change the behavior of the listener calls.</li>
+     * </ul>
+     *
+     *  @param listener the listener to add
+     *
+     *  @throws NullPointerException if {@code} listener is {@code null}
+     */
+    public void addParseListener(ParseTreeListener listener)
+    {
     }
 
     public final ParserRuleContext ctx()

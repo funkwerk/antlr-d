@@ -79,8 +79,6 @@ abstract class ATNState
      */
     public IntervalSet nextTokenWithinRule;
 
-    abstract public int getStateType();
-
     /**
      * @uml
      * @pure

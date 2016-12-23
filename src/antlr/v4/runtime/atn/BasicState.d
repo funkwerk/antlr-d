@@ -46,7 +46,7 @@ class BasicState : ATNState
      */
     public override int getStateType()
     {
-        return cast(int)StateNames.BASIC;
+        return StateNames.BASIC;
     }
 
 }

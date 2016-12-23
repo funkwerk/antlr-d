@@ -47,6 +47,7 @@ import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.BasicBlockStartState;
 import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.BlockEndState;
+import antlr.v4.runtime.atn.StarBlockStartState;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerCustomAction;
@@ -592,22 +593,89 @@ class ATNDeserializer
      */
     protected void verifyATN(ATN atn)
     {
+        // verify assumptions
+        foreach (ATNState state; atn.states) {
+            if (state is null) {
+                continue;
+            }
+
+            checkCondition(state.onlyHasEpsilonTransitions() || state.getNumberOfTransitions() <= 1);
+
+            if (state.classinfo == PlusBlockStartState.classinfo) {
+                checkCondition((cast(PlusBlockStartState)state).loopBackState !is null);
+            }
+
+            if (state.classinfo == StarLoopEntryState.classinfo) {
+                StarLoopEntryState starLoopEntryState = cast(StarLoopEntryState)state;
+                checkCondition(starLoopEntryState.loopBackState !is null);
+                checkCondition(starLoopEntryState.getNumberOfTransitions() == 2);
+
+                if (starLoopEntryState.transition(0).target.classinfo == StarBlockStartState.classinfo) {
+                    checkCondition(starLoopEntryState.transition(1).target.classinfo == LoopEndState.classinfo);
+                    checkCondition(!starLoopEntryState.nonGreedy);
+                }
+                else if (starLoopEntryState.transition(0).target.classinfo == LoopEndState.classinfo) {
+                    checkCondition(starLoopEntryState.transition(1).target.classinfo == StarBlockStartState.classinfo);
+                    checkCondition(starLoopEntryState.nonGreedy);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+            }
+
+            if (state.classinfo == StarLoopbackState.classinfo) {
+                checkCondition(state.getNumberOfTransitions() == 1);
+                checkCondition(state.transition(0).target.classinfo == StarLoopEntryState.classinfo);
+            }
+
+            if (state.classinfo == LoopEndState.classinfo) {
+                checkCondition((cast(LoopEndState)state).loopBackState !is null);
+            }
+
+            if (state.classinfo == RuleStartState.classinfo) {
+                checkCondition((cast(RuleStartState)state).stopState !is null);
+            }
+
+            if (state.classinfo ==  BlockStartState.classinfo) {
+                checkCondition((cast(BlockStartState)state).endState !is null);
+            }
+
+            if (state.classinfo == BlockEndState.classinfo) {
+                checkCondition((cast(BlockEndState)state).startState !is null);
+            }
+
+            if (state.classinfo == DecisionState.classinfo) {
+                DecisionState decisionState = cast(DecisionState)state;
+                checkCondition(decisionState.getNumberOfTransitions() <= 1 || decisionState.decision >= 0);
+            }
+            else {
+                checkCondition(state.getNumberOfTransitions() <= 1 || state.classinfo == RuleStopState.classinfo);
+            }
+        }
+
     }
 
     protected void checkCondition(bool condition)
     {
+        checkCondition(condition, null);
     }
 
     protected void checkCondition(bool condition, string message)
     {
+        if (!condition) {
+            throw new IllegalStateException(message);
+        }
     }
 
     protected static int toInt32(char[] data, int offset)
     {
+        return to!int(data[offset]) | (to!int(data[offset + 1]) << 16);
     }
 
     protected long toLong(char[] data, int offset)
     {
+        long lowOrder = to!long(toInt32(data, offset)) & 0x00000000FFFFFFFFL;
+        return lowOrder | (to!long(toInt32(data, offset + 2)) << 32);
     }
 
     protected UUID toUUID(char[] data, int offset)
@@ -615,7 +683,7 @@ class ATNDeserializer
     }
 
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,
-        int arg3, IntervalSet[] sets)
+                                     int arg3, IntervalSet[] sets)
     {
     }
 

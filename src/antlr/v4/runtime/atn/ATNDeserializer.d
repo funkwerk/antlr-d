@@ -65,7 +65,11 @@ import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.EpsilonTransition;
+import antlr.v4.runtime.atn.PredicateTransition;
+import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.RangeTransition;
+import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.misc.IntervalSet;
 
 // Class ATNDeserializer
@@ -680,11 +684,50 @@ class ATNDeserializer
 
     protected UUID toUUID(char[] data, int offset)
     {
+        char[8] a;
+        for (int i = 0; i < 16; i++)
+            a[i] = data[i + offset];
+        return sha1UUID(a);
     }
 
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,
                                      int arg3, IntervalSet[] sets)
     {
+	ATNState target = atn.states.get[trg];
+        switch (type) {
+        case TransitionStates.EPSILON : return new EpsilonTransition(target);
+        case TransitionStates.RANGE :
+            if (arg3 != 0) {
+                return new RangeTransition(target, Token.EOF, arg2);
+            }
+            else {
+                return new RangeTransition(target, arg1, arg2);
+            }
+        case TransitionStates.RULE :
+            RuleTransition rt = new RuleTransition(cast(RuleStartState)atn.states[arg1], arg2, arg3, target);
+            return rt;
+        case TransitionStates.PREDICATE :
+            PredicateTransition pt = new PredicateTransition(target, arg1, arg2, arg3 != 0);
+            return pt;
+        case TransitionStates.PRECEDENCE:
+            return new PrecedencePredicateTransition(target, arg1);
+        case TransitionStates.ATOM :
+            if (arg3 != 0) {
+                return new AtomTransition(target, Token.EOF);
+            }
+            else {
+                return new AtomTransition(target, arg1);
+            }
+        case TransitionStates.ACTION :
+            ActionTransition a = new ActionTransition(target, arg1, arg2, arg3 != 0);
+            return a;
+        case TransitionStates.SET : return new SetTransition(target, sets.get(arg1));
+        case TransitionStates.NOT_SET : return new NotSetTransition(target, sets.get(arg1));
+        case TransitionStates.WILDCARD : return new WildcardTransition(target);
+        }
+
+        throw new IllegalArgumentException("The specified transition type is not valid.");
+
     }
 
     protected ATNState stateFactory(int type, int ruleIndex)
@@ -692,6 +735,10 @@ class ATNDeserializer
     }
 
     protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
+    {
+    }
+
+    public ATNState stateFactory(int type, int ruleIndex)
     {
     }
 

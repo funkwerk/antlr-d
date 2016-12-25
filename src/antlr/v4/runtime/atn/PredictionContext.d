@@ -32,6 +32,7 @@ module antlr.v4.runtime.atn.PredictionContext;
 
 import std.array;
 import std.conv;
+import std.algorithm.sorting;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;

@@ -51,13 +51,13 @@ generate :
 	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
 	$(foreach src, $(UNITTESTS), $(RDMD) $(TEST_FLAGS) $(src);)
 
-$$(BUILD_DIR)/TestRunner : $(UNITTESTS)
-	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
+$(BUILDDIR)/TestRunner : $(UNITTESTS)
+	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(UNITTEST_LIB) -of$(BUILDDIR)/TestRunner
 
 .PHONY : unittest
 unittest : $(BUILDDIR)/TestRunner | $(BUILDDIR)
 	-$(BUILDDIR)/TestRunner
-	mv ./*.lst $(BUILD_DIR)
+	mv ./*.lst $(BUILDDIR)
 
 .PHONY : prepare_generator
 prepare_generator : | $(BUILDDIR)

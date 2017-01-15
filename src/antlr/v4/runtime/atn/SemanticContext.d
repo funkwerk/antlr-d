@@ -69,7 +69,7 @@ abstract class SemanticContext
      * prediction, so we passed in the outer context here in case of context
      * dependent predicate evaluation.</p>
      */
-    abstract public bool eval(Recognizer!(int, ATNSimulator) parser, SemanticContext parserCallStack);
+    abstract public bool eval(Recognizer!(int, ATNSimulator) parser, RuleContext parserCallStack);
 
     /**
      * @uml

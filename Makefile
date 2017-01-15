@@ -52,7 +52,7 @@ generate :
 	$(foreach src, $(UNITTESTS), $(RDMD) $(TEST_FLAGS) $(src);)
 
 $(BUILDDIR)/TestRunner : $(UNITTESTS)
-	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(UNITTEST_LIB) -of$(BUILDDIR)/TestRunner
+	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILDDIR)/TestRunner
 
 .PHONY : unittest
 unittest : $(BUILDDIR)/TestRunner | $(BUILDDIR)

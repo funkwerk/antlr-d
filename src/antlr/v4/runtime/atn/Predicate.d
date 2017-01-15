@@ -72,9 +72,9 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(int, ATNSimulator) parser, SemanticContext parserCallStack)
+    public override bool eval(Recognizer!(int, ATNSimulator) parser, RuleContext parserCallStack)
     {
-        RuleContext localctx = isCtxDependent ? cast(RuleContext)parserCallStack : null;
+        RuleContext localctx = isCtxDependent ? parserCallStack : null;
         return parser.sempred(localctx, ruleIndex, predIndex);
     }
 

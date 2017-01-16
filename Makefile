@@ -22,7 +22,8 @@ SRC =	$(SRC_DIR)/RuntimeMetaData.d\
 	$(SRC_DIR)/misc/MurmurHash.d\
 	$(SRC_DIR)/misc/DoubleKeyMap\
 	$(SRC_TREE)/ParseTreeListener\
-	$(SRC_DIR)/TrimToSizeListener
+	$(SRC_DIR)/TrimToSizeListener\
+	$(SRC_DIR)/misc/DoubleKeyMap
 
 BUILDDIR = build
 MODEL_DIR = model

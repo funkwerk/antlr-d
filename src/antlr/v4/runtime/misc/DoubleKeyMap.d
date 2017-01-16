@@ -46,9 +46,7 @@ class DoubleKeyMap(K1, K2, V)
 
     public V put(K1 k1, K2 k2, V v)
     {
-        Nullable!V value;
-        value = v;
-        data[k1][k2] = value;
+        data[k1][k2] = v;
         return v;
     }
 
@@ -82,11 +80,7 @@ class DoubleKeyMap(K1, K2, V)
                 return va; // []
             }
         V[K2] data2 = data[k1];
-        if (!data2) {
-            return va;
-        }
         return data2.values;
-
     }
 
     /**

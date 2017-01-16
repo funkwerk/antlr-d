@@ -199,7 +199,7 @@ abstract class PredictionContext
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
-                                          DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+                                          DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         assert(a !is null && b !is null); // must be empty context, never null
 
@@ -260,7 +260,7 @@ abstract class PredictionContext
      *  @param mergeCache
      */
     public static PredictionContext mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
-                                                    bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+                                                    bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         if (mergeCache !is null ) {
             PredictionContext previous = mergeCache.get(a, b);
@@ -411,7 +411,7 @@ abstract class PredictionContext
      * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
      */
     public static PredictionContext mergeArrays(ArrayPredictionContext a, ArrayPredictionContext b,
-        bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext,) mergeCache)
+        bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         		if (mergeCache !is null) {
 			PredictionContext previous = mergeCache.get(a,b);

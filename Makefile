@@ -3,26 +3,7 @@
 MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
-SRC_ATN = $(SRC_DIR)/atn
-SRC_TREE = $(SRC_DIR)/tree
-SRC =	$(SRC_DIR)/RuntimeMetaData.d\
-	$(SRC_DIR)/Parser.d\
-	$(SRC_ATN)/ATN.d\
-	$(SRC_ATN)/ATNState.d\
-	$(SRC_ATN)/ATNConfig.d\
-	$(SRC_ATN)/PredictionContext.d\
-	$(SRC_ATN)/ArrayPredictionContext.d\
-	$(SRC_ATN)/EpsilonTransition.d\
-	$(SRC_ATN)/ATNDeserializationOptions.d\
-	$(SRC_ATN)/ATNDeserializer.d\
-	$(SRC_DIR)/misc/Interval.d\
-	$(SRC_DIR)/misc/IntervalSet.d\
-	$(SRC_DIR)/misc/AbstractEqualityComparator.d\
-	$(SRC_DIR)/misc/EqualityComparator.d\
-	$(SRC_DIR)/misc/MurmurHash.d\
-	$(SRC_TREE)/ParseTreeListener\
-	$(SRC_DIR)/TrimToSizeListener\
-	$(SRC_DIR)/misc/DoubleKeyMap
+SRC := $(shell find $(SRC_DIR) -name "*.d")
 
 BUILDDIR = build
 MODEL_DIR = model
@@ -49,7 +30,6 @@ all : generate unittest
 .PHONY : generate
 generate :
 	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
-	$(foreach src, $(UNITTESTS), $(RDMD) $(TEST_FLAGS) $(src);)
 
 $(BUILDDIR)/TestRunner : $(UNITTESTS)
 	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILDDIR)/TestRunner

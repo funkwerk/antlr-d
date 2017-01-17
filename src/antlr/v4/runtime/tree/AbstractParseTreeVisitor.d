@@ -62,14 +62,13 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor
      * result is returned. After visiting a child, the aggregate result is
      * updated by calling {@link #aggregateResult aggregateResult} with the
      * previous aggregate result and the result of visiting the child.</p>
-     * @override
      *
      * <p>The default implementation is not safe for use in visitors that modify
      * the tree structure. Visitors that modify the tree should override this
      * method to behave properly in respect to the specific algorithm in use.</p>
      * @override
      */
-    public override override T visitChildren(RuleNode node)
+    public override T visitChildren(RuleNode node)
     {
         T result = defaultResult();
         int n = node.getChildCount();
@@ -149,9 +148,8 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor
      *
      *  @return The updated aggregate result.
      */
-    private T aggregateResult(T aggregate,, T nextResult)
+    private T aggregateResult(T aggregate, T nextResult)
     {
-        return nextResult;
     }
 
     /**
@@ -179,9 +177,8 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor
      *  {@code false} to stop visiting children and immediately return the
      *  current aggregate result from {@link #visitChildren}.
      */
-    private bool shouldVisitNextChild(RuleNode node,, T currentResult)
+    private bool shouldVisitNextChild(RuleNode node, T currentResult)
     {
-        return true;
     }
 
 }

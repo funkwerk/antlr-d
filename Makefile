@@ -5,7 +5,7 @@ MODEL = DRuntime
 SRC_DIR = src/antlr/v4/runtime
 SRC := $(shell find $(SRC_DIR) -name "*.d")
 
-BUILDDIR = build
+BUILD_DIR = build
 MODEL_DIR = model
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
@@ -21,7 +21,7 @@ DMD = dmd
 GENERATOR = axmi2d
 ANTLR = antlr4-antlr4-master-4.5.3
 ANTLR_TAR = $(ANTLR).tgz
-TARGET = $(BUILDDIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
+TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
 all : generate unittest
 .PHONY : all
@@ -31,27 +31,27 @@ all : generate unittest
 generate :
 	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
 
-$(BUILDDIR)/TestRunner : $(UNITTESTS)
-	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILDDIR)/TestRunner
+$(BUILD_DIR)/TestRunner : $(UNITTESTS)
+	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
 
 .PHONY : unittest
-unittest : $(BUILDDIR)/TestRunner | $(BUILDDIR)
-	-$(BUILDDIR)/TestRunner
-	mv ./*.lst $(BUILDDIR)
+unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)
+	-$(BUILD_DIR)/TestRunner
+	mv ./*.lst $(BUILD_DIR)
 
 .PHONY : prepare_generator
-prepare_generator : | $(BUILDDIR)
-	cd $(BUILDDIR) && tar -xf ../$(ANTLR_DIR)/$(ANTLR_TAR)
-	cp codegen/DTarget.java $(BUILDDIR)/$(ANTLR)/tool/src/org/antlr/v4/codegen/target
+prepare_generator : | $(BUILD_DIR)
+	cd $(BUILD_DIR) && tar -xf ../$(ANTLR_DIR)/$(ANTLR_TAR)
+	cp codegen/DTarget.java $(BUILD_DIR)/$(ANTLR)/tool/src/org/antlr/v4/codegen/target
 	mkdir -p $(TARGET)
 	cp -r codegen/templates/*.stg \
 		$(TARGET)
-	cd $(BUILDDIR)/$(ANTLR) && mvn -DskipTests install
+	cd $(BUILD_DIR)/$(ANTLR) && mvn -DskipTests install
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILDDIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
-		-Dlanguage=D -o $(BUILDDIR) doc/examples/Expr.g4
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
+		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
 
 .PHONY : clean
 clean :
@@ -62,7 +62,7 @@ clean :
 
 .PHONY : clobber
 clobber :
-	rm -rf $(BUILDDIR)
+	rm -rf $(BUILD_DIR)
 
-$(BUILDDIR):
-	mkdir $(BUILDDIR)
+$(BUILD_DIR):
+	mkdir $(BUILD_DIR)

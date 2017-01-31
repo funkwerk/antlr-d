@@ -1,6 +1,7 @@
 module antlr.v4.runtime.atn.ErrorInfo;
 
 import antlr.v4.runtime.atn.DecisionEventInfo;
+import antlr.v4.runtime.atn.ATNConfigSet;
 
 // Class ErrorInfo
 /**
@@ -16,24 +17,22 @@ import antlr.v4.runtime.atn.DecisionEventInfo;
 class ErrorInfo : DecisionEventInfo
 {
 
-    public undefined x;
-
     /**
      * @uml
      * Constructs a new instance of the {@link ErrorInfo} class with the
-     *          * specified detailed syntax error information.
-     *          *
-     *          * @param decision The decision number
-     *          * @param configs The final configuration set reached during prediction
-     *          * prior to reaching the {@link ATNSimulator#ERROR} state
-     *          * @param input The input token stream
-     *          * @param startIndex The start index for the current prediction
-     *          * @param stopIndex The index at which the syntax error was identified
+     *  specified detailed syntax error information.
+     *
+     *  @param decision The decision number
+     *  @param configs The final configuration set reached during prediction
+     *  prior to reaching the {@link ATNSimulator#ERROR} state
+     *  @param input The input token stream
+     *  @param startIndex The start index for the current prediction
+     *  @param stopIndex The index at which the syntax error was identified
      *  @param fullCtx {@code true} if the syntax error was identified during LL
      *  prediction; otherwise, {@code false} if the syntax error was identified
      *  during SLL prediction
      */
-    public this(int decision)
+    public this(int decision, ATNConfigSet configs)
     {
     }
 

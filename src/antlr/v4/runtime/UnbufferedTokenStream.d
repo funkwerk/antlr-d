@@ -1,6 +1,8 @@
 module antlr.v4.runtime.UnbufferedTokenStream;
 
 import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenSource;
 
 // Class UnbufferedTokenStream
 /**

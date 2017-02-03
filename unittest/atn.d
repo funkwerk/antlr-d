@@ -11,7 +11,7 @@ class Test
     @Test
     public void constructPrecedencePredicate()
     {
-        auto pp = new PrecedencePredicate();
+        auto pp = new PrecedencePredicate(1);
         pp.assertEquals(null);
     }
 

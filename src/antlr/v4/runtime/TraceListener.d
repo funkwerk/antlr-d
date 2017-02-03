@@ -2,13 +2,14 @@ module antlr.v4.runtime.TraceListener;
 
 import std.stdio;
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 
 // Class TraceListener
 /**
  * TODO add class description
  */
-class TraceListener : ParseTreeListener
+class TraceListener : Parser, ParseTreeListener
 {
 
     public void enterEveryRule(ParserRuleContext ctx)

@@ -39,9 +39,11 @@ import std.algorithm: canFind;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
+import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNType;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.BasicBlockStartState;
@@ -50,6 +52,7 @@ import antlr.v4.runtime.atn.BlockEndState;
 import antlr.v4.runtime.atn.StarBlockStartState;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.atn.LexerChannelAction;
 import antlr.v4.runtime.atn.LexerCustomAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.atn.BasicState;
@@ -60,13 +63,15 @@ import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.StarLoopEntryState;
 import antlr.v4.runtime.atn.StarLoopbackState;
-import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.EpsilonTransition;
 import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PrecedencePredicateTransition;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.NotSetTransition;
+import antlr.v4.runtime.atn.WildcardTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.RangeTransition;
 import antlr.v4.runtime.atn.TransitionStates;
@@ -724,22 +729,68 @@ class ATNDeserializer
         case TransitionStates.SET : return new SetTransition(target, sets.get(arg1));
         case TransitionStates.NOT_SET : return new NotSetTransition(target, sets.get(arg1));
         case TransitionStates.WILDCARD : return new WildcardTransition(target);
+        default: throw new IllegalArgumentException("The specified transition type is not valid.");
         }
-
-        throw new IllegalArgumentException("The specified transition type is not valid.");
 
     }
 
     protected ATNState stateFactory(int type, int ruleIndex)
     {
+        ATNState s;
+        switch (type) {
+        case StateNames.INVALID: return null;
+        case StateNames.BASIC : s = new BasicState(); break;
+        case StateNames.RULE_START : s = new RuleStartState(); break;
+        case StateNames.BLOCK_START : s = new BasicBlockStartState(); break;
+        case StateNames.PLUS_BLOCK_START : s = new PlusBlockStartState(); break;
+        case StateNames.STAR_BLOCK_START : s = new StarBlockStartState(); break;
+        case StateNames.TOKEN_START : s = new TokensStartState(); break;
+        case StateNames.RULE_STOP : s = new RuleStopState(); break;
+        case StateNames.BLOCK_END : s = new BlockEndState(); break;
+        case StateNames.STAR_LOOP_BACK : s = new StarLoopbackState(); break;
+        case StateNames.STAR_LOOP_ENTRY : s = new StarLoopEntryState(); break;
+        case StateNames.PLUS_LOOP_BACK : s = new PlusLoopbackState(); break;
+        case StateNames.LOOP_END : s = new LoopEndState(); break;
+        default :
+            string message = format("The specified state type %d is not valid.", type);
+            throw new IllegalArgumentException(message);
+        }
+
+        s.ruleIndex = ruleIndex;
+        return s;
     }
 
     protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
     {
-    }
+	switch (type) {
+        case LexerActionType.CHANNEL:
+            return new LexerChannelAction(data1);
 
-    public ATNState stateFactory(int type, int ruleIndex)
-    {
+        case LexerActionType.CUSTOM:
+            return new LexerCustomAction(data1, data2);
+
+        case LexerActionType.MODE:
+            return new LexerModeAction(data1);
+
+        case LexerActionType.MORE:
+            return LexerMoreAction.INSTANCE;
+
+        case LexerActionType.POP_MODE:
+            return LexerPopModeAction.INSTANCE;
+
+        case LexerActionType.PUSH_MODE:
+            return new LexerPushModeAction(data1);
+
+        case LexerActionType.SKIP:
+            return LexerSkipAction.INSTANCE;
+
+        case LexerActionType.TYPE:
+            return new LexerTypeAction(data1);
+
+        default:
+            string message = format("The specified lexer action type %d is not valid.", type);
+            throw new IllegalArgumentException(message);
+        }
     }
 
 }

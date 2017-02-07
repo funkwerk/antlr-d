@@ -316,6 +316,30 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     public void addParseListener(ParseTreeListener listener)
     {
+        if (listener is null) {
+            throw new NullPointerException("listener");
+        }
+        _parseListeners ~= listener;
+    }
+
+    public void removeParseListener(ParseTreeListener listener)
+    {
+        ParseTreeListener[] new_parseListeners;
+        foreach (li; _parseListeners) {
+            if ( li != listener) new_parseListeners ~= li;
+        }
+        _parseListeners = new_parseListeners;
+    }
+
+    /**
+     * @uml
+     * Remove all parse listeners.
+     *
+     *  @see #addParseListener
+     */
+    public void removeParseListeners()
+    {
+        _parseListeners.length = 0;
     }
 
     public final ParserRuleContext ctx()

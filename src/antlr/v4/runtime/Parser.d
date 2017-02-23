@@ -342,6 +342,48 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         _parseListeners.length = 0;
     }
 
+    /**
+     * @uml
+     * Notify any parse listeners of an enter rule event.
+     *
+     *  @see #addParseListener
+     */
+    protected void triggerEnterRuleEvent()
+    {
+        foreach (ParseTreeListener listener; _parseListeners) {
+			listener.enterEveryRule(_ctx);
+			_ctx.enterRule(listener);
+		}
+    }
+
+    /**
+     * @uml
+     * Notify any parse listeners of an exit rule event.
+     *
+     *  @see #addParseListener
+     */
+    protected void triggerExitRuleEvent()
+    {
+        // reverse order walk of listeners
+		for (int i = _parseListeners.length-1; i >= 0; i--) {
+			ParseTreeListener listener = _parseListeners[i];
+			_ctx.exitRule(listener);
+			listener.exitEveryRule(_ctx);
+		}
+    }
+
+    /**
+     * @uml
+     * Gets the number of syntax errors reported during parsing. This value is
+     * incremented each time {@link #notifyErrorListeners} is called.
+     *
+     *  @see #notifyErrorListeners
+     */
+    public int getNumberOfSyntaxErrors()
+    {
+        return _syntaxErrors;
+    }
+
     public final ParserRuleContext ctx()
     {
         return this.ctx_;

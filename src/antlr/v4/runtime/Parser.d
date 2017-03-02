@@ -384,6 +384,20 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         return _syntaxErrors;
     }
 
+    public auto getTokenFactory()
+    {
+        return _input.getTokenSource().getTokenFactory();
+    }
+
+    /**
+     * @uml
+     * Tell our token source and error strategy about a new way to create tokens.
+     */
+    public void setTokenFactory(T)(T factory)
+    {
+        _input.getTokenSource().setTokenFactory(factory);
+    }
+
     public final ParserRuleContext ctx()
     {
         return this.ctx_;

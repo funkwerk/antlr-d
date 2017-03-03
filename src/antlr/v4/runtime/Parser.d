@@ -398,6 +398,30 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         _input.getTokenSource().setTokenFactory(factory);
     }
 
+    /**
+     * @uml
+     * The ATN with bypass alternatives is expensive to create so we create it
+     * lazily.
+     *
+     *  @throws UnsupportedOperationException if the current parser does not
+     * implement the {@link #getSerializedATN()} method.
+     */
+    public ATN getATNWithBypassAlts()
+    {
+        string serializedAtn = getSerializedATN();
+        if (serializedAtn is null) {
+            throw new UnsupportedOperationException("The current parser does not support an ATN with bypass alternatives.");
+        }
+        if (serializedATN in bypassAltsAtnCache) {
+            return bypassAltsAtnCache[serializedAtn];
+        }
+        ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
+        deserializationOptions.setGenerateRuleBypassTransitions(true);
+        result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn.toCharArray());
+        bypassAltsAtnCache[serializedAtn] = result;         
+        return result;
+    }
+
     public final ParserRuleContext ctx()
     {
         return this.ctx_;

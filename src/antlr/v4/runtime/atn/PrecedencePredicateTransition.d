@@ -3,7 +3,6 @@ module antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import std.conv;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.Predicate;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.PrecedencePredicate;
 
@@ -53,7 +52,7 @@ class PrecedencePredicateTransition : AbstractPredicateTransition
         return false;
     }
 
-    public Predicate getPredicate()
+    public PrecedencePredicate getPredicate()
     {
         return new PrecedencePredicate(precedence);
     }

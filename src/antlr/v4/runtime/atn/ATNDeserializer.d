@@ -698,7 +698,7 @@ class ATNDeserializer
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,
                                      int arg3, IntervalSet[] sets)
     {
-	ATNState target = atn.states.get[trg];
+	ATNState target = atn.states[trg];
         switch (type) {
         case TransitionStates.EPSILON : return new EpsilonTransition(target);
         case TransitionStates.RANGE :
@@ -726,8 +726,8 @@ class ATNDeserializer
         case TransitionStates.ACTION :
             ActionTransition a = new ActionTransition(target, arg1, arg2, arg3 != 0);
             return a;
-        case TransitionStates.SET : return new SetTransition(target, sets.get(arg1));
-        case TransitionStates.NOT_SET : return new NotSetTransition(target, sets.get(arg1));
+        case TransitionStates.SET : return new SetTransition(target, sets[arg1]);
+        case TransitionStates.NOT_SET : return new NotSetTransition(target, sets[arg1]);
         case TransitionStates.WILDCARD : return new WildcardTransition(target);
         default: throw new IllegalArgumentException("The specified transition type is not valid.");
         }

@@ -45,6 +45,7 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.ParseInfo;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.misc.IntegerStack;
@@ -639,7 +640,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
 
     /**
      * @uml
-     * @deprecated Use
+     * . @deprecated Use
      * {@link #enterRecursionRule(ParserRuleContext, int, int, int)} instead.
      */
     public void enterRecursionRule(ParserRuleContext localctx, int ruleIndex)
@@ -849,24 +850,124 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
 
     public ParserRuleContext getRuleContext()
     {
+        return ctx_;
     }
 
+    /**
+     * @uml
+     * Return List&lt;String&gt; of the rule names in your parser instance
+     * leading up to a call to the current rule.  You could override if
+     * you want more details such as the file/line info of where
+     * in the ATN a rule is invoked.
+     *
+     * This is very useful for error messages.
+     */
     public string[] getRuleInvocationStack()
     {
+	return getRuleInvocationStack(ctx_);
     }
 
     public string[] getRuleInvocationStack(RuleContext p)
     {
 	string[] ruleNames = getRuleNames();
-        List<String> stack = new ArrayList<String>();
-		while ( p!=null ) {
-			// compute what follows who invoked us
-			int ruleIndex = p.getRuleIndex();
-			if ( ruleIndex<0 ) stack.add("n/a");
-			else stack.add(ruleNames[ruleIndex]);
-			p = p.parent;
-		}
-		return stack;
+        string[] stack;
+        while (p) {
+            // compute what follows who invoked us
+            int ruleIndex = p.getRuleIndex();
+            if (ruleIndex <0)
+                stack ~= "n/a";
+            else stack ~= ruleNames[ruleIndex];
+            p = p.parent;
+        }
+        return stack;
+    }
+
+    /**
+     * @uml
+     * For debugging and other purposes.
+     */
+    public string[] getDFAStrings()
+    {
+        string[] s;
+        for (int d = 0; d < _interp.decisionToDFA.length; d++) {
+            DFA dfa = _interp.decisionToDFA[d];
+            s ~= dfa.toString(getVocabulary());
+        }
+        return s;
+    }
+
+    /**
+     * @uml
+     * For debugging and other purposes.
+     */
+    public void dumpDFA()
+    {
+        bool seenOne = false;
+        for (int d = 0; d < _interp.decisionToDFA.length; d++) {
+            DFA dfa = _interp.decisionToDFA[d];
+            if (!dfa.states.isEmpty()) {
+                if (seenOne) writeln();
+                writefln("Decision " ~ dfa.decision ~ ":");
+                writefln(dfa.toString(getVocabulary()));
+                seenOne = true;
+            }
+        }
+    }
+
+    public string getSourceName()
+    {
+        return _input.getSourceName();
+    }
+
+    public ParseInfo getParseInfo()
+    {
+	ParserATNSimulator interp = getInterpreter();
+        if (interp.classinfo == ProfilingATNSimulator.classinfo) {
+            return new ParseInfo(cast(ProfilingATNSimulator)interp);
+        }
+        return null;
+    }
+
+    public void setProfile(bool profile)
+    {
+        ParserATNSimulator interp = getInterpreter();
+        PredictionMode saveMode = interp.getPredictionMode();
+        if (profile) {
+            if (interp.classinfo != ProfilingATNSimulator.classinfo) {
+                setInterpreter(new ProfilingATNSimulator(this));
+            }
+        }
+        else if (interp.classinfo == ProfilingATNSimulator.classinfo) {
+            ParserATNSimulator sim =
+                new ParserATNSimulator(this, getATN(), interp.decisionToDFA, interp.getSharedContextCache());
+            setInterpreter(sim);
+        }
+        getInterpreter().setPredictionMode(saveMode);
+    }
+
+    public void setTrace(bool trace)
+    {
+	if (!trace) {
+            removeParseListener(_tracer);
+            _tracer = null;
+        }
+        else {
+            if (_tracer !is null ) removeParseListener(_tracer);
+            else _tracer = new TraceListener();
+            addParseListener(_tracer);
+        }
+    }
+
+    /**
+     * @uml
+     * Gets whether a {@link TraceListener} is registered as a parse listener
+     * for the parser.
+     *
+     *  @see #setTrace(boolean)
+     */
+    public bool isTrace()
+    {
+        return _tracer !is null;
     }
 
     public final ParserRuleContext ctx()

@@ -1,5 +1,6 @@
 module antlr.v4.runtime.atn.PrecedencePredicate;
 
+import std.conv;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Recognizer;
@@ -90,7 +91,7 @@ class PrecedencePredicate : SemanticContext
      */
     public override string toString()
     {
-        return "{" ~ precedence ~ ">=prec}?";
+        return "{" ~ to!string(precedence) ~ ">=prec}?";
     }
 
 }

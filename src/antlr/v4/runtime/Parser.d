@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Sam Harwell
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,16 +32,23 @@ module antlr.v4.runtime.Parser;
 
 import std.algorithm;
 import antlr.v4.runtime.ANTLRErrorStrategy;
+import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.TraceListener;
 import antlr.v4.runtime.TrimToSizeListener;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.misc.IntegerStack;
+import antlr.v4.runtime.misc.IntervalSet;
 
 // Class Parser
 /**
@@ -123,7 +130,8 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     public void reset()
     {
-        if ( getInputStream()!=null ) getInputStream().seek(0);
+        if (getInputStream() !is null)
+            getInputStream().seek(0);
         _errHandler.reset(this);
         ctx_ = null;
         _syntaxErrors = 0;
@@ -418,8 +426,447 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
         deserializationOptions.setGenerateRuleBypassTransitions(true);
         result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn.toCharArray());
-        bypassAltsAtnCache[serializedAtn] = result;         
+        bypassAltsAtnCache[serializedAtn] = result;
         return result;
+    }
+
+    public ParseTreePattern compileParseTreePattern(string pattern, int patternRuleIndex)
+    {
+        if (getTokenStream() !is null) {
+            TokenSource tokenSource = getTokenStream().getTokenSource();
+            if (tokenSource.classinfo == Lexer.classinfo) {
+                Lexer lexer = cast(Lexer)tokenSource;
+                return compileParseTreePattern(pattern, patternRuleIndex, lexer);
+            }
+        }
+        throw new UnsupportedOperationException("Parser can't discover a lexer to use");
+    }
+
+    /**
+     * @uml
+     * The same as {@link #compileParseTreePattern(String, int)} but specify a
+     * {@link Lexer} rather than trying to deduce it from this parser.
+     */
+    public ParseTreePattern compileParseTreePattern(string pattern, int patternRuleIndex,
+        Lexer lexer)
+    {
+        ParseTreePatternMatcher m = new ParseTreePatternMatcher(lexer, this);
+        return m.compile(pattern, patternRuleIndex);
+    }
+
+    public auto getErrorHandler()
+    {
+        return _errHandler;
+    }
+
+    public void setErrorHandler(ANTLRErrorStrategy!(Token, ParserATNSimulator) handler)
+    {
+        this._errHandler = handler;
+    }
+
+    public TokenStream getInputStream()
+    {
+        return getTokenStream();
+    }
+
+    public void setInputStream(IntStream input)
+    {
+        setTokenStream(cast(TokenStream)input);
+    }
+
+    public TokenStream getTokenStream()
+    {
+        return _input;
+    }
+
+    /**
+     * @uml
+     * Set the token stream and reset the parser.
+     */
+    public void setTokenStream(TokenStream input)
+    {
+        this._input = null;
+        reset();
+        this._input = input;
+    }
+
+    /**
+     * @uml
+     * Match needs to return the current input symbol, which gets put
+     * into the label for the associated token ref; e.g., x=ID.
+     */
+    public Token getCurrentToken()
+    {
+	return _input.LT(1);
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void notifyErrorListeners(string msg)
+    {
+        notifyErrorListeners(getCurrentToken(), msg, null);
+    }
+
+    public void notifyErrorListeners(Token offendingToken, string msg, RecognitionException!(Token, ParserATNSimulator) e)
+    {
+        _syntaxErrors++;
+        int line = -1;
+        int charPositionInLine = -1;
+        line = offendingToken.getLine();
+        charPositionInLine = offendingToken.getCharPositionInLine();
+        ANTLRErrorListener listener = getErrorListenerDispatch();
+        listener.syntaxError(this, offendingToken, line, charPositionInLine, msg, e);
+    }
+
+    /**
+     * @uml
+     * Consume and return the {@linkplain #getCurrentToken current symbol}.
+     *
+     * <p>E.g., given the following input with {@code A} being the current
+     * lookahead symbol, this function moves the cursor to {@code B} and returns
+     * {@code A}.</p>
+     *
+     * <pre>
+     *  A B
+     *  ^
+     * </pre>
+     *
+     * If the parser is not in error recovery mode, the consumed symbol is added
+     * to the parse tree using {@link ParserRuleContext#addChild(Token)}, and
+     * {@link ParseTreeListener#visitTerminal} is called on any parse listeners.
+     * If the parser <em>is</em> in error recovery mode, the consumed symbol is
+     * added to the parse tree using
+     * {@link ParserRuleContext#addErrorNode(Token)}, and
+     * {@link ParseTreeListener#visitErrorNode} is called on any parse
+     * listeners.
+     */
+    public Token consume()
+    {
+        Token o = getCurrentToken();
+        if (o.getType() != EOF) {
+            getInputStream().consume();
+        }
+        bool hasListener = _parseListeners != null && !_parseListeners.isEmpty();
+        if (_buildParseTrees || hasListener) {
+            if (_errHandler.inErrorRecoveryMode(this)) {
+                ErrorNode node = ctx_.addErrorNode(o);
+                if (_parseListeners !is null) {
+                    foreach (ParseTreeListener listener; _parseListeners) {
+                        listener.visitErrorNode(node);
+                    }
+                }
+            }
+            else {
+                TerminalNode node = ctx_.addChild(o);
+                if (_parseListeners !is null) {
+                    foreach (ParseTreeListener listener; _parseListeners) {
+                        listener.visitTerminal(node);
+                    }
+                }
+            }
+        }
+        return o;
+    }
+
+    protected void addContextToParseTree()
+    {
+        ParserRuleContext parent = cast(ParserRuleContext)ctx_.parent;
+        // add current context to parent if we have a parent
+        if (parent !is null) {
+            parent.addChild(ctx_);
+        }
+    }
+
+    public void enterRule(ParserRuleContext localctx, int state, int ruleIndex)
+    {
+        setState(state);
+        ctx_ = localctx;
+        ctx_.start = _input.LT(1);
+        if (_buildParseTrees) addContextToParseTree();
+        if (_parseListeners !is null)
+            triggerEnterRuleEvent();
+    }
+
+    public void exitRule()
+    {
+        if (matchedEOF) {
+            // if we have matched EOF, it cannot consume past EOF so we use LT(1) here
+            ctx_.stop = _input.LT(1); // LT(1) will be end of file
+        }
+        else {
+            ctx_.stop = _input.LT(-1); // stop node is what we just matched
+        }
+        // trigger event on _ctx, before it reverts to parent
+        if (_parseListeners !is null)
+            triggerExitRuleEvent();
+        setState(_ctx.invokingState);
+        ctx_ = cast(ParserRuleContext)ctx_.parent;
+    }
+
+    public void enterOuterAlt(ParserRuleContext localctx, int altNum)
+    {
+	localctx.setAltNumber(altNum);
+        // if we have new localctx, make sure we replace existing ctx
+        // that is previous child of parse tree
+        if (_buildParseTrees && ctx_ != localctx) {
+            ParserRuleContext parent = cast(ParserRuleContext)ctx_.parent;
+            if (parent !is null)
+                {
+                    parent.removeLastChild();
+                    parent.addChild(localctx);
+                }
+        }
+        ctx_ = localctx;
+    }
+
+    /**
+     * @uml
+     * Get the precedence level for the top-most precedence rule.
+     *
+     *  @return The precedence level for the top-most precedence rule, or -1 if
+     * the parser context is not nested within a precedence rule.
+     * @final
+     */
+    public final int getPrecedence()
+    {
+        if (_precedenceStack.isEmpty()) {
+            return -1;
+        }
+        return _precedenceStack.peek();
+    }
+
+    /**
+     * @uml
+     * @deprecated Use
+     * {@link #enterRecursionRule(ParserRuleContext, int, int, int)} instead.
+     */
+    public void enterRecursionRule(ParserRuleContext localctx, int ruleIndex)
+    {
+	enterRecursionRule(localctx, getATN().ruleToStartState[ruleIndex].stateNumber, ruleIndex, 0);
+    }
+
+    public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
+        int precedence)
+    {
+        setState(state);
+        _precedenceStack.push(precedence);
+        ctx_ = localctx;
+        ctx_.start = _input.LT(1);
+        if(_parseListeners !is null) {
+            triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
+        }
+    }
+
+    /**
+     * @uml
+     * Like {@link #enterRule} but for recursive rules.
+     * Make the current context the child of the incoming localctx.
+     */
+    public void pushNewRecursionContext(ParserRuleContext localctx, int state, int ruleIndex)
+    {
+	ParserRuleContext previous = ctx_;
+        previous.parent = localctx;
+        previous.invokingState = state;
+        previous.stop = _input.LT(-1);
+
+        ctx_ = localctx;
+        ctx_.start = previous.start;
+        if (_buildParseTrees) {
+            ctx_.addChild(previous);
+        }
+
+        if (_parseListeners !is null) {
+            triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
+        }
+    }
+
+    public void unrollRecursionContexts(ParserRuleContext _parentctx)
+    {
+	_precedenceStack.pop();
+        ctx_.stop = _input.LT(-1);
+        ParserRuleContext retctx = _ctx; // save current ctx (return value)
+
+        // unroll so _ctx is as it was before call to recursive method
+        if (_parseListeners !is null) {
+            while (ctx_ !is _parentctx) {
+                triggerExitRuleEvent();
+                ctx_ = cast(ParserRuleContext)ctx_.parent;
+            }
+        }
+        else {
+            ctx_ = _parentctx;
+        }
+
+        // hook into tree
+        retctx.parent = _parentctx;
+
+        if (_buildParseTrees && _parentctx != null) {
+            // add return ctx into invoking rule's tree
+            _parentctx.addChild(retctx);
+        }
+    }
+
+    public ParserRuleContext getInvokingContext(int ruleIndex)
+    {
+        ParserRuleContext p = ctx_;
+        while (p !is null ) {
+            if ( p.getRuleIndex() == ruleIndex ) return p;
+            p = cast(ParserRuleContext)p.parent;
+        }
+        return null;
+    }
+
+    public void unrollRecursionContexts(ParserRuleContext _parentctx)
+    {
+	_precedenceStack.pop();
+        ctx_.stop = _input.LT(-1);
+        ParserRuleContext retctx = _ctx; // save current ctx (return value)
+
+        // unroll so _ctx is as it was before call to recursive method
+        if (_parseListeners !is null) {
+            while (ctx_ !is _parentctx) {
+                triggerExitRuleEvent();
+                ctx_ = cast(ParserRuleContext)ctx_.parent;
+            }
+        }
+        else {
+            ctx_ = _parentctx;
+        }
+
+        // hook into tree
+        retctx.parent = _parentctx;
+
+        if (_buildParseTrees && _parentctx != null) {
+            // add return ctx into invoking rule's tree
+            _parentctx.addChild(retctx);
+        }
+    }
+
+    public void getInvokingContext(int ruleIndex)
+    {
+	ParserRuleContext p = ctx_;
+        while (p !is null) {
+            if (p.getRuleIndex() == ruleIndex) return p;
+            p = cast(ParserRuleContext)p.parent;
+        }
+        return null;
+    }
+
+    public bool precpred(RuleContext localctx, int precedence)
+    {
+        return precedence >= _precedenceStack.peek();
+    }
+
+    public bool inContext(string context)
+    {
+	// TODO: useful in parser?
+        return false;
+    }
+
+    /**
+     * @uml
+     * Checks whether or not {@code symbol} can follow the current state in the
+     * ATN. The behavior of this method is equivalent to the following, but is
+     * implemented such that the complete context-sensitive follow set does not
+     * need to be explicitly constructed.
+     *
+     * <pre>
+     * return getExpectedTokens().contains(symbol);
+     * </pre>
+     *
+     *  @param symbol the symbol type to check
+     *  @return {@code true} if {@code symbol} can follow the current state in
+     * the ATN, otherwise {@code false}.
+     */
+    public bool isExpectedToken(int symbol)
+    {
+        ATN atn = getInterpreter().atn;
+        ParserRuleContext ctx = ctx_;
+        ATNState s = atn.states.get(getState());
+        IntervalSet following = atn.nextTokens(s);
+        if (following.contains(symbol)) {
+            return true;
+        }
+        //        System.out.println("following "+s+"="+following);
+        if (!following.contains(Token.EPSILON))
+            return false;
+
+        while (ctx !is null && ctx.invokingState>=0 && following.contains(Token.EPSILON) ) {
+            ATNState invokingState = atn.states.get(ctx.invokingState);
+            RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
+            following = atn.nextTokens(rt.followState);
+            if (following.contains(symbol)) {
+                return true;
+            }
+
+            ctx = cast(ParserRuleContext)ctx.parent;
+        }
+        if ( following.contains(Token.EPSILON) && symbol == Token.EOF ) {
+            return true;
+        }
+
+        return false;;
+    }
+
+    public bool isMatchedEOF()
+    {
+	return matchedEOF;
+    }
+
+    /**
+     * @uml
+     * Computes the set of input symbols which could follow the current parser
+     * state and context, as given by {@link #getState} and {@link #getContext},
+     * espectively.
+     *
+     *  @see ATN#getExpectedTokens(int, RuleContext)
+     */
+    public IntervalSet getExpectedTokens()
+    {
+        return getATN().getExpectedTokens(getState(), getContext());
+    }
+
+    public IntervalSet getExpectedTokensWithinCurrentRule()
+    {
+        ATN atn = getInterpreter().atn;
+        ATNState s = atn.states.get(getState());
+        return atn.nextTokens(s);
+    }
+
+    /**
+     * @uml
+     * Get a rule's index (i.e., {@code RULE_ruleName} field) or -1 if not found.
+     */
+    public int getRuleIndex(string ruleName)
+    {
+	Integer ruleIndex = getRuleIndexMap().get(ruleName);
+        if (ruleIndex !is null )
+            return ruleIndex;
+        return -1;
+    }
+
+    public ParserRuleContext getRuleContext()
+    {
+    }
+
+    public string[] getRuleInvocationStack()
+    {
+    }
+
+    public string[] getRuleInvocationStack(RuleContext p)
+    {
+	string[] ruleNames = getRuleNames();
+        List<String> stack = new ArrayList<String>();
+		while ( p!=null ) {
+			// compute what follows who invoked us
+			int ruleIndex = p.getRuleIndex();
+			if ( ruleIndex<0 ) stack.add("n/a");
+			else stack.add(ruleNames[ruleIndex]);
+			p = p.parent;
+		}
+		return stack;
     }
 
     public final ParserRuleContext ctx()

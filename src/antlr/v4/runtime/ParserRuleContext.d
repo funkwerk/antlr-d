@@ -1,12 +1,183 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2013 Terence Parr
+ *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.ParserRuleContext;
 
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.tree.ErrorNode;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.TerminalNodeImpl;
+import antlr.v4.runtime.ParseTreeListener;
+import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Class ParserRuleContext
 /**
- * TODO add class description
+ * @uml
+ * A rule invocation record for parsing.
+ *
+ * Contains all of the information about the current rule not stored in the
+ * RuleContext. It handles parse tree children list, Any ATN state
+ * tracing, and the default values available for rule invocations:
+ * start, stop, rule index, current alt number.
+ *
+ * Subclasses made for each rule and grammar track the parameters,
+ * return values, locals, and labels specific to that rule. These
+ * are the objects that are returned from rules.
+ *
+ * Note text is not an actual field of a rule return value; it is computed
+ * from start and stop using the input stream's toString() method.  I
+ * could add a ctor to this so that we can pass in and store the input
+ * stream, but I'm not sure we want to do that.  It would seem to be undefined
+ * to get the .text property anyway if the rule matches tokens from multiple
+ * input streams.
+ *
+ * I do not use getters for fields of objects that are used simply to
+ * group values such as this aggregate.  The getters/setters are there to
+ * satisfy the superclass interface.
  */
 class ParserRuleContext : RuleContext
 {
+
+    /**
+     * @uml
+     * If we are debugging or building a parse tree for a visitor,
+     * we need to track all of the tokens and rule invocations associated
+     * with this rule's context. This is empty for parsing w/o tree constr.
+     * operation because we don't the need to track the details about
+     * how we parse this rule.
+     */
+    public ParseTree[] children;
+
+    public Token start;
+
+    public Token stop;
+
+    /**
+     * @uml
+     * The exception that forced this rule to return. If the rule successfully
+     * completed, this is {@code null}.
+     */
+    public RecognitionException!(Token, ParserATNSimulator) exception;
+
+    public this()
+    {
+    }
+
+    /**
+     * @uml
+     * COPY a ctx (I'm deliberately not using copy constructor) to avoid
+     * confusion with creating node with parent. Does not copy children.
+     */
+    public void copyFrom(ParserRuleContext ctx)
+    {
+        this.parent = ctx.parent;
+        this.invokingState = ctx.invokingState;
+
+        this.start = ctx.start;
+        this.stop = ctx.stop;
+    }
+
+    public this(ParserRuleContext parent, int invokingStateNumber)
+    {
+        super(parent, invokingStateNumber);
+    }
+
+    public void enterRule(ParseTreeListener listener)
+    {
+    }
+
+    public void exitRule(ParseTreeListener listener)
+    {
+    }
+
+    /**
+     * @uml
+     * Does not set parent link; other add methods do that
+     */
+    public TerminalNode addChild(TerminalNode t)
+    {
+        children ~= t;
+        return t;
+    }
+
+    public RuleContext addChild(RuleContext ruleInvocation)
+    {
+        children ~= ruleInvocation;
+        return ruleInvocation;
+    }
+
+    /**
+     * @uml
+     * Used by enterOuterAlt to toss out a RuleContext previously added as
+     * we entered a rule. If we have # label, we will need to remove
+     * generic ruleContext object.
+     */
+    public void removeLastChild()
+    {
+        if (children !is null) {
+            children.length--;
+        }
+    }
+
+    public TerminalNode addChild(Token matchedToken)
+    {
+        TerminalNodeImpl t = new TerminalNodeImpl(matchedToken);
+        addChild(t);
+        t.parent = this;
+        return t;
+    }
+
+    public ErrorNode addErrorNode(Token badToken)
+    {
+	ErrorNodeImpl t = new ErrorNodeImpl(badToken);
+        addChild(t);
+        t.parent = this;
+        return t;
+    }
+
+    /**
+     * @uml
+     * Override to make type more specific
+     */
+    public ParserRuleContext getParent()
+    {
+        return cast(ParserRuleContext)super.getParent();
+    }
+
+    public ParseTree getChild(int i)
+    {
+        return children !is null && i>=0 && i<children.length ? children[i] : null;
+    }
 
 }

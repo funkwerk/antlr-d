@@ -34,12 +34,14 @@ module antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.ParseTreeListener;
 import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.misc.Interval;
 
 // Class ParserRuleContext
 /**
@@ -178,6 +180,130 @@ class ParserRuleContext : RuleContext
     public ParseTree getChild(int i)
     {
         return children !is null && i>=0 && i<children.length ? children[i] : null;
+    }
+
+    public auto getChild(T)(T ctxType, int i)
+    {
+        if (children is null || i < 0 || i >= children.length) {
+            return null;
+        }
+
+        int j = -1; // what element have we found with ctxType?
+        foreach (ParseTree o; children) {
+            if (ctxType.isInstance(o)) {
+                j++;
+                if (j == i) {
+                    return cast(T)(o);
+                }
+            }
+        }
+        return null;
+    }
+
+    public TerminalNode getToken(int ttype, int i)
+    {
+	if (children is null || i < 0 || i >= children.length) {
+            return null;
+        }
+
+        int j = -1; // what token with ttype have we found?
+        foreach (ParseTree o; children) {
+            if (o.classinfo == TerminalNode.classinfo) {
+                TerminalNode tnode = cast(TerminalNode)o;
+                Token symbol = tnode.getSymbol();
+                if ( symbol.getType()==ttype ) {
+                    j++;
+                    if ( j == i ) {
+                        return tnode;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public TerminalNode[] getTokens(int ttype)
+    {
+        TerminalNode[] emptyList;
+	if (children is null) {
+            return emptyList;
+        }
+
+        TerminalNode[] tokens = null;
+        foreach (ParseTree o; children) {
+            if (o.classinfo == TerminalNode.classinfo) {
+                TerminalNode tnode = cast(TerminalNode)o;
+                Token symbol = tnode.getSymbol();
+                if (symbol.getType() == ttype) {
+                    if (tokens is null) {
+                        TerminalNode[] tokens;
+                    }
+                    tokens ~= tnode;
+                }
+            }
+        }
+
+        if (tokens is null) {
+            return emptyList;
+        }
+        return tokens;
+    }
+
+    public auto getRuleContext(T)(T ctxType)
+    {
+        return getChild(ctxType, i);
+    }
+
+    public int getChildCount()
+    {
+        return children !is null ? children.length : 0;
+    }
+
+    public Interval getSourceInterval()
+    {
+        if (start is null) {
+            return Interval.INVALID;
+        }
+        if (stop is null || stop.getTokenIndex()<start.getTokenIndex()) {
+            return Interval.of(start.getTokenIndex(), start.getTokenIndex()-1); // empty
+        }
+        return Interval.of(start.getTokenIndex(), stop.getTokenIndex());
+    }
+
+    /**
+     * @uml
+     * Get the initial token in this context.
+     * Note that the range from start to stop is inclusive, so for rules that do not consume anything
+     * (for example, zero length or error productions) this token may exceed stop.
+     */
+    public Token getStart()
+    {
+        return start;
+    }
+
+    /**
+     * @uml
+     * Get the final token in this context.
+     * Note that the range from start to stop is inclusive, so for rules that do not consume anything
+     * (for example, zero length or error productions) this token may precede start.
+     */
+    public Token getStop()
+    {
+        return stop;
+    }
+
+    /**
+     * @uml
+     * Used for rule context info debugging during parse-time, not so much for ATN debugging
+     */
+    public string toInfoString(Parser recognizer)
+    {
+        string> rules = recognizer.getRuleInvocationStack(this);
+        Collections.reverse(rules);
+        return "ParserRuleContext" ~ rules ~ "{" ~
+                "start=" ~ start.getText ~
+                ", stop=" ~ stop.getText ~
+                '}';
     }
 
 }

@@ -109,15 +109,20 @@ abstract class ATNSimulator
     public void clearDFA()
     {
         throw new UnsupportedOperationException("This ATN simulator does not support clearing the DFA.");
-
     }
 
     public PredictionContextCache getSharedContextCache()
     {
+        return sharedContextCache;
     }
 
     public PredictionContext getCachedContext(PredictionContext context)
     {
+        if (sharedContextCache is null) return context;
+        PredictionContext[PredictionContext] visited;
+        return PredictionContext.getCachedContext(context,
+                                                  sharedContextCache,
+                                                  visited);
     }
 
     /**
@@ -126,6 +131,7 @@ abstract class ATNSimulator
      */
     public ATN deserialize(char[] data)
     {
+        return new ATNDeserializer().deserialize(data);
     }
 
 }

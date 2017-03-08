@@ -38,6 +38,7 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.TraceListener;
 import antlr.v4.runtime.TrimToSizeListener;
 import antlr.v4.runtime.Token;
@@ -46,6 +47,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ParseInfo;
+import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.misc.IntegerStack;
@@ -360,8 +362,8 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
     protected void triggerEnterRuleEvent()
     {
         foreach (ParseTreeListener listener; _parseListeners) {
-			listener.enterEveryRule(_ctx);
-			_ctx.enterRule(listener);
+			listener.enterEveryRule(ctx_);
+			ctx_.enterRule(listener);
 		}
     }
 
@@ -376,8 +378,8 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         // reverse order walk of listeners
 		for (int i = _parseListeners.length-1; i >= 0; i--) {
 			ParseTreeListener listener = _parseListeners[i];
-			_ctx.exitRule(listener);
-			listener.exitEveryRule(_ctx);
+			ctx_.exitRule(listener);
+			listener.exitEveryRule(ctx_);
 		}
     }
 
@@ -421,7 +423,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         if (serializedAtn is null) {
             throw new UnsupportedOperationException("The current parser does not support an ATN with bypass alternatives.");
         }
-        if (serializedATN in bypassAltsAtnCache) {
+        if (serializedAtn in bypassAltsAtnCache) {
             return bypassAltsAtnCache[serializedAtn];
         }
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
@@ -599,10 +601,10 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         else {
             ctx_.stop = _input.LT(-1); // stop node is what we just matched
         }
-        // trigger event on _ctx, before it reverts to parent
+        // trigger event on ctx_, before it reverts to parent
         if (_parseListeners !is null)
             triggerExitRuleEvent();
-        setState(_ctx.invokingState);
+        setState(ctx_.invokingState);
         ctx_ = cast(ParserRuleContext)ctx_.parent;
     }
 
@@ -687,9 +689,9 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
     {
 	_precedenceStack.pop();
         ctx_.stop = _input.LT(-1);
-        ParserRuleContext retctx = _ctx; // save current ctx (return value)
+        ParserRuleContext retctx = ctx_; // save current ctx (return value)
 
-        // unroll so _ctx is as it was before call to recursive method
+        // unroll so ctx_ is as it was before call to recursive method
         if (_parseListeners !is null) {
             while (ctx_ !is _parentctx) {
                 triggerExitRuleEvent();
@@ -723,9 +725,9 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
     {
 	_precedenceStack.pop();
         ctx_.stop = _input.LT(-1);
-        ParserRuleContext retctx = _ctx; // save current ctx (return value)
+        ParserRuleContext retctx = ctx_; // save current ctx (return value)
 
-        // unroll so _ctx is as it was before call to recursive method
+        // unroll so ctx_ is as it was before call to recursive method
         if (_parseListeners !is null) {
             while (ctx_ !is _parentctx) {
                 triggerExitRuleEvent();

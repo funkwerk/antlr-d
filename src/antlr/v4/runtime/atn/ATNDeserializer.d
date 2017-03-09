@@ -485,7 +485,7 @@ class ATNDeserializer
                         int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
                         int actionIndex = (cast(ActionTransition)transition).actionIndex;
                         LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
-                        state.setTransition(i, new ActionTransition(transition.target, ruleIndex, legacyLexerActions.length, false));
+                        state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
                         legacyLexerActions ~= lexerAction;
                     }
                 }

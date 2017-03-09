@@ -467,12 +467,20 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         this._errHandler = handler;
     }
 
-    public TokenStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenStream getInputStream()
     {
         return getTokenStream();
     }
 
-    public void setInputStream(IntStream input)
+    /**
+     * @uml
+     * @override
+     */
+    public override void setInputStream(IntStream input)
     {
         setTokenStream(cast(TokenStream)input);
     }
@@ -757,7 +765,11 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         return null;
     }
 
-    public bool precpred(RuleContext localctx, int precedence)
+    /**
+     * @uml
+     * @override
+     */
+    public override bool precpred(RuleContext localctx, int precedence)
     {
         return precedence >= _precedenceStack.peek();
     }

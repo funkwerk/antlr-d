@@ -30,9 +30,12 @@
 
 module antlr.v4.runtime.Recognizer;
 
+import std.stdio;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
@@ -115,6 +118,50 @@ class Recognizer(U, V)
 
     /**
      * @uml
+     * Get a map from rule names to rule indexes.
+     *
+     * <p>Used for XPath and tree pattern compilation.
+     */
+    public int[string] getRuleIndexMap()
+    {
+        string[] ruleNames = getRuleNames();
+        if (ruleNames is null) {
+            throw new UnsupportedOperationException("The current recognizer does not provide a list of rule names.");
+        }
+
+        int[string] result = ruleIndexMapCache[ruleNames];
+        if (result is null) {
+            foreach (int i, rn; ruleNames) {
+                result[rn] = i;
+            }
+            ruleIndexMapCache[ruleNames] = result;
+        }
+
+        return result;
+    }
+
+    public int getTokenType(string tokenName)
+    {
+        int ttype = getTokenTypeMap().get(tokenName);
+        if (ttype) return ttype;
+        return Token.INVALID_TYPE;
+    }
+
+    /**
+     * @uml
+     * If this recognizer was generated, it will have a serialized ATN
+     * representation of the grammar.
+     *
+     * <p>For interpreters, we don't know their serialized ATN despite having
+     * created the interpreter from it.</p>
+     */
+    public string getSerializedATN()
+    {
+        throw new UnsupportedOperationException("there is no serialized ATN");
+    }
+
+    /**
+     * @uml
      * subclass needs to override these if there are sempreds or actions
      * that the ATN interp needs to execute
      */
@@ -122,5 +169,46 @@ class Recognizer(U, V)
     {
         return true;
     }
+
+    public bool precpred(RuleContext localctx, int precedence)
+    {
+        return true;
+    }
+
+    public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
+    {
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final int getState()
+    {
+        return _stateNumber;
+    }
+
+    /**
+     * @uml
+     * @final
+     * Indicate that the recognizer has changed internal state that is
+     * consistent with the ATN state passed in.  This way we always know
+     * where we are in the ATN as the parser goes along. The rule
+     * context objects form a stack that lets us see the stack of
+     * invoking rules. Combine this and we have complete ATN
+     * configuration information.
+     */
+    public final void setState(int atnState)
+    {
+        //writeln("setState "+atnState);
+        _stateNumber = atnState;
+        // if ( traceATNStates ) _ctx.trace(atnState);
+    }
+
+    abstract public IntStream getInputStream();
+
+    abstract public void setInputStream(IntStream input);
+
+    abstract public void setTokenFactory(T)(T input);
 
 }

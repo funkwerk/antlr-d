@@ -39,6 +39,7 @@ import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ParseInfo;
 
 // Class Template Recognizer
 /**
@@ -58,8 +59,6 @@ class Recognizer(U, V)
     protected V _interp;
 
     private int _stateNumber = -1;
-
-    abstract public ATN getATN();
 
     /**
      * @uml
@@ -162,25 +161,6 @@ class Recognizer(U, V)
 
     /**
      * @uml
-     * subclass needs to override these if there are sempreds or actions
-     * that the ATN interp needs to execute
-     */
-    public bool sempred(RuleContext _localctx, int ruleIndex, int actionIndex)
-    {
-        return true;
-    }
-
-    public bool precpred(RuleContext localctx, int precedence)
-    {
-        return true;
-    }
-
-    public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
-    {
-    }
-
-    /**
-     * @uml
      * @final
      */
     public final int getState()
@@ -205,10 +185,59 @@ class Recognizer(U, V)
         // if ( traceATNStates ) _ctx.trace(atnState);
     }
 
-    abstract public IntStream getInputStream();
+    /**
+     * @uml
+     * For debugging and other purposes, might want the grammar name.
+     * Have ANTLR generate an implementation for this method.
+     */
+    abstract public string getGrammarFileName();
 
-    abstract public void setInputStream(IntStream input);
+    /**
+     * @uml
+     * Get the {@link ATN} used by the recognizer for prediction.
+     *
+     *  @return The {@link ATN} used by the recognizer for prediction.
+     */
+    abstract public ATN getATN();
 
-    abstract public void setTokenFactory(T)(T input);
+    /**
+     * @uml
+     * Get the ATN interpreter used by the recognizer for prediction.
+     *
+     *  @return The ATN interpreter used by the recognizer for prediction.
+     */
+    public V getInterpreter()
+    {
+        return _interp;
+    }
+
+    /**
+     * @uml
+     * If profiling during the parse/lex, this will return DecisionInfo records
+     * for each decision in recognizer in a ParseInfo object.
+     */
+    public ParseInfo getParseInfo()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * subclass needs to override these if there are sempreds or actions
+     * that the ATN interp needs to execute
+     */
+    public bool sempred(RuleContext _localctx, int ruleIndex, int actionIndex)
+    {
+        return true;
+    }
+
+    public bool precpred(RuleContext localctx, int precedence)
+    {
+        return true;
+    }
+
+    public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
+    {
+    }
 
 }

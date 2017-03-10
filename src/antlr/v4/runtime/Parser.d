@@ -467,20 +467,12 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         this._errHandler = handler;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override TokenStream getInputStream()
+    public TokenStream getInputStream()
     {
         return getTokenStream();
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override void setInputStream(IntStream input)
+    public void setInputStream(IntStream input)
     {
         setTokenStream(cast(TokenStream)input);
     }
@@ -933,7 +925,11 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         return _input.getSourceName();
     }
 
-    public ParseInfo getParseInfo()
+    /**
+     * @uml
+     * @override
+     */
+    public override ParseInfo getParseInfo()
     {
 	ParserATNSimulator interp = getInterpreter();
         if (interp.classinfo == ProfilingATNSimulator.classinfo) {

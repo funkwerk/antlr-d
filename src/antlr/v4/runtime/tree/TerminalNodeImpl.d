@@ -94,7 +94,7 @@ class TerminalNodeImpl : TerminalNode
 
     public string getText()
     {
-        return symbol.getText(); 
+        return symbol.getText();
     }
 
     public string toStringTree(Parser parser)

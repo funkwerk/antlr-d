@@ -64,6 +64,21 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
      */
     public int _channel;
 
+    public int _mode;
+
+    /**
+     * @uml
+     * You can set the text for the current token to override what is in
+     * the input char buffer.  Use setText() or can set this instance var.
+     */
+    public string _text;
+
+    /**
+     * @uml
+     * The token type for the current token
+     */
+    public int _type;
+
     public void setChannel(int channel)
     {
 	_channel = channel;
@@ -72,6 +87,29 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public int getChannel()
     {
         return _channel;
+    }
+
+    /**
+     * @uml
+     * Instruct the lexer to skip creating a token for current lexer rule
+     * and look for another token.  nextToken() knows to keep looking when
+     * a lexer rule finishes with token set to SKIP_TOKEN.  Recall that
+     * if token==null at end of any token rule, it creates one for you
+     * and emits it.
+     */
+    public void skip()
+    {
+        _type = SKIP;
+    }
+
+    public void more()
+    {
+        _type = MORE;
+    }
+
+    public void mode(int m)
+    {
+        _mode = m;
     }
 
 }

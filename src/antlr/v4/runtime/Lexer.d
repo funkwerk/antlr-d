@@ -33,6 +33,7 @@ module antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.CharStream;
 
 // Class Lexer
@@ -57,6 +58,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public static immutable int MAX_CHAR_VALUE = char.max;
 
     public CharStream _input;
+
+    protected CharStream[TokenSource] _tokenFactorySourcePair;
 
     /**
      * @uml

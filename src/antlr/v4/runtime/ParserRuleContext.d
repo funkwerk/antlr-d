@@ -172,13 +172,18 @@ class ParserRuleContext : RuleContext
     /**
      * @uml
      * Override to make type more specific
+     * @override
      */
-    public ParserRuleContext getParent()
+    public override ParserRuleContext getParent()
     {
         return cast(ParserRuleContext)super.getParent();
     }
 
-    public ParseTree getChild(int i)
+    /**
+     * @uml
+     * @override
+     */
+    public override ParseTree getChild(int i)
     {
         return children !is null && i>=0 && i<children.length ? children[i] : null;
     }
@@ -255,12 +260,20 @@ class ParserRuleContext : RuleContext
         return getChild(ctxType, i);
     }
 
-    public int getChildCount()
+    /**
+     * @uml
+     * @override
+     */
+    public override int getChildCount()
     {
         return children !is null ? children.length : 0;
     }
 
-    public Interval getSourceInterval()
+    /**
+     * @uml
+     * @override
+     */
+    public override Interval getSourceInterval()
     {
         if (start is null) {
             return Interval.INVALID;

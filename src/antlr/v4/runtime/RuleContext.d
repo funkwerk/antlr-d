@@ -1,10 +1,14 @@
 module antlr.v4.runtime.RuleContext;
 
 import std.array;
+import std.conv;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.RuleNode;
+import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.Token;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.misc.Interval;
@@ -191,6 +195,7 @@ class RuleContext
 
     public U accept(U)(ParseTreeVisitor!U visitor)
     {
+        return visitor.visitChildren(this);
     }
 
     /**
@@ -206,10 +211,12 @@ class RuleContext
 
     public string toStringTree(string[] ruleNames)
     {
+        return Trees.toStringTree(this, ruleNames);
     }
 
     public string toStringTree()
     {
+        return toStringTree(cast(string[])null);
     }
 
     /**
@@ -218,6 +225,57 @@ class RuleContext
      */
     public override string toString()
     {
+        return toString(cast(string)null, cast(RuleContext)null);
+    }
+
+    public string toString(Recognizer!(Token, ATNSimulator) recog)
+    {
+        return toString(recog, ParserRuleContext.EMPTY);
+    }
+
+    public string toString(string[] ruleNames)
+    {
+        return toString(ruleNames, null);
+    }
+
+    /**
+     * @uml
+     * recog null unless ParserRuleContext, in which case we use subclass toString(...)
+     */
+    public string toString(Recognizer!(Token, ATNSimulator) recog, RuleContext stop)
+    {
+        string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
+        string[] ruleNamesList = ruleNames !is null ? to!string(ruleNames) : null;
+        return ruleNamesList ~ stop.toString;
+
+    }
+
+    public string toString(string[] ruleNames, RuleContext stop)
+    {
+	stringBuilder buf = appender!(string);
+        RuleContext p = this;
+        buf.put("[");
+        while (p !is null && p != stop) {
+            if (ruleNames is null) {
+                if (!p.isEmpty()) {
+                    buf.put(p.invokingState);
+                }
+            }
+            else {
+                int ruleIndex = p.getRuleIndex();
+                string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames.get(ruleIndex) : to!string(ruleIndex);
+                buf.put(ruleName);
+            }
+
+            if (p.parent !is null && (ruleNames !is null || !p.parent.isEmpty())) {
+                buf.put(" ");
+            }
+
+            p = p.parent;
+        }
+
+        buf.put("]");
+        return buf.data;
     }
 
 }

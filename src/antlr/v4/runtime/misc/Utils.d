@@ -1,7 +1,8 @@
 module antlr.v4.runtime.misc.Utils;
 
 import std.array;
-
+import std.traits;
+import std.conv;
 
 // Class Utils
 /**
@@ -9,6 +10,16 @@ import std.array;
  */
 class Utils
 {
+
+    public static int rank(T)(T e)
+    {
+        foreach (i, member; EnumMembers!T)
+            {
+                if (e == member)
+                    return to!int(i);
+            }
+        assert(0, "Not an enum member");
+    }
 
     public static string escapeWhitespace(string s, bool escapeSpaces)
     {

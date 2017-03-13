@@ -31,12 +31,11 @@
 module antlr.v4.runtime.atn.LexerModeAction;
 
 import std.format;
-import std.traits;
-import std.conv;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.misc.Utils;
 
 // Class LexerModeAction
 /**
@@ -99,17 +98,8 @@ class LexerModeAction : LexerAction
 
     public int hashCode()
     {
-        int rank(E)(E e) if (is(E == enum))
-            {
-                foreach (i, member; EnumMembers!E)
-                    {
-                        if (e == member)
-                            return to!int(i);
-                    }
-                assert(0, "Not an enum member");
-            }
 	int hash = MurmurHash.initialize();
-        hash = MurmurHash.update(hash, rank(getActionType));
+        hash = MurmurHash.update(hash, Utils.rank(getActionType));
         hash = MurmurHash.update(hash, mode);
         return MurmurHash.finish(hash, 2);
     }

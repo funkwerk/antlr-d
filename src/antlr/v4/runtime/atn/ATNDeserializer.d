@@ -58,6 +58,9 @@ import antlr.v4.runtime.atn.LexerModeAction;
 import antlr.v4.runtime.atn.LexerMoreAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.atn.LexerPopModeAction;
+import antlr.v4.runtime.atn.LexerPushModeAction;
+import antlr.v4.runtime.atn.LexerSkipAction;
+import antlr.v4.runtime.atn.LexerTypeAction;
 import antlr.v4.runtime.atn.BasicState;
 import antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.PlusLoopbackState;
@@ -785,7 +788,7 @@ class ATNDeserializer
             return new LexerPushModeAction(data1);
 
         case LexerActionType.SKIP:
-            return LexerSkipAction.INSTANCE;
+            return LexerSkipAction.instance;
 
         case LexerActionType.TYPE:
             return new LexerTypeAction(data1);

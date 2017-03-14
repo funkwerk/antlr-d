@@ -206,12 +206,12 @@ class RuleContext
      */
     public string toStringTree(Parser recog)
     {
-        return Trees.toStringTree(this, recog);
+        return Trees.toStringTree(cast(ParseTree)this, recog);
     }
 
     public string toStringTree(string[] ruleNames)
     {
-        return Trees.toStringTree(this, ruleNames);
+        return Trees.toStringTree(cast(ParseTree)this, ruleNames);
     }
 
     public string toStringTree()

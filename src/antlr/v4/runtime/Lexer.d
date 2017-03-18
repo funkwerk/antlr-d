@@ -30,15 +30,25 @@
 
 module antlr.v4.runtime.Lexer;
 
+import std.stdio;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.CommonToken;
+import antlr.v4.runtime.CommonTokenFactory;
+import antlr.v4.runtime.misc.IntegerStack;
 
 // Class Lexer
 /**
  * TODO add class description
+ * @uml
+ * A lexer is recognizer that draws input symbols from a character stream.
+ * lexer grammars result in a subclass of this object. A Lexer object
+ * uses simplified match() and error recovery mechanisms in the interest
+ * of speed.
  */
 abstract class Lexer : Recognizer!(int, LexerATNSimulator)
 {
@@ -63,9 +73,57 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
 
     /**
      * @uml
+     * How to create token objects
+     */
+    public TokenFactory!CommonToken _factory ;
+
+    /**
+     * @uml
+     * The goal of all lexer rules/methods is to create a token object.
+     * This is an instance variable as multiple rules may collaborate to
+     * create a single token.  nextToken will return this object after
+     * matching lexer rule(s).  If you subclass to allow multiple token
+     * emissions, then set this to the last token to be matched or
+     * something nonnull so that the auto token emit mechanism will not
+     * emit another token.
+     */
+    public Token _token;
+
+    public IntegerStack _modeStack;
+
+    /**
+     * @uml
+     * What character index in the stream did the current token start at?
+     * Needed, for example, to get the text for current token.  Set at
+     * the start of nextToken.
+     */
+    public int _tokenStartCharIndex = -1;
+
+    /**
+     * @uml
+     * The line on which the first character of the token resides
+     */
+    public int _tokenStartLine;
+
+    /**
+     * @uml
+     * The character position of first character within the line
+     */
+    public int _tokenStartCharPositionInLine;
+
+    public bool _hitEOF;
+
+    /**
+     * @uml
      * The channel number for the current token
      */
     public int _channel;
+
+    /**
+     * @uml
+     * The token type for the current token
+     */
+    public int _type;
 
     public int _mode;
 
@@ -76,20 +134,94 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
      */
     public string _text;
 
-    /**
-     * @uml
-     * The token type for the current token
-     */
-    public int _type;
-
-    public void setChannel(int channel)
+    public this()
     {
-	_channel = channel;
     }
 
-    public int getChannel()
+    public this(CharStream input)
     {
-        return _channel;
+        _factory = CommonTokenFactory.DEFAULT;
+        this._input = input;
+        this._tokenFactorySourcePair[this] = input;
+    }
+
+    public void reset()
+    {
+	// wack Lexer state variables
+        if (_input !is null) {
+            _input.seek(0); // rewind the input
+        }
+        _token = null;
+        _type = Token.INVALID_TYPE;
+        _channel = Token.DEFAULT_CHANNEL;
+        _tokenStartCharIndex = -1;
+        _tokenStartCharPositionInLine = -1;
+        _tokenStartLine = -1;
+        _text = null;
+        _hitEOF = false;
+        _mode = Lexer.DEFAULT_MODE;
+        _modeStack.clear();
+        getInterpreter().reset();
+    }
+
+    /**
+     * @uml
+     * Return a token from this source; i.e., match a token on the char
+     * stream.
+     */
+    public Token nextToken()
+    {
+	if (_input is null) {
+            throw new IllegalStateException("nextToken requires a non-null input stream.");
+        }
+        // Mark start location in char stream so unbuffered streams are
+        // guaranteed at least have text of current token
+        int tokenStartMarker = _input.mark();
+        try{
+        outer:
+            while (true) {
+                if (_hitEOF) {
+                    emitEOF();
+                    return _token;
+                }
+                _token = null;
+                _channel = Token.DEFAULT_CHANNEL;
+                _tokenStartCharIndex = _input.index();
+                _tokenStartCharPositionInLine = getInterpreter().getCharPositionInLine();
+                _tokenStartLine = getInterpreter().getLine();
+                _text = null;
+                do {
+                    _type = Token.INVALID_TYPE;
+                    //				writeln("nextToken line "+tokenStartLine+" at "+((char)input.LA(1))+
+                    //								   " in mode "+mode+
+                    //								   " at index "+input.index());
+                    int ttype;
+                    try {
+                        ttype = getInterpreter().match(_input, _mode);
+                    }
+                    catch (LexerNoViableAltException e) {
+                        notifyListeners(e);		// report error
+                        recover(e);
+                        ttype = SKIP;
+                    }
+                    if (_input.LA(1) == IntStream.EOF) {
+                        _hitEOF = true;
+                    }
+                    if (_type == Token.INVALID_TYPE) _type = ttype;
+                    if (_type == SKIP) {
+                        continue outer;
+                    }
+                } while (_type == MORE );
+                if (_token is null) emit();
+                return _token;
+            }
+        }
+        finally {
+            // make sure we release marker after match or
+            // unbuffered char stream will keep buffering
+            _input.release(tokenStartMarker);
+        }
+
     }
 
     /**
@@ -113,6 +245,31 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public void mode(int m)
     {
         _mode = m;
+    }
+
+    public void pushMode(int m)
+    {
+        debug writefln("pushMode %s", m);
+        _modeStack.push(_mode);
+        mode(m);
+    }
+
+    public int popMode()
+    {
+        if (_modeStack.isEmpty()) throw new EmptyStackException();
+        debug writefln("popMode back to %s", modeStack.peek());
+        mode( _modeStack.pop() );
+        return _mode;
+    }
+
+    public void setChannel(int channel)
+    {
+	_channel = channel;
+    }
+
+    public int getChannel()
+    {
+        return _channel;
     }
 
 }

@@ -57,7 +57,6 @@ class CommonTokenFactory : TokenFactory!CommonToken
     public this(bool copyText)
     {
         this.copyText = copyText;
-        DEFAULT = new CommonTokenFactory();
     }
 
     /**

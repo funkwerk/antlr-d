@@ -69,7 +69,11 @@ import antlr.v4.runtime.misc.Interval;
 class RuleContext
 {
 
-    public ParserRuleContext EMPTY;
+    /**
+     * @uml
+     * @__gshared
+     */
+    private static __gshared ParserRuleContext EMPTY_;
 
     public RuleContext parent;
 
@@ -225,7 +229,7 @@ class RuleContext
      */
     public override string toString()
     {
-        return toString(cast(string)null, cast(RuleContext)null);
+        return toString([""]);
     }
 
     public string toString(Recognizer!(Token, ATNSimulator) recog)
@@ -245,14 +249,14 @@ class RuleContext
     public string toString(Recognizer!(Token, ATNSimulator) recog, RuleContext stop)
     {
         string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
-        string[] ruleNamesList = ruleNames !is null ? to!string(ruleNames) : null;
-        return ruleNamesList ~ stop.toString;
+        string[] ruleNamesList = ruleNames !is null ? ruleNames : null;
+        return toString(ruleNamesList) ~ stop.toString;
 
     }
 
     public string toString(string[] ruleNames, RuleContext stop)
     {
-	stringBuilder buf = appender!(string);
+	auto buf = appender!(string);
         RuleContext p = this;
         buf.put("[");
         while (p !is null && p != stop) {
@@ -276,6 +280,23 @@ class RuleContext
 
         buf.put("]");
         return buf.data;
+    }
+
+    /**
+     * @uml
+     * @shared
+     */
+    private shared static this()
+    {
+        EMPTY_ = new ParserRuleContext();
+    }
+
+    /**
+     * Returns: A single instance of LexerSkipAction.
+     */
+    public static ParserRuleContext EMPTY()
+    {
+        return EMPTY_;
     }
 
 }

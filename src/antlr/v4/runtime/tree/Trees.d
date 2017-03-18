@@ -87,7 +87,7 @@ class Trees
                 return ruleName;
             }
             else if (t.classinfo == ErrorNode.classinfo) {
-                return t.toString();
+                return "..."; // t.toString();
             }
             else if (t.classinfo == TerminalNode.classinfo) {
                 Token symbol = (cast(TerminalNode)t).getSymbol();

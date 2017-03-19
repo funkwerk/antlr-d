@@ -37,6 +37,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.misc.IntegerStack;
@@ -74,8 +75,10 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     /**
      * @uml
      * How to create token objects
+     * @read
+     * @write
      */
-    public TokenFactory!CommonToken _factory ;
+    public TokenFactory!CommonToken tokenFactory_;
 
     /**
      * @uml
@@ -270,6 +273,154 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public int getChannel()
     {
         return _channel;
+    }
+
+    /**
+     * @uml
+     * Set the char stream and reset the lexer
+     */
+    public void setInputStream(IntStream input)
+    {
+        this._input = null;
+        this._tokenFactorySourcePair = new Pair<TokenSource, CharStream>(this, _input);
+        reset();
+        this._input = cast(CharStream)input;
+        this._tokenFactorySourcePair = new Pair<TokenSource, CharStream>(this, _input);
+    }
+
+    public string getSourceName()
+    {
+        return _input.getSourceName();
+    }
+
+    public CharStream getInputStream()
+    {
+        return _input;
+    }
+
+    /**
+     * @uml
+     * By default does not support multiple emits per nextToken invocation
+     * for efficiency reasons.  Subclass and override this method, nextToken,
+     * and getToken (to push tokens into a list and pull from that list
+     * rather than a single variable as this implementation does).
+     */
+    public void emit(Token token)
+    {
+        debug writefln("emit %s", token);
+        this._token = token;
+    }
+
+    /**
+     * @uml
+     * The standard method called to automatically emit a token at the
+     * outermost lexical rule.  The token object should point into the
+     * char buffer start..stop.  If there is a text override in 'text',
+     * use that to set the token's text.  Override this method to emit
+     * custom Token objects or provide a new factory.
+     */
+    public Token emit()
+    {
+        Token t = tokenFactory_.create(_tokenFactorySourcePair, _type, _text, _channel, _tokenStartCharIndex, getCharIndex()-1,
+                                       _tokenStartLine, _tokenStartCharPositionInLine);
+        emit(t);
+        return t;
+    }
+
+    public Token emitEOF()
+    {
+        int cpos = getCharPositionInLine();
+        int line = getLine();
+        Token eof = tokenFactory_.create(_tokenFactorySourcePair, Token.EOF, null, Token.DEFAULT_CHANNEL, _input.index(), _input.index()-1,
+                                         line, cpos);
+        emit(eof);
+        return eof;
+    }
+
+    public int getLine()
+    {
+        return getInterpreter().getLine();
+    }
+
+    public int getCharPositionInLine()
+    {
+        getInterpreter().setCharPositionInLine(charPositionInLine);
+    }
+
+    public void setLine(int line)
+    {
+        getInterpreter().setLine(line);
+    }
+
+    public void setCharPositionInLine(int charPositionInLine)
+    {
+        getInterpreter().setCharPositionInLine(charPositionInLine);
+    }
+
+    /**
+     * @uml
+     * What is the index of the current character of lookahead?
+     */
+    public int getCharIndex()
+    {
+        return _input.index();
+    }
+
+    /**
+     * @uml
+     * eturn the text matched so far for the current token or any
+     * text override.
+     */
+    public string getText()
+    {
+        if (_text !is null) {
+            return _text;
+        }
+        return getInterpreter().getText(_input);
+    }
+
+    /**
+     * @uml
+     * Set the complete text of this token; it wipes any previous
+     * changes to the text.
+     */
+    public void setText(string text)
+    {
+        this._text = text;
+    }
+
+    /**
+     * @uml
+     * Override if emitting multiple tokens.
+     */
+    public Token getToken()
+    {
+        return _token;
+    }
+
+    public void setToken(Token token)
+    {
+        this._token = token;
+    }
+
+    public void setType(int ttype)
+    {
+        _type = ttype;
+    }
+
+    public int getType()
+    {
+        return _type;
+    }
+
+    public final TokenFactory!CommonToken tokenFactory()
+    {
+        return this.tokenFactory_;
+    }
+
+    public final void tokenFactory(TokenFactory!CommonToken tokenFactory)
+    {
+        this.tokenFactory_ = tokenFactory;
     }
 
 }

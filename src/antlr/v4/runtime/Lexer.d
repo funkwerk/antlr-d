@@ -265,16 +265,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
         return _mode;
     }
 
-    public void setChannel(int channel)
-    {
-	_channel = channel;
-    }
-
-    public int getChannel()
-    {
-        return _channel;
-    }
-
     /**
      * @uml
      * Set the char stream and reset the lexer
@@ -411,6 +401,33 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public int getType()
     {
         return _type;
+    }
+
+    public void setChannel(int channel)
+    {
+	_channel = channel;
+    }
+
+    public int getChannel()
+    {
+        return _channel;
+    }
+
+    public string[] getModeNames()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * Used to print out token names like ID during debugging and
+     * error reporting.  The generated parsers implement a method
+     * that overrides this to point to their String[] tokenNames.
+     * @override
+     */
+    public override string[] getTokenNames()
+    {
+        return null;
     }
 
     public final TokenFactory!CommonToken tokenFactory()

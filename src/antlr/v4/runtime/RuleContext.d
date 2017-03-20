@@ -3,7 +3,7 @@ module antlr.v4.runtime.RuleContext;
 import std.array;
 import std.conv;
 import antlr.v4.runtime.Parser;
-import antlr.v4.runtime.RuleNode;
+import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.ParserRuleContext;

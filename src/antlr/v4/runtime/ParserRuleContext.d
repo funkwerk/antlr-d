@@ -31,6 +31,7 @@
 
 module antlr.v4.runtime.ParserRuleContext;
 
+import std.variant;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
@@ -80,7 +81,7 @@ class ParserRuleContext : RuleContext
      * operation because we don't the need to track the details about
      * how we parse this rule.
      */
-    public ParseTree[] children;
+    public Variant[] children;
 
     public Token start;
 

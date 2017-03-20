@@ -32,6 +32,7 @@ module antlr.v4.runtime.Parser;
 
 import std.algorithm;
 import antlr.v4.runtime.ANTLRErrorStrategy;
+import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.RuleContext;
@@ -49,8 +50,11 @@ import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ParseInfo;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
+import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.ErrorNode;
+import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.misc.IntegerStack;
 import antlr.v4.runtime.misc.IntervalSet;
 
@@ -427,6 +431,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         if (serializedAtn in bypassAltsAtnCache) {
             return bypassAltsAtnCache[serializedAtn];
         }
+        ATN result;
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
         deserializationOptions.setGenerateRuleBypassTransitions(true);
         result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn.toCharArray());
@@ -706,7 +711,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         // hook into tree
         retctx.parent = _parentctx;
 
-        if (_buildParseTrees && _parentctx != null) {
+        if (_buildParseTrees && _parentctx !is null) {
             // add return ctx into invoking rule's tree
             _parentctx.addChild(retctx);
         }
@@ -742,7 +747,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         // hook into tree
         retctx.parent = _parentctx;
 
-        if (_buildParseTrees && _parentctx != null) {
+        if (_buildParseTrees && _parentctx !is null) {
             // add return ctx into invoking rule's tree
             _parentctx.addChild(retctx);
         }

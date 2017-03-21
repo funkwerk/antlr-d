@@ -49,6 +49,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ParseInfo;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
@@ -557,7 +558,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         if (o.getType() != EOF) {
             getInputStream().consume();
         }
-        bool hasListener = _parseListeners != null && !_parseListeners.isEmpty();
+        bool hasListener = _parseListeners !is null && _parseListeners.length;
         if (_buildParseTrees || hasListener) {
             if (_errHandler.inErrorRecoveryMode(this)) {
                 ErrorNode node = ctx_.addErrorNode(o);
@@ -640,7 +641,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     public final int getPrecedence()
     {
-        if (_precedenceStack.isEmpty()) {
+        if (_precedenceStack.stack.length) {
             return -1;
         }
         return _precedenceStack.peek();
@@ -854,9 +855,8 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     public int getRuleIndex(string ruleName)
     {
-	Integer ruleIndex = getRuleIndexMap().get(ruleName);
-        if (ruleIndex !is null )
-            return ruleIndex;
+        if (ruleName in getRuleIndexMap)
+            return getRuleIndexMap[ruleName];
         return -1;
     }
 

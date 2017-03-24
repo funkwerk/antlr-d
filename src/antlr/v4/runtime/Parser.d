@@ -31,6 +31,7 @@
 module antlr.v4.runtime.Parser;
 
 import std.algorithm;
+import std.conv;
 import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Lexer;
@@ -50,8 +51,10 @@ import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ParseInfo;
 import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ErrorNode;
@@ -333,9 +336,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     public void addParseListener(ParseTreeListener listener)
     {
-        if (listener is null) {
-            throw new NullPointerException("listener");
-        }
+        assert (listener !is null, "NullPointerException(listener)");
         _parseListeners ~= listener;
     }
 
@@ -435,7 +436,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         ATN result;
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
         deserializationOptions.setGenerateRuleBypassTransitions(true);
-        result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn.toCharArray());
+        result = new ATNDeserializer(deserializationOptions).deserialize(to!(char[])(serializedAtn));
         bypassAltsAtnCache[serializedAtn] = result;
         return result;
     }

@@ -31,6 +31,7 @@
 module antlr.v4.runtime.tree.pattern.ParseTreeMatch;
 
 import std.format;
+import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 
@@ -85,6 +86,19 @@ class ParseTreeMatch
      */
     public this(ParseTree tree, ParseTreePattern pattern, ParseTree[][string] labels, ParseTree mismatchedNode)
     {
+        if (tree is null) {
+            throw new IllegalArgumentException("tree cannot be null");
+        }
+        if (pattern is null) {
+            throw new IllegalArgumentException("pattern cannot be null");
+        }
+        if (labels is null) {
+            throw new IllegalArgumentException("labels cannot be null");
+        }
+        this.tree = tree;
+        this.pattern = pattern;
+        this.labels = labels;
+        this.mismatchedNode = mismatchedNode;
     }
 
     /**

@@ -5,9 +5,11 @@ import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.ListTokenSource;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreeMatch;
+import antlr.v4.runtime.tree.pattern.RuleTagToken;
 
 // Class ParseTreePatternMatcher
 /**
@@ -219,6 +221,42 @@ class ParseTreePatternMatcher
             throw new StartRuleDoesNotConsumeFullPattern();
         }
         return new ParseTreePattern(this, pattern, patternRuleIndex, tree);
+    }
+
+    /**
+     * @uml
+     * Used to convert the tree pattern string into a series of tokens. The
+     * input stream is reset.
+     */
+    public Lexer getLexer()
+    {
+    }
+
+    /**
+     * @uml
+     * Used to collect to the grammar file name, token names, rule names for
+     * used to parse the pattern into a parse tree.
+     */
+    public Parser getParser()
+    {
+    }
+
+    /**
+     * @uml
+     * Recursively walk {@code tree} against {@code patternTree}, filling
+     * {@code match.}{@link ParseTreeMatch#labels labels}.
+     *
+     *  @return the first node encountered in {@code tree} which does not match
+     * a corresponding node in {@code patternTree}, or {@code null} if the match
+     * was successful. The specific node returned depends on the matching
+     * algorithm used by the implementation, and may be overridden.
+     */
+    protected ParseTree matchImpl(ParseTree tree, ParseTree patternTree, ParseTree[][string] labels)
+    {
+    }
+
+    public RuleTagToken getRuleTagToken(ParseTree t)
+    {
     }
 
 }

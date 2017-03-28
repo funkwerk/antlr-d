@@ -31,6 +31,7 @@
 module antlr.v4.runtime.CommonTokenStream;
 
 import antlr.v4.runtime.BufferedTokenStream;
+import antlr.v4.runtime.Token;
 
 // Class CommonTokenStream
 /**
@@ -59,5 +60,15 @@ import antlr.v4.runtime.BufferedTokenStream;
  */
 class CommonTokenStream : BufferedTokenStream
 {
+
+    /**
+     * @uml
+     * Specifies the channel to use for filtering tokens.
+     *
+     * <p>
+     * The default value is {@link Token#DEFAULT_CHANNEL}, which matches the
+     * default channel assigned to tokens created by the lexer.</p>
+     */
+    protected int channel = Token.DEFAULT_CHANNEL;
 
 }

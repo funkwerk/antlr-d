@@ -31,6 +31,7 @@
 module antlr.v4.runtime.ParserInterpreter;
 
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -70,5 +71,7 @@ class ParserInterpreter : Parser
     protected string[] tokenNames;
 
     protected string[] ruleNames;
+
+    private Vocabulary vocabulary;
 
 }

@@ -40,6 +40,8 @@ import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenFactory;
+import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.misc.IntegerStack;
 
 // Class Lexer
@@ -143,7 +145,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
 
     public this(CharStream input)
     {
-        _factory = CommonTokenFactory.DEFAULT;
+        tokenFactory_ = CommonTokenFactory.DEFAULT;
         this._input = input;
         this._tokenFactorySourcePair[this] = input;
     }

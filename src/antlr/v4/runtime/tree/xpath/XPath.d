@@ -31,6 +31,7 @@
 module antlr.v4.runtime.tree.xpath.XPath;
 
 import std.stdio;
+import std.file;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
@@ -122,10 +123,10 @@ class XPath
     {
         ANTLRInputStream ins;
         try {
-            ins = new ANTLRInputStream(new StringReader(path));
+            ins = new ANTLRInputStream(readText(path));
         }
-        catch (IOException ioe) {
-            throw new IllegalArgumentException("Could not read path: "+path, ioe);
+        catch (Exception ioe) {
+            throw new IllegalArgumentException("Could not read path: " ~ path, ioe);
         }
         XPathLexer lexer = new XPathLexerRecover(ins);
         lexer.removeErrorListeners();

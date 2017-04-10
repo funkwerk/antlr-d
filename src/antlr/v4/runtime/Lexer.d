@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2013 Terence Parr
  *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@
 module antlr.v4.runtime.Lexer;
 
 import std.stdio;
+import std.typecons;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
@@ -43,6 +45,8 @@ import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.misc.IntegerStack;
+
+alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
 
 // Class Lexer
 /**
@@ -72,7 +76,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
 
     public CharStream _input;
 
-    protected CharStream[TokenSource] _tokenFactorySourcePair;
+    protected TokenFactorySourcePair _tokenFactorySourcePair;
 
     /**
      * @uml
@@ -261,7 +265,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
 
     public int popMode()
     {
-        if (_modeStack.isEmpty()) throw new EmptyStackException();
+        assert (!_modeStack.isEmpty, "Empty stack");
         debug writefln("popMode back to %s", modeStack.peek());
         mode( _modeStack.pop() );
         return _mode;
@@ -274,10 +278,11 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     public void setInputStream(IntStream input)
     {
         this._input = null;
-        this._tokenFactorySourcePair = new Pair<TokenSource, CharStream>(this, _input);
+        //this._tokenFactorySourcePair.l = this;
+        this._tokenFactorySourcePair.r = _input;
         reset();
         this._input = cast(CharStream)input;
-        this._tokenFactorySourcePair = new Pair<TokenSource, CharStream>(this, _input);
+        this._tokenFactorySourcePair.r = _input;
     }
 
     public string getSourceName()

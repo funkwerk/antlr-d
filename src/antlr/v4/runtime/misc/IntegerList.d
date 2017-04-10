@@ -1,17 +1,133 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.misc.IntegerList;
+
+import antlr.v4.runtime.IllegalArgumentException;
 
 // Class IntegerList
 /**
- * TODO add class description
+ * A buffert list of interger values
  */
 class IntegerList
 {
+
+    private static int[] EMPTY_DATA;
+
+    private static immutable int INITIAL_SIZE = 4;
+
+    private static immutable int MAX_ARRAY_SIZE  = int.max-8;
 
     /**
      * @uml
      * @read
      */
     public int[] data_;
+
+    /**
+     * @uml
+     * @read
+     */
+    public int size_;
+
+    public this()
+    {
+        data_ = EMPTY_DATA;
+    }
+
+    public this(int capacity)
+    {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Capacity can't be a negativ value!");
+        }
+        if (capacity == 0) {
+            data_ = EMPTY_DATA;
+        } else {
+            data_.length = capacity;
+        }
+    }
+
+    public this(IntegerList list)
+    {
+        data_ = list.data;
+        size_ = list.size;
+    }
+
+    public this(int[] list)
+    {
+        foreach (value; list) {
+            add(value);
+        }
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void add(int value)
+    {
+        data_ ~= value;
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void addAll(int[] array)
+    {
+        foreach (value; array) {
+            add(value);
+        }
+    }
+
+    public void addAll(IntegerList list)
+    {
+        foreach (value; list.data) {
+            add(value);
+        }
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final int get(int index)
+    in
+    {
+        index >= 0 || index < size_;
+    }
+    body
+    {
+        return data_[index];
+    }
 
     /**
      * @uml
@@ -33,14 +149,22 @@ class IntegerList
         return data;
     }
 
-    public void add(int value)
+    /**
+     * @uml
+     * @final
+     */
+    public final bool contains(int value)
     {
-        data_ ~= value;
     }
 
     public final int[] data()
     {
         return this.data_.dup;
+    }
+
+    public final int size()
+    {
+        return this.size_;
     }
 
 }

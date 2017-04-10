@@ -73,19 +73,9 @@ class CommonTokenFactory : TokenFactory!CommonToken
         this(false);
     }
 
-    public CommonToken create(CharStream[TokenSource] source, int type, string text, int channel,
+    public CommonToken create(TokenFactorySourcePair source, int type, string text, int channel,
         int start, int stop, int line, int charPositionInLine)
     {
-	CommonToken t = new CommonToken(source, type, channel, start, stop);
-        t.setLine(line);
-        t.setCharPositionInLine(charPositionInLine);
-        if (text !is null) {
-            t.setText(text);
-        }
-        else if (copyText && source.b !is null ) {
-            t.setText(source.b.getText(Interval.of(start,stop)));
-        }
-        return t;
     }
 
     public CommonToken create(int type, string text)

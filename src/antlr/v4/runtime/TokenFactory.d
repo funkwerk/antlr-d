@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,8 +31,11 @@
 
 module antlr.v4.runtime.TokenFactory;
 
+import std.typecons;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
+
+alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
 
 // Interface TokenFactory
 /**
@@ -49,7 +53,7 @@ interface TokenFactory(Symbol)
      * error handling strategy. If text!=null, than the start and stop positions
      * are wiped to -1 in the text override is set in the CommonToken.
      */
-    public Symbol create(CharStream[TokenSource] source, int type, string text, int channel,
+    public Symbol create(TokenFactorySourcePair source, int type, string text, int channel,
         int start, int stop, int line, int charPositionInLine);
 
     /**

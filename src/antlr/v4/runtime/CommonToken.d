@@ -1,9 +1,12 @@
 module antlr.v4.runtime.CommonToken;
 
+import std.typecons;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
+
+alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
 
 // Class CommonToken
 /**
@@ -17,7 +20,7 @@ class CommonToken : WritableToken
      * An empty {@link Pair} which is used as the default value of
      * {@link #source} for tokens that do not have a source.
      */
-    protected static CharStream[TokenSource] EMPTY_SOURCE;
+    protected static TokenFactorySourcePair EMPTY_SOURCE;
 
     /**
      * @uml
@@ -52,7 +55,7 @@ class CommonToken : WritableToken
      * the same source and input stream share a reference to the same
      * {@link Pair} containing these values.</p>
      */
-    protected CharStream[TokenSource] source;
+    protected TokenFactorySourcePair source;
 
     /**
      * @uml

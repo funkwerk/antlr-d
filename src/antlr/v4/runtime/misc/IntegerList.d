@@ -31,6 +31,8 @@
 
 module antlr.v4.runtime.misc.IntegerList;
 
+import std.algorithm.mutation;
+import std.typecons;
 import antlr.v4.runtime.IllegalArgumentException;
 
 // Class IntegerList
@@ -122,11 +124,86 @@ class IntegerList
     public final int get(int index)
     in
     {
-        index >= 0 || index < size_;
+        assert(index >= 0 || index < size_);
     }
     body
     {
         return data_[index];
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final bool contains(int value)
+    {
+        for (int i = 0; i < size_; i++) {
+            if (data_[i] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final int set(int index, int value)
+    in
+    {
+        assert(index >= 0 || index < size_);
+    }
+    body
+    {
+        int previous = data_[index];
+        data_[index] = value;
+        return previous;
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final int removeAt(int index)
+    {
+        int value = get(index);
+        data_ = remove(data_, index);
+        size_--;
+        return value;
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void removeRange(int fromIndex, int toIndex)
+    in
+    {
+        assert(fromIndex >= 0 || toIndex >= 0 || fromIndex <= size_ || toIndex <= size_, "IndexOutOfBoundsException");
+        assert(fromIndex <= toIndex, "IllegalArgumentException");
+    }
+    body
+    {
+        data_ = remove(data_, tuple(fromIndex, toIndex+1));
+        size_ -= (toIndex - fromIndex);
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final bool isEmpty()
+    {
+        return size_ == 0;
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void trimToSize()
+    {
     }
 
     /**
@@ -149,12 +226,88 @@ class IntegerList
         return data;
     }
 
+    public void sort()
+    {
+    }
+
+    /**
+     * @uml
+     * Compares the specified object with this list for equality.  Returns
+     * {@code true} if and only if the specified object is also an {@link IntegerList},
+     * both lists have the same size, and all corresponding pairs of elements in
+     * the two lists are equal.  In other words, two lists are defined to be
+     * equal if they contain the same elements in the same order.
+     * <p>
+     * This implementation first checks if the specified object is this
+     * list. If so, it returns {@code true}; if not, it checks if the
+     * specified object is an {@link IntegerList}. If not, it returns {@code false};
+     * if so, it checks the size of both lists. If the lists are not the same size,
+     * it returns {@code false}; otherwise it iterates over both lists, comparing
+     * corresponding pairs of elements.  If any comparison returns {@code false},
+     * this method returns {@code false}.
+     *
+     *  @param o the object to be compared for equality with this list
+     *  @return {@code true} if the specified object is equal to this list
+     */
+    public bool equals(Object o)
+    {
+    }
+
+    /**
+     * @uml
+     * Returns the hash code value for this list.
+     *
+     * <p>This implementation uses exactly the code that is used to define the
+     * list hash function in the documentation for the {@link List#hashCode}
+     * method.</p>
+     *
+     *  @return the hash code value for this list
+     */
+    public int hashCode()
+    {
+    }
+
+    /**
+     * @uml
+     * Returns a string representation of this list.
+     * @override
+     */
+    public override string toString()
+    {
+    }
+
     /**
      * @uml
      * @final
      */
-    public final bool contains(int value)
+    public final int binarySearch(int key)
     {
+        return Arrays.binarySearch(data_, 0, size_, key);
+    }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final void binarySearch(int fromIndex, int toIndex, int key)
+    in
+    {
+        assert(fromIndex >= 0 && toIndex >= 0 && fromIndex <= size_ && toIndex <= size_, "IndexOutOfBoundsException");
+        assert(fromIndex <= toIndex, "IllegalArgumentException");
+    }
+    body
+    {
+        return Arrays.binarySearch(data_, fromIndex, toIndex, key);
+    }
+
+    private void ensureCapacity(int capacity)
+    in
+    {
+        assert(capacity >= 0 && capacity <= MAX_ARRAY_SIZE, "OutOfMemoryError");
+    }
+    body
+    {
+        static assert(0, "not implemented");
     }
 
     public final int[] data()

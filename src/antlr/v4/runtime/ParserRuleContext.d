@@ -32,6 +32,7 @@
 module antlr.v4.runtime.ParserRuleContext;
 
 import std.variant;
+import std.format;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
@@ -313,12 +314,10 @@ class ParserRuleContext : RuleContext
      */
     public string toInfoString(Parser recognizer)
     {
-        string> rules = recognizer.getRuleInvocationStack(this);
-        Collections.reverse(rules);
-        return "ParserRuleContext" ~ rules ~ "{" ~
-                "start=" ~ start.getText ~
-                ", stop=" ~ stop.getText ~
-                '}';
+        string[] rules = recognizer.getRuleInvocationStack(this);
+        rules.reverse;
+        return format("ParserRuleContext{ %1$s " ~
+                "start=%2$s, stop=%3$s}", rules, start.getText, stop.getText);
     }
 
 }

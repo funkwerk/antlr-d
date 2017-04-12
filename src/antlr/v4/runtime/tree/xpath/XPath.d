@@ -32,10 +32,13 @@ module antlr.v4.runtime.tree.xpath.XPath;
 
 import std.stdio;
 import std.file;
+import std.format;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.ANTLRInputStream;
+import antlr.v4.runtime.IllegalArgumentException;
+import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.xpath.XPathLexer;
@@ -137,8 +140,8 @@ class XPath
         }
         catch (LexerNoViableAltException e) {
             int pos = lexer.getCharPositionInLine();
-            String msg = "Invalid tokens or characters at index "+pos+" in path '"+path+"'";
-            throw new IllegalArgumentException(msg, e);
+            string msg = format("Invalid tokens or characters at index %1$s in path '%2$s'", pos, path);
+            throw new IllegalArgumentException(msg);
         }
 
         Token[] tokens = tokenStream.getTokens();
@@ -153,24 +156,24 @@ class XPath
             switch ( el.getType() ) {
             case XPathLexer.ROOT :
             case XPathLexer.ANYWHERE :
-                boolean anywhere = el.getType() == XPathLexer.ANYWHERE;
+                bool anywhere = el.getType() == XPathLexer.ANYWHERE;
                 i++;
                 next = tokens[i];
-                boolean invert = next.getType()==XPathLexer.BANG;
+                bool invert = next.getType() == XPathLexer.BANG;
                 if ( invert ) {
                     i++;
                     next = tokens[i];
                 }
                 XPathElement pathElement = getXPathElement(next, anywhere);
                 pathElement.invert = invert;
-                elements.add(pathElement);
+                elements ~= pathElement;
                 i++;
                 break;
 
             case XPathLexer.TOKEN_REF :
             case XPathLexer.RULE_REF :
             case XPathLexer.WILDCARD :
-                elements.add( getXPathElement(el, false) );
+                elements ~= getXPathElement(el, false);
                 i++;
                 break;
 
@@ -178,7 +181,7 @@ class XPath
                 break loop;
 
             default :
-                throw new IllegalArgumentException("Unknowth path element "+el);
+                throw new IllegalArgumentException("Unknowth path element " ~ el.toString);
             }
         }
         return elements.toArray(new XPathElement[0]);
@@ -192,6 +195,39 @@ class XPath
      */
     public XPathElement getXPathElement(Token wordToken, bool anywhere)
     {
+	if (wordToken.getType() == Token.EOF) {
+            throw new IllegalArgumentException("Missing path element at end of path");
+        }
+        string word = wordToken.getText();
+        int ttype = parser.getTokenType(word);
+        int ruleIndex = parser.getRuleIndex(word);
+        switch (wordToken.getType()) {
+        case XPathLexer.WILDCARD :
+            return anywhere ?
+                new XPathWildcardAnywhereElement() :
+            new XPathWildcardElement();
+        case XPathLexer.TOKEN_REF :
+        case XPathLexer.STRING :
+            if ( ttype==Token.INVALID_TYPE ) {
+                throw new IllegalArgumentException(word~
+                                                   " at index "~
+                                                   wordToken.getStartIndex()~
+                                                   " isn't a valid token name");
+            }
+            return anywhere ?
+                new XPathTokenAnywhereElement(word, ttype) :
+                new XPathTokenElement(word, ttype);
+        default :
+            if ( ruleIndex==-1 ) {
+                throw new IllegalArgumentException(word ~
+                                                   " at index "~
+                                                   wordToken.getStartIndex()~
+                                                   " isn't a valid rule name");
+            }
+            return anywhere ?
+                new XPathRuleAnywhereElement(word, ruleIndex) :
+                new XPathRuleElement(word, ruleIndex);
+        }
     }
 
     public ParseTree findAll(ParseTree tree, string xpath, Parser parser)

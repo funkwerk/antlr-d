@@ -33,6 +33,10 @@ module antlr.v4.runtime.misc.IntegerList;
 
 import std.algorithm.mutation;
 import std.typecons;
+import std.range;
+import std.conv;
+import std.format;
+import std.algorithm;
 import antlr.v4.runtime.IllegalArgumentException;
 
 // Class IntegerList
@@ -204,6 +208,7 @@ class IntegerList
      */
     public final void trimToSize()
     {
+        size_ = to!int(data_.length);
     }
 
     /**
@@ -223,11 +228,12 @@ class IntegerList
      */
     public final @property int[] toArray()
     {
-        return data;
+        return data_;
     }
 
     public void sort()
     {
+        data_.sort();
     }
 
     /**
@@ -251,6 +257,19 @@ class IntegerList
      */
     public bool equals(Object o)
     {
+	if (o == this) {
+            return true;
+        }
+        if (o.classinfo != IntegerList.classinfo) {
+            return false;
+        }
+        IntegerList other = cast(IntegerList)o;
+        if (size_ != other.size) {
+            return false;
+        }
+        auto a = data_.assumeSorted;
+        auto b = other.data.assumeSorted;
+        return a.equal(b);
     }
 
     /**
@@ -265,6 +284,11 @@ class IntegerList
      */
     public int hashCode()
     {
+        int hashCode = 1;
+        for (int i = 0; i < size_; i++) {
+            hashCode = 31*hashCode + data_[i];
+        }
+        return hashCode;
     }
 
     /**
@@ -274,6 +298,7 @@ class IntegerList
      */
     public override string toString()
     {
+        return format("%s", data_);
     }
 
     /**
@@ -282,14 +307,19 @@ class IntegerList
      */
     public final int binarySearch(int key)
     {
-        return Arrays.binarySearch(data_, 0, size_, key);
+        auto r = data_.assumeSorted;
+        auto f = r.find(key);
+        if (!f.empty)
+            return to!int(data_.length - f.length);
+        else
+            return to!int(data_.length - 1);
     }
 
     /**
      * @uml
      * @final
      */
-    public final void binarySearch(int fromIndex, int toIndex, int key)
+    public final int binarySearch(int fromIndex, int toIndex, int key)
     in
     {
         assert(fromIndex >= 0 && toIndex >= 0 && fromIndex <= size_ && toIndex <= size_, "IndexOutOfBoundsException");
@@ -297,17 +327,12 @@ class IntegerList
     }
     body
     {
-        return Arrays.binarySearch(data_, fromIndex, toIndex, key);
-    }
-
-    private void ensureCapacity(int capacity)
-    in
-    {
-        assert(capacity >= 0 && capacity <= MAX_ARRAY_SIZE, "OutOfMemoryError");
-    }
-    body
-    {
-        static assert(0, "not implemented");
+        auto r = data_.assumeSorted;
+        auto f = r[fromIndex..toIndex].find(key);
+        if (!f.empty)
+            return to!int(toIndex - f.length);
+        else
+            return to!int(data_.length - 1);
     }
 
     public final int[] data()

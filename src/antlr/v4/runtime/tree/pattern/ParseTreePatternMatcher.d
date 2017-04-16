@@ -41,6 +41,8 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.pattern.Chunk;
+import antlr.v4.runtime.tree.pattern.TagChunk;
+import antlr.v4.runtime.tree.pattern.TokenTagToken;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreeMatch;
 import antlr.v4.runtime.tree.pattern.RuleTagToken;
@@ -294,6 +296,49 @@ class ParseTreePatternMatcher
 
     public Token[] tokenize(string pattern)
     {
+	// split pattern into chunks: sea (raw input) and islands (<ID>, <expr>)
+        Chunk[] chunks = split(pattern);
+
+        // create token stream from text and tags
+        Token[] tokens;
+        foreach (Chunk chunk; chunks) {
+            if (chunk.classinfo == TagChunk.classinf) {
+                TagChunk tagChunk = cast(TagChunk)chunk;
+                // add special rule token or conjure up new token from name
+                if (Character.isUpperCase(tagChunk.getTag().charAt(0)) ) {
+                    int ttype = parser.getTokenType(tagChunk.getTag());
+                    if (ttype == Token.INVALID_TYPE ) {
+                        throw new IllegalArgumentException("Unknown token "+tagChunk.getTag()+" in pattern: "+pattern);
+                    }
+                    TokenTagToken t = new TokenTagToken(tagChunk.getTag(), ttype, tagChunk.getLabel());
+                    tokens ~= t;
+                }
+                else if ( Character.isLowerCase(tagChunk.getTag().charAt(0)) ) {
+                    int ruleIndex = parser.getRuleIndex(tagChunk.getTag());
+                    if ( ruleIndex==-1 ) {
+                        throw new IllegalArgumentException("Unknown rule "+tagChunk.getTag()+" in pattern: "+pattern);
+                    }
+                    int ruleImaginaryTokenType = parser.getATNWithBypassAlts().ruleToTokenType[ruleIndex];
+                    tokens ~= new RuleTagToken(tagChunk.getTag(), ruleImaginaryTokenType, tagChunk.getLabel());
+                }
+                else {
+                    throw new IllegalArgumentException("invalid tag: "+tagChunk.getTag()+" in pattern: "+pattern);
+                }
+            }
+            else {
+                TextChunk textChunk = cast(TextChunk)chunk;
+                ANTLRInputStream ins = new ANTLRInputStream(textChunk.getText());
+                lexer.setInputStream(ins);
+                Token t = lexer.nextToken();
+                while (t.getType() != Token.EOF) {
+                    tokens ~= t;
+                    t = lexer.nextToken();
+                }
+            }
+        }
+
+        //		System.out.println("tokens="+tokens);
+        return tokens;
     }
 
     public Chunk[] split(string pattern)

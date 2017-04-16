@@ -1,6 +1,7 @@
 module antlr.v4.runtime.tree.pattern.TagChunk;
 
 import antlr.v4.runtime.tree.pattern.Chunk;
+import antlr.v4.runtime.IllegalArgumentException;
 
 // Class TagChunk
 /**
@@ -46,6 +47,7 @@ class TagChunk : Chunk
      */
     public this(string tag)
     {
+        this(null, tag);
     }
 
     /**
@@ -63,6 +65,11 @@ class TagChunk : Chunk
      */
     public this(string label, string tag)
     {
+        if (tag is null || tag.length == 0) {
+            throw new IllegalArgumentException("tag cannot be null or empty");
+        }
+        this.label = label;
+        this.tag = tag;
     }
 
     /**
@@ -71,6 +78,7 @@ class TagChunk : Chunk
      */
     public string getTag()
     {
+        return tag;
     }
 
     /**
@@ -82,6 +90,7 @@ class TagChunk : Chunk
      */
     public string getLabel()
     {
+        return label;
     }
 
     /**
@@ -93,6 +102,10 @@ class TagChunk : Chunk
      */
     public override string toString()
     {
+        if (label !is null) {
+            return label ~ ":" ~ tag;
+        }
+        return tag;
     }
 
 }

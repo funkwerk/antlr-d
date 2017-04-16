@@ -31,6 +31,7 @@
 
 module antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 
+import std.uni;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IllegalArgumentException;
@@ -302,10 +303,10 @@ class ParseTreePatternMatcher
         // create token stream from text and tags
         Token[] tokens;
         foreach (Chunk chunk; chunks) {
-            if (chunk.classinfo == TagChunk.classinf) {
+            if (chunk.classinfo == TagChunk.classinfo) {
                 TagChunk tagChunk = cast(TagChunk)chunk;
                 // add special rule token or conjure up new token from name
-                if (Character.isUpperCase(tagChunk.getTag().charAt(0)) ) {
+                if (isUpper(tagChunk.getTag()[0])) {
                     int ttype = parser.getTokenType(tagChunk.getTag());
                     if (ttype == Token.INVALID_TYPE ) {
                         throw new IllegalArgumentException("Unknown token "+tagChunk.getTag()+" in pattern: "+pattern);
@@ -313,7 +314,7 @@ class ParseTreePatternMatcher
                     TokenTagToken t = new TokenTagToken(tagChunk.getTag(), ttype, tagChunk.getLabel());
                     tokens ~= t;
                 }
-                else if ( Character.isLowerCase(tagChunk.getTag().charAt(0)) ) {
+                else if (isLower(tagChunk.getTag()[0]) ) {
                     int ruleIndex = parser.getRuleIndex(tagChunk.getTag());
                     if ( ruleIndex==-1 ) {
                         throw new IllegalArgumentException("Unknown rule "+tagChunk.getTag()+" in pattern: "+pattern);
@@ -322,7 +323,7 @@ class ParseTreePatternMatcher
                     tokens ~= new RuleTagToken(tagChunk.getTag(), ruleImaginaryTokenType, tagChunk.getLabel());
                 }
                 else {
-                    throw new IllegalArgumentException("invalid tag: "+tagChunk.getTag()+" in pattern: "+pattern);
+                    throw new IllegalArgumentException("invalid tag: " ~ tagChunk.getTag ~ " in pattern: " ~ pattern);
                 }
             }
             else {

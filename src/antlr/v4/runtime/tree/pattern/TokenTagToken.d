@@ -18,7 +18,7 @@ class TokenTagToken : CommonToken
      * This is the backing field for {@link #getTokenName}.
      * @final
      */
-    private string rtokenName;
+    private string tokenName;
 
     /**
      * @uml
@@ -88,7 +88,7 @@ class TokenTagToken : CommonToken
     public override string getText()
     {
         if (label !is null) {
-            return "<" + label ~ ":" ~ tokenName + ">";
+            return "<" + label ~ ":" ~ tokenName ~ ">";
         }
         return "<" ~ tokenName ~ ">";
     }

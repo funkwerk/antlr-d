@@ -33,6 +33,7 @@ module antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 
 import std.uni;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.ListTokenSource;
@@ -43,6 +44,7 @@ import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.pattern.Chunk;
 import antlr.v4.runtime.tree.pattern.TagChunk;
+import antlr.v4.runtime.tree.pattern.TextChunk;
 import antlr.v4.runtime.tree.pattern.TokenTagToken;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreeMatch;

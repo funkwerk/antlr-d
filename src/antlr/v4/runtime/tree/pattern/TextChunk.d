@@ -1,5 +1,6 @@
 module antlr.v4.runtime.tree.pattern.TextChunk;
 
+import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.tree.pattern.Chunk;
 
 // Class TextChunk

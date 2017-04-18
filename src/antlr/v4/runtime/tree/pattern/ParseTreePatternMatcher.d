@@ -234,7 +234,7 @@ class ParseTreePatternMatcher
 
         ParserInterpreter parserInterp = new ParserInterpreter(parser.getGrammarFileName(),
                                                                parser.getVocabulary(),
-                                                               Arrays.asList(parser.getRuleNames()),
+                                                               parser.getRuleNames(),
                                                                parser.getATNWithBypassAlts(),
                                                                tokens);
 

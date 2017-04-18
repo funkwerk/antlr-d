@@ -88,7 +88,7 @@ class TokenTagToken : CommonToken
     public override string getText()
     {
         if (label !is null) {
-            return "<" + label ~ ":" ~ tokenName ~ ">";
+            return "<" ~ label ~ ":" ~ tokenName ~ ">";
         }
         return "<" ~ tokenName ~ ">";
     }

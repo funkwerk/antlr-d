@@ -1,6 +1,41 @@
+/*
+ * [The "BSD license"]
+ * Copyright (c) 2013 Terence Parr
+ * Copyright (c) 2013 Sam Harwell
+ * Copyright (c) 2017 Egbert Voigt
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.tree.pattern.RuleTagToken;
 
+import std.conv;
+import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenSource;
 
 // Class RuleTagToken
 /**
@@ -44,6 +79,7 @@ class RuleTagToken : Token
      */
     public this(string ruleName, int bypassTokenType)
     {
+        this(ruleName, bypassTokenType, null);
     }
 
     /**
@@ -61,38 +97,134 @@ class RuleTagToken : Token
      */
     public this(string ruleName, int bypassTokenType, string label)
     {
+	if (ruleName is null || ruleName.length == 0) {
+            throw new IllegalArgumentException("ruleName cannot be null or empty.");
+        }
+        this.ruleName = ruleName;
+        this.bypassTokenType = bypassTokenType;
+        this.label = label;
     }
 
+    /**
+     * @uml
+     * Gets the name of the rule associated with this rule tag.
+     *
+     *  @return The name of the parser rule associated with this rule tag.
+     */
     public string getRuleName()
     {
+        return ruleName;
     }
 
+    /**
+     * @uml
+     * Gets the label associated with the rule tag.
+     *
+     *  @return The name of the label associated with the rule tag, or
+     * {@code null} if this is an unlabeled rule tag.
+     */
     public string getLabel()
     {
+        return label;
     }
 
     /**
      * @uml
      * @override
+     * <p>Rule tag tokens are always placed on the {@link #DEFAULT_CHANNEL}.</p>
      */
     public override int getChannel()
     {
+        return DEFAULT_CHANNEL;
     }
 
     /**
      * @uml
      * @override
+     * <p>This method returns the rule tag formatted with {@code <} and {@code >}
+     * delimiters.</p>
      */
     public override string getText()
     {
+        if (label !is null) {
+            return "<" ~ label ~ ":" ~ ruleName ~ ">";
+        }
+        return "<" ~ ruleName ~ ">";
+    }
+
+    /**
+     * @uml
+     * @override
+     * <p>Rule tag tokens have types assigned according to the rule bypass
+     * transitions created during ATN deserialization.</p>
+     */
+    public override int getType()
+    {
+        return bypassTokenType;
     }
 
     /**
      * @uml
      * @override
      */
-    public override int getType()
+    public override int getLine()
     {
+        return 0;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getCharPositionInLine()
+    {
+        return -1;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getTokenIndex()
+    {
+        return -1;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getStartIndex()
+    {
+        return -1;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int getStopIndex()
+    {
+        return -1;
+    }
+
+    public TokenSource getTokenSource()
+    {
+        return null;
+    }
+
+    public CharStream getInputStream()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+        return ruleName ~ ":" ~ to!string(bypassTokenType);
     }
 
 }

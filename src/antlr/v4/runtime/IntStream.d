@@ -188,8 +188,7 @@ class IntStream
      * Returns the total number of symbols in the stream, including a single EOF
      * symbol.
      *
-     *  @throws UnsupportedOperationException if the size of the stream is
-     *  unknown.
+     *  @throws UnsupportedOperationException if the size of the stream is unknown.
      */
     abstract public int size();
 

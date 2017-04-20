@@ -306,12 +306,20 @@ class CommonToken : WritableToken
         this.index = index;
     }
 
-    public TokenSource getTokenSource()
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenSource getTokenSource()
     {
         return source.keys[0];
     }
 
-    public CharStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override CharStream getInputStream()
     {
         return source.values[0];
     }

@@ -1,6 +1,8 @@
 module antlr.v4.runtime.Token;
 
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.TokenSource;
 
 // Class Token
 /**
@@ -10,7 +12,7 @@ import antlr.v4.runtime.IntStream;
  * (so we can ignore tabs), token channel, index, and source from which
  * we obtained this token.
  */
-class Token
+abstract class Token
 {
 
     public static immutable int INVALID_TYPE = 0;
@@ -59,27 +61,35 @@ class Token
      * @uml
      * Get the text of the token.
      */
-    abstract public string getText();
+    public string getText()
+    {
+    }
 
     /**
      * @uml
      * Get the token type of the token
      */
-    abstract public int getType();
+    public int getType()
+    {
+    }
 
     /**
      * @uml
      * The line number on which the 1st character of this token was matched,
      * line=1..n
      */
-    abstract public int getLine();
+    public int getLine()
+    {
+    }
 
     /**
      * @uml
      * The index of the first character of this token relative to the
      * beginning of the line at which it occurs, 0..n-1
      */
-    abstract public int getCharPositionInLine();
+    public int getCharPositionInLine()
+    {
+    }
 
     /**
      * @uml
@@ -87,7 +97,9 @@ class Token
      * on a different channel, but the parser only "tunes" to a single channel.
      * The parser ignores everything not on DEFAULT_CHANNEL.
      */
-    abstract public int getChannel();
+    public int getChannel()
+    {
+    }
 
     /**
      * @uml
@@ -98,32 +110,42 @@ class Token
      * Return -1 to indicate that this token was conjured up since
      * it doesn't have a valid index.
      */
-    abstract public int getTokenIndex();
+    public int getTokenIndex()
+    {
+    }
 
     /**
      * @uml
      * The starting character index of the token
      * This method is optional; return -1 if not implemented.
      */
-    abstract public int getStartIndex();
+    public int getStartIndex()
+    {
+    }
 
     /**
      * @uml
      * The last character index of the token.
      * This method is optional; return -1 if not implemented.
      */
-    abstract public int getStopIndex();
+    public int getStopIndex()
+    {
+    }
 
     /**
      * @uml
      * Gets the {@link TokenSource} which created this token.
      */
-    abstract public void getTokenSource();
+    public TokenSource getTokenSource()
+    {
+    }
 
     /**
      * @uml
      * Gets the {@link CharStream} from which this token was derived.
      */
-    abstract public void getInputStream();
+    public CharStream getInputStream()
+    {
+    }
 
 }

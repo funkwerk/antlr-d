@@ -208,12 +208,20 @@ class RuleTagToken : Token
         return -1;
     }
 
-    public TokenSource getTokenSource()
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenSource getTokenSource()
     {
         return null;
     }
 
-    public CharStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override CharStream getInputStream()
     {
         return null;
     }

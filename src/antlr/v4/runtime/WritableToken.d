@@ -6,19 +6,31 @@ import antlr.v4.runtime.Token;
 /**
  * TODO add class description
  */
-class WritableToken : Token
+abstract class WritableToken : Token
 {
 
-    abstract public void setText(string text);
+    public void setText(string text)
+    {
+    }
 
-    abstract public void setType(int ttype);
+    public void setType(int ttype)
+    {
+    }
 
-    abstract public void setLine(int line);
+    public void setLine(int line)
+    {
+    }
 
-    abstract public void setCharPositionInLine(int pos);
+    public void setCharPositionInLine(int pos)
+    {
+    }
 
-    abstract public void setChannel(int channel);
+    public void setChannel(int channel)
+    {
+    }
 
-    abstract public void setTokenIndex(int index);
+    public void setTokenIndex(int index)
+    {
+    }
 
 }

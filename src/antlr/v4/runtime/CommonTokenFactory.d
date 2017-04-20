@@ -1,9 +1,12 @@
 module antlr.v4.runtime.CommonTokenFactory;
 
+import std.typecons;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
+
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class CommonTokenFactory
 /**
@@ -76,6 +79,16 @@ class CommonTokenFactory : TokenFactory!CommonToken
     public CommonToken create(TokenFactorySourcePair source, int type, string text, int channel,
         int start, int stop, int line, int charPositionInLine)
     {
+        CommonToken t = new CommonToken(source, type, channel, start, stop);
+        t.setLine(line);
+        t.setCharPositionInLine(charPositionInLine);
+        if (text !is null) {
+            t.setText(text);
+        }
+        else if (copyText && source.b !is null ) {
+            t.setText(source.b.getText(Interval.of(start,stop)));
+        }
+        return t;
     }
 
     public CommonToken create(int type, string text)

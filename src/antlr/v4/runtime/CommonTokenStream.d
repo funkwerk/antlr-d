@@ -90,12 +90,20 @@ class CommonTokenStream : BufferedTokenStream
         this.channel = channel;
     }
 
-    protected int adjustSeekIndex(int i)
+    /**
+     * @uml
+     * @override
+     */
+    protected override int adjustSeekIndex(int i)
     {
         return nextTokenOnChannel(i, channel);
     }
 
-    protected Token LB(int k)
+    /**
+     * @uml
+     * @override
+     */
+    protected override Token LB(int k)
     {
         if (k == 0 || (p - k) < 0 ) return null;
 

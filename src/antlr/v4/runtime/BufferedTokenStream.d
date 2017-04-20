@@ -217,11 +217,33 @@ class BufferedTokenStream : TokenStream
     {
     }
 
+    public Token LB(int k)
+    {
+    }
+
     /**
      * @uml
      * @override
      */
     public override Token LT(int k)
+    {
+    }
+
+    /**
+     * @uml
+     * Allowed derived classes to modify the behavior of operations which change
+     * the current stream position by adjusting the target token index of a seek
+     * operation. The default implementation simply returns {@code i}. If an
+     * exception is thrown in this method, the current stream index should not be
+     * changed.
+     *
+     * <p>For example, {@link CommonTokenStream} overrides this method to ensure that
+     * the seek target is always an on-channel token.</p>
+     *
+     *  @param i The target token index.
+     *  @return The adjusted target token index.
+     */
+    public int adjustSeekIndex(int i)
     {
     }
 

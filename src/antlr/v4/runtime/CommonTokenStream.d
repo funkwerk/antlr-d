@@ -32,6 +32,7 @@ module antlr.v4.runtime.CommonTokenStream;
 
 import antlr.v4.runtime.BufferedTokenStream;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenSource;
 
 // Class CommonTokenStream
 /**
@@ -70,5 +71,84 @@ class CommonTokenStream : BufferedTokenStream
      * default channel assigned to tokens created by the lexer.</p>
      */
     protected int channel = Token.DEFAULT_CHANNEL;
+
+    /**
+     * @uml
+     * Constructs a new {@link CommonTokenStream} using the specified token
+     * source and the default token channel ({@link Token#DEFAULT_CHANNEL}).
+     *
+     *  @param tokenSource The token source.
+     */
+    public this(TokenSource tokenSource)
+    {
+        super(tokenSource);
+    }
+
+    public this(TokenSource tokenSource, int channel)
+    {
+        this(tokenSource);
+        this.channel = channel;
+    }
+
+    protected int adjustSeekIndex(int i)
+    {
+        return nextTokenOnChannel(i, channel);
+    }
+
+    protected Token LB(int k)
+    {
+        if (k == 0 || (p - k) < 0 ) return null;
+
+        int i = p;
+        int n = 1;
+        // find k good tokens looking backwards
+        while (n <= k) {
+            // skip off-channel tokens
+            i = previousTokenOnChannel(i - 1, channel);
+            n++;
+        }
+        if (i < 0) return null;
+        return tokens[i];
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override Token LT(int k)
+    {
+        debug writefln("enter LT($s)", k);
+        lazyInit();
+        if (k == 0 ) return null;
+        if (k < 0) return LB(-k);
+        int i = p;
+        int n = 1; // we know tokens[p] is a good one
+        // find k good tokens
+        while (n < k) {
+            // skip off-channel tokens, but make sure to not look past EOF
+            if (sync(i + 1)) {
+                i = nextTokenOnChannel(i + 1, channel);
+            }
+            n++;
+        }
+        //		if ( i>range ) range = i;
+        return tokens[i];
+    }
+
+    /**
+     * @uml
+     * Count EOF just once.
+     */
+    public int getNumberOfOnChannelTokens()
+    {
+        int n = 0;
+        fill();
+        for (int i = 0; i < tokens.size(); i++) {
+            Token t = tokens[i];
+            if (t.getChannel() == channel) n++;
+            if (t.getType() == Token.EOF) break;
+        }
+        return n;
+    }
 
 }

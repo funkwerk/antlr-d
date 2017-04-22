@@ -1,8 +1,43 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.BufferedTokenStream;
 
+import std.array;
+import std.format;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.misc.Interval;
 
 // Class BufferedTokenStream
 /**
@@ -210,15 +245,46 @@ class BufferedTokenStream : TokenStream
      * @override
      */
     public override Token get(int i)
+    in
     {
+        assert( i >= 0 && i < tokens.length, format("token index %1$s out of range 0..%2$s", i, tokens.length-1));
+    }
+    body
+    {
+        return tokens[i];
     }
 
-    public Token LA(int i)
+    /**
+     * @uml
+     * Get all tokens from start..stop inclusively
+     */
+    public Token[] get(int start, int stop)
     {
+	if ( start<0 || stop<0 ) return null;
+        lazyInit();
+        Token[] subset;
+        if (stop >= tokens.length) stop = tokens.length - 1;
+        for (int i = start; i <= stop; i++) {
+            Token t = tokens.get(i);
+            if (t.getType() == Token.EOF) break;
+            subset ~= t;
+        }
+        return subset;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override int LA(int i)
+    {
+        return LT(i).getType();
     }
 
     public Token LB(int k)
     {
+        if ( (p-k)<0 ) return null;
+        return tokens[p - k];
     }
 
     /**
@@ -227,6 +293,17 @@ class BufferedTokenStream : TokenStream
      */
     public override Token LT(int k)
     {
+        lazyInit();
+        if (k == 0) return null;
+        if (k < 0) return LB(-k);
+        int i = p + k - 1;
+        sync(i);
+        if ( i >= tokens.size() ) { // return EOF token
+            // EOF must be last token
+            return tokens.get(tokens.size()-1);
+        }
+        //		if ( i>range ) range = i;
+        return tokens[i];
     }
 
     /**
@@ -243,8 +320,310 @@ class BufferedTokenStream : TokenStream
      *  @param i The target token index.
      *  @return The adjusted target token index.
      */
-    public int adjustSeekIndex(int i)
+    protected int adjustSeekIndex(int i)
     {
+        return i;
+    }
+
+    protected void lazyInit()
+    {
+        if (p == -1) {
+            setup();
+        }
+    }
+
+    protected void setup()
+    {
+        sync(0);
+        p = adjustSeekIndex(0);
+    }
+
+    /**
+     * @uml
+     * Reset this token stream by setting its token source.
+     */
+    public void setTokenSource(TokenSource tokenSource)
+    {
+        this.tokenSource = tokenSource;
+        tokens.length = 0;
+        p = -1;
+    }
+
+    public Token[] getTokens()
+    {
+        return tokens;
+    }
+
+    public Token[] getTokens(int start, int stop)
+    {
+        return getTokens(start, stop, null);
+    }
+
+    /**
+     * @uml
+     * Given a start and stop index, return a List of all tokens in
+     * the token type BitSet.  Return null if no tokens were found.  This
+     * method looks at both on and off channel tokens.
+     */
+    public Token[] getTokens(int start, int stop, int[] types)
+    in
+    {
+        lazyInit();
+        assert(start >= 0 && stop < tokens.length &&
+               stop > 0  && start < tokens.length,
+               format("start %1$s or stop %2$s not in 0..%3$s", start, stop, tokens.length - 1));
+    }
+    body
+    {
+        if ( start>stop ) return null;
+
+        // list = tokens[start:stop]:{T t, t.getType() in types}
+        Token[] filteredTokens;
+        for (int i=start; i<=stop; i++) {
+            Token t = tokens[i];
+            if (types is null || types.contains(t.getType()) ) {
+                filteredTokens ~= t;
+            }
+        }
+        if (filteredTokens.length == 0) {
+            filteredTokens = null;
+        }
+        return filteredTokens;
+    }
+
+    public Token[] getTokens(int start, int stop, int ttype)
+    {
+        int[] s;
+        s ~= ttype;
+        return getTokens(start,stop, s);
+    }
+
+    /**
+     * @uml
+     * Given a starting index, return the index of the next token on channel.
+     * Return {@code i} if {@code tokens[i]} is on channel. Return the index of
+     * the EOF token if there are no tokens on channel between {@code i} and
+     * EOF.
+     */
+    protected int nextTokenOnChannel(int i, int channel)
+    {
+	sync(i);
+        if (i >= size()) {
+            return size() - 1;
+        }
+
+        Token token = tokens[i];
+        while (token.getChannel() != channel) {
+            if (token.getType() == Token.EOF) {
+                return i;
+            }
+
+            i++;
+            sync(i);
+            token = tokens[i];
+        }
+
+        return i;
+    }
+
+    /**
+     * @uml
+     * Given a starting index, return the index of the previous token on
+     * channel. Return {@code i} if {@code tokens[i]} is on channel. Return -1
+     * if there are no tokens on channel between {@code i} and 0.
+     *
+     * <p>
+     * If {@code i} specifies an index at or after the EOF token, the EOF token
+     * index is returned. This is due to the fact that the EOF token is treated
+     * as though it were on every channel.</p>
+     */
+    protected int previousTokenOnChannel(int i, int channel)
+    {
+	sync(i);
+        if (i >= size()) {
+            // the EOF token is on every channel
+            return size() - 1;
+        }
+        while (i >= 0) {
+            Token token = tokens.get(i);
+            if (token.getType() == Token.EOF || token.getChannel() == channel) {
+                return i;
+            }
+            i--;
+        }
+        return i;
+    }
+
+    /**
+     * @uml
+     * Collect all tokens on specified channel to the right of
+     * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
+     * EOF. If channel is -1, find any non default channel token.
+     */
+    public Token[] getHiddenTokensToRight(int tokenIndex, int channel)
+    in
+    {
+        lazyInit();
+        assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
+    }
+    body
+    {
+        int nextOnChannel =
+            nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+        int to;
+        int from = tokenIndex+1;
+        // if none onchannel to right, nextOnChannel=-1 so set to = last token
+        if ( nextOnChannel == -1 ) to = size()-1;
+        else to = nextOnChannel;
+        return filterForChannel(from, to, channel);
+    }
+
+    /**
+     * @uml
+     * ollect all hidden tokens (any off-default channel) to the right of
+     * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL
+     * of EOF.
+     */
+    public Token[] getHiddenTokensToRight(int tokenIndex)
+    {
+        return getHiddenTokensToRight(tokenIndex, -1);
+    }
+
+    /**
+     * @uml
+     * Collect all tokens on specified channel to the left of
+     * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
+     * If channel is -1, find any non default channel token.
+     */
+    public Token[] getHiddenTokensToLeft(int tokenIndex, int channel)
+    in
+    {
+        lazyInit();
+        assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
+    }
+    body
+    {
+
+        if (tokenIndex == 0) {
+            // obviously no tokens can appear before the first token
+            return null;
+        }
+        int prevOnChannel =
+            previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+        if ( prevOnChannel == tokenIndex - 1 ) return null;
+        // if none onchannel to left, prevOnChannel=-1 then from=0
+        int from = prevOnChannel+1;
+        int to = tokenIndex-1;
+        return filterForChannel(from, to, channel);
+    }
+
+    /**
+     * @uml
+     * Collect all hidden tokens (any off-default channel) to the left of
+     * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
+     */
+    public Token[] getHiddenTokensToLeft(int tokenIndex)
+    {
+        return getHiddenTokensToLeft(tokenIndex, -1);
+    }
+
+    /**
+     * @uml
+     * Collect all hidden tokens (any off-default channel) to the left of
+     * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
+     */
+    public Token[] filterForChannel(int from, int to, int channel)
+    {
+        Token[] hidden;
+        for (int i=from; i<=to; i++) {
+            Token t = tokens[i];
+            if (channel == -1) {
+                if (t.getChannel() != Lexer.DEFAULT_TOKEN_CHANNEL) hidden.add(t);
+            }
+            else {
+                if (t.getChannel() == channel) hidden ~= t;
+            }
+        }
+        if (hidden.length == 0) return null;
+        return hidden;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getSourceName()
+    {
+        return tokenSource.getSourceName();
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getText()
+    {
+        lazyInit();
+        fill();
+        return getText(Interval.of(0,size()-1));
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getText(Interval interval)
+    {
+      	int start = interval.a;
+        int stop = interval.b;
+        if (start < 0 || stop < 0) return "";
+        lazyInit();
+        if (stop >= tokens.length) stop = tokens.size()-1;
+
+        auto buf = appender!(string);
+        for (int i = start; i <= stop; i++) {
+            Token t = tokens[i];
+            if (t.getType() == Token.EOF) break;
+            buf.put(t.getText());
+        }
+        return buf.data;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getText(RuleContext ctx)
+    {
+        return getText(ctx.getSourceInterval());
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getText(Token start, Token stop)
+    {
+        if (start !is null && stop !is null) {
+            return getText(Interval.of(start.getTokenIndex(), stop.getTokenIndex()));
+        }
+       	return "";
+    }
+
+    /**
+     * @uml
+     * Get all tokens from lexer until EOF
+     */
+    public void fill()
+    {
+        lazyInit();
+        final int blockSize = 1000;
+        while (true) {
+            int fetched = fetch(blockSize);
+            if (fetched < blockSize) {
+                return;
+            }
+        }
     }
 
 }

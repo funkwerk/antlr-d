@@ -1,12 +1,13 @@
 module antlr.v4.runtime.CommonToken;
 
 import std.typecons;
+import std.container : DList;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
 
-alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class CommonToken
 /**

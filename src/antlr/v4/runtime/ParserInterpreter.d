@@ -31,15 +31,23 @@
 
 module antlr.v4.runtime.ParserInterpreter;
 
+import std.typecons;
+import std.container : DList;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterpreterRuleContext;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContextCache;
+
+alias ParentContextPair = Tuple!(ParserRuleContext, "a", int, "b");
 
 // Class ParserInterpreter
 /**
- * TODO add class description
  * @uml
  * A parser simulator that mimics what ANTLR's generated
  * parser code does. A ParserATNSimulator is used to make
@@ -74,5 +82,115 @@ class ParserInterpreter : Parser
     protected string[] ruleNames;
 
     private Vocabulary vocabulary;
+
+    /**
+     * @uml
+     * This stack corresponds to the _parentctx, _parentState pair of locals
+     * that would exist on call stack frames with a recursive descent parser;
+     * in the generated function for a left-recursive rule you'd see:
+     *
+     *  private EContext e(int _p) throws RecognitionException {
+     *      ParserRuleContext _parentctx = _ctx;    // Pair.a
+     *      int _parentState = getState();          // Pair.b
+     *      ...
+     *   }
+     *
+     * Those values are used to create new recursive rule invocation contexts
+     * associated with left operand of an alt like "expr '*' expr".
+     */
+    protected DList!ParentContextPair _parentContextStack;
+
+    /**
+     * @uml
+     * We need a map from (decision,inputIndex)->forced alt for computing ambiguous
+     * parse trees. For now, we allow exactly one override.
+     */
+    protected int overrideDecision = -1;
+
+    protected int overrideDecisionInputIndex = -1;
+
+    protected int overrideDecisionAlt = -1;
+
+    /**
+     * @uml
+     * latch and only override once; error might trigger infinite loop
+     */
+    protected bool overrideDecisionReached = false;;
+
+    /**
+     * @uml
+     * What is the current context when we override a decisions?
+     * This tellsus what the root of the parse tree is when using override
+     * for an ambiguity/lookahead check.
+     */
+    protected InterpreterRuleContext overrideDecisionRoot = null;
+
+    protected InterpreterRuleContext rootContext;
+
+    /**
+     * @uml
+     * deprecated Use {@link #ParserInterpreter(String, Vocabulary, Collection, ATN, TokenStream)} instead.
+     */
+    public this(string grammarFileName, string[] tokenNames, string[] ruleNames, ATN atn,
+        TokenStream input)
+    {
+        this(grammarFileName,
+             VocabularyImpl.fromTokenNames(tokenNames.toArray(new String[tokenNames.size()])),
+             ruleNames, atn, input);
+    }
+
+    public this(string grammarFileName, Vocabulary vocabulary, string[] ruleNames, ATN atn,
+        TokenStream input)
+    {
+	super(input);
+        this.grammarFileName = grammarFileName;
+        this.atn = atn;
+        for (int i = 0; i < tokenNames.length; i++) {
+            tokenNames ~= vocabulary.getDisplayName(i);
+        }
+
+        this.ruleNames = ruleNames;
+        this.vocabulary = vocabulary;
+
+        // init decision DFA
+        int numberOfDecisions = atn.getNumberOfDecisions();
+        for (int i = 0; i < numberOfDecisions; i++) {
+            DecisionState decisionState = atn.getDecisionState(i);
+            decisionToDFA ~= new DFA(decisionState, i);
+        }
+
+        // get atn simulator that knows how to do predictions
+        setInterpreter(new ParserATNSimulator(this, atn,
+                                              decisionToDFA,
+                                              sharedContextCache));
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override void reset()
+    {
+        super.reset();
+        overrideDecisionReached = false;
+        overrideDecisionRoot = null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override ATN getATN()
+    {
+        return atn;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string[] getTokenNames()
+    {
+    }
 
 }

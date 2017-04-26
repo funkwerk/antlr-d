@@ -36,10 +36,12 @@ import std.container : DList;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.InterpreterRuleContext;
 import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -190,6 +192,93 @@ class ParserInterpreter : Parser
      * @override
      */
     public override string[] getTokenNames()
+    {
+        return tokenNames;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override Vocabulary getVocabulary()
+    {
+        return vocabulary;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string[] getRuleNames()
+    {
+        return ruleNames;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getGrammarFileName()
+    {
+        return grammarFileName;
+    }
+
+    /**
+     * @uml
+     * Begin parsing at startRuleIndex
+     */
+    public ParserRuleContext parse(int startRuleIndex)
+    {
+	RuleStartState startRuleStartState = atn.ruleToStartState[startRuleIndex];
+        rootContext = createInterpreterRuleContext(null, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
+        if (startRuleStartState.isLeftRecursiveRule) {
+            enterRecursionRule(rootContext, startRuleStartState.stateNumber, startRuleIndex, 0);
+        }
+        else {
+            enterRule(rootContext, startRuleStartState.stateNumber, startRuleIndex);
+        }
+
+        while ( true ) {
+            ATNState p = getATNState();
+            switch ( p.getStateType() ) {
+            case ATNState.RULE_STOP :
+                // pop; return from rule
+                if (ctx_.isEmpty() ) {
+                    if (startRuleStartState.isLeftRecursiveRule) {
+                        ParserRuleContext result = ctx_;
+                        ParentContextPair parentContext = _parentContextStack.pop();
+                        unrollRecursionContexts(parentContext.a);
+                        return result;
+                    }
+                    else {
+                        exitRule();
+                        return rootContext;
+                    }
+                }
+                visitRuleStopState(p);
+                break;
+            default :
+                try {
+                    visitState(p);
+                }
+                catch (RecognitionException e) {
+                    setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
+                    getContext().exception = e;
+                    getErrorHandler().reportError(this, e);
+                    recover(e);
+                }
+
+                     break;
+            }
+        }
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
+        int precedence)
     {
     }
 

@@ -42,6 +42,8 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -241,7 +243,7 @@ class ParserInterpreter : Parser
         while ( true ) {
             ATNState p = getATNState();
             switch ( p.getStateType() ) {
-            case ATNState.RULE_STOP :
+            case StateNames.RULE_STOP :
                 // pop; return from rule
                 if (ctx_.isEmpty() ) {
                     if (startRuleStartState.isLeftRecursiveRule) {
@@ -279,6 +281,114 @@ class ParserInterpreter : Parser
      */
     public override void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
         int precedence)
+    {
+    }
+
+    protected ATNState getATNState()
+    {
+    }
+
+    protected void visitState(ATNState p)
+    {
+        //		System.out.println("visitState "+p.stateNumber);
+        int predictedAlt = 1;
+        if (p.classinfo == DecisionState.classinf) {
+            predictedAlt = visitDecisionState(cast(DecisionState) p);
+        }
+
+        Transition transition = p.transition(predictedAlt - 1);
+        switch (transition.getSerializationType()) {
+        case Transition.EPSILON:
+            if ( p.getStateType()==ATNState.STAR_LOOP_ENTRY &&
+                 (cast(StarLoopEntryState)p).isPrecedenceDecision &&
+                 !(transition.target.classinfo == LoopEndState.classinfo))
+                {
+                    // We are at the start of a left recursive rule's (...)* loop
+                    // and we're not taking the exit branch of loop.
+                    InterpreterRuleContext localctx =
+                        createInterpreterRuleContext(_parentContextStack.peek().a,
+                                                     _parentContextStack.peek().b,
+                                                     _ctx.getRuleIndex());
+                    pushNewRecursionContext(localctx,
+                                            atn.ruleToStartState[p.ruleIndex].stateNumber,
+                                            _ctx.getRuleIndex());
+                }
+            break;
+        case Transition.ATOM:
+            match((cast(AtomTransition)transition).label);
+            break;
+        case Transition.RANGE:
+        case Transition.SET:
+        case Transition.NOT_SET:
+            if (!transition.matches(_input.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
+                recoverInline();
+            }
+            matchWildcard();
+            break;
+
+        case Transition.WILDCARD:
+            matchWildcard();
+            break;
+
+        case Transition.RULE:
+            RuleStartState ruleStartState = cast(RuleStartState)transition.target;
+            int ruleIndex = ruleStartState.ruleIndex;
+            InterpreterRuleContext newctx = createInterpreterRuleContext(_ctx, p.stateNumber, ruleIndex);
+            if (ruleStartState.isLeftRecursiveRule) {
+                enterRecursionRule(newctx, ruleStartState.stateNumber, ruleIndex, (cast(RuleTransition)transition).precedence);
+            }
+            else {
+                enterRule(newctx, transition.target.stateNumber, ruleIndex);
+            }
+            break;
+
+        case Transition.PREDICATE:
+            PredicateTransition predicateTransition = cast(PredicateTransition)transition;
+            if (!sempred(_ctx, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
+                throw new FailedPredicateException(this);
+            }
+
+            break;
+        case Transition.ACTION:
+            ActionTransition actionTransition = cast(ActionTransition)transition;
+            action(_ctx, actionTransition.ruleIndex, actionTransition.actionIndex);
+            break;
+        case Transition.PRECEDENCE:
+            if (!precpred(_ctx, (cast(PrecedencePredicateTransition)transition).precedence)) {
+                throw new FailedPredicateException(this, String.format("precpred(_ctx, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
+            }
+            break;
+        default:
+            throw new UnsupportedOperationException("Unrecognized ATN transition type.");
+        }
+        setState(transition.target.stateNumber);
+    }
+
+    protected int visitDecisionState(DecisionState p)
+    {
+	int predictedAlt = 1;
+        if (p.getNumberOfTransitions() > 1) {
+            getErrorHandler().sync(this);
+            int decision = p.decision;
+            if (decision == overrideDecision && _input.index() == overrideDecisionInputIndex &&
+                !overrideDecisionReached )
+                {
+                    predictedAlt = overrideDecisionAlt;
+                    overrideDecisionReached = true;
+                }
+            else {
+                predictedAlt = getInterpreter().adaptivePredict(_input, decision, _ctx);
+            }
+        }
+        return predictedAlt;
+    }
+
+    /**
+     * @uml
+     * Provide simple "factory" for InterpreterRuleContext's.
+     */
+    protected InterpreterRuleContext createInterpreterRuleContext(ParserRuleContext parent,
+        int invokingStateNumber, int ruleIndex)
     {
     }
 

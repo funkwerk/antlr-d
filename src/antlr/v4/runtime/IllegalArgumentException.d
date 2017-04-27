@@ -11,6 +11,12 @@ class IllegalArgumentException : RuntimeException
 
     public this(string elementDescription)
     {
+        super(string);
+    }
+
+    public this(string elementDescription, Exception e)
+    {
+        super(string);
     }
 
 }

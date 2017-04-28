@@ -34,21 +34,27 @@ module antlr.v4.runtime.ParserInterpreter;
 import std.typecons;
 import std.container : DList;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterpreterRuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.RuleStartState;
+import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContextCache;
 
 alias ParentContextPair = Tuple!(ParserRuleContext, "a", int, "b");
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class ParserInterpreter
 /**
@@ -282,10 +288,14 @@ class ParserInterpreter : Parser
     public override void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
         int precedence)
     {
+        ParentContextPair pair = tuple(ctx_, localctx.invokingState);
+        _parentContextStack.push(pair);
+        super.enterRecursionRule(localctx, state, ruleIndex, precedence);
     }
 
     protected ATNState getATNState()
     {
+        return atn.states.get(getState());
     }
 
     protected void visitState(ATNState p)
@@ -298,7 +308,7 @@ class ParserInterpreter : Parser
 
         Transition transition = p.transition(predictedAlt - 1);
         switch (transition.getSerializationType()) {
-        case Transition.EPSILON:
+        case TransitionStates.EPSILON:
             if ( p.getStateType()==ATNState.STAR_LOOP_ENTRY &&
                  (cast(StarLoopEntryState)p).isPrecedenceDecision &&
                  !(transition.target.classinfo == LoopEndState.classinfo))
@@ -314,19 +324,19 @@ class ParserInterpreter : Parser
                                             _ctx.getRuleIndex());
                 }
             break;
-        case Transition.ATOM:
+        case TransitionState.ATOM:
             match((cast(AtomTransition)transition).label);
             break;
-        case Transition.RANGE:
-        case Transition.SET:
-        case Transition.NOT_SET:
+        case TransitionStates.RANGE:
+        case TransitionStates.SET:
+        case TransitionStates.NOT_SET:
             if (!transition.matches(_input.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
                 recoverInline();
             }
             matchWildcard();
             break;
 
-        case Transition.WILDCARD:
+        case TransitionStates.WILDCARD:
             matchWildcard();
             break;
 
@@ -342,19 +352,19 @@ class ParserInterpreter : Parser
             }
             break;
 
-        case Transition.PREDICATE:
+        case TransitionStatess.PREDICATE:
             PredicateTransition predicateTransition = cast(PredicateTransition)transition;
-            if (!sempred(_ctx, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
+            if (!sempred(ctx_, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
                 throw new FailedPredicateException(this);
             }
 
             break;
-        case Transition.ACTION:
+        case TransitionStates.ACTION:
             ActionTransition actionTransition = cast(ActionTransition)transition;
             action(_ctx, actionTransition.ruleIndex, actionTransition.actionIndex);
             break;
-        case Transition.PRECEDENCE:
-            if (!precpred(_ctx, (cast(PrecedencePredicateTransition)transition).precedence)) {
+        case TransitionStates.PRECEDENCE:
+            if (!precpred(ctx_, (cast(PrecedencePredicateTransition)transition).precedence)) {
                 throw new FailedPredicateException(this, String.format("precpred(_ctx, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
             }
             break;
@@ -390,6 +400,121 @@ class ParserInterpreter : Parser
     protected InterpreterRuleContext createInterpreterRuleContext(ParserRuleContext parent,
         int invokingStateNumber, int ruleIndex)
     {
+        return new InterpreterRuleContext(parent, invokingStateNumber, ruleIndex);
+    }
+
+    protected void visitRuleStopState(ATNState p)
+    {
+    }
+
+    /**
+     * @uml
+     * Override this parser interpreters normal decision-making process
+     * at a particular decision and input token index. Instead of
+     * allowing the adaptive prediction mechanism to choose the
+     * first alternative within a block that leads to a successful parse,
+     * force it to take the alternative, 1..n for n alternatives.
+     *
+     * As an implementation limitation right now, you can only specify one
+     * override. This is sufficient to allow construction of different
+     * parse trees for ambiguous input. It means re-parsing the entire input
+     * in general because you're never sure where an ambiguous sequence would
+     * live in the various parse trees. For example, in one interpretation,
+     * an ambiguous input sequence would be matched completely in expression
+     * but in another it could match all the way back to the root.
+     *
+     * s : e '!'? ;
+     * e : ID
+     *   | ID '!'
+     *   ;
+     *
+     * Here, x! can be matched as (s (e ID) !) or (s (e ID !)). In the first
+     * case, the ambiguous sequence is fully contained only by the root.
+     * In the second case, the ambiguous sequences fully contained within just
+     * e, as in: (e ID !).
+     *
+     * Rather than trying to optimize this and make
+     * some intelligent decisions for optimization purposes, I settled on
+     * just re-parsing the whole input and then using
+     * {link Trees#getRootOfSubtreeEnclosingRegion} to find the minimal
+     * subtree that contains the ambiguous sequence. I originally tried to
+     * record the call stack at the point the parser detected and ambiguity but
+     * left recursive rules create a parse tree stack that does not reflect
+     * the actual call stack. That impedance mismatch was enough to make
+     * it it challenging to restart the parser at a deeply nested rule
+     * invocation.
+     *
+     * Only parser interpreters can override decisions so as to avoid inserting
+     * override checking code in the critical ALL(*) prediction execution path.
+     */
+    public void addDecisionOverride(int decision, int tokenIndex, int forcedAlt)
+    {
+        overrideDecision = decision;
+        overrideDecisionInputIndex = tokenIndex;
+        overrideDecisionAlt = forcedAlt;
+    }
+
+    public InterpreterRuleContext getOverrideDecisionRoot()
+    {
+        return overrideDecisionRoot;
+    }
+
+    /**
+     * @uml
+     * Rely on the error handler for this parser but, if no tokens are consumed
+     * to recover, add an error node. Otherwise, nothing is seen in the parse
+     * tree.
+     */
+    protected void recover(RecognitionException!(Token, ParserATNSimulator) e)
+    {
+        TokenFactorySourcePair tokenFactorySourcePair;
+	int i = _input.index();
+        getErrorHandler().recover(this, e);
+        if ( _input.index()==i ) {
+            // no input consumed, better add an error node
+            if (e.classinfo == InputMismatchException.classinfo) {
+                InputMismatchException ime = cast(InputMismatchException)e;
+                Token tok = e.getOffendingToken();
+                int expectedTokenType = ime.getExpectedTokens().getMinElement(); // get any element
+                tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
+                Token errToken =
+                    getTokenFactory().create(tokenFactorySourcePair,
+                                             expectedTokenType, tok.getText(),
+                                             Token.DEFAULT_CHANNEL,
+                                             -1, -1, // invalid start/stop
+                                             tok.getLine(), tok.getCharPositionInLine());
+                ctx_.addErrorNode(errToken);
+            }
+            else { // NoViableAlt
+                Token tok = e.getOffendingToken();
+                tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
+                Token errToken =
+                    getTokenFactory().create(tokenFactorySourcePair,
+                                             Token.INVALID_TYPE, tok.getText(),
+                                             Token.DEFAULT_CHANNEL,
+                                             -1, -1, // invalid start/stop
+                                             tok.getLine(), tok.getCharPositionInLine());
+                ctx_.addErrorNode(errToken);
+            }
+        }
+    }
+
+    protected Token recoverInline()
+    {
+        return _errHandler.recoverInline(this);
+    }
+
+    /**
+     * @uml
+     * Return the root of the parse, which can be useful if the parser
+     * bails out. You still can access the top node. Note that,
+     * because of the way left recursive rules add children, it's possible
+     * that the root will not have any children if the start rule immediately
+     * called and left recursive rule that fails.
+     */
+    public InterpreterRuleContext getRootContext()
+    {
+        return rootContext;
     }
 
 }

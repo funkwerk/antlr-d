@@ -33,6 +33,8 @@ module antlr.v4.runtime.tree.xpath.XPath;
 import std.stdio;
 import std.file;
 import std.format;
+import std.conv;
+import std.container : DList;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
@@ -147,7 +149,7 @@ class XPath
         Token[] tokens = tokenStream.getTokens();
         //		System.out.println("path="+path+"=>"+tokens);
         XPathElement[] elements;
-        int n = tokens.length;
+        int n = to!int(tokens.length);
         int i=0;
     loop:
         while ( i<n ) {
@@ -232,6 +234,8 @@ class XPath
 
     public ParseTree findAll(ParseTree tree, string xpath, Parser parser)
     {
+        XPath p = new XPath(parser, xpath);
+        return p.evaluate(tree);
     }
 
     /**
@@ -242,6 +246,27 @@ class XPath
      */
     public ParseTree[] evaluate(ParseTree t)
     {
+	ParserRuleContext dummyRoot = new ParserRuleContext();
+        dummyRoot.children = [t]; // don't set t's parent.
+
+        ParseTree[] work = [dummyRoot];
+
+        int i = 0;
+        while (i < elements.length) {
+            DList!ParseTree next;
+            foreach (ParseTree node; work) {
+                if ( node.getChildCount()>0 ) {
+                    // only try to match next element if it has children
+                    // e.g., //func/*/stat might have a token node for which
+                    // we can't go looking for stat nodes.
+                    ParseTree[] matching = elements[i].evaluate(node);
+                    next.insert(matching);
+                }
+            }
+            i++;
+            work = next[];
+        }
+        return work;
     }
 
 }

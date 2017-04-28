@@ -49,6 +49,7 @@ import antlr.v4.runtime.tree.pattern.TokenTagToken;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreeMatch;
 import antlr.v4.runtime.tree.pattern.RuleTagToken;
+import antlr.v4.runtime.misc.ParseCancellationException;
 
 // Class ParseTreePatternMatcher
 /**

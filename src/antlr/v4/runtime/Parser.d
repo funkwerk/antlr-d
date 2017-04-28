@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.Parser;
 
+import std.stdio;
 import std.algorithm;
 import std.conv;
 import antlr.v4.runtime.ANTLRErrorStrategy;
@@ -56,6 +57,7 @@ import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
@@ -755,11 +757,11 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         }
     }
 
-    public void getInvokingContext(int ruleIndex)
+    public ParserRuleContext getInvokingContext(int ruleIndex)
     {
-	ParserRuleContext p = ctx_;
-        while (p !is null) {
-            if (p.getRuleIndex() == ruleIndex) return p;
+        ParserRuleContext p = ctx_;
+        while (p !is null ) {
+            if ( p.getRuleIndex() == ruleIndex ) return p;
             p = cast(ParserRuleContext)p.parent;
         }
         return null;

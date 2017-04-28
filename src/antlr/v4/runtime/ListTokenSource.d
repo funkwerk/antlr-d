@@ -86,41 +86,141 @@ class ListTokenSource : TokenSource
      *  @exception NullPointerException if {@code tokens} is {@code null}
      */
     public this(Token[] tokens, string sourceName)
+    in
+    {
+        assert(tokens !is null, "tokens cannot be null");
+    }
+    body
     {
         _factory = CommonTokenFactory.DEFAULT;
-	if (tokens is null) {
-            throw new NullPointerException("tokens cannot be null");
-        }
         this.tokens = tokens;
         this.sourceName = sourceName;
     }
 
     public int getCharPositionInLine()
     {
+	if (i < tokens.length) {
+            return tokens.get[i].getCharPositionInLine();
+        }
+		else if (eofToken != null) {
+			return eofToken.getCharPositionInLine();
+		}
+		else if (tokens.length > 0) {
+			// have to calculate the result from the line/column of the previous
+			// token, along with the text of the token.
+			Token lastToken = tokens.get(tokens.length - 1);
+			String tokenText = lastToken.getText();
+			if (tokenText != null) {
+				int lastNewLine = tokenText.lastIndexOf('\n');
+				if (lastNewLine >= 0) {
+					return tokenText.length() - lastNewLine - 1;
+				}
+			}
+
+			return lastToken.getCharPositionInLine() + lastToken.getStopIndex() - lastToken.getStartIndex() + 1;
+		}
+
+		// only reach this if tokens is empty, meaning EOF occurs at the first
+		// position in the input
+		return 0;
     }
 
     public Token nextToken()
     {
+	if (i >= tokens.length) {
+            if (eofToken is null) {
+                int start = -1;
+                if (tokens.length > 0) {
+                    int previousStop = tokens.get(.length - 1).getStopIndex();
+                    if (previousStop != -1) {
+                        start = previousStop + 1;
+                    }
+                }
+
+                int stop = int.max(-1, start - 1);
+                eofToken = _factory.create(new Pair<TokenSource, CharStream>(this, getInputStream()), Token.EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
+            }
+            return eofToken;
+        }
+
+        Token t = tokens.get[i];
+        if (i == tokens.length - 1 && t.getType() == Token.EOF) {
+            eofToken = t;
+        }
+
+        i++;
+        return t;
     }
 
     public int getLine()
     {
+	if (i < tokens.length) {
+            return tokens[i].getLine();
+        }
+        else if (eofToken != null) {
+            return eofToken.getLine();
+        }
+        else if (tokens.length > 0) {
+            // have to calculate the result from the line/column of the previous
+            // token, along with the text of the token.
+            Token lastToken = tokens.get(tokens.length - 1);
+            int line = lastToken.getLine();
+
+            String tokenText = lastToken.getText();
+            if (tokenText != null) {
+                for (int i = 0; i < tokenText.length(); i++) {
+                    if (tokenText.charAt(i) == '\n') {
+                        line++;
+                    }
+                }
+            }
+
+            // if no text is available, assume the token did not contain any newline characters.
+            return line;
+        }
+
+        // only reach this if tokens is empty, meaning EOF occurs at the first
+        // position in the input
+        return 1;
     }
 
     public CharStream getInputStream()
     {
+	if (i < tokens.length) {
+            return tokens.get(i).getInputStream();
+        }
+        else if (eofToken != null) {
+            return eofToken.getInputStream();
+        }
+        else if (tokens.length > 0) {
+            return tokens.get(tokens.length - 1).getInputStream();
+        }
+        // no input stream information is available
+        return null;
     }
 
     public string getSourceName()
     {
+        if (sourceName != null) {
+            return sourceName;
+        }
+
+        CharStream inputStream = getInputStream();
+        if (inputStream != null) {
+            return inputStream.getSourceName();
+        }
+
+        return "List";
     }
 
     public void setTokenFactory(TokenFactory!CommonToken factory)
     {
+        this._factory = factory;
     }
 
     public TokenFactory!CommonToken getTokenFactory()
     {
+        return _factory;
     }
 
 }

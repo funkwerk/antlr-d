@@ -232,7 +232,7 @@ class XPath
         }
     }
 
-    public ParseTree findAll(ParseTree tree, string xpath, Parser parser)
+    public static ParseTree[] findAll(ParseTree tree, string xpath, Parser parser)
     {
         XPath p = new XPath(parser, xpath);
         return p.evaluate(tree);

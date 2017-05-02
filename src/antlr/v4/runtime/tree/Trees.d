@@ -1,8 +1,40 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2013 Terence Parr
+ *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.tree.Trees;
 
 import std.array;
 import std.conv;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ATN;
@@ -126,6 +158,15 @@ class Trees
      */
     public static Tree[] getAncestors(Tree t)
     {
+        Tree[] emptyTrees;
+	if (t.getParent() is null) return emptyTrees;
+        Tree[] ancestors;
+        t = t.getParent();
+        while (t !is null) {
+            ancestors = t ~ ancestors; // insert at start
+            t = t.getParent();
+        }
+        return ancestors;
     }
 
     /**
@@ -135,22 +176,47 @@ class Trees
      */
     public static bool isAncestorOf(Tree t, Tree u)
     {
+        if (t is null || u is null || t.getParent() is null) return false;
+		Tree p = u.getParent();
+		while (p !is null) {
+			if (t is p) return true;
+			p = p.getParent();
+		}
+		return false;
     }
 
     public static ParseTree[] findAllTokenNodes(ParseTree t, int ttype)
     {
+        return findAllNodes(t, ttype, true);
     }
 
-    public static ParseTree findAllRuleNodes(ParseTree t, int ruleIndex)
+    public static ParseTree[] findAllRuleNodes(ParseTree t, int ruleIndex)
     {
+        return findAllNodes(t, ruleIndex, false);
     }
 
     public static ParseTree[] findAllNodes(ParseTree t, int index, bool findTokens)
     {
+        ParseTree[] nodes;
+        _findAllNodes(t, index, findTokens, nodes);
+        return nodes;
     }
 
     public static void _findAllNodes(ParseTree t, int index, bool findTokens, ParseTree[] nodes)
     {
+	// check this node (the root) first
+        if ( findTokens && t.classinfo == TerminalNode.classinfo) {
+            TerminalNode tnode = cast(TerminalNode)t;
+            if (tnode.getSymbol().getType() == index) nodes ~= t;
+        }
+        else if (!findTokens && t.classinfo == ParserRuleContext.classinfo) {
+            ParserRuleContext ctx = cast(ParserRuleContext)t;
+            if ( ctx.getRuleIndex() == index ) nodes ~= t;
+        }
+        // check children
+        for (int i = 0; i < t.getChildCount(); i++){
+            _findAllNodes(t.getChild(i), index, findTokens, nodes);
+        }
     }
 
 }

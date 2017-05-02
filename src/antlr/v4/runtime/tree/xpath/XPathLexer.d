@@ -32,10 +32,12 @@
 module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 
 // Class XPathLexer
@@ -127,11 +129,7 @@ class XPathLexer : Lexer
     {
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override string getModeNames()
+    public string getModeNames()
     {
     }
 
@@ -145,9 +143,9 @@ class XPathLexer : Lexer
 
     /**
      * @uml
-     * action
+     * @override
      */
-    public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
+    public override void action(RuleContext _localctx, int ruleIndex, int actionIndex)
     {
     }
 

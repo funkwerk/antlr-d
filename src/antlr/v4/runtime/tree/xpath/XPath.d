@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,21 +31,30 @@
 
 module antlr.v4.runtime.tree.xpath.XPath;
 
+import std.array;
 import std.stdio;
 import std.file;
 import std.format;
 import std.conv;
 import std.container : DList;
+import std.variant;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.LexerNoViableAltException;
+import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.xpath.XPathLexer;
 import antlr.v4.runtime.tree.xpath.XPathLexerRecover;
+import antlr.v4.runtime.tree.xpath.XPathWildcardAnywhereElement;
+import antlr.v4.runtime.tree.xpath.XPathWildcardElement;
+import antlr.v4.runtime.tree.xpath.XPathRuleElement;
+import antlr.v4.runtime.tree.xpath.XPathRuleAnywhereElement;
+import antlr.v4.runtime.tree.xpath.XPathTokenElement;
+import antlr.v4.runtime.tree.xpath.XPathTokenAnywhereElement;
 
 // Class XPath
 /**
@@ -210,10 +220,10 @@ class XPath
             new XPathWildcardElement();
         case XPathLexer.TOKEN_REF :
         case XPathLexer.STRING :
-            if ( ttype==Token.INVALID_TYPE ) {
+            if (ttype == Token.INVALID_TYPE ) {
                 throw new IllegalArgumentException(word~
                                                    " at index "~
-                                                   wordToken.getStartIndex()~
+                                                   to!string(wordToken.getStartIndex) ~
                                                    " isn't a valid token name");
             }
             return anywhere ?
@@ -223,7 +233,7 @@ class XPath
             if ( ruleIndex==-1 ) {
                 throw new IllegalArgumentException(word ~
                                                    " at index "~
-                                                   wordToken.getStartIndex()~
+                                                   to!string(wordToken.getStartIndex) ~
                                                    " isn't a valid rule name");
             }
             return anywhere ?
@@ -247,7 +257,7 @@ class XPath
     public ParseTree[] evaluate(ParseTree t)
     {
 	ParserRuleContext dummyRoot = new ParserRuleContext();
-        dummyRoot.children = [t]; // don't set t's parent.
+        dummyRoot.children = variantArray(t); // don't set t's parent.
 
         ParseTree[] work = [dummyRoot];
 
@@ -255,7 +265,7 @@ class XPath
         while (i < elements.length) {
             DList!ParseTree next;
             foreach (ParseTree node; work) {
-                if ( node.getChildCount()>0 ) {
+                if (node.getChildCount() > 0) {
                     // only try to match next element if it has children
                     // e.g., //func/*/stat might have a token node for which
                     // we can't go looking for stat nodes.
@@ -264,7 +274,7 @@ class XPath
                 }
             }
             i++;
-            work = next[];
+            work ~= array(next[]);
         }
         return work;
     }

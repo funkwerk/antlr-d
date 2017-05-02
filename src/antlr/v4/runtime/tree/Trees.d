@@ -9,6 +9,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.Tree;
+import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.misc.Utils;
 
 // Class Trees
@@ -103,6 +104,53 @@ class Trees
             return (cast(Token)payload).getText();
         }
         return t.getPayload().toString();
+    }
+
+    /**
+     * @uml
+     * Return ordered list of all children of this node
+     */
+    public static Tree[] getChildren(Tree t)
+    {
+        Tree[] kids;
+        for (int i=0; i<t.getChildCount(); i++) {
+            kids ~= t.getChild(i);
+        }
+        return kids;
+    }
+
+    /**
+     * @uml
+     * Return a list of all ancestors of this node.  The first node of
+     * list is the root and the last is the parent of this node.
+     */
+    public static Tree[] getAncestors(Tree t)
+    {
+    }
+
+    /**
+     * @uml
+     * Return true if t is u's parent or a node on path to root from u.
+     * Use == not equals().
+     */
+    public static bool isAncestorOf(Tree t, Tree u)
+    {
+    }
+
+    public static ParseTree[] findAllTokenNodes(ParseTree t, int ttype)
+    {
+    }
+
+    public static ParseTree findAllRuleNodes(ParseTree t, int ruleIndex)
+    {
+    }
+
+    public static ParseTree[] findAllNodes(ParseTree t, int index, bool findTokens)
+    {
+    }
+
+    public static void _findAllNodes(ParseTree t, int index, bool findTokens, ParseTree[] nodes)
+    {
     }
 
 }

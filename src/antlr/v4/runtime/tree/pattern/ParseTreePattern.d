@@ -132,14 +132,14 @@ class ParseTreePattern
     public ParseTreeMatch[] findAll(ParseTree tree, string xpath)
     {
         ParseTree[] subtrees = XPath.findAll(tree, xpath, matcher.getParser());
-		ParseTreeMatch[] matches;
-		foreach (ParseTree t; subtrees) {
-			ParseTreeMatch match = match(t);
-			if ( match.succeeded() ) {
-				matches ~= match;
-			}
-		}
-		return matches;
+        ParseTreeMatch[] matches;
+        foreach (ParseTree t; subtrees) {
+            ParseTreeMatch match = match(t);
+            if ( match.succeeded() ) {
+                matches ~= match;
+            }
+        }
+        return matches;
     }
 
     /**

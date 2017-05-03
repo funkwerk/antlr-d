@@ -46,14 +46,13 @@ class AtomTransition : Transition
     /**
      * @uml
      * The token type or character value; or, signifies special label.
-     * @read
      */
-    public int label_;
+    public int _label;
 
     public this(ATNState target, int label)
     {
         super(target);
-        this.label_ = label;
+        this._label = label;
     }
 
     /**
@@ -71,7 +70,7 @@ class AtomTransition : Transition
      */
     public override IntervalSet label()
     {
-        return IntervalSet.of(label_);
+        return IntervalSet.of(_label);
     }
 
     /**
@@ -80,7 +79,7 @@ class AtomTransition : Transition
      */
     public override bool matches(int symbol, int minVocabSymbol, int maxVocabSymbol)
     {
-        return label_ == symbol;
+        return _label == symbol;
     }
 
     /**
@@ -89,12 +88,7 @@ class AtomTransition : Transition
      */
     public override string toString()
     {
-        return to!string(label_);
-    }
-
-    public final int label()
-    {
-        return this.label_;
+        return to!string(_label);
     }
 
 }

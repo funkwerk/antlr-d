@@ -1,12 +1,14 @@
 module antlr.v4.runtime.BailErrorStrategy;
 
 import antlr.v4.runtime.DefaultErrorStrategy;
+import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.Token;
 
 // Class BailErrorStrategy
 /**
  * TODO add class description
  */
-class BailErrorStrategy : DefaultErrorStrategy
+class BailErrorStrategy : DefaultErrorStrategy!(Token, Parser)
 {
 
 }

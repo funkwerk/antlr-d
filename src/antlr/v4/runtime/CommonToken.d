@@ -1,5 +1,7 @@
 module antlr.v4.runtime.CommonToken;
 
+import std.conv;
+import std.array;
 import std.typecons;
 import std.container : DList;
 import antlr.v4.runtime.WritableToken;
@@ -346,7 +348,7 @@ class CommonToken : WritableToken
         }
         return "[@" ~ to!string(getTokenIndex) ~ "," ~ to!string(start) ~ ":"
             ~ to!string(stop) ~ "='" ~ txt ~ "',<" ~ to!string(type)
-            ~ ">" ~ channelStr ~ "," ~ to!strimg(line) ~ ":"
+            ~ ">" ~ channelStr ~ "," ~ to!string(line) ~ ":"
             ~ to!string(getCharPositionInLine) ~ "]";
     }
 

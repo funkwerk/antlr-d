@@ -45,7 +45,12 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.StarLoopEntryState;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.TransitionStates;
@@ -318,10 +323,10 @@ class ParserInterpreter : Parser
                     InterpreterRuleContext localctx =
                         createInterpreterRuleContext(_parentContextStack.peek().a,
                                                      _parentContextStack.peek().b,
-                                                     _ctx.getRuleIndex());
+                                                     ctx_.getRuleIndex());
                     pushNewRecursionContext(localctx,
                                             atn.ruleToStartState[p.ruleIndex].stateNumber,
-                                            _ctx.getRuleIndex());
+                                            ctx_.getRuleIndex());
                 }
             break;
         case TransitionState.ATOM:
@@ -340,10 +345,10 @@ class ParserInterpreter : Parser
             matchWildcard();
             break;
 
-        case Transition.RULE:
+        case TransitionStates.RULE:
             RuleStartState ruleStartState = cast(RuleStartState)transition.target;
             int ruleIndex = ruleStartState.ruleIndex;
-            InterpreterRuleContext newctx = createInterpreterRuleContext(_ctx, p.stateNumber, ruleIndex);
+            InterpreterRuleContext newctx = createInterpreterRuleContext(ctx_, p.stateNumber, ruleIndex);
             if (ruleStartState.isLeftRecursiveRule) {
                 enterRecursionRule(newctx, ruleStartState.stateNumber, ruleIndex, (cast(RuleTransition)transition).precedence);
             }
@@ -352,7 +357,7 @@ class ParserInterpreter : Parser
             }
             break;
 
-        case TransitionStatess.PREDICATE:
+        case TransitionStates.PREDICATE:
             PredicateTransition predicateTransition = cast(PredicateTransition)transition;
             if (!sempred(ctx_, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
                 throw new FailedPredicateException(this);
@@ -361,11 +366,11 @@ class ParserInterpreter : Parser
             break;
         case TransitionStates.ACTION:
             ActionTransition actionTransition = cast(ActionTransition)transition;
-            action(_ctx, actionTransition.ruleIndex, actionTransition.actionIndex);
+            action(ctx_, actionTransition.ruleIndex, actionTransition.actionIndex);
             break;
         case TransitionStates.PRECEDENCE:
             if (!precpred(ctx_, (cast(PrecedencePredicateTransition)transition).precedence)) {
-                throw new FailedPredicateException(this, String.format("precpred(_ctx, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
+                throw new FailedPredicateException(this, String.format("precpred(ctx_, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
             }
             break;
         default:
@@ -387,7 +392,7 @@ class ParserInterpreter : Parser
                     overrideDecisionReached = true;
                 }
             else {
-                predictedAlt = getInterpreter().adaptivePredict(_input, decision, _ctx);
+                predictedAlt = getInterpreter().adaptivePredict(_input, decision, ctx_);
             }
         }
         return predictedAlt;

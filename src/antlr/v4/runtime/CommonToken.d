@@ -8,6 +8,7 @@ import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.misc.Interval;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -148,8 +149,9 @@ class CommonToken : WritableToken
         }
         else {
             text = oldToken.getText();
-            CharStream[TokenSource] sourceNew;
-            sourceNew[oldToken.getTokenSource()] = oldToken.getInputStream();
+            TokenFactorySourcePair sourceNew = tuple(
+                                                     oldToken.getTokenSource,
+                                                     oldToken.getInputStream);
             source = sourceNew;
         }
     }
@@ -315,7 +317,7 @@ class CommonToken : WritableToken
      */
     public override TokenSource getTokenSource()
     {
-        return source.keys[0];
+        return source.a;
     }
 
     /**
@@ -324,7 +326,7 @@ class CommonToken : WritableToken
      */
     public override CharStream getInputStream()
     {
-        return source.values[0];
+        return source.b;
     }
 
     /**

@@ -3,6 +3,7 @@ module antlr.v4.runtime.tree.xpath.XPathWildcardAnywhereElement;
 import antlr.v4.runtime.tree.xpath.XPath;
 import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.Trees;
 
 // Class XPathWildcardAnywhereElement
 /**
@@ -22,6 +23,11 @@ class XPathWildcardAnywhereElement : XPathElement
      */
     public override ParseTree[] evaluate(ParseTree t)
     {
+        if (invert) {
+            ParseTree[] emtyParseTree;
+            return emtyParseTree; // !* is weird but valid (empty)
+        }
+        return Trees.getDescendants(t);
     }
 
 }

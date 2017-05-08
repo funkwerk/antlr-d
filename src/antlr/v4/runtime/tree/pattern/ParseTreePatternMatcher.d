@@ -42,7 +42,10 @@ import antlr.v4.runtime.ParserInterpreter;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.CannotInvokeStartRule;
+import antlr.v4.runtime.tree.StartRuleDoesNotConsumeFullPattern;
 import antlr.v4.runtime.tree.pattern.Chunk;
 import antlr.v4.runtime.tree.pattern.TagChunk;
 import antlr.v4.runtime.tree.pattern.TextChunk;
@@ -247,9 +250,9 @@ class ParseTreePatternMatcher
             //			System.out.println("pattern tree = "+tree.toStringTree(parserInterp));
         }
         catch (ParseCancellationException e) {
-            throw cast(RecognitionException)e.getCause();
+            throw cast(RecognitionException!(Token, ATNSimulator))e.getCause();
         }
-        catch (RecognitionException re) {
+        catch (RecognitionException!(Token, ATNSimulator) re) {
             throw re;
         }
         catch (Exception e) {

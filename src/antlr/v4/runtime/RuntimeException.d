@@ -9,6 +9,8 @@ class RuntimeException : Exception
 
     public string elementDescription;
 
+    private Exception cause;
+
     public this()
     {
         super("");
@@ -26,6 +28,16 @@ class RuntimeException : Exception
             return elementDescription;
         }
         return null;
+    }
+
+    public void initCause(Exception e)
+    {
+        cause = e;
+    }
+
+    public Exception getCause()
+    {
+        return cause;
     }
 
 }

@@ -66,7 +66,7 @@ import antlr.v4.runtime.misc.Interval;
  *
  *  @see ParserRuleContext
  */
-class RuleContext
+class RuleContext : RuleNode
 {
 
     /**

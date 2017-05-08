@@ -8,7 +8,7 @@ import antlr.v4.runtime.Token;
 /**
  * TODO add class description
  */
-class BailErrorStrategy : DefaultErrorStrategy!(Token, Parser)
+class BailErrorStrategy : DefaultErrorStrategy
 {
 
 }

@@ -35,13 +35,13 @@ import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.misc.IntervalSet;
 import antlr.v4.runtime.Parser;
 
-// Class Template DefaultErrorStrategy
+// Class DefaultErrorStrategy
 /**
  * @uml
  * This is the default implementation of {@link ANTLRErrorStrategy} used for
  * error reporting and recovery in ANTLR parsers.
  */
-class DefaultErrorStrategy(U, V) : ANTLRErrorStrategy!(U,V)
+class DefaultErrorStrategy : ANTLRErrorStrategy
 {
 
     /**

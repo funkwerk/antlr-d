@@ -32,8 +32,10 @@ module antlr.v4.runtime.ANTLRErrorStrategy;
 
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.ParserATNSimulator;
 
-// Interface Template ANTLRErrorStrategy
+// Interface ANTLRErrorStrategy
 /**
  * @uml
  * The interface for defining strategies to deal with syntax errors encountered
@@ -52,7 +54,7 @@ import antlr.v4.runtime.Parser;
  *
  * <p>TODO: what to do about lexers</p>
  */
-interface ANTLRErrorStrategy(U, V)
+interface ANTLRErrorStrategy
 {
 
     /**
@@ -96,7 +98,7 @@ interface ANTLRErrorStrategy(U, V)
      *  @throws RecognitionException if the error strategy could not recover from
      * the recognition exception
      */
-    public void recover(Parser recognizer, RecognitionException!(U,V) e);
+    public void recover(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e);
 
     /**
      * @uml
@@ -151,6 +153,6 @@ interface ANTLRErrorStrategy(U, V)
      *  @param recognizer the parser instance
      *  @param e the recognition exception to report
      */
-    public void reportError(Parser recognizer, RecognitionException!(U,V) e);
+    public void reportError(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e);
 
 }

@@ -34,6 +34,7 @@ module antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 import std.uni;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ANTLRInputStream;
+import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.ListTokenSource;
@@ -269,6 +270,7 @@ class ParseTreePatternMatcher
      */
     public Lexer getLexer()
     {
+        return lexer;
     }
 
     /**
@@ -278,6 +280,7 @@ class ParseTreePatternMatcher
      */
     public Parser getParser()
     {
+        return parser;
     }
 
     /**

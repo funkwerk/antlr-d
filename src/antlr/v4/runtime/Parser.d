@@ -80,7 +80,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
      */
     private ATN[string] bypassAltsAtnCache;
 
-    protected ANTLRErrorStrategy!(Token, ATNSimulator) _errHandler;
+    protected ANTLRErrorStrategy _errHandler;
 
     protected TokenStream _input;
 
@@ -472,9 +472,8 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         return _errHandler;
     }
 
-    public void setErrorHandler(ANTLRErrorStrategy!(Token, ParserATNSimulator) handler)
+    public void setErrorHandler(ANTLRErrorStrategy handler)
     {
-        this._errHandler = handler;
     }
 
     public TokenStream getInputStream()

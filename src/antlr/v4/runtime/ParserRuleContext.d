@@ -257,9 +257,32 @@ class ParserRuleContext : RuleContext
         return tokens;
     }
 
-    public auto getRuleContext(T)(T ctxType)
+    public auto getRuleContext(T)(T ctxType, int i)
     {
         return getChild(ctxType, i);
+    }
+
+    public auto getRuleContexts(T)(T ctxType)
+    {
+        if (children is null) {
+            ParserRuleContext[] l;
+            return l;
+        }
+        T[] contexts = null;
+        foreach (ParseTree o; children) {
+            if (ctxType.classinfo == o.classinfo) {
+                if (contexts is null) {
+                    contexts = new T[];
+                }
+                contexts ~= cast(o)ctxType;
+            }
+        }
+
+        if (contexts is null) {
+            ParserRuleContext[] l;
+            return l;
+        }
+        return contexts;
     }
 
     /**

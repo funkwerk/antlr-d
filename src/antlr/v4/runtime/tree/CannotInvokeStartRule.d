@@ -9,4 +9,9 @@ import antlr.v4.runtime.RuntimeException;
 class CannotInvokeStartRule : RuntimeException
 {
 
+    public this(Exception e)
+    {
+        super(e);
+    }
+
 }

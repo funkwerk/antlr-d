@@ -32,6 +32,8 @@
 module antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 
 import std.uni;
+import std.conv;
+import std.string;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.BailErrorStrategy;
@@ -39,6 +41,8 @@ import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.ListTokenSource;
 import antlr.v4.runtime.ParserInterpreter;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonTokenStream;
@@ -46,6 +50,8 @@ import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.CannotInvokeStartRule;
 import antlr.v4.runtime.tree.StartRuleDoesNotConsumeFullPattern;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.pattern.Chunk;
 import antlr.v4.runtime.tree.pattern.TagChunk;
 import antlr.v4.runtime.tree.pattern.TextChunk;
@@ -298,10 +304,108 @@ class ParseTreePatternMatcher
      */
     protected ParseTree matchImpl(ParseTree tree, ParseTree patternTree, ParseTree[][string] labels)
     {
+	if (tree is null) {
+            throw new IllegalArgumentException("tree cannot be null");
+        }
+
+        if (patternTree is null) {
+            throw new IllegalArgumentException("patternTree cannot be null");
+        }
+
+        // x and <ID>, x and y, or x and x; or could be mismatched types
+        if (tree.classinfo == TerminalNode.classinfo && patternTree.classinfo == TerminalNode.classinfo) {
+            TerminalNode t1 = cast(TerminalNode)tree;
+            TerminalNode t2 = cast(TerminalNode)patternTree;
+            ParseTree mismatchedNode = null;
+            // both are tokens and they have same type
+            if (t1.getSymbol().getType() == t2.getSymbol().getType() ) {
+                if (t2.getSymbol().classinfo == TokenTagToken.classinfo) { // x and <ID>
+                    TokenTagToken tokenTagToken = cast(TokenTagToken)t2.getSymbol();
+                    // track label->list-of-nodes for both token name and label (if any)
+                    labels[tokenTagToken.getTokenName] ~= tree;
+                    if (tokenTagToken.getLabel() !is null) {
+                        labels[tokenTagToken.getLabel] ~= tree;
+                    }
+                }
+                else if (t1.getText == t2.getText) {
+                    // x and x
+                }
+                else {
+                    // x and y
+                    if (mismatchedNode is null) {
+                        mismatchedNode = t1;
+                    }
+                }
+            }
+            else {
+                if (mismatchedNode is null) {
+                    mismatchedNode = t1;
+                }
+            }
+
+            return mismatchedNode;
+        }
+        if (tree.classinfo == ParserRuleContext.classinfo && patternTree.classinfo == ParserRuleContext.classinfo) {
+            ParserRuleContext r1 = cast(ParserRuleContext)tree;
+            ParserRuleContext r2 = cast(ParserRuleContext)patternTree;
+            ParseTree mismatchedNode = null;
+            // (expr ...) and <expr>
+            RuleTagToken ruleTagToken = getRuleTagToken(r2);
+            if ( ruleTagToken !is null ) {
+                ParseTreeMatch m = null;
+                if (r1.getRuleIndex() == r2.getRuleIndex()) {
+                    // track label->list-of-nodes for both rule name and label (if any)
+                    labels[ruleTagToken.getRuleName] ~= tree;
+                    if ( ruleTagToken.getLabel() !is null ) {
+                        labels[ruleTagToken.getLabel] ~= tree;
+                    }
+                }
+                else {
+                    if (mismatchedNode is null) {
+                        mismatchedNode = r1;
+                    }
+                }
+
+                return mismatchedNode;
+            }
+
+            // (expr ...) and (expr ...)
+            if (r1.getChildCount() != r2.getChildCount()) {
+                if (mismatchedNode is null) {
+                    mismatchedNode = r1;
+                }
+
+                return mismatchedNode;
+            }
+
+            int n = r1.getChildCount();
+            for (int i = 0; i<n; i++) {
+                ParseTree childMatch = matchImpl(r1.getChild(i), patternTree.getChild(i), labels);
+                if ( childMatch !is null ) {
+                    return childMatch;
+                }
+            }
+
+            return mismatchedNode;
+        }
+
+        // if nodes aren't both tokens or both rule nodes, can't match
+        return tree;
     }
 
     public RuleTagToken getRuleTagToken(ParseTree t)
     {
+        if (t.classinfo == RuleNode.classinfo) {
+            RuleNode r = cast(RuleNode)t;
+            if (r.getChildCount == 1 && r.getChild(0).classinfo == TerminalNode.classinfo) {
+                TerminalNode c = cast(TerminalNode)r.getChild(0);
+                if (c.getSymbol().classinfo == RuleTagToken.classinfo) {
+                    //	System.out.println("rule tag subtree "+t.toStringTree(parser));
+                    return cast(RuleTagToken)c.getSymbol();
+                }
+            }
+        }
+        return null;
     }
 
     public Token[] tokenize(string pattern)
@@ -318,15 +422,15 @@ class ParseTreePatternMatcher
                 if (isUpper(tagChunk.getTag()[0])) {
                     int ttype = parser.getTokenType(tagChunk.getTag());
                     if (ttype == Token.INVALID_TYPE ) {
-                        throw new IllegalArgumentException("Unknown token "+tagChunk.getTag()+" in pattern: "+pattern);
+                        throw new IllegalArgumentException("Unknown token " ~ tagChunk.getTag() ~ " in pattern: " ~ pattern);
                     }
                     TokenTagToken t = new TokenTagToken(tagChunk.getTag(), ttype, tagChunk.getLabel());
                     tokens ~= t;
                 }
                 else if (isLower(tagChunk.getTag()[0]) ) {
                     int ruleIndex = parser.getRuleIndex(tagChunk.getTag());
-                    if ( ruleIndex==-1 ) {
-                        throw new IllegalArgumentException("Unknown rule "+tagChunk.getTag()+" in pattern: "+pattern);
+                    if (ruleIndex == -1) {
+                        throw new IllegalArgumentException("Unknown rule " ~ tagChunk.getTag() ~ " in pattern: " ~ pattern);
                     }
                     int ruleImaginaryTokenType = parser.getATNWithBypassAlts().ruleToTokenType[ruleIndex];
                     tokens ~= new RuleTagToken(tagChunk.getTag(), ruleImaginaryTokenType, tagChunk.getLabel());
@@ -351,8 +455,104 @@ class ParseTreePatternMatcher
         return tokens;
     }
 
+    /**
+     * @uml
+     * Split {@code <ID> = <e:expr> ;} into 4 chunks for tokenizing by {@link #tokenize}.
+     */
     public Chunk[] split(string pattern)
     {
+        int p = 0;
+        int n = to!int(pattern.length);
+        Chunk[] chunks;
+        // find all start and stop indexes first, then collect
+        int[] starts;
+        int[] stops;
+        while (p < n) {
+            if (p == pattern.indexOf(escape ~ start, p) ) {
+                p += to!int(escape.length + start.length);
+            }
+            else if ( p == pattern.indexOf(escape ~ stop, p) ) {
+                p += to!int(escape.length + stop.length);
+            }
+            else if ( p == pattern.indexOf(start,p) ) {
+                starts ~= p;
+                p += to!int(start.length);
+            }
+            else if ( p == pattern.indexOf(stop,p) ) {
+                stops ~= p;
+                p += to!int(stop.length);
+            }
+            else {
+                p++;
+            }
+        }
+
+        //		System.out.println("");
+        //		System.out.println(starts);
+        //		System.out.println(stops);
+        if (starts.length > stops.length) {
+            throw new IllegalArgumentException("unterminated tag in pattern: " ~ pattern);
+        }
+
+        if ( starts.length < stops.length) {
+            throw new IllegalArgumentException("missing start tag in pattern: " ~ pattern);
+        }
+
+        int ntags = to!int(starts.length);
+        for (int i=0; i<ntags; i++) {
+            if ( starts[i] >= stops[i] ) {
+                throw new IllegalArgumentException("tag delimiters out of order in pattern: " ~ pattern);
+            }
+        }
+
+        // collect into chunks now
+        if (ntags == 0) {
+            string text = pattern[0.. n];
+            chunks ~= new TextChunk(text);
+        }
+
+        if (ntags>0 && starts[0] > 0) { // copy text up to first tag into chunks
+            string text = pattern[0..starts[0]];
+            chunks ~= new TextChunk(text);
+        }
+        for (int i=0; i<ntags; i++) {
+            // copy inside of <tag>
+            string tag = pattern[starts[i] + start.length..stops[i]];
+            string ruleOrToken = tag;
+            string label = null;
+            int colon = to!int(tag.indexOf(':'));
+            if (colon >= 0) {
+                label = tag[0..colon];
+                ruleOrToken = tag[colon+1..tag.length];
+            }
+            chunks ~= new TagChunk(label, ruleOrToken);
+            if (i + 1 < ntags) {
+                // copy from end of <tag> to start of next
+                string text = pattern[stops[i] + to!int(stop.length)..starts[i + 1]];
+                chunks ~= new TextChunk(text);
+            }
+        }
+        if ( ntags > 0 ) {
+            int afterLastTag = to!int(stops[ntags - 1] + stop.length);
+            if ( afterLastTag < n ) { // copy text from end of last tag to end
+                string text = pattern[afterLastTag..n];
+                chunks ~= new TextChunk(text);
+            }
+        }
+
+        // strip out the escape sequences from text chunks but not tags
+        for (int i = 0; i < chunks.length; i++) {
+            Chunk c = chunks[i];
+            if (c.classinfo == TextChunk.classinfo) {
+                TextChunk tc = cast(TextChunk)c;
+                string unescaped = tc.getText().replace(escape, "");
+                if (unescaped.length < tc.getText().length) {
+                    chunks[i] = new TextChunk(unescaped);
+                }
+            }
+        }
+
+        return chunks;
     }
 
 }

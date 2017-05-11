@@ -36,13 +36,17 @@ import std.conv;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.Tree;
+import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.misc.Utils;
+import antlr.v4.runtime.misc.Interval;
+import antlr.v4.runtime.misc.Predicate;
 
 // Class Trees
 /**
@@ -52,6 +56,10 @@ import antlr.v4.runtime.misc.Utils;
  */
 class Trees
 {
+
+    private this()
+    {
+    }
 
     /**
      * @uml
@@ -217,6 +225,93 @@ class Trees
         for (int i = 0; i < t.getChildCount(); i++){
             _findAllNodes(t.getChild(i), index, findTokens, nodes);
         }
+    }
+
+    /**
+     * @uml
+     * Get all descendents; includes t itself.
+     */
+    public static ParseTree[] getDescendants(ParseTree t)
+    {
+        ParseTree[] nodes;
+        nodes ~= t;
+
+        int n = t.getChildCount();
+        for (int i = 0 ; i < n ; i++){
+            nodes ~= getDescendants(t.getChild(i));
+        }
+        return nodes;
+    }
+
+    public static ParseTree[] descendants(ParseTree t)
+    {
+        return getDescendants(t);
+    }
+
+    /**
+     * @uml
+     * Find smallest subtree of t enclosing range startTokenIndex..stopTokenIndex
+     * inclusively using postorder traversal.  Recursive depth-first-search.
+     */
+    public static ParserRuleContext getRootOfSubtreeEnclosingRegion(ParseTree t, int startTokenIndex,
+        int stopTokenIndex)
+    {
+	int n = t.getChildCount();
+        for (int i = 0; i<n; i++) {
+            ParseTree child = t.getChild(i);
+            ParserRuleContext r = getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);
+            if (r !is null) return r;
+        }
+        if (t.classinfo == ParserRuleContext.classinfo) {
+            ParserRuleContext r = cast(ParserRuleContext)t;
+            if (startTokenIndex >= r.getStart().getTokenIndex() && // is range fully contained in t?
+                (r.getStop() is null || stopTokenIndex <= r.getStop().getTokenIndex()) )
+                {
+                    // note: r.getStop()==null likely implies that we bailed out of parser and there's nothing to the right 
+                    return r;
+                }
+        }
+        return null;
+    }
+
+    /**
+     * @uml
+     * Replace any subtree siblings of root that are completely to left
+     * or right of lookahead range with a CommonToken(Token.INVALID_TYPE,"...")
+     * node. The source interval for t is not altered to suit smaller range!
+     *
+     * WARNING: destructive to t.
+     */
+    public static void stripChildrenOutOfRange(ParserRuleContext t, ParserRuleContext root,
+        int startIndex, int stopIndex)
+    {
+        if (t is null) return;
+        for (int i = 0; i < t.getChildCount(); i++) {
+            ParseTree child = t.getChild(i);
+            Interval range = child.getSourceInterval();
+            if (child.classinfo == ParserRuleContext.classinfo && (range.b < startIndex || range.a > stopIndex) ) {
+                if (isAncestorOf(child, root)) { // replace only if subtree doesn't have displayed root
+                    CommonToken abbrev = new CommonToken(Token.INVALID_TYPE, "...");
+                    t.children[i] =  new TerminalNodeImpl(abbrev);
+                }
+            }
+        }
+    }
+
+    /**
+     * @uml
+     * Return first node satisfying the pred
+     */
+    public static Tree findNodeSuchThat(Tree t, Predicate!Tree pred)
+    {
+        if (pred.test(t) ) return t;
+
+        int n = t.getChildCount();
+        for (int i = 0 ; i < n ; i++){
+            Tree u = findNodeSuchThat(t.getChild(i), pred);
+            if (u !is null ) return u;
+        }
+        return null;
     }
 
 }

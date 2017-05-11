@@ -22,6 +22,12 @@ class RuntimeException : Exception
         this.elementDescription = elementDescription;
     }
 
+    public this(Exception cause)
+    {
+        this.cause = cause;
+        this.elementDescription = cause.elementDescription;
+    }
+
     public string msg()
     {
         if (elementDescription !is null) {

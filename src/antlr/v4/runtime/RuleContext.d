@@ -262,12 +262,12 @@ class RuleContext : RuleNode
         while (p !is null && p != stop) {
             if (ruleNames is null) {
                 if (!p.isEmpty()) {
-                    buf.put(p.invokingState);
+                    buf.put(to!string(p.invokingState));
                 }
             }
             else {
                 int ruleIndex = p.getRuleIndex();
-                string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames.get(ruleIndex) : to!string(ruleIndex);
+                string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames[ruleIndex] : to!string(ruleIndex);
                 buf.put(ruleName);
             }
 

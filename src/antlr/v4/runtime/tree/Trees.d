@@ -267,7 +267,7 @@ class Trees
             if (startTokenIndex >= r.getStart().getTokenIndex() && // is range fully contained in t?
                 (r.getStop() is null || stopTokenIndex <= r.getStop().getTokenIndex()) )
                 {
-                    // note: r.getStop()==null likely implies that we bailed out of parser and there's nothing to the right 
+                    // note: r.getStop()==null likely implies that we bailed out of parser and there's nothing to the right
                     return r;
                 }
         }

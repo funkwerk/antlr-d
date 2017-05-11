@@ -13,6 +13,7 @@ class XPathLexerRecover : XPathLexer
 
     public this(ANTLRInputStream ins)
     {
+        super(ins);
     }
 
     public void recover(LexerNoViableAltException e)

@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -875,17 +876,17 @@ import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.*;
-import antlr.v4.runtime.atn.*;
+//import antlr.v4.runtime.*;
+//import antlr.v4.runtime.atn.*;
 import antlr.v4.runtime.dfa.DFA;
-import antlr.v4.runtime.misc.*;
+//import antlr.v4.runtime.misc.*;
 
 <lexer>
 >>
 
 Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
 public class <lexer.name> : <superClass; null="Lexer"> {
-	static { RuntimeMetaData.checkVersion("<lexerFile.ANTLRVersion>", RuntimeMetaData.VERSION); }
+	static this() { RuntimeMetaData.checkVersion("<lexerFile.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
 	protected static const DFA[] _decisionToDFA;
 	protected static const PredictionContextCache _sharedContextCache =
@@ -909,7 +910,7 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 
 	<namedActions.members>
 
-	public <lexer.name>(CharStream input) {
+	public this(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
@@ -939,7 +940,7 @@ SerializedATN(model) ::= <<
 <! requires segmented representation !>
 private static const int _serializedATNSegments = <length(model.segments)>;
 <model.segments:{segment|private static const string _serializedATNSegment<i0> =
-	"<segment; wrap={"+<\n><\t>"}>";}; separator="\n">
+	"<segment; wrap={"~<\n><\t>"}>";}; separator="\n">
 public static const string _serializedATN = Utils.join(
 	new string[] {
 		<model.segments:{segment | _serializedATNSegment<i0>}; separator=",\n">
@@ -949,7 +950,7 @@ public static const string _serializedATN = Utils.join(
 <else>
 <! only one segment, can be inlined !>
 public static const string _serializedATN =
-	"<model.serialized; wrap={"+<\n><\t>"}>";
+	"<model.serialized; wrap={"~<\n><\t>"}>";
 <endif>
 public static const ATN _ATN =
 	new ATNDeserializer().deserialize(_serializedATN.toCharArray());

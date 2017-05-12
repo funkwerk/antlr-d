@@ -1,11 +1,16 @@
 module antlr.v4.runtime.ListTokenSource;
 
+import std.conv;
+import std.string;
+import std.algorithm;
+import std.typecons;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.CommonToken;
+alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
 
 // Class ListTokenSource
 /**
@@ -100,20 +105,20 @@ class ListTokenSource : TokenSource
     public int getCharPositionInLine()
     {
 	if (i < tokens.length) {
-            return tokens.get[i].getCharPositionInLine();
+            return tokens[i].getCharPositionInLine();
         }
-		else if (eofToken != null) {
+		else if (eofToken !is null) {
 			return eofToken.getCharPositionInLine();
 		}
 		else if (tokens.length > 0) {
 			// have to calculate the result from the line/column of the previous
 			// token, along with the text of the token.
-			Token lastToken = tokens.get(tokens.length - 1);
-			String tokenText = lastToken.getText();
-			if (tokenText != null) {
+			Token lastToken = tokens[$ - 1];
+			string tokenText = lastToken.getText();
+			if (tokenText !is null) {
 				int lastNewLine = tokenText.lastIndexOf('\n');
 				if (lastNewLine >= 0) {
-					return tokenText.length() - lastNewLine - 1;
+                                    return to!int(tokenText.length) - lastNewLine - 1;
 				}
 			}
 
@@ -131,19 +136,20 @@ class ListTokenSource : TokenSource
             if (eofToken is null) {
                 int start = -1;
                 if (tokens.length > 0) {
-                    int previousStop = tokens.get(.length - 1).getStopIndex();
+                    int previousStop = tokens[$ - 1].getStopIndex();
                     if (previousStop != -1) {
                         start = previousStop + 1;
                     }
                 }
 
-                int stop = int.max(-1, start - 1);
-                eofToken = _factory.create(new Pair<TokenSource, CharStream>(this, getInputStream()), Token.EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
+                int stop = max(-1, start - 1);
+                TokenFactorySourcePair tfsp = tuple(this, getInputStream()); 
+                eofToken = _factory.create(tfsp, Token.EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
             }
             return eofToken;
         }
 
-        Token t = tokens.get[i];
+        Token t = tokens[i];
         if (i == tokens.length - 1 && t.getType() == Token.EOF) {
             eofToken = t;
         }
@@ -157,19 +163,19 @@ class ListTokenSource : TokenSource
 	if (i < tokens.length) {
             return tokens[i].getLine();
         }
-        else if (eofToken != null) {
+        else if (eofToken !is null) {
             return eofToken.getLine();
         }
         else if (tokens.length > 0) {
             // have to calculate the result from the line/column of the previous
             // token, along with the text of the token.
-            Token lastToken = tokens.get(tokens.length - 1);
+            Token lastToken = tokens[tokens.length - 1];
             int line = lastToken.getLine();
 
-            String tokenText = lastToken.getText();
-            if (tokenText != null) {
-                for (int i = 0; i < tokenText.length(); i++) {
-                    if (tokenText.charAt(i) == '\n') {
+            string tokenText = lastToken.getText();
+            if (tokenText !is null) {
+                foreach (c; tokenText) {
+                    if (c == '\n') {
                         line++;
                     }
                 }
@@ -187,13 +193,13 @@ class ListTokenSource : TokenSource
     public CharStream getInputStream()
     {
 	if (i < tokens.length) {
-            return tokens.get(i).getInputStream();
+            return tokens[i].getInputStream();
         }
-        else if (eofToken != null) {
+        else if (eofToken !is null) {
             return eofToken.getInputStream();
         }
         else if (tokens.length > 0) {
-            return tokens.get(tokens.length - 1).getInputStream();
+            return tokens[tokens.length - 1].getInputStream();
         }
         // no input stream information is available
         return null;
@@ -201,12 +207,12 @@ class ListTokenSource : TokenSource
 
     public string getSourceName()
     {
-        if (sourceName != null) {
+        if (sourceName !is null) {
             return sourceName;
         }
 
         CharStream inputStream = getInputStream();
-        if (inputStream != null) {
+        if (inputStream !is null) {
             return inputStream.getSourceName();
         }
 

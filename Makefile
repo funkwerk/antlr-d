@@ -4,6 +4,7 @@ MODEL = DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
 SRC := $(shell find $(SRC_DIR) -name "*.d")
+XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 
 BUILD_DIR = build
 MODEL_DIR = model
@@ -52,6 +53,11 @@ prepare_generator : | $(BUILD_DIR)
 build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
 		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
+
+.PHONY : build_xpathlexer
+build_xpathlexer : prepare_generator
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar	\
+		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY : clean
 clean :

@@ -57,18 +57,24 @@ class LexerNoViableAltException : RecognitionException!(int, LexerATNSimulator)
 
     public this(Lexer lexer, CharStream input, int startIndex, ATNConfigSet deadEndConfigs)
     {
+        super(lexer, input, null);
+        this.startIndex = startIndex;
+        this.deadEndConfigs = deadEndConfigs;
     }
 
     public int getStartIndex()
     {
+        return startIndex;
     }
 
     public ATNConfigSet getDeadEndConfigs()
     {
+        return deadEndConfigs;
     }
 
     public CharStream getInputStream()
     {
+        return cast(CharStream)super.getInputStream();
     }
 
     /**

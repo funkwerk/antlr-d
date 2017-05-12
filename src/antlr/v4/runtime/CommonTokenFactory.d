@@ -5,6 +5,7 @@ import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.misc.Interval;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 

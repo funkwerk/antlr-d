@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2012 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,7 +34,10 @@ module antlr.v4.runtime.ANTLRInputStream;
 import std.conv;
 import std.stdio;
 import std.file;
+import std.format;
+import std.algorithm;
 import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.misc.Interval;
 
 // Class ANTLRInputStream
@@ -117,22 +121,16 @@ class ANTLRInputStream : CharStream
 
     public void load(File r, int size, int readChunkSize)
     {
-	if (r is null) {
-            return;
-        }
-        // if (size <= 0) {
-        //     size = INITIAL_BUFFER_SIZE;
-        // }
         if (readChunkSize <= 0) {
             readChunkSize = READ_BUFFER_SIZE;
         }
         debug writefln("load %1$s in chunks of %2$s", size, readChunkSize);
-            data = readText(File);
-            int p = data.length;
-            // set the actual size of the data available;
-            // EOF subtracted one above in p+=numRead; add one back
-            n = p + 1;
-            debug writefln("n= $s",n);
+        data = r.readText;
+        int p = data.length;
+        // set the actual size of the data available;
+        // EOF subtracted one above in p+=numRead; add one back
+        n = p + 1;
+        debug writefln("n= $s",n);
     }
 
     /**
@@ -260,7 +258,7 @@ class ANTLRInputStream : CharStream
         //		System.err.println("data: "+Arrays.toString(data)+", n="+n+
         //						   ", start="+start+
         //						   ", stop="+stop);
-        return new String(data, start, count);
+        return format("%1$s %2$s %3$s", data, start, count);
     }
 
     /**

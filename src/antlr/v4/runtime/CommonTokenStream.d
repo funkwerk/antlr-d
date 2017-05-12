@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.CommonTokenStream;
 
+import std.conv;
 import antlr.v4.runtime.BufferedTokenStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
@@ -151,7 +152,7 @@ class CommonTokenStream : BufferedTokenStream
     {
         int n = 0;
         fill();
-        for (int i = 0; i < tokens.size(); i++) {
+        for (int i = 0; i < to!int(tokens.length); i++) {
             Token t = tokens[i];
             if (t.getChannel() == channel) n++;
             if (t.getType() == Token.EOF) break;

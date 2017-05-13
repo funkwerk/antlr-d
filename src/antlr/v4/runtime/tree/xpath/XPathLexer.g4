@@ -24,13 +24,14 @@ ROOT	 : '/' ;
 WILDCARD : '*' ;
 BANG	 : '!' ;
 
-ID			:	NameStartChar NameChar*
-				{
-				String text = getText();
-				if ( Character.isUpperCase(text.charAt(0)) ) setType(TOKEN_REF);
-				else setType(RULE_REF);
-				}
-			;
+ID       : NameStartChar NameChar*
+               {
+               import std.ascii;
+               string text = getText();
+	       if (isUpper(text[0])) setType(TOKEN_REF);
+	       else setType(RULE_REF);
+	       }
+	       ;
 
 fragment
 NameChar    :   NameStartChar

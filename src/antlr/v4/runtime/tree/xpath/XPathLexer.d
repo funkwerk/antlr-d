@@ -1,8 +1,10 @@
 // Generated from src/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.5.3
 module antlr.v4.runtime.tree.xpath.XPathLexer;
+
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
@@ -10,6 +12,7 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
+import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
 //import antlr.v4.runtime.misc.*;
 
@@ -26,7 +29,7 @@ public class XPathLexer : Lexer {
 		"DEFAULT_MODE"
 	];
 
-	public static const string[] ruleNames = [
+	public static string[] ruleNames = [
 		"ANYWHERE", "ROOT", "WILDCARD", "BANG", "ID", "NameChar", "NameStartChar", 
 		"STRING"
 	];
@@ -38,22 +41,22 @@ public class XPathLexer : Lexer {
 		null, "TOKEN_REF", "RULE_REF", "ANYWHERE", "ROOT", "WILDCARD", "BANG", 
 		"ID", "STRING"
 	];
-    public static const Vocabulary VOCABULARY; // = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+	public static Vocabulary VOCABULARY;
 
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */
 	deprecated
-	public static const string[] tokenNames;
+	public static string[] tokenNames;
 	static this() {
-		tokenNames = new string[_SYMBOLIC_NAMES.length];
+		string[_SYMBOLIC_NAMES.length] tokenNames;
 		for (int i = 0; i < tokenNames.length; i++) {
 			tokenNames[i] = VOCABULARY.getLiteralName(i);
-			if (tokenNames[i] == null) {
+			if (tokenNames[i] is null) {
 				tokenNames[i] = VOCABULARY.getSymbolicName(i);
 			}
 
-			if (tokenNames[i] == null) {
+			if (tokenNames[i] is null) {
 				tokenNames[i] = "<INVALID>";
 			}
 		}
@@ -98,17 +101,20 @@ public class XPathLexer : Lexer {
 		case 4:
 			ID_action(cast(RuleContext)_localctx, actionIndex);
 			break;
+	        default: break;
 		}
 	}
 	private void ID_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 0:
 
-							String text = getText();
-							if ( Character.isUpperCase(text.charAt(0)) ) setType(TOKEN_REF);
-							else setType(RULE_REF);
-							
+			               import std.ascii;
+			               string text = getText();
+				       if (isUpper(text[0])) setType(TOKEN_REF);
+				       else setType(RULE_REF);
+				       
 			break;
+	        default: break;
 		}
 	}
 
@@ -129,16 +135,15 @@ public class XPathLexer : Lexer {
 		"\3\2\2\2%(\5\17\b\2&(\t\2\2\2\'%\3\2\2\2\'&\3\2\2\2(\16\3\2\2\2)*\t\3"~
 		"\2\2*\20\3\2\2\2+/\7)\2\2,.\13\2\2\2-,\3\2\2\2.1\3\2\2\2/0\3\2\2\2/-\3"~
 		"\2\2\202\3\2\2\21/\3\2\2\223\7)\2\23\22\3\2\2\2\6\2 \'/\3\3\6\2";
+	public static ATN _ATN;
 
-    public static const ATN _ATN;
-
-    static this() {
-        _ATN = new ATNDeserializer();
-        _ATN.deserialize(_serializedATN);
-        VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        _decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
-        for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
-            _decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
-        }
-    }
+	static this() {
+	       _ATN = new ATNDeserializer();
+	       _ATN.deserialize(_serializedATN);
+	       VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
+		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
+			_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
+		}
+	}
 }

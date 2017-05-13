@@ -46,18 +46,17 @@ import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.misc.IntegerStack;
 
-alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class Lexer
 /**
- * TODO add class description
  * @uml
  * A lexer is recognizer that draws input symbols from a character stream.
  * lexer grammars result in a subclass of this object. A Lexer object
  * uses simplified match() and error recovery mechanisms in the interest
  * of speed.
  */
-abstract class Lexer : Recognizer!(int, LexerATNSimulator)
+abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
 {
 
     public static immutable int DEFAULT_MODE = 0;
@@ -151,7 +150,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator)
     {
         tokenFactory_ = CommonTokenFactory.DEFAULT;
         this._input = input;
-        this._tokenFactorySourcePair[this] = input;
+        this._tokenFactorySourcePair = tuple(this, input);
     }
 
     public void reset()

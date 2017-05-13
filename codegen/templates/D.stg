@@ -285,22 +285,22 @@ private static const string[] _LITERAL_NAMES = [
 private static const string[] _SYMBOLIC_NAMES = [
 	<symbolicNames:{t | <t>}; null="null", separator=", ", wrap, anchor>
 ];
-public static const Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+public static Vocabulary VOCABULARY;
 
 /**
  * @deprecated Use {@link #VOCABULARY} instead.
  */
 deprecated
-public static const string[] tokenNames;
+public static string[] tokenNames;
 static this() {
-	tokenNames = new string[_SYMBOLIC_NAMES.length];
+	string[_SYMBOLIC_NAMES.length] tokenNames;
 	for (int i = 0; i \< tokenNames.length; i++) {
 		tokenNames[i] = VOCABULARY.getLiteralName(i);
-		if (tokenNames[i] == null) {
+		if (tokenNames[i] is null) {
 			tokenNames[i] = VOCABULARY.getSymbolicName(i);
 		}
 
-		if (tokenNames[i] == null) {
+		if (tokenNames[i] is null) {
 			tokenNames[i] = "\<INVALID>";
 		}
 	}
@@ -328,6 +328,7 @@ public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 case <f.ruleIndex>:
 	<f.name>_action(cast(<f.ctxType>)_localctx, actionIndex);
 	break;}; separator="\n">
+        default: break;
 	}
 }
 <actionFuncs.values; separator="\n">
@@ -363,6 +364,7 @@ private void <r.name>_action(<r.ctxType> _localctx, int actionIndex) {
 case <index>:
 	<actions.(index)>
 	break;}; separator="\n">
+        default: break;
 	}
 }
 >>
@@ -875,6 +877,7 @@ package <lexerFile.genPackage>;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
@@ -882,6 +885,7 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
+import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
 //import antlr.v4.runtime.misc.*;
 
@@ -906,7 +910,7 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 		<lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor>
 	];
 
-	public static const string[] ruleNames = [
+	public static string[] ruleNames = [
 		<lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor>
 	];
 
@@ -956,9 +960,12 @@ public static const string _serializedATN = Utils.join(
 public static const string _serializedATN =
 	"<model.serialized; wrap={"~<\n><\t>"}>";
 <endif>
-public static const ATN _ATN =
-	new ATNDeserializer().deserialize(_serializedATN.toCharArray());
+public static ATN _ATN;
+
 static this() {
+       _ATN = new ATNDeserializer();
+       _ATN.deserialize(_serializedATN);
+       VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 	_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 	for (int i = 0; i \< _ATN.getNumberOfDecisions(); i++) {
 		_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);

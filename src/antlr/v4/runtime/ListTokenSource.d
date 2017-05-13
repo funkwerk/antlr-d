@@ -10,6 +10,7 @@ import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.CommonToken;
+
 alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
 
 // Class ListTokenSource
@@ -143,7 +144,7 @@ class ListTokenSource : TokenSource
                 }
 
                 int stop = max(-1, start - 1);
-                TokenFactorySourcePair tfsp = tuple(this, getInputStream()); 
+                TokenFactorySourcePair tfsp = tuple(this, getInputStream());
                 eofToken = _factory.create(tfsp, Token.EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
             }
             return eofToken;

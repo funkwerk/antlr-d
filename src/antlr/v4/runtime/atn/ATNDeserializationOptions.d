@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2013 Terence Parr
  *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,14 +31,12 @@
 
 module antlr.v4.runtime.atn.ATNDeserializationOptions;
 
-// Class ATNDeserializationOptions
+// Singleton ATNDeserializationOptions
 /**
  * TODO add class description
  */
 class ATNDeserializationOptions
 {
-
-    private static ATNDeserializationOptions defaultOptions;
 
     private bool readOnly;
 
@@ -45,27 +44,15 @@ class ATNDeserializationOptions
 
     private bool generateRuleBypassTransitions;
 
+    /**
+     * The single instance of ATNDeserializationOptions.
+     */
+    private static __gshared ATNDeserializationOptions instance_;
+
     public static this()
     {
-        defaultOptions = new ATNDeserializationOptions();
-        defaultOptions.makeReadOnly();
-    }
-
-    public this()
-    {
-        this.verifyATN = true;
-        this.generateRuleBypassTransitions = false;
-    }
-
-    public this(ATNDeserializationOptions options)
-    {
-        this.verifyATN = options.verifyATN;
-        this.generateRuleBypassTransitions = options.generateRuleBypassTransitions;
-    }
-
-    public static ATNDeserializationOptions getDefaultOptions()
-    {
-        return defaultOptions;
+        instance_.verifyATN = true;
+        instance_.generateRuleBypassTransitions = false;
     }
 
     public bool isReadOnly()
@@ -100,17 +87,25 @@ class ATNDeserializationOptions
         this.generateRuleBypassTransitions = generateRuleBypassTransitions;
     }
 
-    protected void throwIfReadOnly()
+    private void throwIfReadOnly()
     {
-        assert(isReadOnly, "The object is read only.");
+        assert(!isReadOnly, "The object is read only.");
     }
 
-}
+    /**
+     * Creates the single instance of ATNDeserializationOptions.
+     */
+    private shared static this()
+    {
+        instance_ = new ATNDeserializationOptions;
+    }
 
-unittest
-{
-    auto so = new ATNDeserializationOptions();
-    assert(!so.isReadOnly);
-    assert(so.defaultOptions.isReadOnly);
-    assert(so.defaultOptions.verifyATN);
+    /**
+     * Returns: A single instance of ATNDeserializationOptions.
+     */
+    public static ATNDeserializationOptions instance()
+    {
+        return instance_;
+    }
+
 }

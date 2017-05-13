@@ -145,13 +145,14 @@ class ATNDeserializer
 
     public this()
     {
-        this(ATNDeserializationOptions.getDefaultOptions());
+        deserializationOptions = new ATNDeserializationOptions();
+        //deserializationOptions.makeReadOnly;
     }
 
     public this(ATNDeserializationOptions deserializationOptions)
     {
         if (deserializationOptions is null) {
-            deserializationOptions = ATNDeserializationOptions.getDefaultOptions();
+            deserializationOptions = new ATNDeserializationOptions();
         }
         this.deserializationOptions = deserializationOptions;
     }
@@ -189,7 +190,7 @@ class ATNDeserializer
         return false;
     }
 
-    public ATN deserialize(char[] input_data)
+    public ATN deserialize(string input_data)
     {
         auto data = input_data.dup;
         // don't adjust the first value since that's the version number
@@ -600,6 +601,25 @@ class ATNDeserializer
 
     protected void markPrecedenceDecisions(ATN atn)
     {
+        foreach (ATNState state; atn.states) {
+            if (!(state.classinfo == StarLoopEntryState.classinfo)) {
+                continue;
+            }
+
+            /* We analyze the ATN to determine if this ATN decision state is the
+             * decision for the closure block that determines whether a
+             * precedence rule should continue or complete.
+             */
+            if (atn.ruleToStartState[state.ruleIndex].isLeftRecursiveRule) {
+                ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
+                if (maybeLoopEndState.classinfo == LoopEndState.classinfo) {
+                    if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
+                        (cast(StarLoopEntryState)state).isPrecedenceDecision = true;
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -695,10 +715,11 @@ class ATNDeserializer
 
     protected UUID toUUID(char[] data, int offset)
     {
-        char[8] a;
-        for (int i = 0; i < 16; i++)
-            a[i] = data[i + offset];
-        return sha1UUID(a);
+        UUID uuid;
+        for (int i = 0; i < 16; i++) {
+            uuid.data[i] = to!ubyte(data[i + offset]);
+        }
+        return uuid;
     }
 
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,

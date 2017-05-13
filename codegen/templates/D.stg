@@ -326,7 +326,7 @@ public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 	switch (ruleIndex) {
 	<recog.actionFuncs.values:{f|
 case <f.ruleIndex>:
-	<f.name>_action((<f.ctxType>)_localctx, actionIndex);
+	<f.name>_action(cast(<f.ctxType>)_localctx, actionIndex);
 	break;}; separator="\n">
 	}
 }
@@ -338,7 +338,7 @@ public bool sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 	switch (ruleIndex) {
 	<recog.sempredFuncs.values:{f|
 case <f.ruleIndex>:
-	return <f.name>_sempred((<f.ctxType>)_localctx, predIndex);}; separator="\n">
+	return <f.name>_sempred(cast(<f.ctxType>)_localctx, predIndex);}; separator="\n">
 	}
 	return true;
 }
@@ -819,10 +819,10 @@ public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
 AttributeDecl(d) ::= "<d.type> <d.name><if(d.initValue)> = <d.initValue><endif>"
 
 /** If we don't know location of label def x, use this template */
-labelref(x) ::= "<if(!x.isLocal)>((<x.ctx.name>)_localctx).<endif><x.name>"
+labelref(x) ::= "<if(!x.isLocal)>(cast(<x.ctx.name>)_localctx).<endif><x.name>"
 
 /** For any action chunk, what is correctly-typed context struct ptr? */
-ctx(actionChunk) ::= "((<actionChunk.ctx.name>)_localctx)"
+ctx(actionChunk) ::= "(cast(<actionChunk.ctx.name>)_localctx)"
 
 // used for left-recursive rules
 recRuleAltPredicate(ruleName,opPrec)  ::= "precpred(_ctx, <opPrec>)"
@@ -874,10 +874,14 @@ package <lexerFile.genPackage>;
 <namedActions.header>
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
-//import antlr.v4.runtime.*;
-//import antlr.v4.runtime.atn.*;
+import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.VocabularyImpl;
+import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.dfa.DFA;
 //import antlr.v4.runtime.misc.*;
 
@@ -898,13 +902,13 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 		<lexer.channels:{k | <k>=<lexer.channels.(k)>}; separator=", ", wrap, anchor>;
 	<endif>
 	<rest(lexer.modes):{m| public static const int <m> = <i>;}; separator="\n">
-	public static string[] modeNames = {
+	public static string[] modeNames = [
 		<lexer.modes:{m| "<m>"}; separator=", ", wrap, anchor>
-	};
+	];
 
-	public static const string[] ruleNames = {
+	public static const string[] ruleNames = [
 		<lexer.ruleNames:{r | "<r>"}; separator=", ", wrap, anchor>
-	};
+	];
 
 	<vocabulary(lexer.literalNames, lexer.symbolicNames)>
 

@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2016 Terence Parr
  *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -64,6 +65,24 @@ class VocabularyImpl : Vocabulary
     /**
      * @uml
      * Constructs a new instance of {@link VocabularyImpl} from the specified
+     * literal and symbolic token names.
+     *
+     *  @param literalNames The literal names assigned to tokens, or {@code null}
+     *  if no literal names are assigned.
+     *  @param symbolicNames The symbolic names assigned to tokens, or
+     *  {@code null} if no symbolic names are assigned.
+     *
+     *  @see #getLiteralName(int)
+     *  @see #getSymbolicName(int)
+     */
+    public this(string[] literalNames, string[] symbolicNames)
+    {
+        this(literalNames, symbolicNames, null);
+    }
+
+    /**
+     * @uml
+     * Constructs a new instance of {@link VocabularyImpl} from the specified
      * literal, symbolic, and display token names.
      *
      *  @param literalNames The literal names assigned to tokens, or {@code null}
@@ -79,9 +98,7 @@ class VocabularyImpl : Vocabulary
      *  @see #getSymbolicName(int)
      *  @see #getDisplayName(int)
      */
-    public this(string[] literalNames,
-                string[] symbolicNames,
-                string[] displayNames)
+    public this(string[] literalNames, string[] symbolicNames, string[] displayNames)
     {
         this.literalNames = literalNames !is null ? literalNames : to!(string[])(EMPTY_NAMES);
         this.symbolicNames = symbolicNames !is null ? symbolicNames : to!(string[])(EMPTY_NAMES);
@@ -90,33 +107,6 @@ class VocabularyImpl : Vocabulary
         this.maxTokenType =
             max(to!int(this.displayNames.length),
                 max(to!int(this.literalNames.length), to!int(this.symbolicNames.length))) - 1;
-    }
-
-    public int getMaxTokenType()
-    {
-        return maxTokenType;
-    }
-
-    public string getDisplayName(int tokenType)
-    {
-        if (tokenType >= 0 && tokenType < displayNames.length) {
-            string displayName = displayNames[tokenType];
-            if (displayName !is null) {
-                return displayName;
-            }
-        }
-
-        string literalName = getLiteralName(tokenType);
-        if (literalName !is null) {
-            return literalName;
-        }
-
-        string symbolicName = getSymbolicName(tokenType);
-        if (symbolicName != null) {
-            return symbolicName;
-        }
-
-        return to!string(tokenType);
     }
 
     /**
@@ -180,6 +170,33 @@ class VocabularyImpl : Vocabulary
         }
 
         return null;
+    }
+
+    public int getMaxTokenType()
+    {
+        return maxTokenType;
+    }
+
+    public string getDisplayName(int tokenType)
+    {
+        if (tokenType >= 0 && tokenType < displayNames.length) {
+            string displayName = displayNames[tokenType];
+            if (displayName !is null) {
+                return displayName;
+            }
+        }
+
+        string literalName = getLiteralName(tokenType);
+        if (literalName !is null) {
+            return literalName;
+        }
+
+        string symbolicName = getSymbolicName(tokenType);
+        if (symbolicName != null) {
+            return symbolicName;
+        }
+
+        return to!string(tokenType);
     }
 
     public string getLiteralName(int tokenType)

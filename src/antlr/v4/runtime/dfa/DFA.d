@@ -16,4 +16,8 @@ class DFA
      */
     public DFAState[DFAState] states;
 
+    public DFAState s0;
+
+    public int decision;
+
 }

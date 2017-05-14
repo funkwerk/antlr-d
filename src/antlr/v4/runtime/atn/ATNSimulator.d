@@ -94,6 +94,12 @@ abstract class ATNSimulator
         SERIALIZED_UUID = ATNDeserializer.SERIALIZED_UUID;
     }
 
+    public this(ATN atn, PredictionContextCache sharedContextCache)
+    {
+        this.atn = atn;
+        this.sharedContextCache = sharedContextCache;
+    }
+
     abstract public void reset();
 
     /**

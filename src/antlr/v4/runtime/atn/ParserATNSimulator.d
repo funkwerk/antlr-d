@@ -5,6 +5,7 @@ import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -210,7 +211,7 @@ class ParserATNSimulator : ATNSimulator
 
         while (true) { // while more work
             DFAState D = getExistingTargetState(previousD, t);
-            if (D == null) {
+            if (D is null) {
                 D = computeTargetState(dfa, previousD, t);
             }
 

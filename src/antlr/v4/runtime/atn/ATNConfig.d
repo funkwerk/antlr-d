@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2016 Terence Parr
  *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -203,7 +204,6 @@ class ATNConfig
         } else if (other is null) {
             return false;
         }
-        writefln("----------- %1$s", this.semanticContext.classinfo);
 
         return this.state.stateNumber == other.state.stateNumber
             && this.alt == other.alt
@@ -220,7 +220,6 @@ class ATNConfig
         hashCode = MurmurHash.update(hashCode, state.stateNumber);
         hashCode = MurmurHash.update(hashCode, alt);
         hashCode = MurmurHash.update(hashCode, context);
-        writefln("aaaaaaaaaaa %1$s", this.context);
         hashCode = MurmurHash.update(hashCode, semanticContext);
         hashCode = MurmurHash.finish(hashCode, 4);
         return hashCode;

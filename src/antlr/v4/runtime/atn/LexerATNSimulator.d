@@ -40,8 +40,10 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.LexerActionExecutor;
+import antlr.v4.runtime.atn.LexerATNConfig;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.SimState;
+import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.CharStream;
 
 // Class LexerATNSimulator
@@ -293,11 +295,44 @@ class LexerATNSimulator : ATNSimulator
      */
     protected DFAState computeTargetState(CharStream input, DFAState s, int t)
     {
+	ATNConfigSet reach = new OrderedATNConfigSet();
+
+        // if we don't find an existing DFA state
+        // Fill reach starting from closure, following t transitions
+        getReachableConfigSet(input, s.configs, reach, t);
+
+        if (reach.isEmpty()) { // we got nowhere on t from s
+            if (!reach.hasSemanticContext) {
+                // we got nowhere on t, don't throw out this knowledge; it'd
+                // cause a failover from DFA later.
+                addDFAEdge(s, t, ERROR);
+            }
+
+            // stop when we can't match any more char
+            return ERROR;
+        }
+
+        // Add an edge from s to target DFA found/created for reach
+        return addDFAEdge(s, t, reach);
     }
 
     protected int failOrAccept(SimState prevAccept, CharStream input, ATNConfigSet reach,
         int t)
     {
+	if (prevAccept.dfaState != null) {
+            LexerActionExecutor lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
+            accept(input, lexerActionExecutor, startIndex,
+                   prevAccept.index, prevAccept.line, prevAccept.charPos);
+            return prevAccept.dfaState.prediction;
+        }
+        else {
+            // if no accept and EOF is first char, return EOF
+            if (t==IntStream.EOF && input.index()==startIndex ) {
+                return Token.EOF;
+            }
+
+            throw new LexerNoViableAltException(recog, input, startIndex, reach);
+        }
     }
 
     /**
@@ -309,10 +344,89 @@ class LexerATNSimulator : ATNSimulator
     protected void getReachableConfigSet(CharStream input, ATNConfigSet closure, ATNConfigSet reach,
         int t)
     {
+	// this is used to skip processing for configs which have a lower priority
+        // than a config that already reached an accept state for the same rule
+        int skipAlt = ATN.INVALID_ALT_NUMBER;
+        foreach (ATNConfig c; closure) {
+            bool currentAltReachedAcceptState = c.alt == skipAlt;
+            if (currentAltReachedAcceptState && (cast(LexerATNConfig)c).hasPassedThroughNonGreedyDecision()) {
+                continue;
+            }
+
+            debug {
+                writefln("testing %s at %s\n", getTokenName(t), c.toString(recog, true));
+            }
+
+            int n = c.state.getNumberOfTransitions();
+            for (int ti=0; ti<n; ti++) {               // for each transition
+                Transition trans = c.state.transition(ti);
+                ATNState target = getReachableTarget(trans, t);
+                if (target !is null) {
+                    LexerActionExecutor lexerActionExecutor = (cast(LexerATNConfig)c).getLexerActionExecutor();
+                    if (lexerActionExecutor != null) {
+                        lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index() - startIndex);
+                    }
+
+                    bool treatEofAsEpsilon = t == CharStream.EOF;
+                    if (closure(input, new LexerATNConfig(cast(LexerATNConfig)c, target, lexerActionExecutor), reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
+                        // any remaining configs for this alt have a lower priority than
+                        // the one that just reached an accept state.
+                        skipAlt = c.alt;
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
     protected void accept(CharStream input, LexerActionExecutor lexerActionExecutor, int startIndex,
         int index, int line, int charPos)
+    {
+	debug {
+            writefln(Locale.getDefault(), "ACTION %s\n", lexerActionExecutor);
+        }
+
+        // seek to after last char in token
+        input.seek(index);
+        this.line = line;
+        this.charPositionInLine = charPos;
+
+        if (lexerActionExecutor !is null && recog !is null) {
+            lexerActionExecutor.execute(recog, input, startIndex);
+        }
+    }
+
+    protected ATNState getReachableTarget(Transition trans, int t)
+    {
+    }
+
+    protected ATNConfigSet computeStartState(CharStream input, ATNState p)
+    {
+    }
+
+    /**
+     * @uml
+     * Since the alternatives within any lexer decision are ordered by
+     * preference, this method stops pursuing the closure as soon as an accept
+     * state is reached. After the first accept state is reached by depth-first
+     * search from {@code config}, all other (potentially reachable) states for
+     * this rule would have a lower priority.
+     *
+     *  @return {@code true} if an accept state is reached, otherwise
+     * {@code false}.
+     */
+    public bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs, bool currentAltReachedAcceptState,
+        bool speculative, bool treatEofAsEpsilon)
+    {
+    }
+
+    /**
+     * @uml
+     * side-effect: can alter configs.hasSemanticContext
+     */
+    protected LexerATNConfig getEpsilonTarget(CharStream input, LexerATNConfig config, Transition t,
+        ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
     {
     }
 

@@ -51,10 +51,12 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ParseInfo;
+import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.ProfilingATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
@@ -919,9 +921,9 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
         bool seenOne = false;
         for (int d = 0; d < _interp.decisionToDFA.length; d++) {
             DFA dfa = _interp.decisionToDFA[d];
-            if (!dfa.states.isEmpty()) {
+            if (dfa.states.length) {
                 if (seenOne) writeln();
-                writefln("Decision " ~ dfa.decision ~ ":");
+                writefln("Decision %1$s:", dfa.decision);
                 writefln(dfa.toString(getVocabulary()));
                 seenOne = true;
             }

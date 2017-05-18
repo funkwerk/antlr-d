@@ -387,7 +387,7 @@ abstract class Parser : Recognizer!(Token, ATNSimulator)
     protected void triggerExitRuleEvent()
     {
         // reverse order walk of listeners
-		for (int i = _parseListeners.length-1; i >= 0; i--) {
+		for (auto i = _parseListeners.length-1; i >= 0; i--) {
 			ParseTreeListener listener = _parseListeners[i];
 			ctx_.exitRule(listener);
 			listener.exitEveryRule(ctx_);

@@ -45,6 +45,8 @@ import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.SimState;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.LexerNoViableAltException;
+import antlr.v4.runtime.Token;
 
 // Class LexerATNSimulator
 /**
@@ -319,7 +321,7 @@ class LexerATNSimulator : ATNSimulator
     protected int failOrAccept(SimState prevAccept, CharStream input, ATNConfigSet reach,
         int t)
     {
-	if (prevAccept.dfaState != null) {
+	if (prevAccept.dfaState !is null) {
             LexerActionExecutor lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
             accept(input, lexerActionExecutor, startIndex,
                    prevAccept.index, prevAccept.line, prevAccept.charPos);
@@ -327,7 +329,7 @@ class LexerATNSimulator : ATNSimulator
         }
         else {
             // if no accept and EOF is first char, return EOF
-            if (t==IntStream.EOF && input.index()==startIndex ) {
+            if (t==IntStream.EOF && input.index() == startIndex) {
                 return Token.EOF;
             }
 
@@ -399,6 +401,11 @@ class LexerATNSimulator : ATNSimulator
 
     protected ATNState getReachableTarget(Transition trans, int t)
     {
+        if (trans.matches(t, Character.MIN_VALUE, Character.MAX_VALUE)) {
+            return trans.target;
+        }
+
+        return null;
     }
 
     protected ATNConfigSet computeStartState(CharStream input, ATNState p)
@@ -417,8 +424,65 @@ class LexerATNSimulator : ATNSimulator
      * {@code false}.
      */
     public bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs, bool currentAltReachedAcceptState,
-        bool speculative, bool treatEofAsEpsilon)
+                        bool speculative, bool treatEofAsEpsilon)
     {
+        debug {
+            writefln("closure(%1$s)", config.toString(recog, true));
+        }
+
+        if (config.state.classinfo == RuleStopState.classinfo) {
+            debug  {
+                if (recog !is null) {
+                    writefln("closure at %1$s rule stop %2$s\n", recog.getRuleNames()[config.state.ruleIndex], config);
+                }
+                else {
+                    writefln("closure at rule stop %s\n", config);
+                }
+            }
+
+            if (config.context is null || config.context.hasEmptyPath()) {
+                if (config.context is null || config.context.isEmpty()) {
+                    configs.add(config);
+                    return true;
+                }
+                else {
+                    configs.add(new LexerATNConfig(config, config.state, PredictionContext.EMPTY));
+                    currentAltReachedAcceptState = true;
+                }
+            }
+
+            if ( config.context !is null && !config.context.isEmpty() ) {
+                for (auto i = 0; i < config.context.length; i++) {
+                    if (config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE) {
+                        PredictionContext newContext = config.context.getParent(i); // "pop" return state
+                        ATNState returnState = atn.states.get(config.context.getReturnState(i));
+                        LexerATNConfig c = new LexerATNConfig(config, returnState, newContext);
+                        currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState,
+                                                               speculative, treatEofAsEpsilon);
+                    }
+                }
+            }
+
+            return currentAltReachedAcceptState;
+        }
+
+        // optimization
+        if ( !config.state.onlyHasEpsilonTransitions() ) {
+            if (!currentAltReachedAcceptState || !config.hasPassedThroughNonGreedyDecision()) {
+                configs.add(config);
+            }
+        }
+
+        ATNState p = config.state;
+        for (int i=0; i<p.getNumberOfTransitions(); i++) {
+            Transition t = p.transition(i);
+            LexerATNConfig c = getEpsilonTarget(input, config, t, configs, speculative, treatEofAsEpsilon);
+            if ( c!=null ) {
+                currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState, speculative, treatEofAsEpsilon);
+            }
+        }
+
+        return currentAltReachedAcceptState;
     }
 
     /**
@@ -427,6 +491,87 @@ class LexerATNSimulator : ATNSimulator
      */
     protected LexerATNConfig getEpsilonTarget(CharStream input, LexerATNConfig config, Transition t,
         ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
+    {
+    }
+
+    /**
+     * @uml
+     * Evaluate a predicate specified in the lexer.
+     *
+     * <p>If {@code speculative} is {@code true}, this method was called before
+     * {@link #consume} for the matched character. This method should call
+     * {@link #consume} before evaluating the predicate to ensure position
+     * sensitive values, including {@link Lexer#getText}, {@link Lexer#getLine},
+     * and {@link Lexer#getCharPositionInLine}, properly reflect the current
+     * lexer state. This method should restore {@code input} and the simulator
+     * to the original state before returning (i.e. undo the actions made by the
+     * call to {@link #consume}.</p>
+     *
+     *  @param input The input stream.
+     *  @param ruleIndex The rule containing the predicate.
+     *  @param predIndex The index of the predicate within the rule.
+     *  @param speculative {@code true} if the current index in {@code input} is
+     *  one character before the predicate's location.
+     *
+     *  @return {@code true} if the specified predicate evaluates to
+     * {@code true}.
+     */
+    protected bool evaluatePredicate(CharStream input, int ruleIndex, int predIndex, bool speculative)
+    {
+    }
+
+    public void captureSimState(SimState settings, CharStream input, DFAState dfaState)
+    {
+    }
+
+    protected DFAState addDFAEdge(DFAState from, int t, ATNConfigSet q)
+    {
+    }
+
+    protected void addDFAEdge(DFAState p, int t, DFAState q)
+    {
+    }
+
+    /**
+     * @uml
+     * Add a new DFA state if there isn't one with this set of
+     * configurations already. This method also detects the first
+     * configuration containing an ATN rule stop state. Later, when
+     * traversing the DFA, we will know which rule to accept.
+     */
+    protected DFAState addDFAState(ATNConfigSet configs)
+    {
+    }
+
+    public DFA getDFA(int mode)
+    {
+    }
+
+    public string getText(CharStream input)
+    {
+    }
+
+    public int getLine()
+    {
+    }
+
+    public void setLine(int line)
+    {
+    }
+
+    public int getCharPositionInLine()
+    {
+    }
+
+    public void setCharPositionInLine(int charPositionInLine)
+    {
+    }
+
+    public void consume(CharStream input)
+    {
+    }
+
+    public string getTokenName(int t)
     {
     }
 

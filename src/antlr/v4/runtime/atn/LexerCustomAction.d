@@ -36,6 +36,7 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.misc.Utils;
 
 // Class LexerCustomAction
 /**
@@ -85,8 +86,10 @@ class LexerCustomAction : LexerAction
     /**
      * @uml
      * This method returns {@link LexerActionType#CUSTOM}.
+     * @safe
+     * @nothrow
      */
-    public LexerActionType getActionType()
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.CUSTOM;
     }
@@ -119,19 +122,15 @@ class LexerCustomAction : LexerAction
         lexer.action(null, ruleIndex, actionIndex);
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public int hashCode() @safe nothrow
     {
-        int rank(E)(E e) if (is(E == enum))
-            {
-                foreach (i, member; EnumMembers!E)
-                    {
-                        if (e == member)
-                            return to!int(i);
-                    }
-                assert(0, "Not an enum member");
-            }
         int hash = MurmurHash.initialize();
-        hash = MurmurHash.update(hash, rank(getActionType));
+        hash = MurmurHash.update(hash, Utils.rank(getActionType));
         hash = MurmurHash.update(hash, ruleIndex);
         hash = MurmurHash.update(hash, actionIndex);
         return MurmurHash.finish(hash, 3);

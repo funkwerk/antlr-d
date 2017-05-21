@@ -34,8 +34,11 @@ module antlr.v4.runtime.atn.LexerATNConfig;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.LexerActionExecutor;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class LexerATNConfig
 /**
@@ -94,10 +97,12 @@ class LexerATNConfig : ATNConfig
      */
     public LexerActionExecutor getLexerActionExecutor()
     {
+        return lexerActionExecutor;
     }
 
     public bool hasPassedThroughNonGreedyDecision()
     {
+        return passedThroughNonGreedyDecision;
     }
 
     /**
@@ -106,14 +111,42 @@ class LexerATNConfig : ATNConfig
      */
     public override int hashCode()
     {
+        int hashCode = MurmurHash.initialize(7);
+        hashCode = MurmurHash.update(hashCode, state.stateNumber);
+        hashCode = MurmurHash.update(hashCode, alt);
+        hashCode = MurmurHash.update(hashCode, context);
+        hashCode = MurmurHash.update(hashCode, semanticContext);
+        hashCode = MurmurHash.update(hashCode, passedThroughNonGreedyDecision ? 1 : 0);
+        hashCode = MurmurHash.update(hashCode, lexerActionExecutor);
+        hashCode = MurmurHash.finish(hashCode, 6);
+        return hashCode;
     }
 
     public bool equals(ATNConfig other)
     {
+	if (this == other) {
+            return true;
+        }
+        else if (other.classinfo != LexerATNConfig.classinfo) {
+            return false;
+        }
+
+        LexerATNConfig lexerOther = cast(LexerATNConfig)other;
+        if (passedThroughNonGreedyDecision != lexerOther.passedThroughNonGreedyDecision) {
+            return false;
+        }
+        auto objectEqualityComparator = new ObjectEqualityComparator();
+        if (!objectEqualityComparator.equals(lexerActionExecutor, lexerOther.lexerActionExecutor)) {
+            return false;
+        }
+
+        return super.opEquals(other);
     }
 
     public static bool checkNonGreedyDecision(LexerATNConfig source, ATNState target)
     {
+        return source.passedThroughNonGreedyDecision
+            || target.classinfo == DecisionState.classinfo && (cast(DecisionState)target).nonGreedy;
     }
 
 }

@@ -33,14 +33,17 @@ module antlr.v4.runtime.misc.ObjectEqualityComparator;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import std.conv;
 
-// Class ObjectEqualityComparator
+// Singleton ObjectEqualityComparator
 /**
  * TODO add class description
  */
 class ObjectEqualityComparator : AbstractEqualityComparator!Object
 {
 
-    public static const ObjectEqualityComparator INSTANCE = new ObjectEqualityComparator();
+    /**
+     * The single instance of ObjectEqualityComparator.
+     */
+    private static __gshared ObjectEqualityComparator instance_;
 
     public int hashCode(Object obj)
     {
@@ -64,6 +67,22 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
             return b is null;
         }
         return a.opEquals(b);
+    }
+
+    /**
+     * Creates the single instance of ObjectEqualityComparator.
+     */
+    private shared static this()
+    {
+        instance_ = new ObjectEqualityComparator;
+    }
+
+    /**
+     * Returns: A single instance of ObjectEqualityComparator.
+     */
+    public static ObjectEqualityComparator instance()
+    {
+        return instance_;
     }
 
 }

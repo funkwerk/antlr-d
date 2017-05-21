@@ -22,8 +22,10 @@ class LexerMoreAction : LexerAction
      * @uml
      * {@inheritDoc}
      *  @return This method returns {@link LexerActionType#MORE}.
+     * @safe
+     * @nothrow
      */
-    public LexerActionType getActionType()
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.MORE;
     }

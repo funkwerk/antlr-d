@@ -79,4 +79,11 @@ interface LexerAction
      */
     public void execute(Lexer lexer);
 
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public int hashCode() @safe nothrow;
+
 }

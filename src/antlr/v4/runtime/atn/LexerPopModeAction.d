@@ -26,8 +26,10 @@ class LexerPopModeAction : LexerAction
      * @uml
      * {@inheritDoc}
      *  @return This method returns {@link LexerActionType#POP_MODE}.
+     * @safe
+     * @nothrow
      */
-    public LexerActionType getActionType()
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.POP_MODE;
     }

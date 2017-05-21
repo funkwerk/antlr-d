@@ -22,8 +22,10 @@ class LexerSkipAction : LexerAction
      * @uml
      * {@inheritDoc}
      *  @return This method returns {@link LexerActionType#SKIP}.
+     * @safe
+     * @nothrow
      */
-    public LexerActionType getActionType()
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.SKIP;
     }

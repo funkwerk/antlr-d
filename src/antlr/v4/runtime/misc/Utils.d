@@ -11,12 +11,17 @@ import std.conv;
 class Utils
 {
 
-    public static int rank(T)(T e)
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public static int rank(T)(T e) @safe nothrow
     {
         foreach (i, member; EnumMembers!T)
             {
                 if (e == member)
-                    return to!int(i);
+                    return cast(int)(i);
             }
         assert(0, "Not an enum member");
     }

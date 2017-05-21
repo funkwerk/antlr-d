@@ -1,5 +1,8 @@
 lexer grammar XPathLexer;
 
+@header {module antlr.v4.runtime.tree.xpath.XPathLexer;
+}
+
 tokens { TOKEN_REF, RULE_REF }
 
 /*

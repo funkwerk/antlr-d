@@ -39,7 +39,12 @@ class LexerPushModeAction : LexerAction
         return mode;
     }
 
-    public LexerActionType getActionType()
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.PUSH_MODE;
     }

@@ -70,8 +70,10 @@ class LexerChannelAction : LexerAction
     /**
      * @uml
      * @override
+     * @safe
+     * @nothrow
      */
-    public override LexerActionType getActionType()
+    public override LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.CHANNEL;
     }

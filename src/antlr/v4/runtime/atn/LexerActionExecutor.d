@@ -1,5 +1,9 @@
 module antlr.v4.runtime.atn.LexerActionExecutor;
 
+import std.conv;
+import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.misc.MurmurHash;
+
 // Class LexerActionExecutor
 /**
  * @uml
@@ -15,5 +19,40 @@ module antlr.v4.runtime.atn.LexerActionExecutor;
  */
 class LexerActionExecutor
 {
+
+    private LexerAction[] lexerActions;
+
+    /**
+     * @uml
+     * Caches the result of {@link #hashCode} since the hash code is an element
+     * of the performance-critical {@link LexerATNConfig#hashCode} operation.
+     */
+    private int hashCode_;
+
+    /**
+     * @uml
+     * Constructs an executor for a sequence of {@link LexerAction} actions.
+     *  @param lexerActions The lexer actions to execute.
+     */
+    public this(LexerAction[] lexerActions)
+    {
+        this.lexerActions = lexerActions;
+
+        int hash = MurmurHash.initialize();
+        foreach (LexerAction lexerAction; lexerActions) {
+            hash = MurmurHash.update(hash, lexerAction);
+        }
+        this.hashCode_ = MurmurHash.finish(hash, to!int(lexerActions.length));
+    }
+
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public int hashCode() @safe nothrow
+    {
+	return this.hashCode_;
+    }
 
 }

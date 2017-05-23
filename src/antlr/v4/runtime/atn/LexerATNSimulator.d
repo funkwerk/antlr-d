@@ -1,7 +1,7 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
  *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
@@ -34,6 +34,7 @@ module antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.ATN;
@@ -41,9 +42,15 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.LexerActionExecutor;
 import antlr.v4.runtime.atn.LexerATNConfig;
+import antlr.v4.runtime.atn.PredictionContext;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.SimState;
+import antlr.v4.runtime.atn.SingletonPredictionContext;
+import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
@@ -319,7 +326,7 @@ class LexerATNSimulator : ATNSimulator
     }
 
     protected int failOrAccept(SimState prevAccept, CharStream input, ATNConfigSet reach,
-        int t)
+                               int t)
     {
 	if (prevAccept.dfaState !is null) {
             LexerActionExecutor lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
@@ -344,7 +351,7 @@ class LexerATNSimulator : ATNSimulator
      * parameter.
      */
     protected void getReachableConfigSet(CharStream input, ATNConfigSet closure, ATNConfigSet reach,
-        int t)
+                                         int t)
     {
 	// this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
@@ -383,7 +390,7 @@ class LexerATNSimulator : ATNSimulator
     }
 
     protected void accept(CharStream input, LexerActionExecutor lexerActionExecutor, int startIndex,
-        int index, int line, int charPos)
+                          int index, int line, int charPos)
     {
 	debug {
             writefln(Locale.getDefault(), "ACTION %s\n", lexerActionExecutor);
@@ -401,7 +408,7 @@ class LexerATNSimulator : ATNSimulator
 
     protected ATNState getReachableTarget(Transition trans, int t)
     {
-        if (trans.matches(t, Character.MIN_VALUE, Character.MAX_VALUE)) {
+        if (trans.matches(t, 0, 0xfffe)) {
             return trans.target;
         }
 
@@ -410,6 +417,14 @@ class LexerATNSimulator : ATNSimulator
 
     protected ATNConfigSet computeStartState(CharStream input, ATNState p)
     {
+        PredictionContext initialContext = PredictionContext.EMPTY;
+        ATNConfigSet configs;
+        for (int i=0; i<p.getNumberOfTransitions(); i++) {
+            ATNState target = p.transition(i).target;
+            LexerATNConfig c = new LexerATNConfig(target, i+1, initialContext);
+            closure(input, c, configs, false, false, false);
+        }
+        return configs;
     }
 
     /**
@@ -455,7 +470,7 @@ class LexerATNSimulator : ATNSimulator
                 for (auto i = 0; i < config.context.length; i++) {
                     if (config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE) {
                         PredictionContext newContext = config.context.getParent(i); // "pop" return state
-                        ATNState returnState = atn.states.get(config.context.getReturnState(i));
+                        ATNState returnState = atn.states[config.context.getReturnState(i)];
                         LexerATNConfig c = new LexerATNConfig(config, returnState, newContext);
                         currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState,
                                                                speculative, treatEofAsEpsilon);
@@ -477,11 +492,11 @@ class LexerATNSimulator : ATNSimulator
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             Transition t = p.transition(i);
             LexerATNConfig c = getEpsilonTarget(input, config, t, configs, speculative, treatEofAsEpsilon);
-            if ( c!=null ) {
-                currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState, speculative, treatEofAsEpsilon);
+            if (c !is null) {
+                currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState,
+                                                       speculative, treatEofAsEpsilon);
             }
         }
-
         return currentAltReachedAcceptState;
     }
 
@@ -490,8 +505,89 @@ class LexerATNSimulator : ATNSimulator
      * side-effect: can alter configs.hasSemanticContext
      */
     protected LexerATNConfig getEpsilonTarget(CharStream input, LexerATNConfig config, Transition t,
-        ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
+                                              ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
     {
+	LexerATNConfig c = null;
+        switch (t.getSerializationType()) {
+        case TransitionStates.RULE:
+            RuleTransition ruleTransition = cast(RuleTransition)t;
+            PredictionContext newContext =
+                SingletonPredictionContext.create(config.context, ruleTransition.followState.stateNumber);
+            c = new LexerATNConfig(config, t.target, newContext);
+            break;
+        case TransitionStates.PRECEDENCE:
+            throw new UnsupportedOperationException("Precedence predicates are not supported in lexers.");
+        case TransitionStates.PREDICATE:
+            /*  Track traversing semantic predicates. If we traverse,
+                we cannot add a DFA state for this "reach" computation
+                because the DFA would not test the predicate again in the
+                future. Rather than creating collections of semantic predicates
+                like v3 and testing them on prediction, v4 will test them on the
+                fly all the time using the ATN not the DFA. This is slower but
+                semantically it's not used that often. One of the key elements to
+                this predicate mechanism is not adding DFA states that see
+                predicates immediately afterwards in the ATN. For example,
+
+                a : ID {p1}? | ID {p2}? ;
+
+                should create the start state for rule 'a' (to save start state
+                competition), but should not create target of ID state. The
+                collection of ATN states the following ID references includes
+                states reached by traversing predicates. Since this is when we
+                test them, we cannot cash the DFA state target of ID.
+            */
+            PredicateTransition pt = cast(PredicateTransition)t;
+            debug {
+                writefln("EVAL rule %1$s:%2$s", ruleIndex, pt.predIndex);
+            }
+            configs.hasSemanticContext = true;
+            if (evaluatePredicate(input, pt.ruleIndex, pt.predIndex, speculative)) {
+                c = new LexerATNConfig(config, t.target);
+            }
+            break;
+
+        case TransitionStates.ACTION:
+            if (config.context is null || config.context.hasEmptyPath()) {
+                // execute actions anywhere in the start rule for a token.
+                //
+                // TODO: if the entry rule is invoked recursively, some
+                // actions may be executed during the recursive call. The
+                // problem can appear when hasEmptyPath() is true but
+                // isEmpty() is false. In this case, the config needs to be
+                // split into two contexts - one with just the empty path
+                // and another with everything but the empty path.
+                // Unfortunately, the current algorithm does not allow
+                // getEpsilonTarget to return two configurations, so
+                // additional modifications are needed before we can support
+                // the split operation.
+                LexerActionExecutor lexerActionExecutor = LexerActionExecutor.append(config.getLexerActionExecutor(), atn.lexerActions[(cast(ActionTransition)t).actionIndex]);
+                c = new LexerATNConfig(config, t.target, lexerActionExecutor);
+                break;
+            }
+            else {
+                // ignore actions in referenced rules
+                c = new LexerATNConfig(config, t.target);
+                break;
+            }
+
+        case TransitionStates.EPSILON:
+            c = new LexerATNConfig(config, t.target);
+            break;
+
+        case TransitionStates.ATOM:
+        case TransitionStates.RANGE:
+        case TransitionStates.SET:
+            if (treatEofAsEpsilon) {
+                if (t.matches(CharStream.EOF, 0, 0xfffe)) {
+                    c = new LexerATNConfig(config, t.target);
+                    break;
+                }
+            }
+
+            break;
+        }
+
+        return c;
     }
 
     /**

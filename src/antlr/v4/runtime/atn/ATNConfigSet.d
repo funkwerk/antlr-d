@@ -1,6 +1,9 @@
 module antlr.v4.runtime.atn.ATNConfigSet;
 
 import std.bitmanip;
+import std.conv;
+import std.algorithm;
+import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
@@ -140,7 +143,7 @@ class ATNConfigSet
         // since only way to create new graphs is "call rule" and here. We
         // cache at both places.
         existing.reachesIntoOuterContext =
-            Math.max(existing.reachesIntoOuterContext, config.reachesIntoOuterContext);
+            max(existing.reachesIntoOuterContext, config.reachesIntoOuterContext);
 
         // make sure to preserve the precedence filter suppression during the merge
         if (config.isPrecedenceFilterSuppressed()) {
@@ -169,25 +172,50 @@ class ATNConfigSet
         return states;
     }
 
+    /**
+     * @uml
+     * Gets the complete set of represented alternatives for the configuration
+     * set.
+     *
+     *  @return the set of represented alternatives in this configuration set
+     */
     public BitArray getAlts()
     {
         BitArray alts;
         foreach (ATNConfig config; configs) {
-            alts.set(true, config.alt);
+            if (alts.length <= config.alt)
+                alts.length = config.alt + 20;
+            alts.opIndexAssign(true, config.alt);
         }
         return alts;
     }
 
     public SemanticContext[] getPredicates()
     {
+	SemanticContext[] preds;
+        foreach (ATNConfig c; configs) {
+            if (c.semanticContext != SemanticContext.NONE) {
+                preds ~= c.semanticContext;
+            }
+        }
+        return preds;
     }
 
     public ATNConfig get(int i)
     {
+        return configs[i];
     }
 
     public void optimizeConfigs(ATNSimulator interpreter)
     {
+	if (readonly) throw new IllegalStateException("This set is readonly");
+        if ( configLookup.isEmpty() ) return;
+        foreach (ATNConfig config; configs) {
+            //			int before = PredictionContext.getAllContextNodes(config.context).size();
+            config.context = interpreter.getCachedContext(config.context);
+            //			int after = PredictionContext.getAllContextNodes(config.context).size();
+            //			System.out.println("configs "+before+"->"+after);
+        }
     }
 
     public bool addAll(ATNConfig[] coll)
@@ -196,7 +224,60 @@ class ATNConfigSet
         return false;
     }
 
-    public bool equals(Object o)
+    /**
+     * @uml
+     * @override
+     */
+    public override bool opEquals(Object o)
+    {
+	if (o is this) {
+            return true;
+        }
+        else if (o.classinfo != ATNConfigSet.classinfo) {
+            return false;
+        }
+
+        // System.out.print("equals " + this + ", " + o+" = ");
+        ATNConfigSet other = cast(ATNConfigSet)o;
+        bool same = configs !is null &&
+            configs.opEquals(other.configs) &&  // includes stack context
+            this.fullCtx == other.fullCtx &&
+            this.uniqueAlt == other.uniqueAlt &&
+            this.conflictingAlts == other.conflictingAlts &&
+            this.hasSemanticContext == other.hasSemanticContext &&
+            this.dipsIntoOuterContext == other.dipsIntoOuterContext;
+
+        //		System.out.println(same);
+        return same;
+    }
+
+    public int hashCode()
+    {
+        if (readonly) {
+            if (cachedHashCode == -1) {
+                cachedHashCode = configs.hashCode();
+            }
+            return cachedHashCode;
+        }
+
+        return configs.hashCode();
+    }
+
+    public int size()
+    {
+        return to!int(configs.length);
+    }
+
+    public bool isEmpty()
+    {
+	return !configs.length;
+    }
+
+    public bool contains(Object o)
+    {
+    }
+
+    public bool containsFast(ATNConfig obj)
     {
     }
 

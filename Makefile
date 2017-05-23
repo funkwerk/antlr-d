@@ -1,6 +1,6 @@
 # Make for Antlr4DTarget
 
-MODEL = DRuntime
+MODEL = DRuntime DRuntimeMisc
 
 SRC_DIR = src/antlr/v4/runtime
 SRC := $(shell find $(SRC_DIR) -name "*.d")

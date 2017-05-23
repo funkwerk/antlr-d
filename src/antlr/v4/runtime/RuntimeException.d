@@ -24,8 +24,9 @@ class RuntimeException : Exception
 
     public this(Exception cause)
     {
+        super("");
         this.cause = cause;
-        this.elementDescription = cause.elementDescription;
+        this.elementDescription = cause.msg;
     }
 
     public string msg()

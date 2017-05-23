@@ -1,6 +1,6 @@
 # Make for Antlr4DTarget
-
-MODEL = DRuntime DRuntimeMisc
+SHELL = bash
+MODELS =  DRuntimeMisc DRuntime
 
 SRC_DIR = src/antlr/v4/runtime
 SRC := $(shell find $(SRC_DIR) -name "*.d")
@@ -27,10 +27,16 @@ TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codege
 all : generate unittest
 .PHONY : all
 
+.PHONY : generate_file
+generate_file : $(BUILD_DIR)/xx1
+	$(file >$(BUILD_DIR)/xx1)
+	@echo $? fertig
 
 .PHONY : generate
 generate :
-	$(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo
+	@$(foreach MODEL, $(MODELS), echo -n "generate: $(MODEL)"; \
+	time $(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo; \
+	)
 
 $(BUILD_DIR)/TestRunner : $(UNITTESTS)
 	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner

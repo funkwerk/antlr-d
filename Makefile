@@ -1,13 +1,17 @@
 # Make for Antlr4DTarget
 SHELL = bash
-MODELS =  DRuntimeMisc DRuntime
+MKDIR_P = mkdir -p
+
+BUILD_DIR = build
+MODEL_DIR = model
+MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
+MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
 SRC_DIR = src/antlr/v4/runtime
 SRC := $(shell find $(SRC_DIR) -name "*.d")
 XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 
 BUILD_DIR = build
-MODEL_DIR = model
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = /usr/lib/d-unit.a
@@ -27,16 +31,8 @@ TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codege
 all : generate unittest
 .PHONY : all
 
-.PHONY : generate_file
-generate_file : $(BUILD_DIR)/xx1
-	$(file >$(BUILD_DIR)/xx1)
-	@echo $? fertig
-
 .PHONY : generate
-generate :
-	@$(foreach MODEL, $(MODELS), echo -n "generate: $(MODEL)"; \
-	time $(GENERATOR) $(GENERATOR_FLAGS) -s src -m $(MODEL_DIR)/$(MODEL).zargo; \
-	)
+generate : $(MODELS_R)
 
 $(BUILD_DIR)/TestRunner : $(UNITTESTS)
 	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
@@ -70,7 +66,7 @@ clean :
 	rm -rf $(SRC_DIR)/**/**/*\.d_orig $(SRC_DIR)/**/**/*\.d~
 	rm -rf $(SRC_DIR)/**/*\.d_orig $(SRC_DIR)/**/*\.d~
 	rm -rf $(SRC_DIR)/*\.d_orig $(SRC_DIR)/*\.d~
-	rm -rf model/DRuntime.zargo~
+	rm -rf model/DRuntime*.zargo~
 	rm -rf ./*.lst
 
 .PHONY : clobber
@@ -78,4 +74,8 @@ clobber :
 	rm -rf $(BUILD_DIR)
 
 $(BUILD_DIR):
-	mkdir $(BUILD_DIR)
+	$(MKDIR_P) $(BUILD_DIR)/model
+
+$(BUILD_DIR)/%.receipt : %.zargo $(BUILD_DIR)
+	time $(GENERATOR) $(GENERATOR_FLAGS) -s src -m $<
+	@touch $@

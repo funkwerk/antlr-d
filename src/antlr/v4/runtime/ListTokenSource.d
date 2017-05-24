@@ -117,9 +117,9 @@ class ListTokenSource : TokenSource
 			Token lastToken = tokens[$ - 1];
 			string tokenText = lastToken.getText();
 			if (tokenText !is null) {
-				int lastNewLine = tokenText.lastIndexOf('\n');
+				auto lastNewLine = tokenText.lastIndexOf('\n');
 				if (lastNewLine >= 0) {
-                                    return to!int(tokenText.length) - lastNewLine - 1;
+                                    return to!int((tokenText.length) - lastNewLine - 1);
 				}
 			}
 

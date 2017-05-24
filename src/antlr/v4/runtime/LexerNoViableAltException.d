@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -72,7 +73,11 @@ class LexerNoViableAltException : RecognitionException!(int, LexerATNSimulator)
         return deadEndConfigs;
     }
 
-    public CharStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override CharStream getInputStream()
     {
         return cast(CharStream)super.getInputStream();
     }

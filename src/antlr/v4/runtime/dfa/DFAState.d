@@ -76,7 +76,7 @@ class DFAState
      * {@code edges[symbol]} points to target of symbol. Shift up by 1 so (-1)
      * {@link Token#EOF} maps to {@code edges[0]}.
      */
-    public DFAState edges;
+    public DFAState[] edges;
 
     public bool isAcceptState = false;
 

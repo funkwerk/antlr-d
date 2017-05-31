@@ -31,6 +31,8 @@
 
 module antlr.v4.runtime.atn.LexerATNSimulator;
 
+import std.conv;
+import std.format;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Lexer;
@@ -40,6 +42,7 @@ import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.LexerActionExecutor;
 import antlr.v4.runtime.atn.LexerATNConfig;
 import antlr.v4.runtime.atn.PredictionContext;
@@ -54,6 +57,7 @@ import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.misc.Interval;
 
 // Class LexerATNSimulator
 /**
@@ -134,7 +138,7 @@ class LexerATNSimulator : ATNSimulator
             this.startIndex = input.index();
             this.prevAccept.reset();
             DFA dfa = decisionToDFA[mode];
-            if ( dfa.s0 is null ) {
+            if (dfa.s0 is null) {
                 return matchATN(input);
             }
             else {
@@ -585,6 +589,7 @@ class LexerATNSimulator : ATNSimulator
             }
 
             break;
+        default: assert(0, "TransitionState unknown!");
         }
 
         return c;
@@ -614,18 +619,83 @@ class LexerATNSimulator : ATNSimulator
      */
     protected bool evaluatePredicate(CharStream input, int ruleIndex, int predIndex, bool speculative)
     {
+	// assume true if no recognizer was provided
+        if (recog is null) {
+            return true;
+        }
+
+        if (!speculative) {
+            return recog.sempred(null, ruleIndex, predIndex);
+        }
+
+        int savedCharPositionInLine = charPositionInLine;
+        int savedLine = line;
+        int index = input.index();
+        int marker = input.mark();
+        try {
+            consume(input);
+            return recog.sempred(null, ruleIndex, predIndex);
+        }
+        finally {
+            charPositionInLine = savedCharPositionInLine;
+            line = savedLine;
+            input.seek(index);
+            input.release(marker);
+        }
     }
 
     public void captureSimState(SimState settings, CharStream input, DFAState dfaState)
     {
+        settings.index = input.index();
+        settings.line = line;
+        settings.charPos = charPositionInLine;
+        settings.dfaState = dfaState;
     }
 
     protected DFAState addDFAEdge(DFAState from, int t, ATNConfigSet q)
     {
+	/* leading to this call, ATNConfigSet.hasSemanticContext is used as a
+         * marker indicating dynamic predicate evaluation makes this edge
+         * dependent on the specific input sequence, so the static edge in the
+         * DFA should be omitted. The target DFAState is still created since
+         * execATN has the ability to resynchronize with the DFA state cache
+         * following the predicate evaluation step.
+         *
+         * TJP notes: next time through the DFA, we see a pred again and eval.
+         * If that gets us to a previously created (but dangling) DFA
+         * state, we can continue in pure DFA mode from there.
+         */
+        bool suppressEdge = q.hasSemanticContext;
+        q.hasSemanticContext = false;
+
+        DFAState to = addDFAState(q);
+
+        if (suppressEdge) {
+            return to;
+        }
+
+        addDFAEdge(from, t, to);
+        return to;
     }
 
     protected void addDFAEdge(DFAState p, int t, DFAState q)
     {
+	if (t < MIN_DFA_EDGE || t > MAX_DFA_EDGE) {
+            // Only track edges within the DFA bounds
+            return;
+        }
+
+        debug {
+            writefln("EDGE %1$s -> %2$s upon %3$s", p, q, t);
+        }
+
+        synchronized (p) {
+            if ( p.edges==null ) {
+                //  make room for tokens 1..n and -1 masquerading as index 0
+                p.edges = new DFAState[MAX_DFA_EDGE-MIN_DFA_EDGE+1];
+            }
+            p.edges[t - MIN_DFA_EDGE] = q; // connect
+        }
     }
 
     /**
@@ -637,38 +707,84 @@ class LexerATNSimulator : ATNSimulator
      */
     protected DFAState addDFAState(ATNConfigSet configs)
     {
+        /* the lexer evaluates predicates on-the-fly; by this point configs
+         * should not contain any configurations with unevaluated predicates.
+         */
+        assert(!configs.hasSemanticContext);
+
+        DFAState proposed = new DFAState(configs);
+        ATNConfig firstConfigWithRuleStopState = null;
+        foreach (ATNConfig c; configs) {
+            if (c.state.classinfo == RuleStopState.classinfo)	{
+                firstConfigWithRuleStopState = c;
+                break;
+            }
+        }
+        if (firstConfigWithRuleStopState !is null) {
+            proposed.isAcceptState = true;
+            proposed.lexerActionExecutor = (cast(LexerATNConfig)firstConfigWithRuleStopState).getLexerActionExecutor();
+            proposed.prediction = atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex];
+        }
+
+		DFA dfa = decisionToDFA[mode];
+                DFAState existing = dfa.states.get(proposed);
+                if (existing !is null) return existing;
+                DFAState newState = proposed;
+                newState.stateNumber = to!int(dfa.states.length);
+                configs.setReadonly(true);
+                newState.configs = configs;
+                dfa.states[newState] =  newState;
+                return newState;
     }
 
     public DFA getDFA(int mode)
     {
+        return decisionToDFA[mode];
     }
 
     public string getText(CharStream input)
     {
+        // index is first lookahead char, don't include.
+        return input.getText(Interval.of(startIndex, input.index()-1));
     }
 
     public int getLine()
     {
+        return line;
     }
 
     public void setLine(int line)
     {
+        this.line = line;
     }
 
     public int getCharPositionInLine()
     {
+	return charPositionInLine;
     }
 
     public void setCharPositionInLine(int charPositionInLine)
     {
+        this.charPositionInLine = charPositionInLine;
     }
 
     public void consume(CharStream input)
     {
+	int curChar = input.LA(1);
+        if (curChar == '\n') {
+            line++;
+            charPositionInLine=0;
+        } else {
+            charPositionInLine++;
+        }
+        input.consume();
     }
 
     public string getTokenName(int t)
     {
+        if (t == -1) return "EOF";
+        //if ( atn.g!=null ) return atn.g.getTokenDisplayName(t);
+        return format("'$s'", t);
     }
 
 }

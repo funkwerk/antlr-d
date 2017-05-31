@@ -42,8 +42,10 @@ class LexerTypeAction : LexerAction
      * @uml
      * {@inheritDoc}
      *  @return This method returns {@link LexerActionType#TYPE}.
+     * @safe
+     * @nothrow
      */
-    public LexerActionType getActionType()
+    public LexerActionType getActionType() @safe nothrow
     {
         return LexerActionType.TYPE;
 
@@ -71,7 +73,12 @@ class LexerTypeAction : LexerAction
         lexer.setType(type);
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public int hashCode() @safe nothrow
     {
         int hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));

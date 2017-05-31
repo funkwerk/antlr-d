@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,8 @@
 module antlr.v4.runtime.Recognizer;
 
 import std.stdio;
+import std.algorithm;
+import std.conv;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
@@ -52,7 +55,7 @@ class Recognizer(U, V)
 
     public int[string][Vocabulary] tokenTypeMapCache;
 
-    public int[string][string[]] ruleIndexMapCache;
+    public int[string][string] ruleIndexMapCache;
 
     public ANTLRErrorListener!(U,V)[] _listeners;
 
@@ -124,24 +127,25 @@ class Recognizer(U, V)
     public int[string] getRuleIndexMap()
     {
         string[] ruleNames = getRuleNames();
-        if (ruleNames is null) {
+        if (!ruleNames) {
             throw new UnsupportedOperationException("The current recognizer does not provide a list of rule names.");
         }
-
-        int[string] result = ruleIndexMapCache[ruleNames];
-        if (result is null) {
+        int[string] result;
+        if (to!string(joiner(ruleNames, ",")) in ruleIndexMapCache) {
+            result = ruleIndexMapCache[to!string(joiner(ruleNames, ","))];
+        }
+        else {
             foreach (int i, rn; ruleNames) {
                 result[rn] = i;
             }
-            ruleIndexMapCache[ruleNames] = result;
+            ruleIndexMapCache[to!string(joiner(ruleNames, ","))] = result;
         }
-
         return result;
     }
 
     public int getTokenType(string tokenName)
     {
-        int ttype = getTokenTypeMap().get(tokenName);
+        int ttype = getTokenTypeMap()[tokenName];
         if (ttype) return ttype;
         return Token.INVALID_TYPE;
     }

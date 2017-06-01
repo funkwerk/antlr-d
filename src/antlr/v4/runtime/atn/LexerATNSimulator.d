@@ -470,8 +470,8 @@ class LexerATNSimulator : ATNSimulator
                 }
             }
 
-            if ( config.context !is null && !config.context.isEmpty() ) {
-                for (auto i = 0; i < config.context.length; i++) {
+            if (config.context !is null && !config.context.isEmpty() ) {
+                for (auto i = 0; i < config.context.size; i++) {
                     if (config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE) {
                         PredictionContext newContext = config.context.getParent(i); // "pop" return state
                         ATNState returnState = atn.states[config.context.getReturnState(i)];
@@ -731,7 +731,7 @@ class LexerATNSimulator : ATNSimulator
                 if (existing !is null) return existing;
                 DFAState newState = proposed;
                 newState.stateNumber = to!int(dfa.states.length);
-                configs.setReadonly(true);
+                configs.readonly(true);
                 newState.configs = configs;
                 dfa.states[newState] =  newState;
                 return newState;

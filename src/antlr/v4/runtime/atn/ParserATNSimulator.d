@@ -20,13 +20,9 @@ import antlr.v4.runtime.misc.DoubleKeyMap;
 class ParserATNSimulator : ATNSimulator
 {
 
-    /**
-     * @uml
-     * @final
-     */
-    public static bool debugFlag = false;
+    protected Parser parser;
 
-    public static bool debug_list_atn_decisions = false;
+    public DFA[] decisionToDFA;
 
     public PredictionMode mode = PredictionMode.LL;
 

@@ -146,8 +146,12 @@ class DFAState
         return alts;
     }
 
-    public int hashCode()
+    public int toHash()
     {
+	int hash = MurmurHash.initialize(7);
+        hash = MurmurHash.update(hash, configs.hashCode());
+        hash = MurmurHash.finish(hash, 1);
+        return hash;
     }
 
     /**

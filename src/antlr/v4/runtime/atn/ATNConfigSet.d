@@ -4,6 +4,7 @@ import std.bitmanip;
 import std.conv;
 import std.algorithm;
 import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
@@ -36,8 +37,9 @@ class ATNConfigSet
      * the sets and they must not change. This does not protect the other
      * fields; in particular, conflictingAlts is set after
      * we've made this readonly.
+     * @read
      */
-    protected bool readonly = false;
+    public bool readonly_ = false;
 
     public AbstractConfigHashSet configLookup;
 
@@ -275,10 +277,39 @@ class ATNConfigSet
 
     public bool contains(Object o)
     {
+        if (configLookup is null) {
+            throw new UnsupportedOperationException("This method is not implemented for readonly sets.");
+        }
+
+        return configLookup.contains(o);
     }
 
     public bool containsFast(ATNConfig obj)
     {
+        if (configLookup is null) {
+            throw new UnsupportedOperationException("This method is not implemented for readonly sets.");
+        }
+
+        return configLookup.containsFast(obj);
+    }
+
+    public void clear()
+    {
+        if (readonly_) throw new IllegalStateException("This set is readonly");
+        configs.clear();
+        cachedHashCode = -1;
+        configLookup.clear();
+    }
+
+    public void readonly(bool readonly)
+    {
+        readonly_ = readonly;
+        configLookup = null; // can't mod, no need for lookup cache
+    }
+
+    public final bool readonly()
+    {
+        return this.readonly_;
     }
 
 }

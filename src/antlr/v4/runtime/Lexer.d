@@ -277,11 +277,10 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     public void setInputStream(IntStream input)
     {
         this._input = null;
-        //this._tokenFactorySourcePair.l = this;
-        this._tokenFactorySourcePair.r = _input;
+        this._tokenFactorySourcePair = tuple(this, _input);
         reset();
         this._input = cast(CharStream)input;
-        this._tokenFactorySourcePair.r = _input;
+        this._tokenFactorySourcePair = tuple(this, _input);
     }
 
     public string getSourceName()
@@ -340,7 +339,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
 
     public int getCharPositionInLine()
     {
-        getInterpreter().setCharPositionInLine(charPositionInLine);
+        return getInterpreter().getCharPositionInLine();
     }
 
     public void setLine(int line)

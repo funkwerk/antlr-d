@@ -31,11 +31,14 @@
 
 module antlr.v4.runtime.LexerNoViableAltException;
 
+import std.format;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.LexerATNSimulator;
+import antlr.v4.runtime.misc.Utils;
+import antlr.v4.runtime.misc.Interval;
 
 // Class LexerNoViableAltException
 /**
@@ -88,6 +91,13 @@ class LexerNoViableAltException : RecognitionException!(int, LexerATNSimulator)
      */
     public override string toString()
     {
+	string symbol = "";
+        if (startIndex >= 0 && startIndex < getInputStream().size()) {
+            symbol = getInputStream().getText(Interval.of(startIndex,startIndex));
+            symbol = Utils.escapeWhitespace(symbol, false);
+        }
+
+        return format("%s('%s')", "LexerNoViableAltException", symbol);
     }
 
 }

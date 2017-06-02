@@ -103,6 +103,19 @@ class CommonToken : WritableToken
         this.source = EMPTY_SOURCE;
     }
 
+    public this(TokenFactorySourcePair source, int type, int channel, int start, int stop)
+    {
+	this.source = source;
+        this.type = type;
+        this.channel = channel;
+        this.start = start;
+        this.stop = stop;
+        if (source.a !is null) {
+            this.line = source.a.getLine();
+            this.charPositionInLine = source.a.getCharPositionInLine();
+        }
+    }
+
     /**
      * @uml
      * onstructs a new {@link CommonToken} with the specified token type and

@@ -33,8 +33,13 @@ module antlr.v4.runtime.BufferedTokenStream;
 
 import std.array;
 import std.format;
+import std.conv;
+import std.algorithm: canFind;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.misc.Interval;
@@ -167,7 +172,7 @@ class BufferedTokenStream : TokenStream
      */
     public override int size()
     {
-        return tokens.length;
+        return to!int(tokens.length);
     }
 
     /**
@@ -181,11 +186,11 @@ class BufferedTokenStream : TokenStream
             if (fetchedEOF) {
                 // the last token in tokens is EOF. skip check if p indexes any
                 // fetched token except the last.
-                skipEofCheck = p < tokens.size() - 1;
+                skipEofCheck = p < tokens.length - 1;
             }
             else {
                 // no EOF token in tokens. skip check if p indexes a fetched token.
-                skipEofCheck = p < tokens.size();
+                skipEofCheck = p < tokens.length;
             }
         }
         else {
@@ -209,7 +214,7 @@ class BufferedTokenStream : TokenStream
     }
     body
     {
-        int n = i - tokens.length + 1; // how many more elements we need?
+        int n = i - to!int(tokens.length) + 1; // how many more elements we need?
         //System.out.println("sync("+i+") needs "+n);
         if ( n > 0 ) {
             int fetched = fetch(n);
@@ -227,8 +232,8 @@ class BufferedTokenStream : TokenStream
 
         for (int i = 0; i < n; i++) {
             Token t = tokenSource.nextToken();
-            if (t.classinstance == WritableToken.classinstance) {
-                (cast(WritableToken)t).setTokenIndex(tokens.size());
+            if (t.classinfo == WritableToken.classinfo) {
+                (cast(WritableToken)t).setTokenIndex(to!int(tokens.length));
             }
             tokens ~= t;
             if (t.getType() == Token.EOF) {
@@ -263,9 +268,9 @@ class BufferedTokenStream : TokenStream
 	if ( start<0 || stop<0 ) return null;
         lazyInit();
         Token[] subset;
-        if (stop >= tokens.length) stop = tokens.length - 1;
+        if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
         for (int i = start; i <= stop; i++) {
-            Token t = tokens.get(i);
+            Token t = tokens[i];
             if (t.getType() == Token.EOF) break;
             subset ~= t;
         }
@@ -298,9 +303,9 @@ class BufferedTokenStream : TokenStream
         if (k < 0) return LB(-k);
         int i = p + k - 1;
         sync(i);
-        if ( i >= tokens.size() ) { // return EOF token
+        if ( i >= tokens.length ) { // return EOF token
             // EOF must be last token
-            return tokens.get(tokens.size()-1);
+            return tokens[$-1];
         }
         //		if ( i>range ) range = i;
         return tokens[i];
@@ -381,7 +386,7 @@ class BufferedTokenStream : TokenStream
         Token[] filteredTokens;
         for (int i=start; i<=stop; i++) {
             Token t = tokens[i];
-            if (types is null || types.contains(t.getType()) ) {
+            if (types is null || types.canFind(t.getType()) ) {
                 filteredTokens ~= t;
             }
         }
@@ -445,7 +450,7 @@ class BufferedTokenStream : TokenStream
             return size() - 1;
         }
         while (i >= 0) {
-            Token token = tokens.get(i);
+            Token token = tokens[i];
             if (token.getType() == Token.EOF || token.getChannel() == channel) {
                 return i;
             }
@@ -538,7 +543,7 @@ class BufferedTokenStream : TokenStream
         for (int i=from; i<=to; i++) {
             Token t = tokens[i];
             if (channel == -1) {
-                if (t.getChannel() != Lexer.DEFAULT_TOKEN_CHANNEL) hidden.add(t);
+                if (t.getChannel() != Lexer.DEFAULT_TOKEN_CHANNEL) hidden ~= t;
             }
             else {
                 if (t.getChannel() == channel) hidden ~= t;
@@ -578,7 +583,7 @@ class BufferedTokenStream : TokenStream
         int stop = interval.b;
         if (start < 0 || stop < 0) return "";
         lazyInit();
-        if (stop >= tokens.length) stop = tokens.size()-1;
+        if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
 
         auto buf = appender!(string);
         for (int i = start; i <= stop; i++) {

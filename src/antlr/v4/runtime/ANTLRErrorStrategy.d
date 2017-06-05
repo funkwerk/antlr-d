@@ -83,7 +83,7 @@ interface ANTLRErrorStrategy
      *  @throws RecognitionException if the error strategy was not able to
      * recover from the unexpected input symbol
      */
-    public void recoverInline(Parser recognizer);
+    public Token recoverInline(Parser recognizer);
 
     /**
      * @uml

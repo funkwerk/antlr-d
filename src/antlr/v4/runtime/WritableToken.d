@@ -2,35 +2,23 @@ module antlr.v4.runtime.WritableToken;
 
 import antlr.v4.runtime.Token;
 
-// Class WritableToken
+// Interface WritableToken
 /**
- * TODO add class description
+ * TODO add interface description
  */
-abstract class WritableToken : Token
+interface WritableToken :Token
 {
 
-    public void setText(string text)
-    {
-    }
+    public void setText(string text);
 
-    public void setType(int ttype)
-    {
-    }
+    public void setType(int ttype);
 
-    public void setLine(int line)
-    {
-    }
+    public void setLine(int line);
 
-    public void setCharPositionInLine(int pos)
-    {
-    }
+    public void setCharPositionInLine();
 
-    public void setChannel(int channel)
-    {
-    }
+    public void setChannel(int channel);
 
-    public void setTokenIndex(int index)
-    {
-    }
+    public void setTokenIndex(int index);
 
 }

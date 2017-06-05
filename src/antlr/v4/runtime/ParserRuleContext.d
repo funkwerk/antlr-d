@@ -31,6 +31,7 @@
 
 module antlr.v4.runtime.ParserRuleContext;
 
+import std.algorithm;
 import std.variant;
 import std.format;
 import antlr.v4.runtime.RuleContext;
@@ -338,7 +339,7 @@ class ParserRuleContext : RuleContext
     public string toInfoString(Parser recognizer)
     {
         string[] rules = recognizer.getRuleInvocationStack(this);
-        rules.reverse;
+        rules.reverse();
         return format("ParserRuleContext{ %1$s " ~
                 "start=%2$s, stop=%3$s}", rules, start.getText, stop.getText);
     }

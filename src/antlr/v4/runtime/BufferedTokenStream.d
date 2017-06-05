@@ -115,11 +115,7 @@ class BufferedTokenStream : TokenStream
         this.tokenSource = tokenSource;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override TokenSource getTokenSource()
+    public TokenSource getTokenSource()
     {
         return tokenSource;
     }

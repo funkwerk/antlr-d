@@ -34,8 +34,10 @@ module antlr.v4.runtime.Lexer;
 import std.stdio;
 import std.typecons;
 import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
@@ -65,9 +67,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
 
     public static immutable int SKIP = -3;
 
-    public static immutable int DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
+    public static immutable int DEFAULT_TOKEN_CHANNEL = TokenConstants.DEFAULT_CHANNEL;
 
-    public static immutable int HIDDEN = Token.HIDDEN_CHANNEL;
+    public static immutable int HIDDEN = TokenConstants.HIDDEN_CHANNEL;
 
     public static immutable int MIN_CHAR_VALUE = char.min;
 
@@ -433,6 +435,89 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     public override string[] getTokenNames()
     {
         return null;
+    }
+
+    /**
+     * @uml
+     * Return a list of all Token objects in input char stream.
+     * Forces load of all tokens. Does not include EOF token.
+     */
+    public Token[] getAllTokens()
+    {
+	Token[] tokens;
+        Token t = nextToken();
+        while (t.getType() != Token.EOF) {
+            tokens ~= t;
+            t = nextToken();
+        }
+        return tokens;
+    }
+
+    public void recover(LexerNoViableAltException e)
+    {
+	if (_input.LA(1) != IntStream.EOF) {
+            // skip a char and try again
+            getInterpreter().consume(_input);
+        }
+    }
+
+    public void notifyListeners(LexerNoViableAltException notifyListeners)
+    {
+        string text = _input.getText(Interval.of(_tokenStartCharIndex, _input.index()));
+        string msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
+
+        ANTLRErrorListener listener = getErrorListenerDispatch();
+        listener.syntaxError(this, null, _tokenStartLine, _tokenStartCharPositionInLine, msg, e);
+    }
+
+    public string getErrorDisplay(string s)
+    {
+        auto buf = appender!string;
+        foreach (char c; s) {
+            buf.put(getErrorDisplay(c));
+        }
+        return buf.data;
+    }
+
+    public string getErrorDisplay(int c)
+    {
+        string s = to!string(c);
+        switch ( c ) {
+        case Token.EOF :
+            s = "<EOF>";
+            break;
+        case '\n' :
+            s = "\\n";
+            break;
+        case '\t' :
+            s = "\\t";
+            break;
+        case '\r' :
+            s = "\\r";
+            break;
+        }
+        return s;
+    }
+
+    public string getCharErrorDisplay(int c)
+    {
+        string s = getErrorDisplay(c);
+        return "'" ~ s ~ "'";
+    }
+
+    /**
+     * @uml
+     * Lexers can normally match any char in it's vocabulary after matching
+     * a token, so do the easy thing and just kill a character and hope
+     * it all works out.  You can instead use the rule invocation stack
+     * to do sophisticated error recovery if you are in a fragment rule.
+     */
+    public void recover(RecognitionException!(int, LexerATNSimulator) re)
+    {
+	//System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
+        //re.printStackTrace();
+        // TODO: Do we lose character or line position information?
+        _input.consume();
     }
 
     public final TokenFactory!CommonToken tokenFactory()

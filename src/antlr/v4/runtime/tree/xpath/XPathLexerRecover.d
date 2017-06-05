@@ -16,7 +16,11 @@ class XPathLexerRecover : XPathLexer
         super(ins);
     }
 
-    public void recover(LexerNoViableAltException e)
+    /**
+     * @uml
+     * @override
+     */
+    public override void recover(LexerNoViableAltException e)
     {
     }
 

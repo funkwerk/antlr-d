@@ -37,7 +37,7 @@ import std.algorithm;
 import std.container.rbtree;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Vocabulary;
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.misc.IntegerList;
 import antlr.v4.runtime.misc.IntSet;
 import antlr.v4.runtime.misc.Interval;
@@ -400,7 +400,7 @@ class IntervalSet : IntSet
                 return I.a;
             }
         }
-        return Token.INVALID_TYPE;
+        return TokenConstants.INVALID_TYPE;
     }
 
     /**
@@ -413,7 +413,7 @@ class IntervalSet : IntSet
     public int getMaxElement()
     {
         if (isNil) {
-            return Token.INVALID_TYPE;
+            return TokenConstants.INVALID_TYPE;
         }
         Interval last = intervals_[$-1];
         return last.b;
@@ -429,7 +429,7 @@ class IntervalSet : IntSet
     public int getMinElement()
     {
         if (isNil) {
-            return Token.INVALID_TYPE;
+            return TokenConstants.INVALID_TYPE;
         }
         return intervals_[0].a;
     }
@@ -547,10 +547,10 @@ class IntervalSet : IntSet
 
     public string elementName(Vocabulary vocabulary, int a)
     {
-        if (a == Token.EOF) {
+        if (a == TokenConstants.EOF) {
             return "<EOF>";
         }
-        else if (a == Token.EPSILON) {
+        else if (a == TokenConstants.EPSILON) {
             return "<EPSILON>";
         }
         else {
@@ -737,7 +737,7 @@ class IntervalSet : IntSet
             int a = I.a;
             int b = I.b;
             if (a == b) {
-                if (a == Token.EOF) buf.put("<EOF>");
+                if (a == TokenConstants.EOF) buf.put("<EOF>");
                 else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
                 else buf.put(to!string(a));
             }

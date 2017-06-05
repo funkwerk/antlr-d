@@ -34,6 +34,7 @@ import std.container.array;
 import std.container.rbtree;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
@@ -54,7 +55,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 class LL1Analyzer
 {
 
-    public static const int HIT_PRED = Token.INVALID_TYPE;
+    public static const int HIT_PRED = TokenConstants.INVALID_TYPE;
 
     public ATN atn;
 

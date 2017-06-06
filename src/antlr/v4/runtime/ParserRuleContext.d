@@ -34,6 +34,7 @@ module antlr.v4.runtime.ParserRuleContext;
 import std.algorithm;
 import std.variant;
 import std.format;
+import std.conv;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
@@ -133,13 +134,13 @@ class ParserRuleContext : RuleContext
      */
     public TerminalNode addChild(TerminalNode t)
     {
-        children ~= t;
+        children ~= cast(Variant)t;
         return t;
     }
 
     public RuleContext addChild(RuleContext ruleInvocation)
     {
-        children ~= ruleInvocation;
+        children ~= cast(Variant)ruleInvocation;
         return ruleInvocation;
     }
 
@@ -188,7 +189,7 @@ class ParserRuleContext : RuleContext
      */
     public override ParseTree getChild(int i)
     {
-        return children !is null && i>=0 && i<children.length ? children[i] : null;
+        return children !is null && i>=0 && i < to!int(children.length) ? *children[i].peek!(ParseTree) : null;
     }
 
     public auto getChild(T)(T ctxType, int i)
@@ -216,9 +217,9 @@ class ParserRuleContext : RuleContext
         }
 
         int j = -1; // what token with ttype have we found?
-        foreach (ParseTree o; children) {
-            if (o.classinfo == TerminalNode.classinfo) {
-                TerminalNode tnode = cast(TerminalNode)o;
+        foreach (o; children) {
+            if (o.type == typeid(TerminalNode)) {
+                TerminalNode tnode = o.get!(TerminalNode);
                 Token symbol = tnode.getSymbol();
                 if ( symbol.getType()==ttype ) {
                     j++;
@@ -239,13 +240,13 @@ class ParserRuleContext : RuleContext
         }
 
         TerminalNode[] tokens = null;
-        foreach (ParseTree o; children) {
-            if (o.classinfo == TerminalNode.classinfo) {
-                TerminalNode tnode = cast(TerminalNode)o;
+        foreach (o; children) {
+            if (o.type == typeid(TerminalNode)) {
+                TerminalNode tnode = o.get!(TerminalNode);
                 Token symbol = tnode.getSymbol();
                 if (symbol.getType() == ttype) {
                     if (tokens is null) {
-                        TerminalNode[] tokens;
+                        tokens.length = 0;
                     }
                     tokens ~= tnode;
                 }
@@ -292,7 +293,7 @@ class ParserRuleContext : RuleContext
      */
     public override int getChildCount()
     {
-        return children !is null ? children.length : 0;
+        return children !is null ? to!int(children.length) : 0;
     }
 
     /**
@@ -302,7 +303,7 @@ class ParserRuleContext : RuleContext
     public override Interval getSourceInterval()
     {
         if (start is null) {
-            return Interval.INVALID;
+            return new Interval(-1, -2); // INVALID
         }
         if (stop is null || stop.getTokenIndex()<start.getTokenIndex()) {
             return Interval.of(start.getTokenIndex(), start.getTokenIndex()-1); // empty

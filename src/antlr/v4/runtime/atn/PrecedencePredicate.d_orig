@@ -4,7 +4,7 @@ import std.conv;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Recognizer;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.Token;
 
 // Class PrecedencePredicate
@@ -34,7 +34,7 @@ class PrecedencePredicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public override bool eval(Recognizer!(Token, ATNSimulator) parser, RuleContext parserCallStack)
     {
         return parser.precpred(parserCallStack, precedence);
     }
@@ -43,8 +43,8 @@ class PrecedencePredicate : SemanticContext
      * @uml
      * @override
      */
-    public override SemanticContext evalPrecedence(Recognizer!(Token, ParserATNSimulator) parser,
-        RuleContext parserCallStack)
+    public override SemanticContext evalPrecedence(Recognizer!(Token, ATNSimulator) parser,
+                                                   RuleContext parserCallStack)
     {
         if (parser.precpred(parserCallStack, precedence)) {
             return SemanticContext.NONE;

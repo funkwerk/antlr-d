@@ -31,7 +31,7 @@
 module antlr.v4.runtime.atn.Predicate;
 
 import std.conv;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.Token;
@@ -73,7 +73,7 @@ class Predicate : SemanticContext
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public override bool eval(Recognizer!(Token, ATNSimulator) parser, RuleContext parserCallStack)
     {
         RuleContext localctx = isCtxDependent ? parserCallStack : null;
         return parser.sempred(localctx, ruleIndex, predIndex);

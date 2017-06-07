@@ -39,6 +39,9 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.UnsupportedOperationException;
+import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.TokenFactory;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
@@ -77,7 +80,7 @@ class Recognizer(U, V)
 
     /**
      * @uml
-     * et the vocabulary used by the recognizer.
+     * Get the vocabulary used by the recognizer.
      *
      *  @return A {@link Vocabulary} instance providing information about the
      *  vocabulary used by the grammar.
@@ -165,32 +168,6 @@ class Recognizer(U, V)
 
     /**
      * @uml
-     * @final
-     */
-    public final int getState()
-    {
-        return _stateNumber;
-    }
-
-    /**
-     * @uml
-     * @final
-     * Indicate that the recognizer has changed internal state that is
-     * consistent with the ATN state passed in.  This way we always know
-     * where we are in the ATN as the parser goes along. The rule
-     * context objects form a stack that lets us see the stack of
-     * invoking rules. Combine this and we have complete ATN
-     * configuration information.
-     */
-    public final void setState(int atnState)
-    {
-        //writeln("setState "+atnState);
-        _stateNumber = atnState;
-        // if ( traceATNStates ) _ctx.trace(atnState);
-    }
-
-    /**
-     * @uml
      * For debugging and other purposes, might want the grammar name.
      * Have ANTLR generate an implementation for this method.
      */
@@ -225,6 +202,57 @@ class Recognizer(U, V)
         return null;
     }
 
+    public void setInterpreter(V interpreter)
+    {
+    }
+
+    /**
+     * @uml
+     * What is the error header, normally line/character position information?
+     */
+    public string getErrorHeader(RecognitionException!(U,V) e)
+    {
+    }
+
+    /**
+     * @uml
+     * How should a token be displayed in an error message? The default
+     * is to display just the text, but during development you might
+     * want to have a lot of information spit out.  Override in that case
+     * to use t.toString() (which, for CommonToken, dumps everything about
+     * the token). This is better than forcing you to override a method in
+     * your token objects because you don't have to go modify your lexer
+     * so that it creates a new Java type.
+     *
+     *  @deprecated This method is not called by the ANTLR 4 Runtime. Specific
+     * implementations of {@link ANTLRErrorStrategy} may provide a similar
+     * feature when necessary. For example, see
+     * {@link DefaultErrorStrategy#getTokenErrorDisplay}.
+     */
+    public string getTokenErrorDisplay(Token t)
+    {
+    }
+
+    public void addErrorListener(ANTLRErrorListener!(U, V) listener)
+    {
+    }
+
+    public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
+    {
+    }
+
+    public void removeErrorListeners()
+    {
+    }
+
+    public ANTLRErrorListener!(U,V)[] getErrorListeners()
+    {
+    }
+
+    public ANTLRErrorListener!(U,V)[] getErrorListenerDispatch()
+    {
+    }
+
     /**
      * @uml
      * subclass needs to override these if there are sempreds or actions
@@ -243,5 +271,39 @@ class Recognizer(U, V)
     public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
     {
     }
+
+    /**
+     * @uml
+     * @final
+     */
+    public final int getState()
+    {
+        return _stateNumber;
+    }
+
+    /**
+     * @uml
+     * @final
+     * Indicate that the recognizer has changed internal state that is
+     * consistent with the ATN state passed in.  This way we always know
+     * where we are in the ATN as the parser goes along. The rule
+     * context objects form a stack that lets us see the stack of
+     * invoking rules. Combine this and we have complete ATN
+     * configuration information.
+     */
+    public final void setState(int atnState)
+    {
+        //writeln("setState "+atnState);
+        _stateNumber = atnState;
+        // if ( traceATNStates ) _ctx.trace(atnState);
+    }
+
+    abstract public IntStream getInputStream();
+
+    abstract public void setInputStream(IntStream input);
+
+    abstract public TokenFactory!CommonToken getTokenFactory();
+
+    abstract public void setTokenFactory(TokenFactory!CommonToken input);
 
 }

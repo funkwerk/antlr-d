@@ -33,6 +33,9 @@ module antlr.v4.runtime.Lexer;
 
 import std.stdio;
 import std.typecons;
+import std.array;
+import std.conv;
+import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.atn.LexerATNSimulator;
@@ -47,6 +50,7 @@ import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.misc.IntegerStack;
+import antlr.v4.runtime.misc.Interval;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -162,8 +166,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
             _input.seek(0); // rewind the input
         }
         _token = null;
-        _type = Token.INVALID_TYPE;
-        _channel = Token.DEFAULT_CHANNEL;
+        _type = TokenConstants.INVALID_TYPE;
+        _channel = TokenConstants.DEFAULT_CHANNEL;
         _tokenStartCharIndex = -1;
         _tokenStartCharPositionInLine = -1;
         _tokenStartLine = -1;
@@ -195,13 +199,13 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
                     return _token;
                 }
                 _token = null;
-                _channel = Token.DEFAULT_CHANNEL;
+                _channel = TokenConstants.DEFAULT_CHANNEL;
                 _tokenStartCharIndex = _input.index();
                 _tokenStartCharPositionInLine = getInterpreter().getCharPositionInLine();
                 _tokenStartLine = getInterpreter().getLine();
                 _text = null;
                 do {
-                    _type = Token.INVALID_TYPE;
+                    _type = TokenConstants.INVALID_TYPE;
                     //				writeln("nextToken line "+tokenStartLine+" at "+((char)input.LA(1))+
                     //								   " in mode "+mode+
                     //								   " at index "+input.index());
@@ -217,7 +221,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
                     if (_input.LA(1) == IntStream.EOF) {
                         _hitEOF = true;
                     }
-                    if (_type == Token.INVALID_TYPE) _type = ttype;
+                    if (_type == TokenConstants.INVALID_TYPE) _type = ttype;
                     if (_type == SKIP) {
                         continue outer;
                     }
@@ -231,7 +235,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
             // unbuffered char stream will keep buffering
             _input.release(tokenStartMarker);
         }
-
+        assert(0);
     }
 
     /**
@@ -328,7 +332,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     {
         int cpos = getCharPositionInLine();
         int line = getLine();
-        Token eof = tokenFactory_.create(_tokenFactorySourcePair, Token.EOF, null, Token.DEFAULT_CHANNEL, _input.index(), _input.index()-1,
+        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstants.EOF, null, TokenConstants.DEFAULT_CHANNEL,
+                                         _input.index(), _input.index()-1,
                                          line, cpos);
         emit(eof);
         return eof;
@@ -446,7 +451,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     {
 	Token[] tokens;
         Token t = nextToken();
-        while (t.getType() != Token.EOF) {
+        while (t.getType() != TokenConstants.EOF) {
             tokens ~= t;
             t = nextToken();
         }
@@ -466,7 +471,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         string text = _input.getText(Interval.of(_tokenStartCharIndex, _input.index()));
         string msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
 
-        ANTLRErrorListener listener = getErrorListenerDispatch();
+        ANTLRErrorListener!(int, LexerATNSimulator) listener = getErrorListenerDispatch();
         listener.syntaxError(this, null, _tokenStartLine, _tokenStartCharPositionInLine, msg, e);
     }
 
@@ -483,7 +488,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     {
         string s = to!string(c);
         switch ( c ) {
-        case Token.EOF :
+        case TokenConstants.EOF :
             s = "<EOF>";
             break;
         case '\n' :
@@ -495,6 +500,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         case '\r' :
             s = "\\r";
             break;
+        default: break;
         }
         return s;
     }

@@ -35,14 +35,13 @@ import std.conv;
 import std.algorithm.sorting;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
 import antlr.v4.runtime.atn.RuleTransition;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -674,13 +673,13 @@ abstract class PredictionContext
         }
     }
 
-    public string[] toStrings(Recognizer!(Token, ParserATNSimulator) recognizer, int currentState)
+    public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, int currentState)
     {
         return toStrings(recognizer, EMPTY, currentState);
     }
 
-    public string[] toStrings(Recognizer!(Token, ParserATNSimulator) recognizer, PredictionContext stop,
-        int currentState)
+    public string[] toStrings(Recognizer!(int, ATNSimulator) recognizer, PredictionContext stop,
+                              int currentState)
     {
         string[] result;
     outer:

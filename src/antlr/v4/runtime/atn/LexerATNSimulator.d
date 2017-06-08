@@ -54,9 +54,11 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
+import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.misc.Interval;
 
 // Class LexerATNSimulator
@@ -341,7 +343,7 @@ class LexerATNSimulator : ATNSimulator
         else {
             // if no accept and EOF is first char, return EOF
             if (t==IntStream.EOF && input.index() == startIndex) {
-                return Token.EOF;
+                return TokenConstants.EOF;
             }
 
             throw new LexerNoViableAltException(recog, input, startIndex, reach);
@@ -360,7 +362,7 @@ class LexerATNSimulator : ATNSimulator
 	// this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
         int skipAlt = ATN.INVALID_ALT_NUMBER;
-        foreach (ATNConfig c; closure) {
+        foreach (ATNConfig c; closure.configs) {
             bool currentAltReachedAcceptState = c.alt == skipAlt;
             if (currentAltReachedAcceptState && (cast(LexerATNConfig)c).hasPassedThroughNonGreedyDecision()) {
                 continue;
@@ -376,7 +378,7 @@ class LexerATNSimulator : ATNSimulator
                 ATNState target = getReachableTarget(trans, t);
                 if (target !is null) {
                     LexerActionExecutor lexerActionExecutor = (cast(LexerATNConfig)c).getLexerActionExecutor();
-                    if (lexerActionExecutor != null) {
+                    if (lexerActionExecutor !is null) {
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index() - startIndex);
                     }
 
@@ -714,7 +716,7 @@ class LexerATNSimulator : ATNSimulator
 
         DFAState proposed = new DFAState(configs);
         ATNConfig firstConfigWithRuleStopState = null;
-        foreach (ATNConfig c; configs) {
+        foreach (ATNConfig c; configs.configs) {
             if (c.state.classinfo == RuleStopState.classinfo)	{
                 firstConfigWithRuleStopState = c;
                 break;

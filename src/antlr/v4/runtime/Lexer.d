@@ -279,8 +279,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
     /**
      * @uml
      * Set the char stream and reset the lexer
+     * @override
      */
-    public void setInputStream(IntStream input)
+    public override void setInputStream(IntStream input)
     {
         this._input = null;
         this._tokenFactorySourcePair = tuple(this, _input);
@@ -294,7 +295,11 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         return _input.getSourceName();
     }
 
-    public CharStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override CharStream getInputStream()
     {
         return _input;
     }

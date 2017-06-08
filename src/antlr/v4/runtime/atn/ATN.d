@@ -41,6 +41,7 @@ import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.LL1Analyzer;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.misc.IntervalSet;
@@ -210,24 +211,24 @@ class ATN
         RuleContext ctx = context;
         ATNState s = states[stateNumber];
         IntervalSet following = nextTokens(s);
-        if (!following.contains(Token.EPSILON)) {
+        if (!following.contains(TokenConstants.EPSILON)) {
             return following;
         }
 
         IntervalSet expected = new IntervalSet();
         expected.addAll(following);
-        expected.remove(Token.EPSILON);
-        while (ctx !is null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
+        expected.remove(TokenConstants.EPSILON);
+        while (ctx !is null && ctx.invokingState >= 0 && following.contains(TokenConstants.EPSILON)) {
             ATNState invokingState = states[ctx.invokingState];
             RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
             following = nextTokens(rt.followState);
             expected.addAll(following);
-            expected.remove(Token.EPSILON);
+            expected.remove(TokenConstants.EPSILON);
             ctx = ctx.parent;
         }
 
-        if (following.contains(Token.EPSILON)) {
-            expected.add(Token.EOF);
+        if (following.contains(TokenConstants.EPSILON)) {
+            expected.add(TokenConstants.EOF);
         }
 
         return expected;

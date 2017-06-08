@@ -33,10 +33,12 @@ module antlr.v4.runtime.Recognizer;
 
 import std.stdio;
 import std.algorithm;
+import std.array;
 import std.conv;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.RecognitionException;
@@ -114,7 +116,7 @@ class Recognizer(U, V)
                 }
             }
 
-            result["EOF"] = Token.EOF;
+            result["EOF"] = TokenConstants.EOF;
             result.rehash; // for faster lookups
             tokenTypeMapCache[vocabulary] = result;
         }
@@ -150,7 +152,7 @@ class Recognizer(U, V)
     {
         int ttype = getTokenTypeMap()[tokenName];
         if (ttype) return ttype;
-        return Token.INVALID_TYPE;
+        return TokenConstants.INVALID_TYPE;
     }
 
     /**
@@ -204,6 +206,7 @@ class Recognizer(U, V)
 
     public void setInterpreter(V interpreter)
     {
+        _interp = interpreter;
     }
 
     /**
@@ -212,6 +215,9 @@ class Recognizer(U, V)
      */
     public string getErrorHeader(RecognitionException!(U,V) e)
     {
+        int line = e.getOffendingToken().getLine();
+        int charPositionInLine = e.getOffendingToken().getCharPositionInLine();
+        return "line " ~ to!string(line) ~ ":" ~ to!string(charPositionInLine);
     }
 
     /**
@@ -231,26 +237,49 @@ class Recognizer(U, V)
      */
     public string getTokenErrorDisplay(Token t)
     {
+	if (t is null) return "<no token>";
+        string s = t.getText();
+        if (s is null) {
+            if (t.getType() == TokenConstants.EOF) {
+                s = "<EOF>";
+            }
+            else {
+                s = "<" ~ to!string(t.getType) ~ ">";
+            }
+        }
+        s = s.replace("\n","\\n");
+        s = s.replace("\r","\\r");
+        s = s.replace("\t","\\t");
+        return "'" ~ s ~ "'";
     }
 
     public void addErrorListener(ANTLRErrorListener!(U, V) listener)
     {
+	if (listener is null) {
+            assert(0, "listener cannot be null.");
+        }
+
+       	_listeners ~= listener;
     }
 
     public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
     {
+        _listeners.remove(listener);
     }
 
     public void removeErrorListeners()
     {
+        _listeners.length = 0;
     }
 
     public ANTLRErrorListener!(U,V)[] getErrorListeners()
     {
+        return _listeners;
     }
 
     public ANTLRErrorListener!(U,V)[] getErrorListenerDispatch()
     {
+        return new ProxyErrorListener(getErrorListeners());
     }
 
     /**

@@ -81,7 +81,7 @@ class TokenStream : IntStream
      * Gets the underlying {@link TokenSource} which provides tokens for this
      * stream.
      */
-    abstract public Token getTokenSource();
+    abstract public TokenSource getTokenSource();
 
     /**
      * @uml

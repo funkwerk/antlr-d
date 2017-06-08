@@ -407,7 +407,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         return _syntaxErrors;
     }
 
-    public auto getTokenFactory()
+    public Token getTokenFactory()
     {
         return _input.getTokenSource().getTokenFactory();
     }
@@ -479,12 +479,20 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     {
     }
 
-    public TokenStream getInputStream()
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenStream getInputStream()
     {
         return getTokenStream();
     }
 
-    public void setInputStream(IntStream input)
+    /**
+     * @uml
+     * @override
+     */
+    public override void setInputStream(IntStream input)
     {
         setTokenStream(cast(TokenStream)input);
     }

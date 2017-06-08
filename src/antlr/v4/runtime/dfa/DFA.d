@@ -102,7 +102,7 @@ class DFA
      *  {@code false}.
      *  @see Parser#getPrecedence()
      */
-    public void isPrecedenceDfa()
+    public bool isPrecedenceDfa()
     {
         return precedenceDfa;
     }

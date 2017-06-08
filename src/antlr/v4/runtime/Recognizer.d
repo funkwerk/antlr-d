@@ -264,7 +264,12 @@ class Recognizer(U, V)
 
     public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
     {
-        _listeners.remove(listener);
+        foreach (int elementRemoveIndex, el; _listeners) {
+            if (listener == el) {
+                _listeners.remove(elementRemoveIndex);
+                break;
+            }
+        }
     }
 
     public void removeErrorListeners()

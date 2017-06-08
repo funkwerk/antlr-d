@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.atn.SetTransition;
 
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.misc.IntervalSet;
 import antlr.v4.runtime.atn.Transition;
@@ -48,7 +48,7 @@ class SetTransition : Transition
     public this(ATNState target, IntervalSet set)
     {
         super(target);
-        if ( set is null ) set = IntervalSet.of(Token.INVALID_TYPE);
+        if ( set is null ) set = IntervalSet.of(TokenConstants.INVALID_TYPE);
         this.set = set;
     }
 

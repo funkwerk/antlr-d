@@ -91,15 +91,15 @@ class LexerActionExecutor
      *  @return A {@link LexerActionExecutor} for executing the combine actions
      * of {@code lexerActionExecutor} and {@code lexerAction}.
      */
-    public static void append(LexerActionExecutor lexerActionExecutor, LexerAction lexerAction)
+    public static LexerActionExecutor append(LexerActionExecutor lexerActionExecutor, LexerAction lexerAction)
     {
         if (lexerActionExecutor is null) {
             LexerAction[] a = [lexerAction];
             return new LexerActionExecutor(a);
         }
 
-        LexerAction[] lexerActions = Arrays.copyOf(lexerActionExecutor.lexerActions, lexerActionExecutor.lexerActions.length + 1);
-        lexerActions[lexerActions.length - 1] = lexerAction;
+        LexerAction[] lexerActions = lexerActionExecutor.lexerActions;
+        lexerActions ~= lexerAction;
         return new LexerActionExecutor(lexerActions);
     }
 
@@ -135,10 +135,27 @@ class LexerActionExecutor
      */
     public LexerActionExecutor fixOffsetBeforeMatch(int offset)
     {
+	LexerAction[] updatedLexerActions = null;
+        for (int i = 0; i < lexerActions.length; i++) {
+            if (lexerActions[i].isPositionDependent() && !(lexerActions[i].classinfo == LexerIndexedCustomAction.classinfo)) {
+                if (updatedLexerActions is null) {
+                    updatedLexerActions = lexerActions.clone();
+                }
+
+                updatedLexerActions[i] = new LexerIndexedCustomAction(offset, lexerActions[i]);
+            }
+        }
+
+        if (updatedLexerActions is null) {
+            return this;
+        }
+
+        return new LexerActionExecutor(updatedLexerActions);
     }
 
     public LexerAction[] getLexerActions()
     {
+        return lexerActions;
     }
 
     /**

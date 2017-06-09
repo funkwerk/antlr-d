@@ -44,10 +44,12 @@ import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CommonToken;
+import antlr.v4.runtime.ProxyErrorListener;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ParseInfo;
+import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Class Template Recognizer
 /**
@@ -282,7 +284,7 @@ class Recognizer(U, V)
         return _listeners;
     }
 
-    public ANTLRErrorListener!(U,V)[] getErrorListenerDispatch()
+    public ANTLRErrorListener!(U, V) getErrorListenerDispatch()
     {
         return new ProxyErrorListener(getErrorListeners());
     }

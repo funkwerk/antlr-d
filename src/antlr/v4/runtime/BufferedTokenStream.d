@@ -36,6 +36,7 @@ import std.format;
 import std.conv;
 import std.algorithm: canFind;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.IllegalStateException;
@@ -236,7 +237,7 @@ class BufferedTokenStream : TokenStream
                 (cast(WritableToken)t).setTokenIndex(to!int(tokens.length));
             }
             tokens ~= t;
-            if (t.getType() == Token.EOF) {
+            if (t.getType() == TokenConstants.EOF) {
                 fetchedEOF = true;
                 return i + 1;
             }
@@ -271,7 +272,7 @@ class BufferedTokenStream : TokenStream
         if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
         for (int i = start; i <= stop; i++) {
             Token t = tokens[i];
-            if (t.getType() == Token.EOF) break;
+            if (t.getType() == TokenConstants.EOF) break;
             subset ~= t;
         }
         return subset;
@@ -419,7 +420,7 @@ class BufferedTokenStream : TokenStream
 
         Token token = tokens[i];
         while (token.getChannel() != channel) {
-            if (token.getType() == Token.EOF) {
+            if (token.getType() == TokenConstants.EOF) {
                 return i;
             }
 
@@ -451,7 +452,7 @@ class BufferedTokenStream : TokenStream
         }
         while (i >= 0) {
             Token token = tokens[i];
-            if (token.getType() == Token.EOF || token.getChannel() == channel) {
+            if (token.getType() == TokenConstants.EOF || token.getChannel() == channel) {
                 return i;
             }
             i--;
@@ -588,7 +589,7 @@ class BufferedTokenStream : TokenStream
         auto buf = appender!(string);
         for (int i = start; i <= stop; i++) {
             Token t = tokens[i];
-            if (t.getType() == Token.EOF) break;
+            if (t.getType() == TokenConstants.EOF) break;
             buf.put(t.getText());
         }
         return buf.data;
@@ -622,7 +623,7 @@ class BufferedTokenStream : TokenStream
     public void fill()
     {
         lazyInit();
-        final int blockSize = 1000;
+        const int blockSize = 1000;
         while (true) {
             int fetched = fetch(blockSize);
             if (fetched < blockSize) {

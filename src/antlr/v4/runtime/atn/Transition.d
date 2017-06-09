@@ -36,6 +36,12 @@ import antlr.v4.runtime.atn.EpsilonTransition;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.RangeTransition;
+import antlr.v4.runtime.atn.AtomTransition;
+import antlr.v4.runtime.atn.ActionTransition;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.NotSetTransition;
+import antlr.v4.runtime.atn.WildcardTransition;
+import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.misc.IntervalSet;
 
@@ -77,6 +83,12 @@ abstract class Transition
         serializationTypes[typeid(RangeTransition)] = TransitionStates.RANGE;
         serializationTypes[typeid(RuleTransition)] = TransitionStates.RULE;
         serializationTypes[typeid(PredicateTransition)] = TransitionStates.PREDICATE;
+        serializationTypes[typeid(AtomTransition)] = TransitionStates.ATOM;
+        serializationTypes[typeid(ActionTransition)] = TransitionStates.ACTION;
+        serializationTypes[typeid(SetTransition)] = TransitionStates.SET;
+        serializationTypes[typeid(NotSetTransition)] = TransitionStates.NOT_SET;
+        serializationTypes[typeid(WildcardTransition)] = TransitionStates.WILDCARD;
+        serializationTypes[typeid(PrecedencePredicateTransition)] = TransitionStates.PRECEDENCE;
     }
 
     public this(ATNState target)

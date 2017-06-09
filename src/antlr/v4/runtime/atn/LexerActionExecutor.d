@@ -139,7 +139,7 @@ class LexerActionExecutor
         for (int i = 0; i < lexerActions.length; i++) {
             if (lexerActions[i].isPositionDependent() && !(lexerActions[i].classinfo == LexerIndexedCustomAction.classinfo)) {
                 if (updatedLexerActions is null) {
-                    updatedLexerActions = lexerActions.clone();
+                    updatedLexerActions = lexerActions.dup();
                 }
 
                 updatedLexerActions[i] = new LexerIndexedCustomAction(offset, lexerActions[i]);
@@ -221,6 +221,17 @@ class LexerActionExecutor
      */
     public override bool opEquals(Object obj)
     {
+        if (obj is this) {
+            return true;
+        }
+        else if (obj.classinfo != LexerActionExecutor.classinfo) {
+            return false;
+        }
+        LexerActionExecutor other = cast(LexerActionExecutor)obj;
+        foreach (int i, lexerA; lexerActions)
+            if (lexerA != other.lexerActions[i])
+                return false;
+        return hashCode == other.hashCode;
     }
 
 }

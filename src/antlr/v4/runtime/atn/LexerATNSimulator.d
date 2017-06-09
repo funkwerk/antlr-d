@@ -729,7 +729,7 @@ class LexerATNSimulator : ATNSimulator
         }
 
 		DFA dfa = decisionToDFA[mode];
-                DFAState existing = dfa.states.get(proposed);
+                DFAState existing = dfa.states[proposed];
                 if (existing !is null) return existing;
                 DFAState newState = proposed;
                 newState.stateNumber = to!int(dfa.states.length);

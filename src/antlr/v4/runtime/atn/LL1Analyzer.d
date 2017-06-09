@@ -32,6 +32,8 @@ module antlr.v4.runtime.atn.LL1Analyzer;
 
 import std.container.array;
 import std.container.rbtree;
+import std.conv;
+import std.stdio;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
@@ -189,20 +191,20 @@ class LL1Analyzer
 
         if (s == stopState) {
             if (ctx is null) {
-                look.add(Token.EPSILON);
+                look.add(TokenConstants.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
-                look.add(Token.EOF);
+                look.add(TokenConstants.EOF);
                 return;
             }
         }
 
         if (s.classinfo == RuleStopState.classinfo) {
             if (ctx is null ) {
-                look.add(Token.EPSILON);
+                look.add(TokenConstants.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
-                look.add(Token.EOF);
+                look.add(TokenConstants.EOF);
                 return;
             }
 
@@ -258,14 +260,14 @@ class LL1Analyzer
                 _LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
             }
             else if (t.classinfo == WildcardTransition.classinfo) {
-                look.addAll( IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, atn.maxTokenType) );
+                look.addAll( IntervalSet.of(TokenConstants.MIN_USER_TOKEN_TYPE, atn.maxTokenType) );
             }
             else {
-                //				System.out.println("adding "+ t);
+                debug writeln("adding " ~ to!string(t));
                 IntervalSet set = t.label();
                 if (set !is null) {
                     if (t.classinfo == NotSetTransition.classinfo) {
-                        set = set.complement(IntervalSet.of(Token.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
+                        set = set.complement(IntervalSet.of(TokenConstants.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
                     }
                     look.addAll(set);
                 }

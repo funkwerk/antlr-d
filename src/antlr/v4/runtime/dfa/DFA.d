@@ -118,7 +118,7 @@ class DFA
      *  @throws IllegalStateException if this is not a precedence DFA.
      *  @see #isPrecedenceDfa()
      */
-    public DFAState getPrecedenceStartState(int precedence, DFAState startState)
+    public DFAState getPrecedenceStartState(int precedence)
     {
 	if (!isPrecedenceDfa()) {
             throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");

@@ -87,3 +87,22 @@ abstract class AbstractEqualityComparator(T) : EqualityComparator
     }
 
 }
+
+unittest
+{
+    class TestIntAbstractEqualityComparator : AbstractEqualityComparator!int
+    {
+    }
+    class TestStringAbstractEqualityComparator : AbstractEqualityComparator!string
+    {
+    }
+    auto testInt = new TestIntAbstractEqualityComparator();
+    testInt.append(12);
+    testInt.append(5);
+    assert(testInt.toArray == [12, 5]);
+    auto testString = new TestStringAbstractEqualityComparator();
+    testString.append("abcdefg");
+    testString.append("!");
+    testString.append("1234");
+    assert(testString.toArray == ["abcdefg", "!", "1234"]);
+}

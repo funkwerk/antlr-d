@@ -15,7 +15,7 @@ class ToHash
      * @pure
      * @nothrow
      */
-    public size_t opCall(int i) @safe pure nothrow
+    public static size_t opCall(int i) @safe pure nothrow
     {
         return i;
     }
@@ -26,7 +26,7 @@ class ToHash
      * @pure
      * @nothrow
      */
-    public size_t opCall(string s) @safe pure nothrow
+    public static size_t opCall(string s) @safe pure nothrow
     {
         return to!int(s[0]);
     }

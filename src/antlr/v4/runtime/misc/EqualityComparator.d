@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voig
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,7 +31,7 @@
 
 module antlr.v4.runtime.misc.EqualityComparator;
 
-// Interface Template EqualityComparator
+// Interface EqualityComparator
 /**
  * @uml
  * This interface provides an abstract concept of object equality independent of
@@ -40,26 +41,17 @@ module antlr.v4.runtime.misc.EqualityComparator;
  *
  * @author Sam Harwell
  */
-interface EqualityComparator(T)
+interface EqualityComparator
 {
 
     /**
      * @uml
-     * This method returns a hash code for the specified object.
-     *
-     *  @param obj The object.
-     *  @return The hash code for {@code obj}.
+     * This method returns a hash code for the object.
+     * @safe
+     * @pure
      */
-    public int hashCode(T obj);
+    public size_t toHash() @safe pure;
 
-    /**
-     * @uml
-     * This method tests if two objects are equal.
-     *
-     *  @param a The first object to compare.
-     *  @param b The second object to compare.
-     *  @return {@code true} if {@code a} equals {@code b}, otherwise {@code false}.
-     */
-    public bool equals(T a, T b);
+    public bool opEquals(Object o);
 
 }

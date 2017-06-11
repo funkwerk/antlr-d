@@ -35,7 +35,10 @@ import std.conv;
 
 // Singleton ObjectEqualityComparator
 /**
- * TODO add class description
+ * This default implementation of {@link EqualityComparator} uses object equality
+ * for comparisons by calling {@link Object#hashCode} and {@link Object#equals}.
+ *
+ * @author Sam Harwell
  */
 class ObjectEqualityComparator : AbstractEqualityComparator!Object
 {

@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2016 Terence Parr
  *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -36,11 +37,12 @@ import std.stdio;
 // Class MurmurHash
 /**
  * @author Sam Harwell
+ * @author Egbert Voigt (D)
  */
 class MurmurHash
 {
 
-    public static immutable int DEFAULT_SEED = 0;
+    public static immutable size_t DEFAULT_SEED = 0;
 
     /**
      * @uml
@@ -50,7 +52,7 @@ class MurmurHash
      * @safe
      * @nothrow
      */
-    public static int initialize() @safe nothrow
+    public static size_t initialize() @safe nothrow
     {
         auto mh = new MurmurHash;
         return initialize(DEFAULT_SEED);
@@ -65,7 +67,7 @@ class MurmurHash
      * @safe
      * @nothrow
      */
-    public static int initialize(int seed) @safe nothrow
+    public static size_t initialize(size_t seed) @safe nothrow
     {
         return seed;
     }
@@ -80,16 +82,16 @@ class MurmurHash
      * @safe
      * @nothrow
      */
-    public static int update(int hash, int value) @safe nothrow
+    public static size_t update(size_t hash, size_t value) @safe nothrow
     {
-        immutable int c1 = 0xCC9E2D51;
-        immutable int c2 = 0x1B873593;
-        immutable int r1 = 15;
-        immutable int r2 = 13;
-        immutable int m = 5;
-        immutable int n = 0xE6546B64;
+        immutable size_t c1 = 0xCC9E2D51;
+        immutable size_t c2 = 0x1B873593;
+        immutable size_t r1 = 15;
+        immutable size_t r2 = 13;
+        immutable size_t m = 5;
+        immutable size_t n = 0xE6546B64;
 
-        int k = value;
+        size_t k = value;
         k = k * c1;
         k = (k << r1) | (k >>> (32 - r1));
         k = k * c2;
@@ -109,12 +111,11 @@ class MurmurHash
      *  @param hash the intermediate hash value
      *  @param value the value to add to the current hash
      *  @return the updated intermediate hash value
-     * @safe
      * @nothrow
      */
-    public static int update(U)(int hash, U value) @safe nothrow
+    public static size_t update(U)(size_t hash, U value) nothrow
     {
-        return update(hash, value !is null ? value.hashCode : 0);
+        return value.hashOf(hash);
     }
 
     /**
@@ -128,9 +129,9 @@ class MurmurHash
      * @safe
      * @nothrow
      */
-    public static int finish(int hash, int numberOfWords) @safe nothrow
+    public static size_t finish(size_t hash, size_t numberOfWords) @safe nothrow
     {
-        hash = hash ^ (cast(int)numberOfWords * 4);
+        hash = hash ^ (cast(size_t)numberOfWords * 4);
         hash = hash ^ (hash >>> 16);
         hash = hash * 0x85EBCA6B;
         hash = hash ^ (hash >>> 13);
@@ -149,15 +150,24 @@ class MurmurHash
      *  @param seed the seed for the MurmurHash algorithm
      *  @return the hash code of the data
      */
-    public static T hashCode(T)(T[] data, int seed)
+    public static size_t hashCode(T)(T[] data, size_t seed)
     {
-        int hash = initialize(seed);
+        size_t hash = initialize(seed);
         foreach (T value; data) {
             hash = update(hash, value);
         }
-
-        hash = finish(hash, to!int(data.length));
+        hash = finish(hash, data.length);
         return hash;
     }
 
+}
+
+unittest
+{
+    auto testMurmurHash = new MurmurHash;
+    assert(testMurmurHash.hashCode!int([12], 3) == 8015155421799095863LU);
+    auto res = testMurmurHash.initialize;
+    res = testMurmurHash.update!int(res, 33);
+    res = testMurmurHash.update!int(res, 2);
+    assert(testMurmurHash.finish(res, 2) == 9650988314287891571LU);
 }

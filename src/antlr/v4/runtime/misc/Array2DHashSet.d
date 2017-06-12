@@ -40,7 +40,6 @@ import std.algorithm.mutation : remove;
 import std.algorithm.searching : canFind;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
-import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class Template Array2DHashSet
 /**

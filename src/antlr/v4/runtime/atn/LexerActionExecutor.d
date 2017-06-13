@@ -34,6 +34,7 @@ import std.conv;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.atn.LexerIndexedCustomAction;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class LexerActionExecutor

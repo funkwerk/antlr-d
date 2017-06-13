@@ -15,7 +15,6 @@ import antlr.v4.runtime.misc.DoubleKeyMap;
 
 // Class ATNConfigSet
 /**
- * TODO add class description
  * @uml
  * Specialized {@link Set}{@code <}{@link ATNConfig}{@code >} that can track
  * info about the set, with support for combining similar configurations using a

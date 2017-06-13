@@ -4,7 +4,7 @@ import antlr.v4.runtime.Token;
 
 // Interface WritableToken
 /**
- * TODO add interface description
+ * Add write functions for Token attributes
  */
 interface WritableToken :Token
 {

@@ -128,7 +128,7 @@ class CommonToken : WritableToken
     public this(int type, string text)
     {
 	this.type = type;
-        this.channel = DEFAULT_CHANNEL;
+        this.channel = TokenConstants.DEFAULT_CHANNEL;
         this.text = text;
         this.source = EMPTY_SOURCE;
     }

@@ -127,9 +127,9 @@ class LexerCustomAction : LexerAction
      * @safe
      * @nothrow
      */
-    public int hashCode() @safe nothrow
+    public size_t hashCode() @safe nothrow
     {
-        int hash = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         hash = MurmurHash.update(hash, ruleIndex);
         hash = MurmurHash.update(hash, actionIndex);

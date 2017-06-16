@@ -71,9 +71,14 @@ class LexerPushModeAction : LexerAction
         lexer.pushMode(mode);
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     */
+    public size_t hashCode() @safe nothrow
     {
-        int hash = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         return MurmurHash.finish(hash, 1);
     }
@@ -98,4 +103,9 @@ class LexerPushModeAction : LexerAction
         return format("pushMode(%d)", mode);
     }
 
+}
+
+unittest
+{
+    auto pushModeAction = new LexerPushModeAction(0);
 }

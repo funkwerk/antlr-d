@@ -16,7 +16,7 @@ class Utils
      * @safe
      * @nothrow
      */
-    public static int rank(T)(T e) @safe nothrow
+    public static size_t rank(T)(T e) @safe nothrow
     {
         foreach (i, member; EnumMembers!T)
             {

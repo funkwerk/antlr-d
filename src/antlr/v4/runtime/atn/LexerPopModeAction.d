@@ -13,6 +13,8 @@ import antlr.v4.runtime.misc.Utils;
  *
  * <p>The {@code popMode} command does not have any parameters, so this action is
  * implemented as a singleton instance exposed by {@link #INSTANCE}.</p>
+ * @safe
+ * @nothrow
  */
 class LexerPopModeAction : LexerAction
 {
@@ -55,9 +57,9 @@ class LexerPopModeAction : LexerAction
         lexer.popMode();
     }
 
-    public int hashCode()
+    public size_t hashCode()
     {
-        int hash = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         return MurmurHash.finish(hash, 1);
     }

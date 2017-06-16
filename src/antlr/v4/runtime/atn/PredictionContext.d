@@ -167,25 +167,25 @@ abstract class PredictionContext
      */
     abstract public override bool opEquals(Object obj);
 
-    public static int calculateEmptyHashCode()
+    public static size_t calculateEmptyHashCode()
     {
-        int hash = MurmurHash.initialize(INITIAL_HASH);
+        size_t hash = MurmurHash.initialize(INITIAL_HASH);
         hash = MurmurHash.finish(hash, 0);
         return hash;
     }
 
-    public int calculateHashCode(PredictionContext parent, int returnState)
+    public size_t calculateHashCode(PredictionContext parent, int returnState)
     {
-        int hash = MurmurHash.initialize(INITIAL_HASH);
+        size_t hash = MurmurHash.initialize(INITIAL_HASH);
         hash = MurmurHash.update!PredictionContext(hash, parent);
         hash = MurmurHash.update(hash, returnState);
         hash = MurmurHash.finish(hash, 2);
         return hash;
     }
 
-    public static int calculateHashCode(PredictionContext[] parents, int[] returnStates)
+    public static size_t calculateHashCode(PredictionContext[] parents, int[] returnStates)
     {
-        int hash = MurmurHash.initialize(INITIAL_HASH);
+        size_t hash = MurmurHash.initialize(INITIAL_HASH);
 
         foreach (parent; parents) {
             hash = MurmurHash.update!PredictionContext(hash, parent);
@@ -195,7 +195,7 @@ abstract class PredictionContext
             hash = MurmurHash.update(hash, returnState);
         }
 
-        hash = MurmurHash.finish(hash, to!int(2 * parents.length));
+        hash = MurmurHash.finish(hash, (2 * parents.length));
         return hash;
     }
 

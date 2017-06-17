@@ -451,7 +451,7 @@ class ParserATNSimulator : ATNSimulator
      *    conflict
      *    conflict + preds
      */
-    protected int execATN(DFA dfa, TokenStream input, int startIndex, ParserRuleContext outerContext)
+    protected int execATN(DFA dfa, ATNState s0, TokenStream input, int startIndex, ParserRuleContext outerContext)
     {
 	debug {
             writefln("execATN decision %1$s"~

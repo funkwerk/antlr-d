@@ -97,7 +97,7 @@ abstract class PredictionContext
      *   }
      * </pre>
      */
-    public int cachedHashCode;
+    public size_t cachedHashCode;
 
     public this()
     {
@@ -105,7 +105,7 @@ abstract class PredictionContext
         id = globalNodeCount++;
     }
 
-    public this(int cachedHashCode)
+    public this(size_t cachedHashCode)
     {
         this.cachedHashCode = cachedHashCode;
     }
@@ -156,7 +156,7 @@ abstract class PredictionContext
      * @safe
      * @nothrow
      */
-    public int hashCode() @safe nothrow
+    public size_t hashCode() @safe nothrow
     {
         return cachedHashCode;
     }

@@ -96,9 +96,13 @@ class LexerIndexedCustomAction : LexerAction
         action.execute(lexer);
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @nothrow
+     */
+    public size_t hashCode() nothrow
     {
-        int hash = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, offset);
         hash = MurmurHash.update(hash, action);
         return MurmurHash.finish(hash, 2);
@@ -113,10 +117,8 @@ class LexerIndexedCustomAction : LexerAction
             return false;
         }
         LexerIndexedCustomAction other = cast(LexerIndexedCustomAction)obj;
-        foreach (int i, lexerA; lexerActions)
-            if (lexerA != other.lexerActions[i])
-                return false;
-        return hashCode == other.hashCode;
+        return offset == other.getOffset
+            && action == other.getAction;
     }
 
 }

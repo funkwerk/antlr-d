@@ -55,7 +55,7 @@ import antlr.v4.runtime.atn.ParserATNSimulator;
 /**
  * TODO add class description
  */
-class Recognizer(U, V)
+abstract class Recognizer(U, V)
 {
 
     public static immutable int EOF = -1;

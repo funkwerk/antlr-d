@@ -252,16 +252,22 @@ class ATNConfigSet
         return same;
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @override
+     * @safe
+     * @nothrow
+     */
+    public override size_t toHash() @safe nothrow
     {
         if (readonly) {
             if (cachedHashCode == -1) {
-                cachedHashCode = configs.hashCode();
+                cachedHashCode = configs.toHash();
             }
             return cachedHashCode;
         }
 
-        return configs.hashCode();
+        return configs.toHash();
     }
 
     public int size()

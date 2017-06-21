@@ -86,7 +86,7 @@ class ANTLRInputStream : CharStream
     public this(string input)
     {
         this.data = input.to!(char []);
-        this.n = input.length;
+        this.n = to!int(input.length);
     }
 
     /**

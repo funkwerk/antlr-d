@@ -40,9 +40,15 @@ class LexerMoreAction : LexerAction
         lexer.more();
     }
 
-    public int hashCode()
+    /**
+     * @uml
+     * @safe
+     * @nothrow
+     * @override
+     */
+    public override size_t toHash() @safe nothrow
     {
-	int hash = MurmurHash.initialize();
+	size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         return MurmurHash.finish(hash, 1);
     }

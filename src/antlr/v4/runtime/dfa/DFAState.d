@@ -33,6 +33,8 @@ module antlr.v4.runtime.dfa.DFAState;
 
 import std.conv;
 import std.array;
+import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.LexerActionExecutor;
 import antlr.v4.runtime.dfa.PredPrediction;
@@ -138,7 +140,7 @@ class DFAState
     {
         int[] alts;
         if (configs !is null) {
-            foreach (ATNConfig c; configs) {
+            foreach (ATNConfig c; configs.configs) {
                 alts ~= c.alt;
             }
         }
@@ -146,10 +148,16 @@ class DFAState
         return alts;
     }
 
-    public int toHash()
+    /**
+     * @uml
+     * @override
+     * @safe
+     * @nothrow
+     */
+    public override size_t toHash() @safe nothrow
     {
-	int hash = MurmurHash.initialize(7);
-        hash = MurmurHash.update(hash, configs.hashCode());
+	size_t hash = MurmurHash.initialize(7);
+        hash = MurmurHash.update(hash, configs.toHash());
         hash = MurmurHash.finish(hash, 1);
         return hash;
     }
@@ -182,15 +190,15 @@ class DFAState
     {
         auto buf = appender!string;
         buf.put(to!string(stateNumber));
-        buf.append(":");
-        buf.append(configs);
+        buf.put(":");
+        buf.put(configs.toString);
         if (isAcceptState) {
             buf.put("=>");
             if (predicates !is null) {
-                buf.put(predicates.toString);
+                buf.put(to!string(predicates));
             }
             else {
-                buf.put(prediction.toString);
+                buf.put(to!string(prediction));
             }
         }
         return buf.data;

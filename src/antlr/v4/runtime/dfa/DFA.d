@@ -35,6 +35,7 @@ import std.algorithm.sorting;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.DecisionState;
+import antlr.v4.runtime.atn.StarLoopEntryState;
 
 // Class DFA
 /**

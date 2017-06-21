@@ -107,10 +107,12 @@ class LexerATNConfig : ATNConfig
     /**
      * @uml
      * @override
+     * @safe
+     * @nothrow
      */
-    public override int hashCode()
+    public override size_t toHash() @safe nothrow
     {
-        int hashCode = MurmurHash.initialize(7);
+        size_t hashCode = MurmurHash.initialize(7);
         hashCode = MurmurHash.update(hashCode, state.stateNumber);
         hashCode = MurmurHash.update(hashCode, alt);
         hashCode = MurmurHash.update(hashCode, context);

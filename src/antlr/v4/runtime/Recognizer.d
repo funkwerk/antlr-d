@@ -286,7 +286,7 @@ abstract class Recognizer(U, V)
 
     public ANTLRErrorListener!(U, V) getErrorListenerDispatch()
     {
-        return new ProxyErrorListener(getErrorListeners());
+        return new ProxyErrorListener!(U, V)(getErrorListeners());
     }
 
     /**

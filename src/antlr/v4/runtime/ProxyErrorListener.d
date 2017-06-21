@@ -1,3 +1,34 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 module antlr.v4.runtime.ProxyErrorListener;
 
 import std.bitmanip;
@@ -10,38 +41,38 @@ import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.ATNConfigSet;
 
-// Class ProxyErrorListener
+// Class Template ProxyErrorListener
 /**
  * @uml
  * This implementation of {@link ANTLRErrorListener} dispatches all calls to a
  * collection of delegate listeners. This reduces the effort required to support multiple
  * listeners.
  */
-class ProxyErrorListener : ANTLRErrorListener!(Token, ParserATNSimulator)
+class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
 {
 
-    public ANTLRErrorListener!(Token, ParserATNSimulator)[] delegates;
+    public ANTLRErrorListener!(U,V)[] delegates;
 
-    public this(ANTLRErrorListener!(Token, ParserATNSimulator)[] delegates)
+    public this(ANTLRErrorListener!(U,V)[] delegates)
     {
 	if (delegates is null) {
-            ASSERT(0, "Null pointer exception delegates");
+            assert(0, "Null pointer exception delegates");
         }
         this.delegates = delegates;
     }
 
-    public void syntaxError(Recognizer!(Token, ParserATNSimulator) recognizer, Object offendingSymbol,
-        int line, int charPositionInLine, string msg, RecognitionException!(Token, ParserATNSimulator) e)
+    public void syntaxError(Recognizer!(U, V) recognizer, Object offendingSymbol, int line,
+        int charPositionInLine, string msg, RecognitionException!(U,V) e)
     {
-	foreach (ANTLRErrorListener listener; delegates) {
+	foreach (listener; delegates) {
             listener.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
         }
     }
 
-    public void reportAmbiguity(DFA dfa, int startIndex, int stopIndex, bool exact, BitArray ambigAlts,
+    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitArray ambigAlts,
         ATNConfigSet configs)
     {
-	foreach (ANTLRErrorListener listener; delegates) {
+	foreach (listener; delegates) {
             listener.reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs);
         }
     }
@@ -49,7 +80,7 @@ class ProxyErrorListener : ANTLRErrorListener!(Token, ParserATNSimulator)
     public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
         BitArray conflictingAlts, ATNConfigSet configs)
     {
-	foreach (ANTLRErrorListener listener; delegates) {
+	foreach (listener; delegates) {
             listener.reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs);
         }
     }
@@ -57,7 +88,7 @@ class ProxyErrorListener : ANTLRErrorListener!(Token, ParserATNSimulator)
     public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
         int prediction, ATNConfigSet configs)
     {
-	foreach (ANTLRErrorListener listener; delegates) {
+	foreach (listener; delegates) {
             listener.reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs);
         }
     }

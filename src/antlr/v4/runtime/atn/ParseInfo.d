@@ -30,6 +30,7 @@
  */
 
 module antlr.v4.runtime.atn.ParseInfo;
+
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.atn.ProfilingATNSimulator;

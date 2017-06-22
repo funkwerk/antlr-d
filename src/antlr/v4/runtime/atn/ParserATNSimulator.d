@@ -35,13 +35,18 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.dfa.PredPrediction;
 import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.misc.DoubleKeyMap;
@@ -519,7 +524,7 @@ class ParserATNSimulator : ATNSimulator
                 }
 
                 debug(dfa_debug) writefln("ctx sensitive state %1$ in %2$s",
-                                         outerContext, D);
+                                          outerContext, D);
                 bool fullCtx = true;
                 ATNConfigSet s0_closure =
                     computeStartState(dfa.atnStartState, outerContext,
@@ -564,11 +569,126 @@ class ParserATNSimulator : ATNSimulator
 	
     }
 
+    /**
+     * Get an existing target state for an edge in the DFA. If the target state
+     * for the edge has not yet been computed or is otherwise not available,
+     * this method returns {@code null}.
+     *
+     * @param previousD The current DFA state
+     * @param t The next input symbol
+     * @return The existing target DFA state for the given input symbol
+     * {@code t}, or {@code null} if the target state for this edge is not
+     * already cached
+     */
     public DFAState getExistingTargetState(DFAState previousD, int t)
+    {
+        DFAState[] edges = previousD.edges;
+        if (edges == null || t + 1 < 0 || t + 1 >= edges.length) {
+            return null;
+        }
+        return edges[t + 1];
+    }
+
+    /**
+     * Compute a target state for an edge in the DFA, and attempt to add the
+     * computed state and corresponding edge to the DFA.
+     *
+     * @param dfa The DFA
+     * @param previousD The current DFA state
+     * @param t The next input symbol
+     *
+     * @return The computed target DFA state for the given input symbol
+     * {@code t}. If {@code t} does not lead to a valid DFA state, this method
+     * returns {@link #ERROR}.
+     */
+    public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    {
+        ATNConfigSet reach = computeReachSet(previousD.configs, t, false);
+        if (reach is null) {
+            addDFAEdge(dfa, previousD, t, ERROR);
+            return ERROR;
+        }
+
+        // create new target state; we'll add to DFA after it's complete
+        DFAState D = new DFAState(reach);
+
+        int predictedAlt = getUniqueAlt(reach);
+
+        debug {
+            BitArray[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
+            writefln("SLL altSubSets=" ~ altSubSets ~
+                     ", configs=" ~reach ~
+                     ", predict="+predictedAlt ~ ", allSubsetsConflict="+
+                     PredictionMode.allSubsetsConflict(altSubSets) ~ ", conflictingAlts=" ~
+                     getConflictingAlts(reach));
+        }
+
+        if (predictedAlt != ATN.INVALID_ALT_NUMBER) {
+            // NO CONFLICT, UNIQUELY PREDICTED ALT
+            D.isAcceptState = true;
+            D.configs.uniqueAlt = predictedAlt;
+            D.prediction = predictedAlt;
+        }
+        else if ( PredictionMode.hasSLLConflictTerminatingPrediction(mode, reach)) {
+            // MORE THAN ONE VIABLE ALTERNATIVE
+            D.configs.conflictingAlts = getConflictingAlts(reach);
+            D.requiresFullContext = true;
+            // in SLL-only mode, we will stop at this state and return the minimum alt
+            D.isAcceptState = true;
+            D.prediction = D.configs.conflictingAlts.nextSetBit(0);
+        }
+
+        if ( D.isAcceptState && D.configs.hasSemanticContext ) {
+            predicateDFAState(D, atn.getDecisionState(dfa.decision));
+            if (D.predicates != null) {
+                D.prediction = ATN.INVALID_ALT_NUMBER;
+            }
+        }
+
+        // all adds to dfa are done after we've created full D state
+        D = addDFAEdge(dfa, previousD, t, D);
+        return D;
+    }
+
+    public void predicateDFAState(DFAState dfaState, DecisionState decisionState)
     {
     }
 
-    public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    protected int execATNWithFullContext(DFA dfa, DFAState D, ATNConfigSet s0, TokenStream input,
+        int startIndex, ParserRuleContext outerContext)
+    {
+    }
+
+    public ATNConfigSet computeReachSet(ATNConfigSet closure, int t, bool fullCtx)
+    {
+    }
+
+    public ATNConfigSet removeAllConfigsNotInRuleStopState(ATNConfigSet configs, bool lookToEndOfRule)
+    {
+    }
+
+    public ATNConfigSet computeStartState(ATNState p, RuleContext ctx, bool fullCtx)
+    {
+    }
+
+    public ATNConfigSet applyPrecedenceFilter(ATNConfigSet configs)
+    {
+    }
+
+    public ATNState getReachableTarget(Transition trans, int ttype)
+    {
+    }
+
+    public SemanticContext[] getPredsForAmbigAlts(BitArray ambigAlts, ATNConfigSet configs,
+        int nalts)
+    {
+    }
+
+    public PredPrediction[] getPredicatePredictions(BitArray ambigAlts, SemanticContext[] altToPred)
+    {
+    }
+
+    public int getAltThatFinishedDecisionEntryRule(ATNConfigSet configs)
     {
     }
 

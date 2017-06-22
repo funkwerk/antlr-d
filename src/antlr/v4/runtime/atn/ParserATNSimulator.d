@@ -30,7 +30,9 @@
 
 module antlr.v4.runtime.atn.ParserATNSimulator;
 
+import std.bitmanip;
 import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATN;
@@ -283,6 +285,8 @@ class ParserATNSimulator : ATNSimulator
 
     public static bool debug_list_atn_decisions = false;
 
+    protected Parser parser;
+
     public PredictionMode mode = PredictionMode.LL;
 
     /**
@@ -296,8 +300,6 @@ class ParserATNSimulator : ATNSimulator
      * also be examined during cache lookup.
      */
     public DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
-
-    protected Parser parser;
 
     public DFA[] decisionToDFA;
 
@@ -493,10 +495,10 @@ class ParserATNSimulator : ATNSimulator
                 throw e;
             }
 
-            if ( D.requiresFullContext && mode != PredictionMode.SLL ) {
+            if (D.requiresFullContext && mode != PredictionMode.SLL) {
                 // IF PREDS, MIGHT RESOLVE TO SINGLE ALT => SLL (or syntax error)
-                BitSet conflictingAlts = D.configs.conflictingAlts;
-                if ( D.predicates!=null ) {
+                BitArray conflictingAlts = D.configs.conflictingAlts;
+                if (D.predicates != null) {
                     debug writeln("DFA state has preds in DFA sim LL failover");
                     int conflictIndex = input.index();
                     if (conflictIndex != startIndex) {
@@ -536,7 +538,7 @@ class ParserATNSimulator : ATNSimulator
 
                 int stopIndex = input.index();
                 input.seek(startIndex);
-                BitSet alts = evalSemanticContext(D.predicates, outerContext, true);
+                BitArray alts = evalSemanticContext(D.predicates, outerContext, true);
                 switch (alts.cardinality()) {
                 case 0:
                     throw noViableAlt(input, outerContext, D.configs, startIndex);
@@ -560,6 +562,14 @@ class ParserATNSimulator : ATNSimulator
             }
         }
 	
+    }
+
+    public DFAState getExistingTargetState(DFAState previousD, int t)
+    {
+    }
+
+    public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    {
     }
 
 }

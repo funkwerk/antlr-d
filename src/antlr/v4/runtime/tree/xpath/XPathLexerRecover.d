@@ -22,6 +22,7 @@ class XPathLexerRecover : XPathLexer
      */
     public override void recover(LexerNoViableAltException e)
     {
+        throw e;
     }
 
 }

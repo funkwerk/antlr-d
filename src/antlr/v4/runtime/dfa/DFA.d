@@ -32,8 +32,12 @@ module antlr.v4.runtime.dfa.DFA;
 
 import std.conv;
 import std.algorithm.sorting;
+import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.StarLoopEntryState;
 
@@ -131,23 +135,22 @@ class DFA
         return s0.edges[precedence];
     }
 
+    /**
+     * Sets whether this is a precedence DFA.
+     *
+     * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
+     * {@code false}
+     *
+     * @throws UnsupportedOperationException if {@code precedenceDfa} does not
+     * match the value of {@link #isPrecedenceDfa} for the current DFA.
+     *
+     * @deprecated This method no longer performs any action.
+     */
     public void setPrecedenceDfa(bool precedenceDfa)
     {
-	if (!isPrecedenceDfa()) {
-            throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");
+	if (precedenceDfa != isPrecedenceDfa()) {
+			throw new UnsupportedOperationException("The precedenceDfa field cannot change after a DFA is constructed.");
         }
-
-        if (precedence < 0) {
-            return;
-        }
-
-        // synchronization on s0 here is ok. when the DFA is turned into a
-        // precedence DFA, s0 will be initialized once and not updated again
-        // s0.edges is never null for a precedence DFA
-        if (precedence >= s0.edges.length) {
-            s0.edges = Arrays.copyOf(s0.edges, precedence + 1);
-        }
-        s0.edges[precedence] = startState;
     }
 
     public DFAState[] getStates()

@@ -62,7 +62,7 @@ class ATNConfigSet
      * I should also point out that this seems to include predicated alternatives
      * that have predicates that evaluate to false. Computed in computeTargetState().
      */
-    protected BitArray conflictingAlts;
+    public BitArray conflictingAlts;
 
     /**
      * @uml

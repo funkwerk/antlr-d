@@ -60,7 +60,7 @@ class LexerActionExecutor
      * Caches the result of {@link #hashCode} since the hash code is an element
      * of the performance-critical {@link LexerATNConfig#hashCode} operation.
      */
-    private int hashCode_;
+    private size_t hashCode_;
 
     /**
      * @uml
@@ -71,11 +71,11 @@ class LexerActionExecutor
     {
         this.lexerActions = lexerActions;
 
-        int hash = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         foreach (LexerAction lexerAction; lexerActions) {
             hash = MurmurHash.update(hash, lexerAction);
         }
-        this.hashCode_ = MurmurHash.finish(hash, to!int(lexerActions.length));
+        this.hashCode_ = MurmurHash.finish(hash, lexerActions.length);
     }
 
     /**
@@ -211,7 +211,7 @@ class LexerActionExecutor
      * @safe
      * @nothrow
      */
-    public int hashCode() @safe nothrow
+    public size_t hashCode() @safe nothrow
     {
 	return this.hashCode_;
     }

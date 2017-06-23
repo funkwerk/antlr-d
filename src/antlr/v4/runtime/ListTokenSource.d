@@ -6,6 +6,7 @@ import std.algorithm;
 import std.typecons;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.CommonTokenFactory;
@@ -145,13 +146,13 @@ class ListTokenSource : TokenSource
 
                 int stop = max(-1, start - 1);
                 TokenFactorySourcePair tfsp = tuple(this, getInputStream());
-                eofToken = _factory.create(tfsp, Token.EOF, "EOF", Token.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
+                eofToken = _factory.create(tfsp, TokenConstants.EOF, "EOF", TokenConstants.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
             }
             return eofToken;
         }
 
         Token t = tokens[i];
-        if (i == tokens.length - 1 && t.getType() == Token.EOF) {
+        if (i == tokens.length - 1 && t.getType() == TokenConstants.EOF) {
             eofToken = t;
         }
 

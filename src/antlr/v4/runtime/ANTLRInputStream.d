@@ -126,7 +126,7 @@ class ANTLRInputStream : CharStream
         }
         debug writefln("load %1$s in chunks of %2$s", size, readChunkSize);
         data = r.readText;
-        int p = data.length;
+        int p = to!int(data.length);
         // set the actual size of the data available;
         // EOF subtracted one above in p+=numRead; add one back
         n = p + 1;

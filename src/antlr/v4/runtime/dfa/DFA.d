@@ -37,6 +37,8 @@ import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.dfa.DFASerializer;
+import antlr.v4.runtime.dfa.LexerDFASerializer;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.StarLoopEntryState;

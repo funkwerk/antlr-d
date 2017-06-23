@@ -40,6 +40,7 @@ import std.container : DList;
 import std.variant;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.IllegalArgumentException;
@@ -189,7 +190,7 @@ class XPath
                 i++;
                 break;
 
-            case Token.EOF :
+            case TokenConstants.EOF :
                 break loop;
 
             default :
@@ -207,7 +208,7 @@ class XPath
      */
     public XPathElement getXPathElement(Token wordToken, bool anywhere)
     {
-	if (wordToken.getType() == Token.EOF) {
+	if (wordToken.getType() == TokenConstants.EOF) {
             throw new IllegalArgumentException("Missing path element at end of path");
         }
         string word = wordToken.getText();
@@ -220,7 +221,7 @@ class XPath
             new XPathWildcardElement();
         case XPathLexer.TOKEN_REF :
         case XPathLexer.STRING :
-            if (ttype == Token.INVALID_TYPE ) {
+            if (ttype == TokenConstants.INVALID_TYPE ) {
                 throw new IllegalArgumentException(word~
                                                    " at index "~
                                                    to!string(wordToken.getStartIndex) ~

@@ -88,6 +88,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
      * How to create token objects
      * @read
      * @write
+     * @override
      */
     public TokenFactory!CommonToken tokenFactory_;
 
@@ -531,12 +532,12 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         _input.consume();
     }
 
-    public final TokenFactory!CommonToken tokenFactory()
+    public final override TokenFactory!CommonToken tokenFactory()
     {
         return this.tokenFactory_;
     }
 
-    public final void tokenFactory(TokenFactory!CommonToken tokenFactory)
+    public final override void tokenFactory(TokenFactory!CommonToken tokenFactory)
     {
         this.tokenFactory_ = tokenFactory;
     }

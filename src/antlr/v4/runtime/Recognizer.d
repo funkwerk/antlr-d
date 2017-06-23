@@ -338,8 +338,8 @@ abstract class Recognizer(U, V)
 
     abstract public void setInputStream(IntStream input);
 
-    abstract public TokenFactory!CommonToken getTokenFactory();
+    abstract public TokenFactory!CommonToken tokenFactory();
 
-    abstract public void setTokenFactory(TokenFactory!CommonToken input);
+    abstract public void tokenFactory(TokenFactory!CommonToken input);
 
 }

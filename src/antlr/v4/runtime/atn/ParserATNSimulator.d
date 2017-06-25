@@ -30,7 +30,6 @@
 
 module antlr.v4.runtime.atn.ParserATNSimulator;
 
-import std.bitmanip;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
@@ -49,6 +48,7 @@ import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.misc.BitSet;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 
 // Class ParserATNSimulator
@@ -502,7 +502,7 @@ class ParserATNSimulator : ATNSimulator
 
             if (D.requiresFullContext && mode != PredictionMode.SLL) {
                 // IF PREDS, MIGHT RESOLVE TO SINGLE ALT => SLL (or syntax error)
-                BitArray conflictingAlts = D.configs.conflictingAlts;
+                BitSet conflictingAlts = D.configs.conflictingAlts;
                 if (D.predicates != null) {
                     debug writeln("DFA state has preds in DFA sim LL failover");
                     int conflictIndex = input.index();
@@ -543,7 +543,7 @@ class ParserATNSimulator : ATNSimulator
 
                 int stopIndex = input.index();
                 input.seek(startIndex);
-                BitArray alts = evalSemanticContext(D.predicates, outerContext, true);
+                BitSet alts = evalSemanticContext(D.predicates, outerContext, true);
                 switch (alts.cardinality()) {
                 case 0:
                     throw noViableAlt(input, outerContext, D.configs, startIndex);
@@ -615,7 +615,7 @@ class ParserATNSimulator : ATNSimulator
         int predictedAlt = getUniqueAlt(reach);
 
         debug {
-            BitArray[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
+            BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
             writefln("SLL altSubSets=" ~ altSubSets ~
                      ", configs=" ~reach ~
                      ", predict="+predictedAlt ~ ", allSubsetsConflict="+
@@ -679,12 +679,12 @@ class ParserATNSimulator : ATNSimulator
     {
     }
 
-    public SemanticContext[] getPredsForAmbigAlts(BitArray ambigAlts, ATNConfigSet configs,
+    public SemanticContext[] getPredsForAmbigAlts(BitSet ambigAlts, ATNConfigSet configs,
         int nalts)
     {
     }
 
-    public PredPrediction[] getPredicatePredictions(BitArray ambigAlts, SemanticContext[] altToPred)
+    public PredPrediction[] getPredicatePredictions(BitSet ambigAlts, SemanticContext[] altToPred)
     {
     }
 

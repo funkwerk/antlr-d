@@ -532,12 +532,12 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         _input.consume();
     }
 
-    public final override TokenFactory!CommonToken tokenFactory()
+    public override final TokenFactory!CommonToken tokenFactory()
     {
         return this.tokenFactory_;
     }
 
-    public final override void tokenFactory(TokenFactory!CommonToken tokenFactory)
+    public override final void tokenFactory(TokenFactory!CommonToken tokenFactory)
     {
         this.tokenFactory_ = tokenFactory;
     }

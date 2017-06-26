@@ -31,6 +31,7 @@
 
 module antlr.v4.runtime.atn.ParseInfo;
 
+import std.conv;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.atn.ProfilingATNSimulator;
@@ -193,7 +194,7 @@ class ParseInfo
     public int getDFASize(int decision)
     {
         DFA decisionToDFA = atnSimulator.decisionToDFA[decision];
-        return decisionToDFA.states.size();
+        return to!int(decisionToDFA.states.length);
     }
 
 }

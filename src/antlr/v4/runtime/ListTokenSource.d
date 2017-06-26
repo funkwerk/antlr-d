@@ -12,7 +12,7 @@ import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.CommonToken;
 
-alias TokenFactorySourcePair = Tuple!(TokenSource, "l", CharStream, "r");
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class ListTokenSource
 /**

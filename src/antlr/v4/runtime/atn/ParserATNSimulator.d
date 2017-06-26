@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.atn.ParserATNSimulator;
 
+import std.typecons;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
@@ -38,18 +39,25 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.dfa.PredPrediction;
 import antlr.v4.runtime.atn.PredictionMode;
+import antlr.v4.runtime.atn.PrecedencePredicateTransition;
+import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.misc.BitSet;
 import antlr.v4.runtime.misc.DoubleKeyMap;
+
+alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b");
 
 // Class ParserATNSimulator
 /**
@@ -292,6 +300,8 @@ class ParserATNSimulator : ATNSimulator
 
     protected Parser parser;
 
+    public DFA[] decisionToDFA;
+
     /**
      * SLL, LL, or LL + exact ambig detection?
      */
@@ -311,8 +321,6 @@ class ParserATNSimulator : ATNSimulator
 
     protected DFA _dfa;
 
-    public DFA[] decisionToDFA;
-
     protected TokenStream _input;
 
     protected int _startIndex;
@@ -323,9 +331,8 @@ class ParserATNSimulator : ATNSimulator
      * @uml
      * Testing only!
      */
-    public this(ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache)
+    protected this(ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache)
     {
-        this(null, atn, decisionToDFA, sharedContextCache);
     }
 
     public this(Parser parser, ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache)
@@ -462,7 +469,7 @@ class ParserATNSimulator : ATNSimulator
      *    conflict
      *    conflict + preds
      */
-    protected int execATN(DFA dfa, ATNState s0, TokenStream input, int startIndex, ParserRuleContext outerContext)
+    protected int execATN(DFA dfa, DFAState s0, TokenStream input, int startIndex, ParserRuleContext outerContext)
     {
 	debug {
             writefln("execATN decision %1$s"~
@@ -1052,7 +1059,7 @@ class ParserATNSimulator : ATNSimulator
     {
 	IntervalSet alts = new IntervalSet();
         foreach (ATNConfig c; configs) {
-            if ( c.getOuterContextDepth()>0 || (c.state instanceof RuleStopState && c.context.hasEmptyPath()) ) {
+            if ( c.getOuterContextDepth()>0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
         }
@@ -1111,7 +1118,7 @@ class ParserATNSimulator : ATNSimulator
     {
 	IntervalSet alts = new IntervalSet();
         foreach (ATNConfig c; configs) {
-            if ( c.getOuterContextDepth()>0 || (c.state instanceof RuleStopState && c.context.hasEmptyPath()) ) {
+            if ( c.getOuterContextDepth()>0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
         }
@@ -1126,6 +1133,85 @@ class ParserATNSimulator : ATNSimulator
 
     protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
         bool complete)
+    {
+    }
+
+    public void closure(ATNConfig config, ATNConfig[] closureBusy, bool collectPredicates,
+        bool fullCtx, bool treatEofAsEpsilon)
+    {
+    }
+
+    protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
+        bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
+    {
+    }
+
+    public string getRuleName(int index)
+    {
+    }
+
+    public ATNConfig getEpsilonTarget(ATNConfig config, Transition t, bool collectPredicates,
+        bool inContext, bool fullCtx, bool treatEofAsEpsilon)
+    {
+		switch (t.getSerializationType()) {
+		case Transition.RULE:
+			return ruleTransition(config, cast(RuleTransition)t);
+
+		case Transition.PRECEDENCE:
+			return precedenceTransition(config, cast(PrecedencePredicateTransition)t, collectPredicates, inContext, fullCtx);
+
+		case Transition.PREDICATE:
+			return predTransition(config, cast(PredicateTransition)t,
+								  collectPredicates,
+								  inContext,
+								  fullCtx);
+
+		case Transition.ACTION:
+			return actionTransition(config, cast(ActionTransition)t);
+
+		case Transition.EPSILON:
+			return new ATNConfig(config, t.target);
+
+		case Transition.ATOM:
+		case Transition.RANGE:
+		case Transition.SET:
+			// EOF transitions act like epsilon transitions after the first EOF
+			// transition is traversed
+			if (treatEofAsEpsilon) {
+				if (t.matches(TokenConstants.EOF, 0, 1)) {
+					return new ATNConfig(config, t.target);
+				}
+			}
+
+			return null;
+
+		default:
+			return null;
+		}
+
+    }
+
+    protected ATNConfig actionTransition(ATNConfig config, ActionTransition t)
+    {
+	debug writefln("ACTION edge %1$s:%2$s", t.ruleIndex, t.actionIndex);
+		return new ATNConfig(config, t.target);
+    }
+
+    public ATNConfig precedenceTransition(ATNConfig config, PrecedencePredicateTransition pt,
+        bool collectPredicates, bool inContext, bool fullCtx)
+    {
+    }
+
+    protected ATNConfig predTransition(ATNConfig config, PredicateTransition pt, bool collectPredicates,
+        bool inContext, bool fullCtx)
+    {
+    }
+
+    public ATNConfig ruleTransition(ATNConfig config, RuleTransition t)
+    {
+    }
+
+    protected BitSet getConflictingAlts(ATNConfigSet configs)
     {
     }
 

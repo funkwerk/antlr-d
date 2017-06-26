@@ -472,7 +472,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
         }
     }
 
-    public void notifyListeners(LexerNoViableAltException notifyListeners)
+    public void notifyListeners(LexerNoViableAltException e)
     {
         string text = _input.getText(Interval.of(_tokenStartCharIndex, _input.index()));
         string msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";

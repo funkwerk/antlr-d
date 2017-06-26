@@ -31,7 +31,6 @@
 
 module antlr.v4.runtime.ProxyErrorListener;
 
-import std.bitmanip;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -40,6 +39,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.misc.BitSet;
 
 // Class Template ProxyErrorListener
 /**
@@ -69,7 +69,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
         }
     }
 
-    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitArray ambigAlts,
+    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitSet ambigAlts,
         ATNConfigSet configs)
     {
 	foreach (listener; delegates) {
@@ -78,7 +78,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
     }
 
     public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
-        BitArray conflictingAlts, ATNConfigSet configs)
+        BitSet conflictingAlts, ATNConfigSet configs)
     {
 	foreach (listener; delegates) {
             listener.reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs);

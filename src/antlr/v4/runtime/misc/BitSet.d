@@ -53,9 +53,25 @@ struct BitSet
         return -1;
     }
 
-    public void set(int bitIndex)
+    public void set(int bitIndex, bool value)
     {
-        bitSet[bitIndex] = true;
+        if (bitSet.length <= bitIndex)
+            bitSet.length = bitIndex + 3; // dynamic array need more space
+        bitSet[bitIndex] = value;
+    }
+
+    /**
+     * @uml
+     * @nothrow
+     */
+    public bool get(int bitIndex) nothrow
+    in
+    {
+        assert(bitSet.length > bitIndex);
+    }
+    body
+    {
+        return bitSet[bitIndex];
     }
 
     public bool isEmpty()
@@ -101,8 +117,8 @@ unittest
     assert(bs.bitSet.dim == 1);
     assert(bs.cardinality == 0);
     assert(bs.isEmpty == true);
-    bs.set(2);
-    bs.set(7);
+    bs.set(2, true);
+    bs.set(7, true);
     assert(bs.cardinality == 2);
     assert(bs.isEmpty == false);
     assert(bs.nextSetBit(1) == 2);
@@ -120,4 +136,8 @@ unittest
     assert(bs.toHash == 387427050);
     assert(cs.toHash == 3534673149);
     assert(ds.toHash == 3534673149);
+    assert(bs.get(2) == true);
+    assert(bs.get(3) == false);
+    bs.set(19, true);
+    assert(bs.toString == "001000_01000000_00000100");
 }

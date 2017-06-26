@@ -292,6 +292,9 @@ class ParserATNSimulator : ATNSimulator
 
     protected Parser parser;
 
+    /**
+     * SLL, LL, or LL + exact ambig detection?
+     */
     public PredictionMode mode = PredictionMode.LL;
 
     /**
@@ -306,6 +309,8 @@ class ParserATNSimulator : ATNSimulator
      */
     public DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
 
+    protected DFA _dfa;
+
     public DFA[] decisionToDFA;
 
     protected TokenStream _input;
@@ -313,8 +318,6 @@ class ParserATNSimulator : ATNSimulator
     protected int _startIndex;
 
     protected ParserRuleContext _outerContext;
-
-    protected DFA _dfa;
 
     /**
      * @uml
@@ -652,43 +655,477 @@ class ParserATNSimulator : ATNSimulator
 
     public void predicateDFAState(DFAState dfaState, DecisionState decisionState)
     {
+	// We need to test all predicates, even in DFA states that
+        // uniquely predict alternative.
+        int nalts = decisionState.getNumberOfTransitions();
+        // Update DFA so reach becomes accept state with (predicate,alt)
+        // pairs if preds found for conflicting alts
+        BitSet altsToCollectPredsFrom = getConflictingAltsOrUniqueAlt(dfaState.configs);
+        SemanticContext[] altToPred = getPredsForAmbigAlts(altsToCollectPredsFrom, dfaState.configs, nalts);
+        if ( altToPred!=null ) {
+            dfaState.predicates = getPredicatePredictions(altsToCollectPredsFrom, altToPred);
+            dfaState.prediction = ATN.INVALID_ALT_NUMBER; // make sure we use preds
+        }
+        else {
+            // There are preds in configs but they might go away
+            // when OR'd together like {p}? || NONE == NONE. If neither
+            // alt has preds, resolve to min alt
+            dfaState.prediction = altsToCollectPredsFrom.nextSetBit(0);
+        }
     }
 
+    /**
+     * @uml
+     * comes back with reach.uniqueAlt set to a valid alt
+     */
     protected int execATNWithFullContext(DFA dfa, DFAState D, ATNConfigSet s0, TokenStream input,
-        int startIndex, ParserRuleContext outerContext)
+                                         int startIndex, ParserRuleContext outerContext)
     {
+	debug {
+            writefln("execATNWithFullContext %s", s0);
+        }
+        bool fullCtx = true;
+        bool foundExactAmbig = false;
+        ATNConfigSet reach = null;
+        ATNConfigSet previous = s0;
+        input.seek(startIndex);
+        int t = input.LA(1);
+        int predictedAlt;
+        while (true) { // while more work
+            //			System.out.println("LL REACH "+getLookaheadName(input)+
+            //							   " from configs.size="+previous.size()+
+            //							   " line "+input.LT(1).getLine()+":"+input.LT(1).getCharPositionInLine());
+            reach = computeReachSet(previous, t, fullCtx);
+            if (reach is null) {
+                // if any configs in previous dipped into outer context, that
+                // means that input up to t actually finished entry rule
+                // at least for LL decision. Full LL doesn't dip into outer
+                // so don't need special case.
+                // We will get an error no matter what so delay until after
+                // decision; better error message. Also, no reachable target
+                // ATN states in SLL implies LL will also get nowhere.
+                // If conflict in states that dip out, choose min since we
+                // will get error no matter what.
+                NoViableAltException e = noViableAlt(input, outerContext, previous, startIndex);
+                input.seek(startIndex);
+                int alt = getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previous, outerContext);
+                if ( alt!=ATN.INVALID_ALT_NUMBER ) {
+                    return alt;
+                }
+                throw e;
+            }
+
+            BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
+            debug {
+                writefln("LL altSubSets=%1$s, PredictionMode.getUniqueAlt(altSubSets)" ~
+                         ", resolvesToJustOneViableAlt=%3$s",
+                         altSubSets,
+                         PredictionMode.getUniqueAlt(altSubSets),
+                         PredictionMode.resolvesToJustOneViableAlt(altSubSets));
+            }
+
+            //			System.out.println("altSubSets: "+altSubSets);
+            //			System.err.println("reach="+reach+", "+reach.conflictingAlts);
+            reach.uniqueAlt = getUniqueAlt(reach);
+            // unique prediction?
+            if ( reach.uniqueAlt!=ATN.INVALID_ALT_NUMBER ) {
+                predictedAlt = reach.uniqueAlt;
+                break;
+            }
+            if ( mode != PredictionMode.LL_EXACT_AMBIG_DETECTION ) {
+                predictedAlt = PredictionMode.resolvesToJustOneViableAlt(altSubSets);
+                if ( predictedAlt != ATN.INVALID_ALT_NUMBER ) {
+                    break;
+                }
+            }
+            else {
+                // In exact ambiguity mode, we never try to terminate early.
+                // Just keeps scarfing until we know what the conflict is
+                if ( PredictionMode.allSubsetsConflict(altSubSets) &&
+                     PredictionMode.allSubsetsEqual(altSubSets) )
+                    {
+                        foundExactAmbig = true;
+                        predictedAlt = PredictionMode.getSingleViableAlt(altSubSets);
+                        break;
+                    }
+                // else there are multiple non-conflicting subsets or
+                // we're not sure what the ambiguity is yet.
+                // So, keep going.
+            }
+
+            previous = reach;
+            if (t != IntStream.EOF) {
+                input.consume();
+                t = input.LA(1);
+            }
+        }
+
+        // If the configuration set uniquely predicts an alternative,
+        // without conflict, then we know that it's a full LL decision
+        // not SLL.
+        if ( reach.uniqueAlt != ATN.INVALID_ALT_NUMBER ) {
+            reportContextSensitivity(dfa, predictedAlt, reach, startIndex, input.index());
+            return predictedAlt;
+        }
+
+        // We do not check predicates here because we have checked them
+        // on-the-fly when doing full context prediction.
+
+        /*
+          In non-exact ambiguity detection mode, we might	actually be able to
+          detect an exact ambiguity, but I'm not going to spend the cycles
+          needed to check. We only emit ambiguity warnings in exact ambiguity
+          mode.
+
+          For example, we might know that we have conflicting configurations.
+          But, that does not mean that there is no way forward without a
+          conflict. It's possible to have nonconflicting alt subsets as in:
+
+          LL altSubSets=[{1, 2}, {1, 2}, {1}, {1, 2}]
+
+          from
+
+          [(17,1,[5 $]), (13,1,[5 10 $]), (21,1,[5 10 $]), (11,1,[$]),
+          (13,2,[5 10 $]), (21,2,[5 10 $]), (11,2,[$])]
+
+          In this case, (17,1,[5 $]) indicates there is some next sequence that
+          would resolve this without conflict to alternative 1. Any other viable
+          next sequence, however, is associated with a conflict.  We stop
+          looking for input because no amount of further lookahead will alter
+          the fact that we should predict alternative 1.  We just can't say for
+          sure that there is an ambiguity without looking further.
+        */
+        reportAmbiguity(dfa, D, startIndex, input.index(), foundExactAmbig,
+                        reach.getAlts(), reach);
+
+        return predictedAlt;
     }
 
     public ATNConfigSet computeReachSet(ATNConfigSet closure, int t, bool fullCtx)
     {
+        debug writefln("in computeReachSet, starting closure: %s", closure);
+
+        if (mergeCache is null) {
+            mergeCache = new DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext);
+        }
+
+        ATNConfigSet intermediate = new ATNConfigSet(fullCtx);
+
+        /* Configurations already in a rule stop state indicate reaching the end
+         * of the decision rule (local context) or end of the start rule (full
+         * context). Once reached, these configurations are never updated by a
+         * closure operation, so they are handled separately for the performance
+         * advantage of having a smaller intermediate set when calling closure.
+         *
+         * For full-context reach operations, separate handling is required to
+         * ensure that the alternative matching the longest overall sequence is
+         * chosen when multiple such configurations can match the input.
+         */
+        ATNConfig[] skippedStopStates;
+
+        // First figure out where we can reach on input t
+        foreach (c; closure) {
+            debug writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
+
+            if (typeid(c.state) == typeid(RuleStopState)) {
+                assert (!c.context.isEmpty);
+                if (fullCtx || t == IntStream.EOF) {
+                    if (skippedStopStates is null) {
+                        skippedStopStates.length = 0;
+                    }
+
+                    skippedStopStates ~= c;
+                }
+
+                continue;
+            }
+
+            int n = c.state.getNumberOfTransitions();
+            for (int ti=0; ti<n; ti++) {               // for each transition
+                Transition trans = c.state.transition(ti);
+                ATNState target = getReachableTarget(trans, t);
+                if (target !is null ) {
+                    intermediate.add(new ATNConfig(c, target), mergeCache);
+                }
+            }
+        }
+
+        // Now figure out where the reach operation can take us...
+
+        ATNConfigSet reach = null;
+
+        /* This block optimizes the reach operation for intermediate sets which
+         * trivially indicate a termination state for the overall
+         * adaptivePredict operation.
+         *
+         * The conditions assume that intermediate
+         * contains all configurations relevant to the reach set, but this
+         * condition is not true when one or more configurations have been
+         * withheld in skippedStopStates, or when the current symbol is EOF.
+         */
+        if (skippedStopStates is null && t != TokenConstants.EOF) {
+            if (intermediate.size() == 1 ) {
+                // Don't pursue the closure if there is just one state.
+                // It can only have one alternative; just add to result
+                // Also don't pursue the closure if there is unique alternative
+                // among the configurations.
+                reach = intermediate;
+            }
+            else if ( getUniqueAlt(intermediate)!=ATN.INVALID_ALT_NUMBER ) {
+                // Also don't pursue the closure if there is unique alternative
+                // among the configurations.
+                reach = intermediate;
+            }
+        }
+
+        /* If the reach set could not be trivially determined, perform a closure
+         * operation on the intermediate set to compute its initial value.
+         */
+        if (reach is null) {
+            reach = new ATNConfigSet(fullCtx);
+            ATNConfig[] closureBusy;
+            bool treatEofAsEpsilon = t == TokenConstants.EOF;
+            foreach (c; intermediate) {
+                closure(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
+            }
+        }
+
+        if (t == IntStream.EOF) {
+            /* After consuming EOF no additional input is possible, so we are
+             * only interested in configurations which reached the end of the
+             * decision rule (local context) or end of the start rule (full
+             * context). Update reach to contain only these configurations. This
+             * handles both explicit EOF transitions in the grammar and implicit
+             * EOF transitions following the end of the decision or start rule.
+             *
+             * When reach==intermediate, no closure operation was performed. In
+             * this case, removeAllConfigsNotInRuleStopState needs to check for
+             * reachable rule stop states as well as configurations already in
+             * a rule stop state.
+             *
+             * This is handled before the configurations in skippedStopStates,
+             * because any configurations potentially added from that list are
+             * already guaranteed to meet this condition whether or not it's
+             * required.
+             */
+            reach = removeAllConfigsNotInRuleStopState(reach, reach == intermediate);
+        }
+
+        /* If skippedStopStates is not null, then it contains at least one
+         * configuration. For full-context reach operations, these
+         * configurations reached the end of the start rule, in which case we
+         * only add them back to reach if no configuration during the current
+         * closure operation reached such a state. This ensures adaptivePredict
+         * chooses an alternative matching the longest overall sequence when
+         * multiple alternatives are viable.
+         */
+        if (skippedStopStates !is null && (!fullCtx || !PredictionMode.hasConfigInRuleStopState(reach))) {
+            assert(skippedStopStates.isEmpty);
+            foreach (c; skippedStopStates) {
+                reach.add(c, mergeCache);
+            }
+        }
+
+        if ( reach.isEmpty() ) return null;
+        return reach;
     }
 
-    public ATNConfigSet removeAllConfigsNotInRuleStopState(ATNConfigSet configs, bool lookToEndOfRule)
+    protected ATNConfigSet removeAllConfigsNotInRuleStopState(ATNConfigSet configs, bool lookToEndOfRule)
     {
     }
 
     public ATNConfigSet computeStartState(ATNState p, RuleContext ctx, bool fullCtx)
     {
+        // always at least the implicit call to start rule
+        PredictionContext initialContext = PredictionContext.fromRuleContext(atn, ctx);
+        ATNConfigSet configs = new ATNConfigSet(fullCtx);
+
+        for (int i=0; i<p.getNumberOfTransitions(); i++) {
+            ATNState target = p.transition(i).target;
+            ATNConfig c = new ATNConfig(target, i+1, initialContext);
+            ATNConfig[] closureBusy;
+            closure(c, configs, closureBusy, true, fullCtx, false);
+        }
+
+        return configs;
     }
 
     public ATNConfigSet applyPrecedenceFilter(ATNConfigSet configs)
     {
+	Map<Integer, PredictionContext> statesFromAlt1;
+        ATNConfigSet configSet = new ATNConfigSet(configs.fullCtx);
+        foreach (config; configs) {
+            // handle alt 1 first
+            if (config.alt != 1) {
+                continue;
+            }
+
+            SemanticContext updatedContext = config.semanticContext.evalPrecedence(parser, _outerContext);
+            if (updatedContext == null) {
+                // the configuration was eliminated
+                continue;
+            }
+
+            statesFromAlt1.put(config.state.stateNumber, config.context);
+            if (updatedContext != config.semanticContext) {
+                configSet ~= new ATNConfig(config, updatedContext), mergeCache;
+            }
+            else {
+                configSet.add(config, mergeCache);
+            }
+        }
+
+        foreach (config; configs) {
+            if (config.alt == 1) {
+                // already handled
+                continue;
+            }
+
+            if (!config.isPrecedenceFilterSuppressed()) {
+                /* In the future, this elimination step could be updated to also
+                 * filter the prediction context for alternatives predicting alt>1
+                 * (basically a graph subtraction algorithm).
+                 */
+                PredictionContext context = statesFromAlt1.get(config.state.stateNumber);
+                if (context !is null && context.equals(config.context)) {
+                    // eliminated
+                    continue;
+                }
+            }
+
+            configSet.add(config, mergeCache);
+        }
+
+        return configSet;
+
     }
 
     public ATNState getReachableTarget(Transition trans, int ttype)
     {
+	if (trans.matches(ttype, 0, atn.maxTokenType)) {
+            return trans.target;
+        }
+        return null;
     }
 
     public SemanticContext[] getPredsForAmbigAlts(BitSet ambigAlts, ATNConfigSet configs,
-        int nalts)
+                                                  int nalts)
+    {
+        // REACH=[1|1|[]|0:0, 1|2|[]|0:1]
+        /* altToPred starts as an array of all null contexts. The entry at index i
+         * corresponds to alternative i. altToPred[i] may have one of three values:
+         *   1. null: no ATNConfig c is found such that c.alt==i
+         *   2. SemanticContext.NONE: At least one ATNConfig c exists such that
+         *      c.alt==i and c.semanticContext==SemanticContext.NONE. In other words,
+         *      alt i has at least one unpredicated config.
+         *   3. Non-NONE Semantic Context: There exists at least one, and for all
+         *      ATNConfig c such that c.alt==i, c.semanticContext!=SemanticContext.NONE.
+         *
+         * From this, it is clear that NONE||anything==NONE.
+         */
+        SemanticContext[] altToPred = new SemanticContext[nalts + 1];
+        foreach (ATNConfig c; configs) {
+            if ( ambigAlts.get(c.alt) ) {
+                altToPred[c.alt] = SemanticContext.or(altToPred[c.alt], c.semanticContext);
+            }
+        }
+
+        int nPredAlts = 0;
+        for (int i = 1; i <= nalts; i++) {
+            if (altToPred[i] == null) {
+                altToPred[i] = SemanticContext.NONE;
+            }
+            else if (altToPred[i] != SemanticContext.NONE) {
+                nPredAlts++;
+            }
+        }
+        if (nPredAlts == 0) altToPred = null;
+        debug writefln("getPredsForAmbigAlts result %s", to!string(altToPred));
+        return altToPred;
+    }
+
+    protected PredPrediction[] getPredicatePredictions(BitSet ambigAlts, SemanticContext[] altToPred)
     {
     }
 
-    public PredPrediction[] getPredicatePredictions(BitSet ambigAlts, SemanticContext[] altToPred)
+    protected int getAltThatFinishedDecisionEntryRule(ATNConfigSet configs)
+    {
+	IntervalSet alts = new IntervalSet();
+        foreach (ATNConfig c; configs) {
+            if ( c.getOuterContextDepth()>0 || (c.state instanceof RuleStopState && c.context.hasEmptyPath()) ) {
+                alts.add(c.alt);
+            }
+        }
+        if ( alts.size()==0 ) return ATN.INVALID_ALT_NUMBER;
+        return alts.getMinElement();
+    }
+
+    /**
+     * This method is used to improve the localization of error messages by
+     * choosing an alternative rather than throwing a
+     * {@link NoViableAltException} in particular prediction scenarios where the
+     * {@link #ERROR} state was reached during ATN simulation.
+     *
+     * <p>
+     * The default implementation of this method uses the following
+     * algorithm to identify an ATN configuration which successfully parsed the
+     * decision entry rule. Choosing such an alternative ensures that the
+     * {@link ParserRuleContext} returned by the calling rule will be complete
+     * and valid, and the syntax error will be reported later at a more
+     * localized location.</p>
+     *
+     * <ul>
+     * <li>If a syntactically valid path or paths reach the end of the decision rule and
+     * they are semantically valid if predicated, return the min associated alt.</li>
+     * <li>Else, if a semantically invalid but syntactically valid path exist
+     * or paths exist, return the minimum associated alt.
+     * </li>
+     * <li>Otherwise, return {@link ATN#INVALID_ALT_NUMBER}.</li>
+     * </ul>
+     *
+     * <p>
+     * In some scenarios, the algorithm described above could predict an
+     * alternative which will result in a {@link FailedPredicateException} in
+     * the parser. Specifically, this could occur if the <em>only</em> configuration
+     * capable of successfully parsing to the end of the decision rule is
+     * blocked by a semantic predicate. By choosing this alternative within
+     * {@link #adaptivePredict} instead of throwing a
+     * {@link NoViableAltException}, the resulting
+     * {@link FailedPredicateException} in the parser will identify the specific
+     * predicate which is preventing the parser from successfully parsing the
+     * decision rule, which helps developers identify and correct logic errors
+     * in semantic predicates.
+     * </p>
+     *
+     * @param configs The ATN configurations which were valid immediately before
+     * the {@link #ERROR} state was reached
+     * @param outerContext The is the \gamma_0 initial parser context from the paper
+     * or the parser stack at the instant before prediction commences.
+     *
+     * @return The value to return from {@link #adaptivePredict}, or
+     * {@link ATN#INVALID_ALT_NUMBER} if a suitable alternative was not
+     * identified and {@link #adaptivePredict} should report an error instead.
+     */
+    protected int getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(ATNConfigSet configs,
+                                                                          ParserRuleContext outerContext)
+    {
+	IntervalSet alts = new IntervalSet();
+        foreach (ATNConfig c; configs) {
+            if ( c.getOuterContextDepth()>0 || (c.state instanceof RuleStopState && c.context.hasEmptyPath()) ) {
+                alts.add(c.alt);
+            }
+        }
+        if ( alts.size()==0 ) return ATN.INVALID_ALT_NUMBER;
+        return alts.getMinElement();
+    }
+
+    protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
+        ParserRuleContext outerContext)
     {
     }
 
-    public int getAltThatFinishedDecisionEntryRule(ATNConfigSet configs)
+    protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
+        bool complete)
     {
     }
 

@@ -30,13 +30,13 @@
 
 module antlr.v4.runtime.ANTLRErrorListener;
 
-import std.bitmanip;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.misc.BitSet;
 
 // Interface Template ANTLRErrorListener
 /**
@@ -123,7 +123,7 @@ interface ANTLRErrorListener(U, V)
      * identified
      */
     public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
-                                bool exact, BitArray ambigAlts, ATNConfigSet configs);
+                                bool exact, BitSet ambigAlts, ATNConfigSet configs);
 
     /**
      * This method is called when an SLL conflict occurs and the parser is about
@@ -149,7 +149,7 @@ interface ANTLRErrorListener(U, V)
      * detected
      */
     public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
-                                            BitArray conflictingAlts, ATNConfigSet configs);
+                                            BitSet conflictingAlts, ATNConfigSet configs);
 
     /**
      * This method is called by the parser when a full-context prediction has a

@@ -12,6 +12,7 @@ import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.misc.DoubleKeyMap;
+import antlr.v4.runtime.misc.BitSet;
 
 // Class ATNConfigSet
 /**
@@ -62,7 +63,7 @@ class ATNConfigSet
      * I should also point out that this seems to include predicated alternatives
      * that have predicates that evaluate to false. Computed in computeTargetState().
      */
-    public BitArray conflictingAlts;
+    public BitSet conflictingAlts;
 
     /**
      * @uml
@@ -180,12 +181,10 @@ class ATNConfigSet
      *
      *  @return the set of represented alternatives in this configuration set
      */
-    public BitArray getAlts()
+    public BitSet getAlts()
     {
-        BitArray alts;
+        BitSet alts;
         foreach (ATNConfig config; configs) {
-            if (alts.length <= config.alt)
-                alts.length = config.alt + 20;
             alts.opIndexAssign(true, config.alt);
         }
         return alts;

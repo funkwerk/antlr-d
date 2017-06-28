@@ -36,6 +36,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
@@ -1377,6 +1378,44 @@ class ParserATNSimulator : ATNSimulator
     {
         BitSet[] altsets = PredictionMode.getConflictingAltSubsets(configs);
         return PredictionMode.getAlts(altsets);
+    }
+
+    public BitSet getConflictingAltsOrUniqueAlt(ATNConfigSet configs)
+    {
+    }
+
+    public string getTokenName(int t)
+    {
+    }
+
+    public string getLookaheadName(TokenStream input)
+    {
+    }
+
+    public void dumpDeadEndConfigs(NoViableAltException nvae)
+    {
+    }
+
+    protected NoViableAltException noViableAlt(TokenStream input, ParserRuleContext outerContext,
+        ATNConfigSet configs, int startIndex)
+    {
+    }
+
+    protected static int getUniqueAlt(ATNConfigSet configs)
+    {
+    }
+
+    protected DFAState addDFAEdge(DFA dfa, DFAState from, int t, DFAState to)
+    {
+    }
+
+    protected DFAState addDFAState(DFA dfa, DFAState D)
+    {
+    }
+
+    protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,
+        int startIndex, int stopIndex)
+    {
     }
 
 }

@@ -333,6 +333,7 @@ class ParserATNSimulator : ATNSimulator
      */
     protected this(ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache)
     {
+        this(null, atn, decisionToDFA, sharedContextCache);
     }
 
     public this(Parser parser, ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache)
@@ -1127,92 +1128,255 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
-        ParserRuleContext outerContext)
+                                                                            ParserRuleContext outerContext)
     {
+        BitSet predictions = new BitSet();
+        foreach (pair; predPredictions) {
+            if (pair.pred == SemanticContext.NONE ) {
+                predictions.set(pair.alt);
+                if (!complete) {
+                    break;
+                }
+                continue;
+            }
+
+            bool fullCtx = false; // in dfa
+            bool predicateEvaluationResult = evalSemanticContext(pair.pred, outerContext, pair.alt, fullCtx);
+            debug(dfa_debug)  {
+                writefln("eval pred %1$s=%2$s", pair, predicateEvaluationResult);
+            }
+
+            if ( predicateEvaluationResult ) {
+                debug(dfa_debug) writefln("PREDICT %s", pair.alt);
+                predictions.set(pair.alt);
+                if (!complete) {
+                    break;
+                }
+            }
+        }
+        return predictions;
     }
 
+    /**
+     *  pairs that win. A {@code NONE} predicate indicates an alt containing an
+     *  unpredicated config which behaves as "always true." If !complete
+     *  then we stop at the first predicate that evaluates to true. This
+     *  includes pairs with null predicates.
+     */
     protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
-        bool complete)
+                                                bool complete)
     {
+	BitSet predictions = new BitSet();
+        foreach (pair; predPredictions) {
+            if (pair.pred == SemanticContext.NONE ) {
+                predictions.set(pair.alt);
+                if (!complete) {
+                    break;
+                }
+                continue;
+            }
+
+            bool fullCtx = false; // in dfa
+            bool predicateEvaluationResult = evalSemanticContext(pair.pred, outerContext, pair.alt, fullCtx);
+            debug(dfa_debug) {
+                writefln("eval pred %1$s=%2$s", pair, predicateEvaluationResult);
+            }
+
+            if ( predicateEvaluationResult ) {
+                debug(dfa_debug) writefln("PREDICT ", pair.alt);
+                predictions.set(pair.alt);
+                if (!complete) {
+                    break;
+                }
+            }
+        }
+
+        return predictions;
+    }
+
+    public bool evalSemanticContext(SemanticContext pred, int parserCallStack, bool fullCtx)
+    {
+	return pred.eval(parser, parserCallStack);
     }
 
     public void closure(ATNConfig config, ATNConfig[] closureBusy, bool collectPredicates,
-        bool fullCtx, bool treatEofAsEpsilon)
+                        bool fullCtx, bool treatEofAsEpsilon)
     {
+        int initialDepth = 0;
+        closureCheckingStopState(config, configs, closureBusy, collectPredicates,
+                                 fullCtx,
+                                 initialDepth, treatEofAsEpsilon);
+        assert (!fullCtx || !configs.dipsIntoOuterContext);
     }
 
     protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
-        bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
+                                            bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
     }
 
     public string getRuleName(int index)
     {
+        if (parser !is null && index>=0 ) return parser.getRuleNames()[index];
+        return format("<rule %s>",index);
     }
 
     public ATNConfig getEpsilonTarget(ATNConfig config, Transition t, bool collectPredicates,
-        bool inContext, bool fullCtx, bool treatEofAsEpsilon)
+                                      bool inContext, bool fullCtx, bool treatEofAsEpsilon)
     {
-		switch (t.getSerializationType()) {
-		case Transition.RULE:
-			return ruleTransition(config, cast(RuleTransition)t);
+        switch (t.getSerializationType()) {
+        case Transition.RULE:
+            return ruleTransition(config, cast(RuleTransition)t);
 
-		case Transition.PRECEDENCE:
-			return precedenceTransition(config, cast(PrecedencePredicateTransition)t, collectPredicates, inContext, fullCtx);
+        case Transition.PRECEDENCE:
+            return precedenceTransition(config, cast(PrecedencePredicateTransition)t, collectPredicates, inContext, fullCtx);
 
-		case Transition.PREDICATE:
-			return predTransition(config, cast(PredicateTransition)t,
-								  collectPredicates,
-								  inContext,
-								  fullCtx);
+        case Transition.PREDICATE:
+            return predTransition(config, cast(PredicateTransition)t,
+                                  collectPredicates,
+                                  inContext,
+                                  fullCtx);
 
-		case Transition.ACTION:
-			return actionTransition(config, cast(ActionTransition)t);
+        case Transition.ACTION:
+            return actionTransition(config, cast(ActionTransition)t);
 
-		case Transition.EPSILON:
-			return new ATNConfig(config, t.target);
+        case Transition.EPSILON:
+            return new ATNConfig(config, t.target);
 
-		case Transition.ATOM:
-		case Transition.RANGE:
-		case Transition.SET:
-			// EOF transitions act like epsilon transitions after the first EOF
-			// transition is traversed
-			if (treatEofAsEpsilon) {
-				if (t.matches(TokenConstants.EOF, 0, 1)) {
-					return new ATNConfig(config, t.target);
-				}
-			}
+        case Transition.ATOM:
+        case Transition.RANGE:
+        case Transition.SET:
+            // EOF transitions act like epsilon transitions after the first EOF
+            // transition is traversed
+            if (treatEofAsEpsilon) {
+                if (t.matches(TokenConstants.EOF, 0, 1)) {
+                    return new ATNConfig(config, t.target);
+                }
+            }
 
-			return null;
+            return null;
 
-		default:
-			return null;
-		}
+        default:
+            return null;
+        }
 
     }
 
     protected ATNConfig actionTransition(ATNConfig config, ActionTransition t)
     {
-	debug writefln("ACTION edge %1$s:%2$s", t.ruleIndex, t.actionIndex);
-		return new ATNConfig(config, t.target);
+        debug writefln("ACTION edge %1$s:%2$s", t.ruleIndex, t.actionIndex);
+        return new ATNConfig(config, t.target);
     }
 
     public ATNConfig precedenceTransition(ATNConfig config, PrecedencePredicateTransition pt,
-        bool collectPredicates, bool inContext, bool fullCtx)
+                                          bool collectPredicates, bool inContext, bool fullCtx)
     {
+        debug {
+            writefln("PRED (collectPredicates=%1$s"+collectPredicates+") %2$s" ~
+                     ">=_p, ctx dependent=true", collectPredicate,  pt.precedence);
+            if ( parser !is null ) {
+                writefln("context surrounding pred is ",
+                         parser.getRuleInvocationStack());
+            }
+        }
+
+        ATNConfig c = null;
+        if (collectPredicates && inContext) {
+            if ( fullCtx ) {
+                // In full context mode, we can evaluate predicates on-the-fly
+                // during closure, which dramatically reduces the size of
+                // the config sets. It also obviates the need to test predicates
+                // later during conflict resolution.
+                int currentPosition = _input.index();
+                _input.seek(_startIndex);
+                boolean predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
+                _input.seek(currentPosition);
+                if ( predSucceeds ) {
+                    c = new ATNConfig(config, pt.target); // no pred context
+                }
+            }
+            else {
+                SemanticContext newSemCtx =
+                    SemanticContext.and(config.semanticContext, pt.getPredicate());
+                c = new ATNConfig(config, pt.target, newSemCtx);
+            }
+        }
+        else {
+            c = new ATNConfig(config, pt.target);
+        }
+
+        debug writefln("config from pred transition=%s", c);
+        return c;
+
     }
 
     protected ATNConfig predTransition(ATNConfig config, PredicateTransition pt, bool collectPredicates,
-        bool inContext, bool fullCtx)
+                                       bool inContext, bool fullCtx)
     {
+        debug {
+            writefln("PRED (collectPredicates=%1$s) %2$s:%3$s, ctx dependent=%4$s",
+                     collectPredicates, pt.ruleIndex,
+                     pt.predIndex, pt.isCtxDependent);
+            if ( parser !is null ) {
+                writefln("context surrounding pred is %s",
+                         parser.getRuleInvocationStack());
+            }
+        }
+
+        ATNConfig c = null;
+        if ( collectPredicates &&
+             (!pt.isCtxDependent || (pt.isCtxDependent&&inContext)) )
+            {
+                if ( fullCtx ) {
+                    // In full context mode, we can evaluate predicates on-the-fly
+                    // during closure, which dramatically reduces the size of
+                    // the config sets. It also obviates the need to test predicates
+                    // later during conflict resolution.
+                    int currentPosition = _input.index();
+                    _input.seek(_startIndex);
+                    boolean predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
+                    _input.seek(currentPosition);
+                    if ( predSucceeds ) {
+                        c = new ATNConfig(config, pt.target); // no pred context
+                    }
+                }
+                else {
+                    SemanticContext newSemCtx =
+                        SemanticContext.and(config.semanticContext, pt.getPredicate());
+                    c = new ATNConfig(config, pt.target, newSemCtx);
+                }
+            }
+        else {
+            c = new ATNConfig(config, pt.target);
+        }
+
+        debug writefln("config from pred transition=",c);
+        return c;
     }
 
     public ATNConfig ruleTransition(ATNConfig config, RuleTransition t)
     {
+        debug {
+            writefln("CALL rule %1$s, ctx=%2$s", getRuleName(t.target.ruleIndex)+config.context);
+        }
+        ATNState returnState = t.followState;
+        PredictionContext newContext =
+            SingletonPredictionContext.create(config.context, returnState.stateNumber);
+        return new ATNConfig(config, t.target, newContext);
     }
 
+    /**
+     * Gets a {@link BitSet} containing the alternatives in {@code configs}
+     * which are part of one or more conflicting alternative subsets.
+     *
+     * @param configs The {@link ATNConfigSet} to analyze.
+     * @return The alternatives in {@code configs} which are part of one or more
+     * conflicting alternative subsets. If {@code configs} does not contain any
+     * conflicting subsets, this method returns an empty {@link BitSet}.
+     */
     protected BitSet getConflictingAlts(ATNConfigSet configs)
     {
+        BitSet[] altsets = PredictionMode.getConflictingAltSubsets(configs);
+        return PredictionMode.getAlts(altsets);
     }
 
 }

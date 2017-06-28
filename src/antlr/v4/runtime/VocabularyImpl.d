@@ -36,6 +36,7 @@ import std.ascii;
 import std.algorithm.comparison;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 
 // Class VocabularyImpl
 /**
@@ -165,7 +166,7 @@ class VocabularyImpl : Vocabulary
             return symbolicNames[tokenType];
         }
 
-        if (tokenType == Token.EOF) {
+        if (tokenType == TokenConstants.EOF) {
             return "EOF";
         }
 

@@ -48,6 +48,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.xpath.XPathElement;
+import antlr.v4.runtime.tree.xpath.XPathLexerErrorListener;
 import antlr.v4.runtime.tree.xpath.XPathLexer;
 import antlr.v4.runtime.tree.xpath.XPathLexerRecover;
 import antlr.v4.runtime.tree.xpath.XPathWildcardAnywhereElement;

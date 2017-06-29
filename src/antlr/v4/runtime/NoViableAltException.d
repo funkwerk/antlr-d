@@ -1,6 +1,6 @@
 module antlr.v4.runtime.NoViableAltException;
 
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
@@ -12,7 +12,7 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 /**
  * TODO add class description
  */
-class NoViableAltException : Recognizer!(Token, ParserATNSimulator)
+class NoViableAltException : RecognitionException!(Token, ParserATNSimulator)
 {
 
     private ATNConfigSet deadEndConfigs;
@@ -26,7 +26,7 @@ class NoViableAltException : Recognizer!(Token, ParserATNSimulator)
              recognizer.getCurrentToken(),
              recognizer.getCurrentToken(),
              null,
-             recognizer._ctx);
+             recognizer.ctx_);
     }
 
     public this(Parser recognizer, TokenStream input, Token startToken, Token offendingToken,

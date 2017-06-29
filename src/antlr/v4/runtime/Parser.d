@@ -373,10 +373,10 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      */
     protected void triggerEnterRuleEvent()
     {
-        foreach (ParseTreeListener listener; _parseListeners) {
-			listener.enterEveryRule(ctx_);
-			ctx_.enterRule(listener);
-		}
+        foreach (listener; _parseListeners) {
+            listener.enterEveryRule(ctx_);
+            ctx_.enterRule(listener);
+        }
     }
 
     /**

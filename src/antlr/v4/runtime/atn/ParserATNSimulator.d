@@ -36,6 +36,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
@@ -57,6 +58,7 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.misc.BitSet;
 import antlr.v4.runtime.misc.DoubleKeyMap;
+import antlr.v4.runtime.misc.IntervalSet;
 
 alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b");
 
@@ -961,7 +963,7 @@ class ParserATNSimulator : ATNSimulator
 
     public ATNConfigSet applyPrecedenceFilter(ATNConfigSet configs)
     {
-	Map<Integer, PredictionContext> statesFromAlt1;
+	PredictionContext[int] statesFromAlt1;
         ATNConfigSet configSet = new ATNConfigSet(configs.fullCtx);
         foreach (config; configs) {
             // handle alt 1 first
@@ -1041,7 +1043,7 @@ class ParserATNSimulator : ATNSimulator
 
         int nPredAlts = 0;
         for (int i = 1; i <= nalts; i++) {
-            if (altToPred[i] == null) {
+            if (altToPred[i] is null) {
                 altToPred[i] = SemanticContext.NONE;
             }
             else if (altToPred[i] != SemanticContext.NONE) {
@@ -1055,13 +1057,34 @@ class ParserATNSimulator : ATNSimulator
 
     protected PredPrediction[] getPredicatePredictions(BitSet ambigAlts, SemanticContext[] altToPred)
     {
+	PredPrediction[] pairs;
+        bool containsPredicate = false;
+        for (int i = 1; i < altToPred.length; i++) {
+            SemanticContext pred = altToPred[i];
+
+            // unpredicated is indicated by SemanticContext.NONE
+            assert(pred !is null);
+
+            if (ambigAlts !is null && ambigAlts[i]) {
+                pairs ~= new PredPrediction(pred, i);
+            }
+            if ( pred!=SemanticContext.NONE ) containsPredicate = true;
+        }
+
+        if ( !containsPredicate ) {
+            return null;
+        }
+
+        //		System.out.println(Arrays.toString(altToPred)+"->"+pairs);
+        return pairs(new PredPrediction[pairs.length]);
+
     }
 
     protected int getAltThatFinishedDecisionEntryRule(ATNConfigSet configs)
     {
 	IntervalSet alts = new IntervalSet();
         foreach (ATNConfig c; configs) {
-            if ( c.getOuterContextDepth()>0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
+            if ( c.getOuterContextDepth() > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
         }
@@ -1165,7 +1188,7 @@ class ParserATNSimulator : ATNSimulator
      *  includes pairs with null predicates.
      */
     protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
-                                                bool complete)
+                                         bool complete)
     {
 	BitSet predictions = new BitSet();
         foreach (pair; predPredictions) {
@@ -1397,7 +1420,7 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected NoViableAltException noViableAlt(TokenStream input, ParserRuleContext outerContext,
-        ATNConfigSet configs, int startIndex)
+                                               ATNConfigSet configs, int startIndex)
     {
     }
 
@@ -1414,8 +1437,33 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,
+                                               int startIndex, int stopIndex)
+    {
+    }
+
+    protected void reportContextSensitivity(DFA dfa, int prediction, ATNConfigSet configs,
         int startIndex, int stopIndex)
     {
+    }
+
+    protected void reportAmbiguity(DFA dfa, DFAState D, int startIndex, int stopIndex, bool exact,
+        BitSet ambigAlts, ATNConfigSet configs)
+    {
+    }
+
+    public void setPredictionMode(PredictionMode mode)
+    {
+	this.mode = mode;
+    }
+
+    public PredictionMode getPredictionMode()
+    {
+	return mode;
+    }
+
+    public Parser getParser()
+    {
+	return parser;
     }
 
 }

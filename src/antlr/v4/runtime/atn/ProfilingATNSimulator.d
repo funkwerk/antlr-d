@@ -32,6 +32,7 @@ module antlr.v4.runtime.atn.ProfilingATNSimulator;
 
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
+import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
@@ -81,7 +82,7 @@ class ProfilingATNSimulator : ParserATNSimulator
             long stop = System.nanoTime();
             decisions[decision].timeInPrediction += (stop-start);
             decisions[decision].invocations++;
-            
+
             int SLL_k = _sllStopIndex - _startIndex + 1;
             decisions[decision].SLL_TotalLook += SLL_k;
             decisions[decision].SLL_MinLook = decisions[decision].SLL_MinLook==0 ? SLL_k : Math.min(decisions[decision].SLL_MinLook, SLL_k);
@@ -90,7 +91,7 @@ class ProfilingATNSimulator : ParserATNSimulator
                 decisions[decision].SLL_MaxLookEvent =
                     new LookaheadEventInfo(decision, null, alt, input, _startIndex, _sllStopIndex, false);
             }
-            
+
             if (_llStopIndex >= 0) {
                 int LL_k = _llStopIndex - _startIndex + 1;
                 decisions[decision].LL_TotalLook += LL_k;
@@ -101,13 +102,38 @@ class ProfilingATNSimulator : ParserATNSimulator
                         new LookaheadEventInfo(decision, null, alt, input, _startIndex, _llStopIndex, true);
                 }
             }
-            
+
             return alt;
         }
         finally {
             this.currentDecision = -1;
         }
-        
+
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override DFAState getExistingTargetState(DFAState previousD, int t)
+    {
+	// this method is called after each time the input position advances
+        // during SLL prediction
+        _sllStopIndex = _input.index();
+
+        DFAState existingTargetState = super.getExistingTargetState(previousD, t);
+        if ( existingTargetState!=null ) {
+            decisions[currentDecision].SLL_DFATransitions++; // count only if we transition over a DFA state
+            if ( existingTargetState==ERROR ) {
+                decisions[currentDecision].errors.add(
+                                                      new ErrorInfo(currentDecision, previousD.configs, _input, _startIndex, _sllStopIndex, false)
+                                                      );
+            }
+        }
+
+        currentState = existingTargetState;
+        return existingTargetState;
+
     }
 
 }

@@ -77,8 +77,9 @@ class LexerTypeAction : LexerAction
      * @uml
      * @safe
      * @nothrow
+     * @override
      */
-    public size_t hashCode() @safe nothrow
+    public override size_t toHash() @safe nothrow
     {
         size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));

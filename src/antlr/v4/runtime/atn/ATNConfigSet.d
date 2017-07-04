@@ -1,10 +1,13 @@
 module antlr.v4.runtime.atn.ATNConfigSet;
 
 import std.bitmanip;
+import std.array;
 import std.conv;
+import std.format;
 import std.algorithm;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
+import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
@@ -124,7 +127,7 @@ class ATNConfigSet
      */
     public bool add(ATNConfig config, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-	if ( readonly ) throw new IllegalStateException("This set is readonly");
+	if ( readonly_ ) throw new IllegalStateException("This set is readonly");
         if ( config.semanticContext!=SemanticContext.NONE ) {
             hasSemanticContext = true;
         }
@@ -185,7 +188,7 @@ class ATNConfigSet
     {
         BitSet alts;
         foreach (ATNConfig config; configs) {
-            alts.opIndexAssign(true, config.alt);
+            alts.set(config.alt, true);
         }
         return alts;
     }
@@ -208,7 +211,7 @@ class ATNConfigSet
 
     public void optimizeConfigs(ATNSimulator interpreter)
     {
-	if (readonly) throw new IllegalStateException("This set is readonly");
+	if (readonly_) throw new IllegalStateException("This set is readonly");
         if ( configLookup.isEmpty() ) return;
         foreach (ATNConfig config; configs) {
             //			int before = PredictionContext.getAllContextNodes(config.context).size();
@@ -259,7 +262,7 @@ class ATNConfigSet
      */
     public override size_t toHash() @safe nothrow
     {
-        if (readonly) {
+        if (readonly_) {
             if (cachedHashCode == -1) {
                 cachedHashCode = configs.toHash();
             }
@@ -309,6 +312,23 @@ class ATNConfigSet
     {
         readonly_ = readonly;
         configLookup = null; // can't mod, no need for lookup cache
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string toString()
+    {
+	auto buf = appender!string;
+        buf.put(to!string(elements));
+        if (hasSemanticContext) buf.put(format(",hasSemanticContext=%s", hasSemanticContext));
+        if (uniqueAlt != ATN.INVALID_ALT_NUMBER )
+            buf.put(format(",uniqueAlt=%s", uniqueAlt));
+        if (!conflictingAlts.isEmpty)
+            buf.put(format(",conflictingAlts=%s", conflictingAlts));
+        if (dipsIntoOuterContext) buf.put(",dipsIntoOuterContext");
+        return buf.data;
     }
 
     public final bool readonly()

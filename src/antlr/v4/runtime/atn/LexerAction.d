@@ -83,6 +83,6 @@ interface LexerAction
      * @uml
      * @nothrow
      */
-    public size_t hashCode() nothrow;
+    public size_t toHash() nothrow;
 
 }

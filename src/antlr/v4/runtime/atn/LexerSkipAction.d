@@ -51,7 +51,11 @@ class LexerSkipAction : LexerAction
         lexer.skip();
     }
 
-    public size_t hashCode()
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t toHash()
     {
         size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));

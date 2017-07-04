@@ -98,9 +98,13 @@ class LexerChannelAction : LexerAction
         lexer.setChannel(channel);
     }
 
-    public size_t hashCode()
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t toHash()
     {
-        int size_t = MurmurHash.initialize();
+        size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         hash = MurmurHash.update(hash, channel);
         return MurmurHash.finish(hash, 2);

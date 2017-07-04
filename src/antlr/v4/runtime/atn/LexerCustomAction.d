@@ -126,14 +126,16 @@ class LexerCustomAction : LexerAction
      * @uml
      * @safe
      * @nothrow
+     * @override
      */
-    public size_t hashCode() @safe nothrow
+    public override size_t toHash() @safe nothrow
     {
         size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, Utils.rank(getActionType));
         hash = MurmurHash.update(hash, ruleIndex);
         hash = MurmurHash.update(hash, actionIndex);
         return MurmurHash.finish(hash, 3);
+
     }
 
     public bool equals(Object obj)

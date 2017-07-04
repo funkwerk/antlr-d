@@ -931,7 +931,7 @@ class ParserATNSimulator : ATNSimulator
          * multiple alternatives are viable.
          */
         if (skippedStopStates !is null && (!fullCtx || !PredictionMode.hasConfigInRuleStopState(reach))) {
-            assert(skippedStopStates.isEmpty);
+            assert(skippedStopStates.length == 0);
             foreach (c; skippedStopStates) {
                 reach.add(c, mergeCache);
             }
@@ -1065,7 +1065,7 @@ class ParserATNSimulator : ATNSimulator
             // unpredicated is indicated by SemanticContext.NONE
             assert(pred !is null);
 
-            if (ambigAlts !is null && ambigAlts[i]) {
+            if (ambigAlts !is null && ambigAlts.get(i)) {
                 pairs ~= new PredPrediction(pred, i);
             }
             if ( pred!=SemanticContext.NONE ) containsPredicate = true;
@@ -1444,11 +1444,24 @@ class ParserATNSimulator : ATNSimulator
     protected void reportContextSensitivity(DFA dfa, int prediction, ATNConfigSet configs,
         int startIndex, int stopIndex)
     {
+        debug(retry_debug) {
+            Interval interval = Interval.of(startIndex, stopIndex);
+            writefln("reportContextSensitivity decision=%1$s:%2$s, input=%3$s",
+                     dfa.decision, config, parser.getTokenStream().getText(interval));
+        }
+        if (parser !is null) parser.getErrorListenerDispatch().reportContextSensitivity(parser, dfa, startIndex, stopIndex, prediction, configs);
     }
 
     protected void reportAmbiguity(DFA dfa, DFAState D, int startIndex, int stopIndex, bool exact,
         BitSet ambigAlts, ATNConfigSet configs)
     {
+	debug(retry_debug) {
+            Interval interval = Interval.of(startIndex, stopIndex);
+            writefln("reportAmbiguity %1$s:%2$s, input=%3$s",
+                     ambigAlts, configs, parser.getTokenStream().getText(interval));
+        }
+        if (parser !is null) parser.getErrorListenerDispatch().reportAmbiguity(parser, dfa, startIndex, stopIndex,
+                                                                              exact, ambigAlts, configs);
     }
 
     public void setPredictionMode(PredictionMode mode)

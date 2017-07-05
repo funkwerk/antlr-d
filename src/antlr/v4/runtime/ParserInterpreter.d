@@ -150,7 +150,7 @@ class ParserInterpreter : Parser
         TokenStream input)
     {
         this(grammarFileName,
-             VocabularyImpl.fromTokenNames(tokenNames.toArray(new String[tokenNames.size()])),
+             VocabularyImpl.fromTokenNames(tokenNames),
              ruleNames, atn, input);
     }
 

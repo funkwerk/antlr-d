@@ -53,6 +53,7 @@ import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
@@ -943,6 +944,26 @@ class ParserATNSimulator : ATNSimulator
 
     protected ATNConfigSet removeAllConfigsNotInRuleStopState(ATNConfigSet configs, bool lookToEndOfRule)
     {
+	if (PredictionMode.allConfigsInRuleStopStates(configs)) {
+            return configs;
+        }
+
+        ATNConfigSet result = new ATNConfigSet(configs.fullCtx);
+        foreach (ATNConfig config; configs.configs) {
+            if (config.state.classinfo == RuleStopState.classinfo) {
+                result.add(config, mergeCache);
+                continue;
+            }
+
+            if (lookToEndOfRule && config.state.onlyHasEpsilonTransitions()) {
+                IntervalSet nextTokens = atn.nextTokens(config.state);
+                if (nextTokens.contains(TokenConstants.EPSILON)) {
+                    ATNState endOfRuleState = atn.ruleToStopState[config.state.ruleIndex];
+                    result.add(new ATNConfig(config, endOfRuleState), mergeCache);
+                }
+            }
+        }
+        return result;
     }
 
     public ATNConfigSet computeStartState(ATNState p, RuleContext ctx, bool fullCtx)
@@ -965,19 +986,19 @@ class ParserATNSimulator : ATNSimulator
     {
 	PredictionContext[int] statesFromAlt1;
         ATNConfigSet configSet = new ATNConfigSet(configs.fullCtx);
-        foreach (config; configs) {
+        foreach (config; configs.configs) {
             // handle alt 1 first
             if (config.alt != 1) {
                 continue;
             }
 
             SemanticContext updatedContext = config.semanticContext.evalPrecedence(parser, _outerContext);
-            if (updatedContext == null) {
+            if (updatedContext is null) {
                 // the configuration was eliminated
                 continue;
             }
 
-            statesFromAlt1.put(config.state.stateNumber, config.context);
+            statesFromAlt1[config.state.stateNumber] = config.context;
             if (updatedContext != config.semanticContext) {
                 configSet ~= new ATNConfig(config, updatedContext), mergeCache;
             }
@@ -1223,7 +1244,7 @@ class ParserATNSimulator : ATNSimulator
 	return pred.eval(parser, parserCallStack);
     }
 
-    public void closure(ATNConfig config, ATNConfig[] closureBusy, bool collectPredicates,
+    public void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy, bool collectPredicates,
                         bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;

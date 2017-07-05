@@ -101,7 +101,7 @@ class ANTLRInputStream : CharStream
 
     public this(File r)
     {
-        load(r, initialSize, readChunkSize);
+        load(r, INITIAL_BUFFER_SIZE, READ_BUFFER_SIZE);
     }
 
     public this(File r, int initialSize)

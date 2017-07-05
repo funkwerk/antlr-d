@@ -138,6 +138,40 @@ class DFA
     }
 
     /**
+     * Set the start state for a specific precedence value.
+     *
+     * @param precedence The current precedence.
+     * @param startState The start state corresponding to the specified
+     * precedence.
+     *
+     * @throws IllegalStateException if this is not a precedence DFA.
+     * @see #isPrecedenceDfa()
+     * @uml
+     * @final
+     */
+    public final void setPrecedenceStartState(int precedence, DFAState startState)
+    {
+	if (!isPrecedenceDfa()) {
+			throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");
+		}
+
+		if (precedence < 0) {
+			return;
+		}
+
+		// synchronization on s0 here is ok. when the DFA is turned into a
+		// precedence DFA, s0 will be initialized once and not updated again
+		synchronized (s0) {
+			// s0.edges is never null for a precedence DFA
+			if (precedence >= s0.edges.length) {
+				s0.edges = Arrays.copyOf(s0.edges, precedence + 1);
+			}
+
+			s0.edges[precedence] = startState;
+		}
+    }
+
+    /**
      * Sets whether this is a precedence DFA.
      *
      * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
@@ -169,6 +203,13 @@ class DFA
     public override string toString()
     {
         return to!string(VocabularyImpl.EMPTY_VOCABULARY);
+    }
+
+    public string toString(string[] tokenNames)
+    {
+	if ( s0==null ) return "";
+		DFASerializer serializer = new DFASerializer(this,tokenNames);
+		return serializer.toString();
     }
 
     public string toString(Vocabulary vocabulary)

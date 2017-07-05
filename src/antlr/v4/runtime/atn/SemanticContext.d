@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2016 Terence Parr
  *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -37,7 +38,6 @@ import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Class SemanticContext
 /**
- * TODO add class description
  * @uml
  * A tree structure used to record the semantic context in which
  * an ATN configuration is valid.  It's either a single predicate,

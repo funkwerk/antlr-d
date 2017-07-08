@@ -32,13 +32,18 @@
 module antlr.v4.runtime.ParserInterpreter;
 
 import std.typecons;
+import std.format;
 import std.container : DList;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterpreterRuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.FailedPredicateException;
+import antlr.v4.runtime.UnsupportedOperationException;
+import antlr.v4.runtime.InputMismatchException;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.Vocabulary;
@@ -48,7 +53,10 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.StarLoopEntryState;
+import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.PredicateTransition;
+import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.ParserATNSimulator;
@@ -259,7 +267,8 @@ class ParserInterpreter : Parser
                 if (ctx_.isEmpty() ) {
                     if (startRuleStartState.isLeftRecursiveRule) {
                         ParserRuleContext result = ctx_;
-                        ParentContextPair parentContext = _parentContextStack.pop();
+                        ParentContextPair parentContext = _parentContextStack.back;
+                        _parentContextStack.removeBack();
                         unrollRecursionContexts(parentContext.a);
                         return result;
                     }
@@ -274,7 +283,7 @@ class ParserInterpreter : Parser
                 try {
                     visitState(p);
                 }
-                catch (RecognitionException e) {
+                catch (RecognitionException!(Token, ParserATNSimulator) e) {
                     setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
                     getContext().exception = e;
                     getErrorHandler().reportError(this, e);
@@ -307,35 +316,35 @@ class ParserInterpreter : Parser
     {
         //		System.out.println("visitState "+p.stateNumber);
         int predictedAlt = 1;
-        if (p.classinfo == DecisionState.classinf) {
+        if (p.classinfo == DecisionState.classinfo) {
             predictedAlt = visitDecisionState(cast(DecisionState) p);
         }
 
         Transition transition = p.transition(predictedAlt - 1);
         switch (transition.getSerializationType()) {
         case TransitionStates.EPSILON:
-            if ( p.getStateType()==ATNState.STAR_LOOP_ENTRY &&
+            if ( p.getStateType()== StateNames.STAR_LOOP_ENTRY &&
                  (cast(StarLoopEntryState)p).isPrecedenceDecision &&
                  !(transition.target.classinfo == LoopEndState.classinfo))
                 {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
                     InterpreterRuleContext localctx =
-                        createInterpreterRuleContext(_parentContextStack.peek().a,
-                                                     _parentContextStack.peek().b,
+                        createInterpreterRuleContext(_parentContextStack.front.a,
+                                                     _parentContextStack.front.b,
                                                      ctx_.getRuleIndex());
                     pushNewRecursionContext(localctx,
                                             atn.ruleToStartState[p.ruleIndex].stateNumber,
                                             ctx_.getRuleIndex());
                 }
             break;
-        case TransitionState.ATOM:
+        case TransitionStates.ATOM:
             match((cast(AtomTransition)transition).label);
             break;
         case TransitionStates.RANGE:
         case TransitionStates.SET:
         case TransitionStates.NOT_SET:
-            if (!transition.matches(_input.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
+            if (!transition.matches(_input.LA(1), TokenConstants.MIN_USER_TOKEN_TYPE, 65535)) {
                 recoverInline();
             }
             matchWildcard();
@@ -370,7 +379,7 @@ class ParserInterpreter : Parser
             break;
         case TransitionStates.PRECEDENCE:
             if (!precpred(ctx_, (cast(PrecedencePredicateTransition)transition).precedence)) {
-                throw new FailedPredicateException(this, String.format("precpred(ctx_, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
+                throw new FailedPredicateException(this, format("precpred(ctx_, %d)", (cast(PrecedencePredicateTransition)transition).precedence));
             }
             break;
         default:

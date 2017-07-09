@@ -285,7 +285,7 @@ class ParserInterpreter : Parser
                 }
                 catch (RecognitionException!(Token, ParserATNSimulator) e) {
                     setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
-                    getContext().exception = e;
+                    ctx.exception = e;
                     getErrorHandler().reportError(this, e);
                     recover(e);
                 }
@@ -303,13 +303,13 @@ class ParserInterpreter : Parser
         int precedence)
     {
         ParentContextPair pair = tuple(ctx_, localctx.invokingState);
-        _parentContextStack.push(pair);
+        _parentContextStack.insert(pair);
         super.enterRecursionRule(localctx, state, ruleIndex, precedence);
     }
 
     protected ATNState getATNState()
     {
-        return atn.states.get(getState());
+        return atn.states[getState];
     }
 
     protected void visitState(ATNState p)

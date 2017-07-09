@@ -5,7 +5,6 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 
-
 // Class InputMismatchException
 /**
  * @uml

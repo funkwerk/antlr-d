@@ -741,32 +741,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         return null;
     }
 
-    public void unrollRecursionContexts(ParserRuleContext _parentctx)
-    {
-	_precedenceStack.pop();
-        ctx_.stop = _input.LT(-1);
-        ParserRuleContext retctx = ctx_; // save current ctx (return value)
-
-        // unroll so ctx_ is as it was before call to recursive method
-        if (_parseListeners !is null) {
-            while (ctx_ !is _parentctx) {
-                triggerExitRuleEvent();
-                ctx_ = cast(ParserRuleContext)ctx_.parent;
-            }
-        }
-        else {
-            ctx_ = _parentctx;
-        }
-
-        // hook into tree
-        retctx.parent = _parentctx;
-
-        if (_buildParseTrees && _parentctx !is null) {
-            // add return ctx into invoking rule's tree
-            _parentctx.addChild(retctx);
-        }
-    }
-
     public ParserRuleContext getInvokingContext(int ruleIndex)
     {
         ParserRuleContext p = ctx_;

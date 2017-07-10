@@ -444,8 +444,8 @@ class LexerATNSimulator : ATNSimulator
      *  @return {@code true} if an accept state is reached, otherwise
      * {@code false}.
      */
-    public bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs, bool currentAltReachedAcceptState,
-                        bool speculative, bool treatEofAsEpsilon)
+    protected bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs,
+        bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
     {
         debug {
             writefln("closure(%1$s)", config.toString(recog, true));

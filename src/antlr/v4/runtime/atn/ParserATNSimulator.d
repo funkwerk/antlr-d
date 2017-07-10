@@ -836,7 +836,7 @@ class ParserATNSimulator : ATNSimulator
         ATNConfig[] skippedStopStates;
 
         // First figure out where we can reach on input t
-        foreach (c; closure) {
+        foreach (c; closure.configs) {
             debug writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
 
             if (typeid(c.state) == typeid(RuleStopState)) {
@@ -897,7 +897,7 @@ class ParserATNSimulator : ATNSimulator
             reach = new ATNConfigSet(fullCtx);
             ATNConfig[] closureBusy;
             bool treatEofAsEpsilon = t == TokenConstants.EOF;
-            foreach (c; intermediate) {
+            foreach (c; intermediate.configs) {
                 closure(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
             }
         }
@@ -1007,7 +1007,7 @@ class ParserATNSimulator : ATNSimulator
             }
         }
 
-        foreach (config; configs) {
+        foreach (config; configs.configs) {
             if (config.alt == 1) {
                 // already handled
                 continue;
@@ -1056,7 +1056,7 @@ class ParserATNSimulator : ATNSimulator
          * From this, it is clear that NONE||anything==NONE.
          */
         SemanticContext[] altToPred = new SemanticContext[nalts + 1];
-        foreach (ATNConfig c; configs) {
+        foreach (ATNConfig c; configs.configs) {
             if ( ambigAlts.get(c.alt) ) {
                 altToPred[c.alt] = SemanticContext.or(altToPred[c.alt], c.semanticContext);
             }
@@ -1104,7 +1104,7 @@ class ParserATNSimulator : ATNSimulator
     protected int getAltThatFinishedDecisionEntryRule(ATNConfigSet configs)
     {
 	IntervalSet alts = new IntervalSet();
-        foreach (ATNConfig c; configs) {
+        foreach (ATNConfig c; configs.configs) {
             if ( c.getOuterContextDepth() > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
@@ -1163,7 +1163,7 @@ class ParserATNSimulator : ATNSimulator
                                                                           ParserRuleContext outerContext)
     {
 	IntervalSet alts = new IntervalSet();
-        foreach (ATNConfig c; configs) {
+        foreach (ATNConfig c; configs.configs) {
             if ( c.getOuterContextDepth()>0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
@@ -1214,7 +1214,7 @@ class ParserATNSimulator : ATNSimulator
 	BitSet predictions = new BitSet();
         foreach (pair; predPredictions) {
             if (pair.pred == SemanticContext.NONE ) {
-                predictions.set(pair.alt);
+                predictions.set(pair.alt, true);
                 if (!complete) {
                     break;
                 }
@@ -1244,8 +1244,8 @@ class ParserATNSimulator : ATNSimulator
 	return pred.eval(parser, parserCallStack);
     }
 
-    public void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy, bool collectPredicates,
-                        bool fullCtx, bool treatEofAsEpsilon)
+    protected void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
+        bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
         closureCheckingStopState(config, configs, closureBusy, collectPredicates,

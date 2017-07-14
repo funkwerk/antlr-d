@@ -31,6 +31,7 @@
 module antlr.v4.runtime.atn.ParserATNSimulator;
 
 import std.typecons;
+import std.format;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
@@ -48,11 +49,13 @@ import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ActionTransition;
 import antlr.v4.runtime.dfa.PredPrediction;
 import antlr.v4.runtime.atn.PredictionMode;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
@@ -306,10 +309,7 @@ class ParserATNSimulator : ATNSimulator
 
     public DFA[] decisionToDFA;
 
-    /**
-     * SLL, LL, or LL + exact ambig detection?
-     */
-    public PredictionMode mode = PredictionMode.LL;
+    public PredictionModeConst mode = PredictionModeConst.LL;
 
     /**
      * @uml
@@ -515,7 +515,7 @@ class ParserATNSimulator : ATNSimulator
                 throw e;
             }
 
-            if (D.requiresFullContext && mode != PredictionMode.SLL) {
+            if (D.requiresFullContext && mode != PredictionModeConst.SLL) {
                 // IF PREDS, MIGHT RESOLVE TO SINGLE ALT => SLL (or syntax error)
                 BitSet conflictingAlts = D.configs.conflictingAlts;
                 if (D.predicates != null) {
@@ -744,7 +744,7 @@ class ParserATNSimulator : ATNSimulator
                 predictedAlt = reach.uniqueAlt;
                 break;
             }
-            if ( mode != PredictionMode.LL_EXACT_AMBIG_DETECTION ) {
+            if ( mode != PredictionModeConst.LL_EXACT_AMBIG_DETECTION ) {
                 predictedAlt = PredictionMode.resolvesToJustOneViableAlt(altSubSets);
                 if ( predictedAlt != ATN.INVALID_ALT_NUMBER ) {
                     break;
@@ -1086,13 +1086,13 @@ class ParserATNSimulator : ATNSimulator
             // unpredicated is indicated by SemanticContext.NONE
             assert(pred !is null);
 
-            if (ambigAlts !is null && ambigAlts.get(i)) {
+            if (ambigAlts !is null && ambigAlts[i]) {
                 pairs ~= new PredPrediction(pred, i);
             }
-            if ( pred!=SemanticContext.NONE ) containsPredicate = true;
+            if (pred != SemanticContext.NONE ) containsPredicate = true;
         }
 
-        if ( !containsPredicate ) {
+        if (!containsPredicate) {
             return null;
         }
 
@@ -1172,8 +1172,8 @@ class ParserATNSimulator : ATNSimulator
         return alts.getMinElement();
     }
 
-    protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
-                                                                            ParserRuleContext outerContext)
+    protected ATNConfigSetBitSetPair[] splitAccordingToSemanticValidity(ATNConfigSet configs,
+                                                                        ParserRuleContext outerContext)
     {
         BitSet predictions = new BitSet();
         foreach (pair; predPredictions) {
@@ -1245,7 +1245,7 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
-        bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
+                           bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
         closureCheckingStopState(config, configs, closureBusy, collectPredicates,
@@ -1269,27 +1269,27 @@ class ParserATNSimulator : ATNSimulator
                                       bool inContext, bool fullCtx, bool treatEofAsEpsilon)
     {
         switch (t.getSerializationType()) {
-        case Transition.RULE:
+        case TransitionStates.RULE:
             return ruleTransition(config, cast(RuleTransition)t);
 
-        case Transition.PRECEDENCE:
+        case TransitionStates.PRECEDENCE:
             return precedenceTransition(config, cast(PrecedencePredicateTransition)t, collectPredicates, inContext, fullCtx);
 
-        case Transition.PREDICATE:
+        case TransitionStates.PREDICATE:
             return predTransition(config, cast(PredicateTransition)t,
                                   collectPredicates,
                                   inContext,
                                   fullCtx);
 
-        case Transition.ACTION:
+        case TransitionStates.ACTION:
             return actionTransition(config, cast(ActionTransition)t);
 
-        case Transition.EPSILON:
+        case TransitionStates.EPSILON:
             return new ATNConfig(config, t.target);
 
-        case Transition.ATOM:
-        case Transition.RANGE:
-        case Transition.SET:
+        case TransitionStates.ATOM:
+        case TransitionStates.RANGE:
+        case TransitionStates.SET:
             // EOF transitions act like epsilon transitions after the first EOF
             // transition is traversed
             if (treatEofAsEpsilon) {
@@ -1333,7 +1333,7 @@ class ParserATNSimulator : ATNSimulator
                 // later during conflict resolution.
                 int currentPosition = _input.index();
                 _input.seek(_startIndex);
-                boolean predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
+                bool predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
                 _input.seek(currentPosition);
                 if ( predSucceeds ) {
                     c = new ATNConfig(config, pt.target); // no pred context
@@ -1378,9 +1378,9 @@ class ParserATNSimulator : ATNSimulator
                     // later during conflict resolution.
                     int currentPosition = _input.index();
                     _input.seek(_startIndex);
-                    boolean predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
+                    bool predSucceeds = evalSemanticContext(pt.getPredicate(), _outerContext, config.alt, fullCtx);
                     _input.seek(currentPosition);
-                    if ( predSucceeds ) {
+                    if (predSucceeds) {
                         c = new ATNConfig(config, pt.target); // no pred context
                     }
                 }
@@ -1463,7 +1463,7 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected void reportContextSensitivity(DFA dfa, int prediction, ATNConfigSet configs,
-        int startIndex, int stopIndex)
+                                            int startIndex, int stopIndex)
     {
         debug(retry_debug) {
             Interval interval = Interval.of(startIndex, stopIndex);
@@ -1474,7 +1474,7 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected void reportAmbiguity(DFA dfa, DFAState D, int startIndex, int stopIndex, bool exact,
-        BitSet ambigAlts, ATNConfigSet configs)
+                                   BitSet ambigAlts, ATNConfigSet configs)
     {
 	debug(retry_debug) {
             Interval interval = Interval.of(startIndex, stopIndex);
@@ -1482,15 +1482,15 @@ class ParserATNSimulator : ATNSimulator
                      ambigAlts, configs, parser.getTokenStream().getText(interval));
         }
         if (parser !is null) parser.getErrorListenerDispatch().reportAmbiguity(parser, dfa, startIndex, stopIndex,
-                                                                              exact, ambigAlts, configs);
+                                                                               exact, ambigAlts, configs);
     }
 
-    public void setPredictionMode(PredictionMode mode)
+    public void setPredictionMode(PredictionModeConst mode)
     {
 	this.mode = mode;
     }
 
-    public PredictionMode getPredictionMode()
+    public PredictionModeConst getPredictionMode()
     {
 	return mode;
     }

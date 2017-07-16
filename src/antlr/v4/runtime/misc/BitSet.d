@@ -108,6 +108,21 @@ struct BitSet
         return this.bitSet == bitSet.bitSet;
     }
 
+    public void clear()
+    {
+        bitSet.length(0);
+    }
+
+    public BitSet or(BitSet bitSet)
+    {
+        BitSet result;
+        auto maxLenght = max(this.bitSet.length, bitSet.bitSet.length);
+        this.bitSet.length = maxLenght;
+        bitSet.bitSet.length = maxLenght;
+        result.bitSet = this.bitSet | bitSet.bitSet;
+        return result;
+    }
+
 }
 
 unittest
@@ -140,4 +155,13 @@ unittest
     assert(bs.get(3) == false);
     bs.set(19, true);
     assert(bs.toString == "001000_01000000_00000100");
+    ds.set(8, true);
+    ds.set(1, false);
+    auto x = cs.or(ds);
+    assert(x.toString == "0101_10101010");
+    cs.clear;
+    cs.set(5, true);
+    ds.set(0, true);
+    x = cs.or(ds);
+    assert(x.toString == "1001_11101010");
 }

@@ -409,7 +409,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
 
     public Token getTokenFactory()
     {
-        return _input.getTokenSource().getTokenFactory();
+        return cast(Token)_input.getTokenSource().getTokenFactory();
     }
 
     /**
@@ -539,7 +539,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         int charPositionInLine = -1;
         line = offendingToken.getLine();
         charPositionInLine = offendingToken.getCharPositionInLine();
-        ANTLRErrorListener listener = getErrorListenerDispatch();
+        ANTLRErrorListener!(Token, ParserATNSimulator) listener = getErrorListenerDispatch();
         listener.syntaxError(this, offendingToken, line, charPositionInLine, msg, e);
     }
 

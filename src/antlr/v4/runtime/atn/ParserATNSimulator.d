@@ -1172,7 +1172,7 @@ class ParserATNSimulator : ATNSimulator
         return alts.getMinElement();
     }
 
-    protected ATNConfigSetBitSetPair[] splitAccordingToSemanticValidity(ATNConfigSet configs,
+    protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
                                                                         ParserRuleContext outerContext)
     {
         BitSet predictions = new BitSet();

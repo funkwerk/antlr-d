@@ -141,6 +141,16 @@ class ATNConfig
         this(c, state, c.context, c.semanticContext);
     }
 
+    public this(ATNConfig c, ATNState state, SemanticContext semanticContext)
+    {
+        this(c, state, c.context, semanticContext);
+    }
+
+    public this(ATNConfig c, SemanticContext semanticContext)
+    {
+	this(c, c.state, c.context, semanticContext);
+    }
+
     public this(ATNConfig c, ATNState state, PredictionContext context)
     {
         this(c, state, context, c.semanticContext);

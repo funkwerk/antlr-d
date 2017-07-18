@@ -30,6 +30,7 @@
 
 module antlr.v4.runtime.atn.ProfilingATNSimulator;
 
+import std.conv;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.dfa.DFAState;
@@ -46,6 +47,8 @@ class ProfilingATNSimulator : ParserATNSimulator
 
     protected DecisionInfo[] decisions;
 
+    protected int currentDecision;
+
     protected int numDecisions;
 
     protected int _sllStopIndex;
@@ -60,7 +63,7 @@ class ProfilingATNSimulator : ParserATNSimulator
               parser.getInterpreter().atn,
               parser.getInterpreter().decisionToDFA,
               parser.getInterpreter().sharedContextCache);
-        numDecisions = atn.decisionToState.size();
+        numDecisions = to!int(atn.decisionToState.length);
         decisions = new DecisionInfo[numDecisions];
         for (int i=0; i<numDecisions; i++) {
             decisions[i] = new DecisionInfo(i);
@@ -122,7 +125,7 @@ class ProfilingATNSimulator : ParserATNSimulator
         _sllStopIndex = _input.index();
 
         DFAState existingTargetState = super.getExistingTargetState(previousD, t);
-        if ( existingTargetState!=null ) {
+        if (existingTargetState !is null) {
             decisions[currentDecision].SLL_DFATransitions++; // count only if we transition over a DFA state
             if ( existingTargetState==ERROR ) {
                 decisions[currentDecision].errors.add(

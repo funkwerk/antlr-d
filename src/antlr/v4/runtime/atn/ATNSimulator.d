@@ -86,7 +86,7 @@ abstract class ATNSimulator
      * more time I think and doesn't save on the overall footprint
      * so it's not worth the complexity.</p>
      */
-    protected PredictionContextCache sharedContextCache;
+    public PredictionContextCache sharedContextCache;
 
     public static this()
     {

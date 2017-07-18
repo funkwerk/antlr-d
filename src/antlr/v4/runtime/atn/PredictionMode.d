@@ -36,6 +36,7 @@ import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.AltAndContextMap;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.BitSet;
@@ -465,11 +466,12 @@ class PredictionMode
 
     public static BitSet getAlts(ATNConfigSet configs)
     {
-	BitSet alts = new BitSet();
+	BitSet *alts;
+        alts = new BitSet;
         foreach (ATNConfig config; configs.configs) {
             alts.set(config.alt, true);
         }
-        return alts;
+        return *alts;
     }
 
     /**
@@ -483,12 +485,13 @@ class PredictionMode
      */
     public static BitSet[] getConflictingAltSubsets(ATNConfigSet configs)
     {
-	AltAndContextMap configToAlts = new AltAndContextMap();
+	AltAndContextMap configToAlts;
         foreach (ATNConfig c; configs.configs) {
-            BitSet alts = configToAlts.get(c);
-            if (alts is null) {
+            BitSet *alts;
+            *alts = configToAlts.get(c);
+            if (alts.isEmpty) {
                 alts = new BitSet();
-                configToAlts.put(c, alts);
+                configToAlts.put(c, *alts);
             }
             alts.set(c.alt, true);
         }

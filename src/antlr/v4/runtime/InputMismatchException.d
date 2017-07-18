@@ -16,7 +16,7 @@ class InputMismatchException : RecognitionException!(Token, ParserATNSimulator)
 
     public this(Parser recognizer)
     {
-	super(recognizer, recognizer.getInputStream(), recognizer._ctx);
+	super(recognizer, recognizer.getInputStream(), recognizer.ctx_);
         this.setOffendingToken(recognizer.getCurrentToken());
     }
 

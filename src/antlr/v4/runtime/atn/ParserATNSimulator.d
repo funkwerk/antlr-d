@@ -1020,7 +1020,7 @@ class ParserATNSimulator : ATNSimulator
                  * (basically a graph subtraction algorithm).
                  */
                 PredictionContext context = statesFromAlt1.get(config.state.stateNumber);
-                if (context !is null && context.equals(config.context)) {
+                if (context !is null && context.opEquals(config.context)) {
                     // eliminated
                     continue;
                 }
@@ -1174,7 +1174,7 @@ class ParserATNSimulator : ATNSimulator
     }
 
     protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
-                                                                        ParserRuleContext outerContext)
+                                                                            ParserRuleContext outerContext)
     {
         BitSet predictions = new BitSet();
         foreach (pair; predPredictions) {
@@ -1212,7 +1212,7 @@ class ParserATNSimulator : ATNSimulator
     protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
                                          bool complete)
     {
-	BitSet predictions = new BitSet();
+	BitSet predictions;
         foreach (pair; predPredictions) {
             if (pair.pred == SemanticContext.NONE ) {
                 predictions.set(pair.alt, true);
@@ -1419,48 +1419,229 @@ class ParserATNSimulator : ATNSimulator
      * conflicting alternative subsets. If {@code configs} does not contain any
      * conflicting subsets, this method returns an empty {@link BitSet}.
      */
-    protected BitSet getConflictingAlts(ATNConfigSet configs)
+    public BitSet getConflictingAlts(ATNConfigSet configs)
     {
         BitSet[] altsets = PredictionMode.getConflictingAltSubsets(configs);
         return PredictionMode.getAlts(altsets);
     }
 
+    /**
+     * Sam pointed out a problem with the previous definition, v3, of
+     * ambiguous states. If we have another state associated with conflicting
+     * alternatives, we should keep going. For example, the following grammar
+     *
+     * s : (ID | ID ID?) ';' ;
+     *
+     * When the ATN simulation reaches the state before ';', it has a DFA
+     * state that looks like: [12|1|[], 6|2|[], 12|2|[]]. Naturally
+     * 12|1|[] and 12|2|[] conflict, but we cannot stop processing this node
+     * because alternative to has another way to continue, via [6|2|[]].
+     * The key is that we have a single state that has config's only associated
+     * with a single alternative, 2, and crucially the state transitions
+     * among the configurations are all non-epsilon transitions. That means
+     * we don't consider any conflicts that include alternative 2. So, we
+     * ignore the conflict between alts 1 and 2. We ignore a set of
+     * conflicting alts when there is an intersection with an alternative
+     * associated with a single alt state in the state&rarr;config-list map.
+     *
+     * It's also the case that we might have two conflicting configurations but
+     * also a 3rd nonconflicting configuration for a different alternative:
+     * [1|1|[], 1|2|[], 8|3|[]]. This can come about from grammar:
+     *
+     * a : A | A | A B ;
+     *
+     * After matching input A, we reach the stop state for rule A, state 1.
+     * State 8 is the state right before B. Clearly alternatives 1 and 2
+     * conflict and no amount of further lookahead will separate the two.
+     * However, alternative 3 will be able to continue and so we do not
+     * stop working on this state. In the previous example, we're concerned
+     * with states associated with the conflicting alternatives. Here alt
+     * 3 is not associated with the conflicting configs, but since we can continue
+     * looking for input reasonably, I don't declare the state done. We
+     * ignore a set of conflicting alts when we have an alternative
+     * that we still need to pursue.
+     */
     public BitSet getConflictingAltsOrUniqueAlt(ATNConfigSet configs)
     {
+	BitSet *conflictingAlts;
+        if (configs.uniqueAlt != ATN.INVALID_ALT_NUMBER) {
+            conflictingAlts = new BitSet();
+            conflictingAlts.set(configs.uniqueAlt);
+        }
+        else {
+            conflictingAlts = configs.conflictingAlts;
+        }
+        return *conflictingAlts;
     }
 
     public string getTokenName(int t)
     {
+	if (t == TokenConstants.EOF) {
+            return "EOF";
+        }
+
+        Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : VocabularyImpl.EMPTY_VOCABULARY;
+        string displayName = vocabulary.getDisplayName(t);
+        if (displayName.equals(to!string(t))) {
+            return displayName;
+        }
+
+        return displayName ~ "<" ~ to!string(t) ~ ">";
     }
 
     public string getLookaheadName(TokenStream input)
     {
+        return getTokenName(input.LA(1));
     }
 
+    /**
+     * Used for debugging in adaptivePredict around execATN but I cut
+     * it out for clarity now that alg. works well. We can leave this
+     * "dead" code for a bit.
+     */
     public void dumpDeadEndConfigs(NoViableAltException nvae)
     {
+	writefln("dead end configs: ");
+        foreach (ATNConfig c; nvae.getDeadEndConfigs()) {
+            string trans = "no edges";
+            if (c.state.getNumberOfTransitions > 0) {
+                Transition t = c.state.transition(0);
+                if (t.classinfo == AtomTransition.classinfo) {
+                    AtomTransition at = cast(AtomTransition)t;
+                    trans = "Atom "+getTokenName(at.label);
+                }
+                else if (t.classinfo == SetTransition.classinfo) {
+                    SetTransition st = cast(SetTransition)t;
+                    bool not = (st.classinfo ==  NotSetTransition.classinfo);
+                    trans = (not?"~":"") ~ "Set "~ st.set.toString();
+                }
+            }
+            writefln("%1$s:%2$s", c.toString(parser, true), trans);
+        }
     }
 
     protected NoViableAltException noViableAlt(TokenStream input, ParserRuleContext outerContext,
                                                ATNConfigSet configs, int startIndex)
     {
+        return new NoViableAltException(parser, input,
+                                        input.get(startIndex),
+                                        input.LT(1),
+                                        configs, outerContext);
     }
 
     protected static int getUniqueAlt(ATNConfigSet configs)
     {
+	int alt = ATN.INVALID_ALT_NUMBER;
+        foreach (ATNConfig c; configs.configs) {
+            if (alt == ATN.INVALID_ALT_NUMBER) {
+                alt = c.alt; // found first alt
+            }
+            else if (c.alt != alt) {
+                return ATN.INVALID_ALT_NUMBER;
+            }
+        }
+        return alt;
     }
 
+    /**
+     * Add an edge to the DFA, if possible. This method calls
+     * {@link #addDFAState} to ensure the {@code to} state is present in the
+     * DFA. If {@code from} is {@code null}, or if {@code t} is outside the
+     * range of edges that can be represented in the DFA tables, this method
+     * returns without adding the edge to the DFA.
+     *
+     * <p>If {@code to} is {@code null}, this method returns {@code null}.
+     * Otherwise, this method returns the {@link DFAState} returned by calling
+     * {@link #addDFAState} for the {@code to} state.</p>
+     *
+     * @param dfa The DFA
+     * @param from The source state for the edge
+     * @param t The input symbol
+     * @param to The target state for the edge
+     *
+     * @return If {@code to} is {@code null}, this method returns {@code null};
+     * otherwise this method returns the result of calling {@link #addDFAState}
+     * on {@code to}
+     */
     protected DFAState addDFAEdge(DFA dfa, DFAState from, int t, DFAState to)
     {
+        debug {
+            writefln("EDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(t));
+        }
+        if (to is null) {
+            return null;
+        }
+
+        to = addDFAState(dfa, to); // used existing if possible not incoming
+        if (from is null || t < -1 || t > atn.maxTokenType) {
+            return to;
+        }
+
+        synchronized (from) {
+            if ( from.edges==null ) {
+                from.edges = new DFAState[atn.maxTokenType+1+1];
+            }
+
+            from.edges[t+1] = to; // connect
+        }
+
+        debug {
+            writeln("DFA=\n" ~ dfa.toString(parser !is null ? parser.getVocabulary():VocabularyImpl.EMPTY_VOCABULARY));
+        }
+
+        return to;
     }
 
+    /**
+     * Add state {@code D} to the DFA if it is not already present, and return
+     * the actual instance stored in the DFA. If a state equivalent to {@code D}
+     * is already in the DFA, the existing state is returned. Otherwise this
+     * method returns {@code D} after adding it to the DFA.
+     *
+     * <p>If {@code D} is {@link #ERROR}, this method returns {@link #ERROR} and
+     * does not change the DFA.</p>
+     *
+     * @param dfa The dfa
+     * @param D The DFA state to add
+     * @return The state stored in the DFA. This will be either the existing
+     * state if {@code D} is already in the DFA, or {@code D} itself if the
+     * state was not already present.
+     */
     protected DFAState addDFAState(DFA dfa, DFAState D)
     {
+	if (D == ERROR) {
+            return D;
+        }
+        synchronized (dfa.states) {
+            DFAState existing = dfa.states.get(D);
+            if (existing !is null) return existing;
+
+            D.stateNumber = dfa.states.size();
+            if (!D.configs.isReadonly) {
+                D.configs.optimizeConfigs(this);
+                D.configs.setReadonly(true);
+            }
+            dfa.states.put(D, D);
+            debug writefln("adding new DFA state: %1$s", D);
+            return D;
+        }
     }
 
     protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,
                                                int startIndex, int stopIndex)
     {
+        debug(retry_debug) {
+            Interval interval = Interval.of(startIndex, stopIndex);
+            writefln("reportAttemptingFullContext decision=%1$s:%2$s, input=%3$s",
+                     dfa.decision, configs,
+                     parser.getTokenStream().getText(interval));
+        }
+        if (parser !is null) parser.getErrorListenerDispatch().reportAttemptingFullContext(parser,
+                                                                                           dfa,
+                                                                                           startIndex,
+                                                                                           stopIndex,
+                                                                                           conflictingAlts,
+                                                                                           configs);
     }
 
     protected void reportContextSensitivity(DFA dfa, int prediction, ATNConfigSet configs,

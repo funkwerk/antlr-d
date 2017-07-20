@@ -455,7 +455,7 @@ class PredictionMode
      * @param altsets a collection of alternative subsets
      * @return the set of represented alternatives in {@code altsets}
      */
-    private static BitSet getAlts(BitSet[] altsets)
+    public static BitSet getAlts(BitSet[] altsets)
     {
 	BitSet all;
         foreach (BitSet alts; altsets) {

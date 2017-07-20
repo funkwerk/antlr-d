@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2013 Terence Parr
  *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -31,9 +32,11 @@
 module antlr.v4.runtime.atn.ProfilingATNSimulator;
 
 import std.conv;
+import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
@@ -137,6 +140,59 @@ class ProfilingATNSimulator : ParserATNSimulator
         currentState = existingTargetState;
         return existingTargetState;
 
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    protected override DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    {
+	DFAState state = super.computeTargetState(dfa, previousD, t);
+        currentState = state;
+        return state;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    protected override ATNConfigSet computeReachSet(ATNConfigSet closure, int t, bool fullCtx)
+    {
+	if (fullCtx) {
+            // this method is called after each time the input position advances
+            // during full context prediction
+            _llStopIndex = _input.index();
+        }
+
+        ATNConfigSet reachConfigs = super.computeReachSet(closure, t, fullCtx);
+        if (fullCtx) {
+            decisions[currentDecision].LL_ATNTransitions++; // count computation even if error
+            if ( reachConfigs!=null ) {
+            }
+            else { // no reach on current lookahead symbol. ERROR.
+                // TODO: does not handle delayed errors per getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule()
+                decisions[currentDecision].errors.add(
+                                                      new ErrorInfo(currentDecision, closure, _input, _startIndex, _llStopIndex, true)
+                                                      );
+            }
+        }
+        else {
+            decisions[currentDecision].SLL_ATNTransitions++;
+            if ( reachConfigs!=null ) {
+            }
+            else { // no reach on current lookahead symbol. ERROR.
+                decisions[currentDecision].errors.add(
+                                                      new ErrorInfo(currentDecision, closure, _input, _startIndex, _sllStopIndex, false)
+                                                      );
+            }
+        }
+        return reachConfigs;
+
+    }
+
+    public DecisionInfo[] getDecisionInfo()
+    {
     }
 
 }

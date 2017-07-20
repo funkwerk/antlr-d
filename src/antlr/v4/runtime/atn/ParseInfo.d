@@ -134,6 +134,7 @@ class ParseInfo
      */
     public long getTotalSLLATNLookaheadOps()
     {
+        DecisionInfo[] decisions = atnSimulator.getDecisionInfo();
         long k = 0;
         for (int i = 0; i < decisions.length; i++) {
             k += decisions[i].SLL_ATNTransitions;
@@ -147,6 +148,7 @@ class ParseInfo
      */
     public long getTotalLLATNLookaheadOps()
     {
+	DecisionInfo[] decisions = atnSimulator.getDecisionInfo();
         long k = 0;
         for (int i = 0; i < decisions.length; i++) {
             k += decisions[i].LL_ATNTransitions;

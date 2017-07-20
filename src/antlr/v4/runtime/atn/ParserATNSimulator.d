@@ -55,6 +55,7 @@ import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.SemanticContext;

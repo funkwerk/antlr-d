@@ -32,6 +32,8 @@ module antlr.v4.runtime.atn.ParserATNSimulator;
 
 import std.typecons;
 import std.format;
+import std.conv;
+import std.stdio;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.Parser;
@@ -39,6 +41,8 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.NoViableAltException;
+import antlr.v4.runtime.Vocabulary;
+import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
@@ -1001,7 +1005,7 @@ class ParserATNSimulator : ATNSimulator
 
             statesFromAlt1[config.state.stateNumber] = config.context;
             if (updatedContext != config.semanticContext) {
-                configSet ~= new ATNConfig(config, updatedContext), mergeCache;
+                configSet.add(new ATNConfig(config, updatedContext), mergeCache);
             }
             else {
                 configSet.add(config, mergeCache);
@@ -1482,7 +1486,7 @@ class ParserATNSimulator : ATNSimulator
 
         Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : VocabularyImpl.EMPTY_VOCABULARY;
         string displayName = vocabulary.getDisplayName(t);
-        if (displayName.equals(to!string(t))) {
+        if (displayName == to!string(t)) {
             return displayName;
         }
 

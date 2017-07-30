@@ -31,10 +31,13 @@
 module antlr.v4.runtime.TraceListener;
 
 import std.stdio;
+import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.TokenFactory;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.ParserRuleContext;
 
 // Class TraceListener
@@ -68,6 +71,59 @@ class TraceListener : Parser, ParseTreeListener
     {
         writeln("exit   " ~ getRuleNames()[ctx.getRuleIndex()] ~
                 ", LT(1)=" ~ _input.LT(1).getText());
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string[] getTokenNames()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string getGrammarFileName()
+    {
+        return "";
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override ATN getATN()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override string[] getRuleNames()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenFactory!CommonToken tokenFactory()
+    {
+        return null;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override void tokenFactory(TokenFactory!CommonToken input)
+    {
     }
 
 }

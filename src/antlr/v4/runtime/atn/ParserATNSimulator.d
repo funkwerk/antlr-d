@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -47,6 +48,9 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNConfig;
+import antlr.v4.runtime.atn.AtomTransition;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.NotSetTransition;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.Transition;
@@ -1091,7 +1095,7 @@ class ParserATNSimulator : ATNSimulator
             // unpredicated is indicated by SemanticContext.NONE
             assert(pred !is null);
 
-            if (ambigAlts !is null && ambigAlts[i]) {
+            if (ambigAlts.length > 0 && ambigAlts.get(i)) {
                 pairs ~= new PredPrediction(pred, i);
             }
             if (pred != SemanticContext.NONE ) containsPredicate = true;
@@ -1180,31 +1184,26 @@ class ParserATNSimulator : ATNSimulator
     protected ATNConfigSetATNConfigSetPair splitAccordingToSemanticValidity(ATNConfigSet configs,
                                                                             ParserRuleContext outerContext)
     {
-        BitSet predictions = new BitSet();
-        foreach (pair; predPredictions) {
-            if (pair.pred == SemanticContext.NONE ) {
-                predictions.set(pair.alt);
-                if (!complete) {
-                    break;
+	ATNConfigSet succeeded = new ATNConfigSet(configs.fullCtx);
+        ATNConfigSet failed = new ATNConfigSet(configs.fullCtx);
+        foreach (ATNConfig c; configs.configs) {
+            if (c.semanticContext != SemanticContext.NONE ) {
+                bool predicateEvaluationResult = evalSemanticContext(c.semanticContext, outerContext, c.alt, configs.fullCtx);
+                if (predicateEvaluationResult) {
+                    succeeded.add(c);
                 }
-                continue;
-            }
-
-            bool fullCtx = false; // in dfa
-            bool predicateEvaluationResult = evalSemanticContext(pair.pred, outerContext, pair.alt, fullCtx);
-            debug(dfa_debug)  {
-                writefln("eval pred %1$s=%2$s", pair, predicateEvaluationResult);
-            }
-
-            if ( predicateEvaluationResult ) {
-                debug(dfa_debug) writefln("PREDICT %s", pair.alt);
-                predictions.set(pair.alt);
-                if (!complete) {
-                    break;
+                else {
+                    failed.add(c);
                 }
+            }
+            else {
+                succeeded.add(c);
             }
         }
-        return predictions;
+        ATNConfigSetATNConfigSetPair res;
+        res.a = succeeded;
+        res.b = failed;
+        return res;
     }
 
     /**
@@ -1470,10 +1469,10 @@ class ParserATNSimulator : ATNSimulator
 	BitSet *conflictingAlts;
         if (configs.uniqueAlt != ATN.INVALID_ALT_NUMBER) {
             conflictingAlts = new BitSet();
-            conflictingAlts.set(configs.uniqueAlt);
+            conflictingAlts.set(configs.uniqueAlt, true);
         }
         else {
-            conflictingAlts = configs.conflictingAlts;
+            *conflictingAlts = configs.conflictingAlts;
         }
         return *conflictingAlts;
     }
@@ -1506,7 +1505,7 @@ class ParserATNSimulator : ATNSimulator
     public void dumpDeadEndConfigs(NoViableAltException nvae)
     {
 	writefln("dead end configs: ");
-        foreach (ATNConfig c; nvae.getDeadEndConfigs()) {
+        foreach (ATNConfig c; nvae.getDeadEndConfigs().configs) {
             string trans = "no edges";
             if (c.state.getNumberOfTransitions > 0) {
                 Transition t = c.state.transition(0);

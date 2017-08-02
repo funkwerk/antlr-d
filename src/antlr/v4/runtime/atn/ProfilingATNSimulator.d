@@ -32,9 +32,11 @@
 module antlr.v4.runtime.atn.ProfilingATNSimulator;
 
 import std.conv;
+import std.datetime;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
+import antlr.v4.runtime.atn.LookaheadEventInfo;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.Parser;
@@ -83,10 +85,10 @@ class ProfilingATNSimulator : ParserATNSimulator
             this._sllStopIndex = -1;
             this._llStopIndex = -1;
             this.currentDecision = decision;
-            long start = System.nanoTime(); // expensive but useful info
+            auto start = MonoTime.currTime; // expensive but useful info
             int alt = super.adaptivePredict(input, decision, outerContext);
-            long stop = System.nanoTime();
-            decisions[decision].timeInPrediction += (stop-start);
+            auto stop = MonoTime.currTime;
+            decisions[decision].timeInPrediction += ticksToNSecs(stop.ticks - start.ticks);
             decisions[decision].invocations++;
 
             int SLL_k = _sllStopIndex - _startIndex + 1;

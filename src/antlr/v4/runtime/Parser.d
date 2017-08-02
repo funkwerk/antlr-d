@@ -541,7 +541,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         line = offendingToken.getLine();
         charPositionInLine = offendingToken.getCharPositionInLine();
         ANTLRErrorListener!(Token, ParserATNSimulator) listener = getErrorListenerDispatch();
-        listener.syntaxError(this, offendingToken, line, charPositionInLine, msg, e);
+        listener.syntaxError(this, cast(Object)offendingToken, line, charPositionInLine, msg, e);
     }
 
     /**
@@ -786,7 +786,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     {
         ATN atn = getInterpreter().atn;
         ParserRuleContext ctx = ctx_;
-        ATNState s = atn.states.get(getState());
+        ATNState s = atn.states[getState];
         IntervalSet following = atn.nextTokens(s);
         if (following.contains(symbol)) {
             return true;
@@ -796,7 +796,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
             return false;
 
         while (ctx !is null && ctx.invokingState>=0 && following.contains(TokenConstants.EPSILON) ) {
-            ATNState invokingState = atn.states.get(ctx.invokingState);
+            ATNState invokingState = atn.states[ctx.invokingState];
             RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
             following = atn.nextTokens(rt.followState);
             if (following.contains(symbol)) {
@@ -827,13 +827,13 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      */
     public IntervalSet getExpectedTokens()
     {
-        return getATN().getExpectedTokens(getState(), getContext());
+        return getATN().getExpectedTokens(getState(), ctx_);
     }
 
     public IntervalSet getExpectedTokensWithinCurrentRule()
     {
         ATN atn = getInterpreter().atn;
-        ATNState s = atn.states.get(getState());
+        ATNState s = atn.states[getState];
         return atn.nextTokens(s);
     }
 
@@ -935,7 +935,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     public void setProfile(bool profile)
     {
         ParserATNSimulator interp = getInterpreter();
-        PredictionMode saveMode = interp.getPredictionMode();
+        auto saveMode = interp.getPredictionMode();
         if (profile) {
             if (interp.classinfo != ProfilingATNSimulator.classinfo) {
                 setInterpreter(new ProfilingATNSimulator(this));

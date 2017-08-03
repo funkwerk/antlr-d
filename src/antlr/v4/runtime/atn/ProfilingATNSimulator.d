@@ -33,13 +33,16 @@ module antlr.v4.runtime.atn.ProfilingATNSimulator;
 
 import std.conv;
 import std.datetime;
+import std.algorithm;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
+import antlr.v4.runtime.atn.ErrorInfo;
 import antlr.v4.runtime.atn.LookaheadEventInfo;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
 
@@ -60,6 +63,19 @@ class ProfilingATNSimulator : ParserATNSimulator
 
     protected int _llStopIndex;
 
+    protected DFAState currentState;
+
+    /**
+     *  we can determine whether or not a decision / input pair is context-sensitive.
+     *  If LL gives a different result than SLL's predicted alternative, we have a
+     *  context sensitivity for sure. The converse is not necessarily true, however.
+     *  It's possible that after conflict resolution chooses minimum alternatives,
+     *  SLL could get the same answer as LL. Regardless of whether or not the result indicates
+     *  an ambiguity, it is not treated as a context sensitivity because LL prediction
+     *  was not required in order to produce a correct prediction for this decision and input sequence.
+     *  It may in fact still be a context sensitivity but we don't know by looking at the
+     *  minimum alternatives for the current input.
+     */
     public int conflictingAltResolvedBySLL;
 
     public this(Parser parser)
@@ -93,7 +109,7 @@ class ProfilingATNSimulator : ParserATNSimulator
 
             int SLL_k = _sllStopIndex - _startIndex + 1;
             decisions[decision].SLL_TotalLook += SLL_k;
-            decisions[decision].SLL_MinLook = decisions[decision].SLL_MinLook==0 ? SLL_k : Math.min(decisions[decision].SLL_MinLook, SLL_k);
+            decisions[decision].SLL_MinLook = decisions[decision].SLL_MinLook==0 ? SLL_k : min(decisions[decision].SLL_MinLook, SLL_k);
             if ( SLL_k > decisions[decision].SLL_MaxLook ) {
                 decisions[decision].SLL_MaxLook = SLL_k;
                 decisions[decision].SLL_MaxLookEvent =
@@ -103,7 +119,7 @@ class ProfilingATNSimulator : ParserATNSimulator
             if (_llStopIndex >= 0) {
                 int LL_k = _llStopIndex - _startIndex + 1;
                 decisions[decision].LL_TotalLook += LL_k;
-                decisions[decision].LL_MinLook = decisions[decision].LL_MinLook==0 ? LL_k : Math.min(decisions[decision].LL_MinLook, LL_k);
+                decisions[decision].LL_MinLook = decisions[decision].LL_MinLook==0 ? LL_k : min(decisions[decision].LL_MinLook, LL_k);
                 if ( LL_k > decisions[decision].LL_MaxLook ) {
                     decisions[decision].LL_MaxLook = LL_k;
                     decisions[decision].LL_MaxLookEvent =
@@ -133,9 +149,8 @@ class ProfilingATNSimulator : ParserATNSimulator
         if (existingTargetState !is null) {
             decisions[currentDecision].SLL_DFATransitions++; // count only if we transition over a DFA state
             if ( existingTargetState==ERROR ) {
-                decisions[currentDecision].errors.add(
-                                                      new ErrorInfo(currentDecision, previousD.configs, _input, _startIndex, _sllStopIndex, false)
-                                                      );
+                decisions[currentDecision].errors
+                    ~= new ErrorInfo(currentDecision, previousD.configs, _input, _startIndex, _sllStopIndex, false);
             }
         }
 
@@ -170,31 +185,47 @@ class ProfilingATNSimulator : ParserATNSimulator
         ATNConfigSet reachConfigs = super.computeReachSet(closure, t, fullCtx);
         if (fullCtx) {
             decisions[currentDecision].LL_ATNTransitions++; // count computation even if error
-            if ( reachConfigs!=null ) {
+            if (reachConfigs !is null) {
             }
             else { // no reach on current lookahead symbol. ERROR.
                 // TODO: does not handle delayed errors per getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule()
-                decisions[currentDecision].errors.add(
-                                                      new ErrorInfo(currentDecision, closure, _input, _startIndex, _llStopIndex, true)
-                                                      );
+                decisions[currentDecision].errors
+                    ~= new ErrorInfo(currentDecision, closure, _input, _startIndex, _llStopIndex, true);
             }
         }
         else {
             decisions[currentDecision].SLL_ATNTransitions++;
-            if ( reachConfigs!=null ) {
+            if (reachConfigs !is null) {
             }
             else { // no reach on current lookahead symbol. ERROR.
-                decisions[currentDecision].errors.add(
-                                                      new ErrorInfo(currentDecision, closure, _input, _startIndex, _sllStopIndex, false)
-                                                      );
+                decisions[currentDecision].errors
+                    ~= new ErrorInfo(currentDecision, closure, _input, _startIndex, _sllStopIndex, false);
             }
         }
         return reachConfigs;
 
     }
 
+    /**
+     * @uml
+     * @override
+     */
+    protected override bool evalSemanticContext(SemanticContext pred, ParserRuleContext parserCallStack,
+        int alt, bool fullCtx)
+    {
+	bool result = super.evalSemanticContext(pred, parserCallStack, alt, fullCtx);
+        if (pred.classinfo != SemanticContext.PrecedencePredicate.classinfo) {
+            bool fullContext = _llStopIndex >= 0;
+            int stopIndex = fullContext ? _llStopIndex : _sllStopIndex;
+            decisions[currentDecision].predicateEvals
+                ~= new PredicateEvalInfo(currentDecision, _input, _startIndex, stopIndex, pred, result, alt, fullCtx);
+        }
+        return result;
+    }
+
     public DecisionInfo[] getDecisionInfo()
     {
+        return decisions;
     }
 
 }

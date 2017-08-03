@@ -1243,9 +1243,10 @@ class ParserATNSimulator : ATNSimulator
         return predictions;
     }
 
-    public bool evalSemanticContext(SemanticContext pred, int parserCallStack, bool fullCtx)
+    public bool evalSemanticContext(SemanticContext pred, ParserRuleContext parserCallStack,
+        int alt, bool fullCtx)
     {
-	return pred.eval(parser, parserCallStack);
+        return pred.eval(parser, parserCallStack);
     }
 
     protected void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,

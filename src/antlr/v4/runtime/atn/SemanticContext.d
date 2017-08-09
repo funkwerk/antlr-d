@@ -100,8 +100,9 @@ abstract class SemanticContext
      * @uml
      * @safe
      * @nothrow
+     * @override
      */
-    public int hashCode() @safe nothrow
+    public override size_t toHash() @safe nothrow
     {
         return 1;
     }

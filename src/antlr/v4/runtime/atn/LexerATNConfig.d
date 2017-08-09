@@ -115,10 +115,10 @@ class LexerATNConfig : ATNConfig
         size_t hashCode = MurmurHash.initialize(7);
         hashCode = MurmurHash.update(hashCode, state.stateNumber);
         hashCode = MurmurHash.update(hashCode, alt);
-        hashCode = MurmurHash.update(hashCode, context);
-        hashCode = MurmurHash.update(hashCode, semanticContext);
+        hashCode = MurmurHash.update(hashCode, context.toHash);
+        hashCode = MurmurHash.update(hashCode, semanticContext.toHash);
         hashCode = MurmurHash.update(hashCode, passedThroughNonGreedyDecision ? 1 : 0);
-        hashCode = MurmurHash.update(hashCode, lexerActionExecutor);
+        hashCode = MurmurHash.update(hashCode, lexerActionExecutor.toHash);
         hashCode = MurmurHash.finish(hashCode, 6);
         return hashCode;
     }

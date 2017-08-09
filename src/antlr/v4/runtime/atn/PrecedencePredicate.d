@@ -62,8 +62,10 @@ class PrecedencePredicate : SemanticContext
     /**
      * @uml
      * @override
+     * @safe
+     * @nothrow
      */
-    public override int hashCode()
+    public override size_t toHash() @safe nothrow
     {
        	int hashCode = 1;
         hashCode = 31 * hashCode + precedence;

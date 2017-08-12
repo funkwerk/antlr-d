@@ -50,7 +50,6 @@ import antlr.v4.runtime.misc.Interval;
 
 // Class ParserRuleContext
 /**
- * @uml
  * A rule invocation record for parsing.
  *
  * Contains all of the information about the current rule not stored in the
@@ -77,7 +76,6 @@ class ParserRuleContext : RuleContext
 {
 
     /**
-     * @uml
      * If we are debugging or building a parse tree for a visitor,
      * we need to track all of the tokens and rule invocations associated
      * with this rule's context. This is empty for parsing w/o tree constr.
@@ -134,13 +132,13 @@ class ParserRuleContext : RuleContext
      */
     public TerminalNode addChild(TerminalNode t)
     {
-        children ~= cast(Variant)t;
+        children ~= Variant(t);
         return t;
     }
 
     public RuleContext addChild(RuleContext ruleInvocation)
     {
-        children ~= cast(Variant)ruleInvocation;
+        children ~= Variant(ruleInvocation);
         return ruleInvocation;
     }
 
@@ -334,7 +332,6 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * @uml
      * Used for rule context info debugging during parse-time, not so much for ATN debugging
      */
     public string toInfoString(Parser recognizer)
@@ -342,7 +339,8 @@ class ParserRuleContext : RuleContext
         string[] rules = recognizer.getRuleInvocationStack(this);
         rules.reverse();
         return format("ParserRuleContext{ %1$s " ~
-                "start=%2$s, stop=%3$s}", rules, start.getText, stop.getText);
+                      "start=%2$s, stop=%3$s}", rules,
+                      start.getText, stop.getText);
     }
 
 }

@@ -24,6 +24,7 @@ struct AltAndContextMap
 
     public BitSet[] values()
     {
+        return altAndContextMap.values;
     }
 
 }

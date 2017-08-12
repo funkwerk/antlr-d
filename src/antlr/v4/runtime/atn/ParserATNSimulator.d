@@ -1233,7 +1233,7 @@ class ParserATNSimulator : ATNSimulator
 
             if ( predicateEvaluationResult ) {
                 debug(dfa_debug) writefln("PREDICT ", pair.alt);
-                predictions.set(pair.alt);
+                predictions.set(pair.alt, true);
                 if (!complete) {
                     break;
                 }

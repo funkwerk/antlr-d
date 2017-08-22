@@ -339,7 +339,7 @@ class ParserInterpreter : Parser
                 }
             break;
         case TransitionStates.ATOM:
-            match((cast(AtomTransition)transition).label);
+            match((cast(AtomTransition)transition)._label);
             break;
         case TransitionStates.RANGE:
         case TransitionStates.SET:
@@ -491,7 +491,7 @@ class ParserInterpreter : Parser
                 Token tok = e.getOffendingToken();
                 int expectedTokenType = ime.getExpectedTokens().getMinElement(); // get any element
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
-                Token errToken =
+                auto errToken =
                     getTokenFactory().create(tokenFactorySourcePair,
                                              expectedTokenType, tok.getText(),
                                              Token.DEFAULT_CHANNEL,
@@ -500,7 +500,7 @@ class ParserInterpreter : Parser
                 ctx_.addErrorNode(errToken);
             }
             else { // NoViableAlt
-                Token tok = e.getOffendingToken();
+                auto tok = e.getOffendingToken;
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
                 Token errToken =
                     getTokenFactory().create(tokenFactorySourcePair,

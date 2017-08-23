@@ -46,6 +46,8 @@ import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.TraceListener;
 import antlr.v4.runtime.TrimToSizeListener;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonToken;
+import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
@@ -408,9 +410,9 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         return _syntaxErrors;
     }
 
-    public Token getTokenFactory()
+    public TokenFactory!CommonToken getTokenFactory()
     {
-        return cast(Token)_input.getTokenSource().getTokenFactory();
+        return _input.getTokenSource().getTokenFactory();
     }
 
     /**

@@ -35,6 +35,9 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.PrecedencePredicate;
+import antlr.v4.runtime.atn.AND;
+import antlr.v4.runtime.atn.OR;
 
 // Class SemanticContext
 /**
@@ -105,6 +108,40 @@ abstract class SemanticContext
     public override size_t toHash() @safe nothrow
     {
         return 1;
+    }
+
+    public static SemanticContext and(SemanticContext a, SemanticContext b)
+    {
+	if (a is null || a == NONE ) return b;
+        if (b is null || b == NONE ) return a;
+        AND result = new AND(a, b);
+        if (result.opnds.length == 1) {
+            return result.opnds[0];
+        }
+        return result;
+    }
+
+    public static SemanticContext or(SemanticContext a, SemanticContext b)
+    {
+	if (a is null ) return b;
+        if (b is null ) return a;
+        if (a == NONE || b == NONE ) return NONE;
+        OR result = new OR(a, b);
+        if (result.opnds.length == 1) {
+            return result.opnds[0];
+        }
+        return result;
+    }
+
+    public PrecedencePredicate[] filterPrecedencePredicates(SemanticContext[] collection)
+    {
+	PrecedencePredicate[] result;
+        foreach (context; collection) {
+            if (context.classinfo == PrecedencePredicate.classinfo) {
+                result ~= cast(PrecedencePredicate)context;
+            }
+        }
+        return result;
     }
 
 }

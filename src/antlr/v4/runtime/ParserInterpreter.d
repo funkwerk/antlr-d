@@ -494,7 +494,7 @@ class ParserInterpreter : Parser
                 auto errToken =
                     getTokenFactory().create(tokenFactorySourcePair,
                                              expectedTokenType, tok.getText(),
-                                             Token.DEFAULT_CHANNEL,
+                                             TokenConstants.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop
                                              tok.getLine(), tok.getCharPositionInLine());
                 ctx_.addErrorNode(errToken);
@@ -502,10 +502,10 @@ class ParserInterpreter : Parser
             else { // NoViableAlt
                 auto tok = e.getOffendingToken;
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
-                Token errToken =
+                auto errToken =
                     getTokenFactory().create(tokenFactorySourcePair,
-                                             Token.INVALID_TYPE, tok.getText(),
-                                             Token.DEFAULT_CHANNEL,
+                                             TokenConstants.INVALID_TYPE, tok.getText(),
+                                             TokenConstants.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop
                                              tok.getLine(), tok.getCharPositionInLine());
                 ctx_.addErrorNode(errToken);

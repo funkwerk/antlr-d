@@ -1,9 +1,11 @@
 module antlr.v4.runtime.atn.AND;
 
+import std.algorithm.comparison;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.atn.Operator;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.misc.MurmurHash;
 
 // Class AND
 /**
@@ -13,6 +15,41 @@ class AND : Operator
 {
 
     public SemanticContext[] opnds;
+
+    public this(SemanticContext a, SemanticContext b)
+    {
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override SemanticContext[] getOperands()
+    {
+        return opnds;
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override bool opEquals(Object obj)
+    {
+	if (this == obj) return true;
+        if (obj.classinfo != AND.classinfo) return false;
+        AND other = cast(AND)obj;
+        return equal(this.opnds, other.opnds);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t toHash()
+    {
+        auto and = new AND;
+        return MurmurHash.hashCode(opnds, and.toHash);
+    }
 
     public bool eval(Parser parser, RuleContext parserCallStack)
     {

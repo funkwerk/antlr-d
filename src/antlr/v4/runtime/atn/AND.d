@@ -1,10 +1,15 @@
 module antlr.v4.runtime.atn.AND;
 
+import std.conv;
 import std.algorithm.comparison;
+import std.algorithm.iteration;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.Operator;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class AND
@@ -44,14 +49,18 @@ class AND : Operator
     /**
      * @uml
      * @override
+     * @trusted
      */
-    public override size_t toHash()
+    public override size_t toHash() @trusted
     {
-        auto and = new AND;
-        return MurmurHash.hashCode(opnds, and.toHash);
+        return MurmurHash.hashCode(opnds, this.toHash);
     }
 
-    public bool eval(Parser parser, RuleContext parserCallStack)
+    /**
+     * @uml
+     * @override
+     */
+    public override bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
     {
 	foreach (SemanticContext opnd; opnds) {
             if (!opnd.eval(parser, parserCallStack)) return false;
@@ -59,7 +68,11 @@ class AND : Operator
         return true;
     }
 
-    public SemanticContext evalPrecedence(Parser parser, RuleContext parserCallStack)
+    /**
+     * @uml
+     * @override
+     */
+    public override SemanticContext evalPrecedence(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
     {
 	bool differs = false;
         SemanticContext[] operands;
@@ -100,6 +113,7 @@ class AND : Operator
      */
     public override string toString()
     {
+        return to!string(map!(n => n.toString)(opnds).joiner(" && "));
     }
 
 }

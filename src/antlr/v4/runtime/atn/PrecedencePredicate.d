@@ -54,9 +54,13 @@ class PrecedencePredicate : SemanticContext
         }
     }
 
-    public int compareTo(PrecedencePredicate o)
+    /**
+     * @uml
+     * @override
+     */
+    public override int opCmp(Object o)
     {
-        return precedence - o.precedence;
+        return precedence - cast(PrecedencePredicate)o.precedence;
     }
 
     /**
@@ -72,7 +76,11 @@ class PrecedencePredicate : SemanticContext
         return hashCode;
     }
 
-    public bool equals(Object obj)
+    /**
+     * @uml
+     * @override
+     */
+    public override bool opEquals(Object obj)
     {
 	if (obj.classinfo != PrecedencePredicate.classinfo) {
             return false;

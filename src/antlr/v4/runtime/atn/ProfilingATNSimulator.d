@@ -38,6 +38,7 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.atn.ErrorInfo;
+import antlr.v4.runtime.atn.PredicateEvalInfo;
 import antlr.v4.runtime.atn.LookaheadEventInfo;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.dfa.DFA;

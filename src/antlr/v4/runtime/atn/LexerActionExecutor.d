@@ -233,7 +233,7 @@ class LexerActionExecutor
         foreach (int i, lexerA; lexerActions)
             if (lexerA != other.lexerActions[i])
                 return false;
-        return hashCode == other.hashCode;
+        return this.hashCode_ == other.toHash;
     }
 
 }

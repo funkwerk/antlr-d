@@ -4,6 +4,7 @@ import std.format;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Class FailedPredicateException
@@ -29,7 +30,7 @@ class FailedPredicateException : RecognitionException!(Token, ParserATNSimulator
 
     public this(Parser recognizer, string predicate, string message)
     {
-	super(formatMessage(predicate, message), recognizer, recognizer.getInputStream(), recognizer._ctx);
+	super(formatMessage(predicate, message), recognizer, recognizer.getInputStream(), recognizer.ctx_);
         ATNState s = recognizer.getInterpreter().atn.states.get(recognizer.getState());
 
         AbstractPredicateTransition trans = cast(AbstractPredicateTransition)s.transition(0);

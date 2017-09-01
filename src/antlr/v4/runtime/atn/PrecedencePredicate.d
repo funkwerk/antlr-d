@@ -60,7 +60,7 @@ class PrecedencePredicate : SemanticContext
      */
     public override int opCmp(Object o)
     {
-        return precedence - cast(PrecedencePredicate)o.precedence;
+        return precedence - (cast(PrecedencePredicate)o).precedence;
     }
 
     /**

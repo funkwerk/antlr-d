@@ -34,6 +34,7 @@ module antlr.v4.runtime.atn.OR;
 import std.conv;
 import std.algorithm.searching;
 import std.algorithm.iteration;
+import std.algorithm.comparison;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.RuleContext;
@@ -85,12 +86,7 @@ class OR : Operator
      */
     public override bool opEquals(Object obj)
     {
-        if (this is obj)
-            return true;
-        if (obj.classinfo != OR.classinfo)
-            return false;
-        OR other = cast(OR)obj;
-        return Arrays.equals(this.opnds, other.opnds);
+        return this.opnds == (cast(OR)obj).opnds;
     }
 
     /**

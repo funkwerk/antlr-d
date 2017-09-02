@@ -5,7 +5,9 @@ import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.PredicateTransition;
 
 // Class FailedPredicateException
 /**
@@ -22,16 +24,18 @@ class FailedPredicateException : RecognitionException!(Token, ParserATNSimulator
 
     public this(Parser recognizer)
     {
+	this(recognizer, null);
     }
 
     public this(Parser recognizer, string predicate)
     {
+        this(recognizer, predicate, null);
     }
 
     public this(Parser recognizer, string predicate, string message)
     {
 	super(formatMessage(predicate, message), recognizer, recognizer.getInputStream(), recognizer.ctx_);
-        ATNState s = recognizer.getInterpreter().atn.states.get(recognizer.getState());
+        ATNState s = recognizer.getInterpreter().atn.states[recognizer.getState];
 
         AbstractPredicateTransition trans = cast(AbstractPredicateTransition)s.transition(0);
         if (trans.classinfo == PredicateTransition.classinfo) {

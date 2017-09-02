@@ -117,7 +117,7 @@ class ATNConfigSet
      */
     public bool fullCtx;
 
-    private int cachedHashCode = -1;
+    private size_t cachedHashCode = -1;
 
     public this(bool fullCtx)
     {
@@ -295,12 +295,11 @@ class ATNConfigSet
     {
         if (readonly_) {
             if (cachedHashCode == -1) {
-                cachedHashCode = configs.toHash();
+                cachedHashCode = configs.map!(n => n.toHash).sum;
             }
             return cachedHashCode;
         }
-
-        return configs.toHash();
+        return configs.map!(n => n.toHash).sum;
     }
 
     public int size()

@@ -167,19 +167,19 @@ class Array2DHashSet(T)
      */
     protected final int getBucket(T o)
     {
-        int hash = comparator.hashCode(o);
+        int hash = comparator.toHash(o);
         int b = hash & (to!int(buckets.length) - 1); // assumes len is power of 2
         return b;
     }
 
-    public int hashCode()
+    public override size_t toHash()
     {
-	int hash = MurmurHash.initialize();
+	size_t hash = MurmurHash.initialize();
         foreach (bucket; buckets) {
             if (bucket.isNull) continue;
             foreach (o; bucket) {
                 if (o.isNull) break;
-                hash = MurmurHash.update(hash, comparator.hashCode(o));
+                hash = MurmurHash.update(hash, comparator.toHash(o));
             }
         }
         hash = MurmurHash.finish(hash, size());

@@ -40,6 +40,7 @@ import std.algorithm.mutation : remove;
 import std.algorithm.searching : canFind;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
+import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class Template Array2DHashSet
 /**
@@ -167,7 +168,7 @@ class Array2DHashSet(T)
      */
     protected final int getBucket(T o)
     {
-        int hash = comparator.toHash(o);
+        int hash = comparator.hashOf(o);
         int b = hash & (to!int(buckets.length) - 1); // assumes len is power of 2
         return b;
     }
@@ -179,7 +180,7 @@ class Array2DHashSet(T)
             if (bucket.isNull) continue;
             foreach (o; bucket) {
                 if (o.isNull) break;
-                hash = MurmurHash.update(hash, comparator.toHash(o));
+                hash = MurmurHash.update(hash, comparator.hashOf(o));
             }
         }
         hash = MurmurHash.finish(hash, size());

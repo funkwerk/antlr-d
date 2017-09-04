@@ -39,70 +39,7 @@ import std.algorithm.iteration;
  * This abstract base class is provided so performance-critical applications can
  * use virtual- instead of interface-dispatch when calling comparator methods.
  */
-abstract class AbstractEqualityComparator(T) : EqualityComparator
+abstract class AbstractEqualityComparator(T) : EqualityComparator!T
 {
 
-    private T[] arr;
-
-    /**
-     * @uml
-     * This method returns a hash code for the object.
-     * @safe
-     * @pure
-     * @override
-     */
-    public override size_t toHash() @safe pure
-    {
-        size_t hash;
-        foreach (e; arr) {
-            hash = hash * 9;
-            hash += ToHash(e);
-        }
-        return hash;
-    }
-
-    /**
-     * @uml
-     * @override
-     */
-    public override bool opEquals(Object o)
-    {
-        auto x = cast(AbstractEqualityComparator!T)o;
-        if (this.arr.length != x.arr.length) return false;
-        foreach (int i, e; arr)
-            if (e != x.arr[i]) return false;
-        return true;
-    }
-
-    public void append(T t)
-    {
-        arr ~= t;
-    }
-
-    public T[] toArray()
-    {
-        T[] res;
-        arr.each!(n => res ~= n);
-        return res;
-    }
-
-}
-
-unittest
-{
-    class TestIntAbstractEqualityComparator : AbstractEqualityComparator!int
-    {
-    }
-    class TestStringAbstractEqualityComparator : AbstractEqualityComparator!string
-    {
-    }
-    auto testInt = new TestIntAbstractEqualityComparator();
-    testInt.append(12);
-    testInt.append(5);
-    assert(testInt.toArray == [12, 5]);
-    auto testString = new TestStringAbstractEqualityComparator();
-    testString.append("abcdefg");
-    testString.append("!");
-    testString.append("1234");
-    assert(testString.toArray == ["abcdefg", "!", "1234"]);
 }

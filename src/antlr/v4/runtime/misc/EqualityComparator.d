@@ -31,7 +31,7 @@
 
 module antlr.v4.runtime.misc.EqualityComparator;
 
-// Interface EqualityComparator
+// Interface Template EqualityComparator
 /**
  * @uml
  * This interface provides an abstract concept of object equality independent of
@@ -41,17 +41,15 @@ module antlr.v4.runtime.misc.EqualityComparator;
  *
  * @author Sam Harwell
  */
-interface EqualityComparator
+interface EqualityComparator(T)
 {
 
     /**
      * @uml
      * This method returns a hash code for the object.
-     * @safe
-     * @pure
      */
-    public size_t toHash() @safe pure;
+    public size_t hashOf(T o);
 
-    public bool opEquals(Object o);
+    public bool equals(T a, T b);
 
 }

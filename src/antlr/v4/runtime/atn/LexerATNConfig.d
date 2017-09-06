@@ -38,6 +38,7 @@ import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class LexerATNConfig
 /**

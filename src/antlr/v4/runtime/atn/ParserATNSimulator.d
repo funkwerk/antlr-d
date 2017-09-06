@@ -1027,7 +1027,7 @@ class ParserATNSimulator : ATNSimulator
                  * filter the prediction context for alternatives predicting alt>1
                  * (basically a graph subtraction algorithm).
                  */
-                PredictionContext context = statesFromAlt1.get(config.state.stateNumber);
+                PredictionContext context = statesFromAlt1[config.state.stateNumber];
                 if (context !is null && context.opEquals(config.context)) {
                     // eliminated
                     continue;

@@ -92,11 +92,11 @@ class Array2DHashSet(T)
     public this(AbstractEqualityComparator!(T) comparator, int initialCapacity, int initialBucketCapacity)
     {
 	if (comparator is null) {
-            comparator = cast(AbstractEqualityComparator!T) new ObjectEqualityComparator();
+            comparator = cast(AbstractEqualityComparator!T)ObjectEqualityComparator.instance;
         }
 
         this.comparator = comparator;
-        this.buckets = createBuckets();
+        this.buckets = createBuckets(initialCapacity);
         this.initialBucketCapacity = initialBucketCapacity;
     }
 
@@ -115,37 +115,37 @@ class Array2DHashSet(T)
 
     protected T getOrAddImpl(T o)
     {
-        int b = getBucket(o);
-        //Nullable!(Nullable!T[]) bucket = buckets[b];
+        auto b = getBucket(o);
+        Nullable!T[] bucket = buckets[b];
 
-        // // NEW BUCKET
-        // if (bucket.isNull) {
-        //     bucket = createBucket();
-        //     bucket[0] = o;
-        //     buckets[b] = bucket;
-        //     n++;
-        //     return o;
-        // }
+        // NEW BUCKET
+        if (bucket.length == 0) {
+            bucket = createBucket(initialBucketCapacity);
+            bucket ~= Nullable!T(o);
+            buckets[b] = bucket;
+            n++;
+            return o;
+        }
 
-        // // LOOK FOR IT IN BUCKET
-        // for (int i=0; i<bucket.length; i++) {
-        //     auto existing = bucket[i];
-        //     if (existing.isNull) { // empty slot; not there, add.
-        //         bucket[i] = o;
-        //         n++;
-        //         return o;
-        //     }
-        //     if ( comparator.equals(existing, o) ) return existing; // found existing, quit
-        // }
+        // LOOK FOR IT IN BUCKET
+        for (int i=0; i < bucket.length; i++) {
+            auto existing = bucket[i];
+            if (existing.isNull) { // empty slot; not there, add.
+                bucket[i] = o;
+                n++;
+                return o;
+            }
+            if (comparator.equals(existing, o))
+                return existing; // found existing, quit
+        }
 
-        // // FULL BUCKET, expand and add to end
-        // int oldLength = to!int(bucket.length);
-        // bucket.length = bucket.length * 2;
-        // buckets[b] = bucket;
-        // bucket[oldLength] = o; // add to end
-        // n++;
-        // return o;
-        return 1;
+        // FULL BUCKET, expand and add to end
+        auto oldLength = bucket.length;
+        bucket.length = bucket.length * 2;
+        buckets[b] = bucket;
+        bucket[oldLength] = o; // add to end
+        n++;
+        return o;
     }
 
     public Nullable!T get(Nullable!T o)
@@ -166,13 +166,17 @@ class Array2DHashSet(T)
      * @uml
      * @final
      */
-    protected final int getBucket(T o)
+    protected final size_t getBucket(T o)
     {
-        int hash = comparator.hashOf(o);
-        int b = hash & (to!int(buckets.length) - 1); // assumes len is power of 2
+        auto hash = comparator.hashOf(o);
+        auto b = hash & (buckets.length - 1); // assumes len is power of 2
         return b;
     }
 
+    /**
+     * @uml
+     * @override
+     */
     public override size_t toHash()
     {
 	size_t hash = MurmurHash.initialize();
@@ -206,7 +210,7 @@ class Array2DHashSet(T)
 	auto old = buckets;
         currentPrime += 4;
         int newCapacity = to!int(buckets.length) * 2;
-        auto newTable = createBuckets();
+        auto newTable = createBuckets(newCapacity);
         int[] newBucketLengths = new int[newTable.length];
         buckets = newTable;
         threshold = cast(int)(newCapacity * LOAD_FACTOR);
@@ -221,12 +225,12 @@ class Array2DHashSet(T)
                 if (o.isNull) {
                     break;
                 }
-                int b = getBucket(o);
+                auto b = getBucket(o);
                 int bucketLength = newBucketLengths[b];
                 Nullable!T[] newBucket;
                 if (bucketLength == 0) {
                     // new bucket
-                    newBucket = createBucket();
+                    newBucket = createBucket(initialBucketCapacity);
                     newTable[b] = newBucket;
                 }
                 else {
@@ -296,21 +300,19 @@ class Array2DHashSet(T)
 
     public T[] toArray()
     {
-	auto a = createBucket();
-        a.length = size;
-        int i = 0;
+	T[] a;
         foreach (bucket; buckets) {
             if (bucket.isNull) {
                 continue;
             }
-            foreach (o; bucket) {
-                if (o.isNull) {
+            foreach (T o; bucket) {
+                if (o is null) {
                     break;
                 }
-                a[i++] = o;
+                a ~= o;
             }
         }
-        return to!(int[])(a.get);
+        return a;
     }
 
     public U[] toArray(U)(U[] a)
@@ -349,7 +351,7 @@ class Array2DHashSet(T)
 	if (obj.isNull) {
             return false;
         }
-        int b = getBucket(obj);
+        size_t b = getBucket(obj);
         auto bucket = buckets[b];
         if (bucket.isNull) {
             // no bucket
@@ -433,11 +435,11 @@ class Array2DHashSet(T)
                 j++;
             }
         }
-        
+
         bool changed = newsize != n;
         n = newsize;
         return changed;
-        
+
     }
 
     public bool removeAll(Nullable!T[] c)
@@ -451,7 +453,7 @@ class Array2DHashSet(T)
 
     public void clear()
     {
-	buckets = createBuckets();
+	buckets = createBuckets(INITAL_CAPACITY);
         n = 0;
     }
 
@@ -499,18 +501,13 @@ class Array2DHashSet(T)
         return buf.data;
     }
 
-    // public Nullable!T asElementType(Object o)
-    // {
-    //     return Nullable!(cast(T)o);
-    // }
-
-    public Nullable!(Nullable!T[])[] createBuckets()
+    public Nullable!(Nullable!T[])[] createBuckets(int capacity)
     {
         Nullable!(Nullable!T[])[] obj;
         return obj;
     }
 
-    public Nullable!(Nullable!T[]) createBucket()
+    public Nullable!T[] createBucket(int capacity)
     {
         Nullable!(Nullable!T[]) obj;
         return obj;

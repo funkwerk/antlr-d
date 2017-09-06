@@ -47,8 +47,10 @@ interface EqualityComparator(T)
     /**
      * @uml
      * This method returns a hash code for the object.
+     * @safe
+     * @nothrow
      */
-    public size_t hashOf(T o);
+    public size_t hashOf(T o) @safe nothrow;
 
     public bool equals(T a, T b);
 

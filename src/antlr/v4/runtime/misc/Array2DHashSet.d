@@ -109,7 +109,8 @@ class Array2DHashSet(T)
      */
     public final T getOrAdd(T o)
     {
-        if ( n > threshold ) expand();
+        if (n > threshold)
+            expand();
         return getOrAddImpl(o);
     }
 
@@ -256,7 +257,7 @@ class Array2DHashSet(T)
     public final bool add(T t)
     {
 	T existing = getOrAdd(t);
-        return existing==t;
+        return existing == t;
     }
 
     /**
@@ -305,8 +306,8 @@ class Array2DHashSet(T)
             if (bucket.isNull) {
                 continue;
             }
-            foreach (T o; bucket) {
-                if (o is null) {
+            foreach (o; bucket) {
+                if (o.isNull) {
                     break;
                 }
                 a ~= o;
@@ -517,8 +518,9 @@ class Array2DHashSet(T)
 
 unittest
 {
-    auto x = new Array2DHashSet!int();
+    import antlr.v4.runtime.atn.ATNConfig;
+    auto x = new Array2DHashSet!ATNConfig;
     writefln("result = \n%1$s", x.toString);
-    x.add(1);
-    writefln("result = \n%1$s", x.toTableString);
+    //x.add(1);
+    //writefln("result = \n%1$s", x.toTableString);
 }

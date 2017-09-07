@@ -31,7 +31,6 @@
 module antlr.v4.runtime.misc.AbstractEqualityComparator;
 
 import antlr.v4.runtime.misc.EqualityComparator;
-import antlr.v4.runtime.misc.ToHash : ToHash;
 import std.algorithm.iteration;
 
 // Class Template AbstractEqualityComparator

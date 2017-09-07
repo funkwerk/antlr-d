@@ -907,7 +907,7 @@ class ParserATNSimulator : ATNSimulator
             ATNConfig[] closureBusy;
             bool treatEofAsEpsilon = t == TokenConstants.EOF;
             foreach (c; intermediate.configs) {
-                closure(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
+                closureATN(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
             }
         }
 
@@ -985,7 +985,7 @@ class ParserATNSimulator : ATNSimulator
             ATNState target = p.transition(i).target;
             ATNConfig c = new ATNConfig(target, i+1, initialContext);
             ATNConfig[] closureBusy;
-            closure(c, configs, closureBusy, true, fullCtx, false);
+            closureATN(c, configs, closureBusy, true, fullCtx, false);
         }
 
         return configs;
@@ -1106,7 +1106,7 @@ class ParserATNSimulator : ATNSimulator
         }
 
         //		System.out.println(Arrays.toString(altToPred)+"->"+pairs);
-        return pairs(new PredPrediction[pairs.length]);
+        return pairs;
 
     }
 
@@ -1249,7 +1249,7 @@ class ParserATNSimulator : ATNSimulator
         return pred.eval(parser, parserCallStack);
     }
 
-    protected void closure(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
+    protected void closureATN(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
                            bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
@@ -1484,7 +1484,7 @@ class ParserATNSimulator : ATNSimulator
             return "EOF";
         }
 
-        Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : VocabularyImpl.EMPTY_VOCABULARY;
+        Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : cast(Vocabulary)VocabularyImpl.EMPTY_VOCABULARY;
         string displayName = vocabulary.getDisplayName(t);
         if (displayName == to!string(t)) {
             return displayName;
@@ -1512,7 +1512,7 @@ class ParserATNSimulator : ATNSimulator
                 Transition t = c.state.transition(0);
                 if (t.classinfo == AtomTransition.classinfo) {
                     AtomTransition at = cast(AtomTransition)t;
-                    trans = "Atom "+getTokenName(at.label);
+                    trans = "Atom " ~ getTokenName(at._label);
                 }
                 else if (t.classinfo == SetTransition.classinfo) {
                     SetTransition st = cast(SetTransition)t;
@@ -1520,7 +1520,7 @@ class ParserATNSimulator : ATNSimulator
                     trans = (not?"~":"") ~ "Set "~ st.set.toString();
                 }
             }
-            writefln("%1$s:%2$s", c.toString(parser, true), trans);
+            writefln("%1$s:%2$s", c.toString(true), trans);
         }
     }
 
@@ -1616,19 +1616,17 @@ class ParserATNSimulator : ATNSimulator
 	if (D == ERROR) {
             return D;
         }
-        synchronized (dfa.states) {
-            DFAState existing = dfa.states.get(D);
+            DFAState existing = dfa.states[D];
             if (existing !is null) return existing;
 
-            D.stateNumber = dfa.states.size();
-            if (!D.configs.isReadonly) {
+            D.stateNumber = to!int(dfa.states.length);
+            if (!D.configs.readonly) {
                 D.configs.optimizeConfigs(this);
-                D.configs.setReadonly(true);
+                D.configs.readonly(true);
             }
-            dfa.states.put(D, D);
+            dfa.states[D] =  D;
             debug writefln("adding new DFA state: %1$s", D);
             return D;
-        }
     }
 
     protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,

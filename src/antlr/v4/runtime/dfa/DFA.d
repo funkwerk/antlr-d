@@ -164,9 +164,8 @@ class DFA
 		synchronized (s0) {
 			// s0.edges is never null for a precedence DFA
 			if (precedence >= s0.edges.length) {
-				s0.edges = Arrays.copyOf(s0.edges, precedence + 1);
+				s0.edges.length = precedence + 1;
 			}
-
 			s0.edges[precedence] = startState;
 		}
     }
@@ -207,9 +206,10 @@ class DFA
 
     public string toString(string[] tokenNames)
     {
-	if ( s0==null ) return "";
-		DFASerializer serializer = new DFASerializer(this,tokenNames);
-		return serializer.toString();
+	if (s0 is null)
+            return "";
+        DFASerializer serializer = new DFASerializer(this,tokenNames);
+        return serializer.toString();
     }
 
     public string toString(Vocabulary vocabulary)

@@ -226,11 +226,11 @@ class ATNConfig
 
     /**
      * @uml
-     * @safe
+     * @trusted
      * @nothrow
      * @override
      */
-    public override size_t toHash() @safe nothrow
+    public override size_t toHash() @trusted nothrow
     {
         size_t hashCode = MurmurHash.initialize(7);
         hashCode = MurmurHash.update(hashCode, state.stateNumber);

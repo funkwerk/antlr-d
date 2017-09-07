@@ -20,8 +20,11 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
     /**
      * <p>This implementation returns
      * {@code obj.}{@link Object#hashCode hashCode()}.</p>
+     * @uml
+     * @safe
+     * @nothrow
      */
-    public size_t hashOf(Object obj)
+    public size_t hashOf(Object obj) @safe nothrow
     {
         if (obj is null) {
             return 0;

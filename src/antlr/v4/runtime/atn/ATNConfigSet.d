@@ -42,6 +42,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
+import antlr.v4.runtime.atn.ConfigHashSet;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.ATNSimulator;

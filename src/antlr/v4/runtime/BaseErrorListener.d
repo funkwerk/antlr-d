@@ -1,10 +1,15 @@
 module antlr.v4.runtime.BaseErrorListener;
 
 import antlr.v4.runtime.ANTLRErrorListener;
+import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.misc.BitSet;
 
 // Class Template BaseErrorListener
 /**
- * @uml
  * Provides an empty default implementation of {@link ANTLRErrorListener}. The
  * default implementation of each method does nothing, but can be overridden as
  * necessary.

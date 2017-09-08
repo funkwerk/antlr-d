@@ -492,7 +492,7 @@ class ParserInterpreter : Parser
                 int expectedTokenType = ime.getExpectedTokens().getMinElement(); // get any element
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
                 auto errToken =
-                    getTokenFactory().create(tokenFactorySourcePair,
+                    tokenFactory().create(tokenFactorySourcePair,
                                              expectedTokenType, tok.getText(),
                                              TokenConstants.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop
@@ -503,7 +503,7 @@ class ParserInterpreter : Parser
                 auto tok = e.getOffendingToken;
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
                 auto errToken =
-                    getTokenFactory().create(tokenFactorySourcePair,
+                    tokenFactory().create(tokenFactorySourcePair,
                                              TokenConstants.INVALID_TYPE, tok.getText(),
                                              TokenConstants.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop

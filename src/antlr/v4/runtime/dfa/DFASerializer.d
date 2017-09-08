@@ -70,7 +70,7 @@ class DFASerializer
         auto buf = appender!string;
         DFAState[] states = dfa.getStates;
         foreach (DFAState s; states) {
-            int n = 0;
+            size_t n = 0;
             if (s.edges !is null) n = s.edges.length;
             for (int i=0; i<n; i++) {
                 DFAState t = s.edges[i];

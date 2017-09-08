@@ -50,8 +50,8 @@ interface EqualityComparator(T)
      * @safe
      * @nothrow
      */
-    public size_t hashOf(T o) @safe nothrow;
+    public static size_t hashOf(T o) @safe nothrow;
 
-    public bool equals(T a, T b);
+    public static bool equals(T a, T b);
 
 }

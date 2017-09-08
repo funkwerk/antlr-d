@@ -40,13 +40,12 @@ import antlr.v4.runtime.misc.BitSet;
 
 // Interface Template ANTLRErrorListener
 /**
- * TODO add interface description
+ * How to emit recognition errors.
  */
 interface ANTLRErrorListener(U, V)
 {
 
     /**
-     * @uml
      * Upon syntax error, notify any interested parties. This is not how to
      * recover from errors or compute error messages. {@link ANTLRErrorStrategy}
      * specifies how to recover from syntax errors and how to compute error

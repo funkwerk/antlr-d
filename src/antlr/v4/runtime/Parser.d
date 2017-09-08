@@ -410,7 +410,11 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         return _syntaxErrors;
     }
 
-    public TokenFactory!CommonToken getTokenFactory()
+    /**
+     * @uml
+     * @override
+     */
+    public override TokenFactory!CommonToken tokenFactory()
     {
         return _input.getTokenSource().getTokenFactory();
     }
@@ -419,7 +423,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      * @uml
      * Tell our token source and error strategy about a new way to create tokens.
      */
-    public void setTokenFactory(T)(T factory)
+    public void tokenFactory(T)(T factory)
     {
         _input.getTokenSource().setTokenFactory(factory);
     }

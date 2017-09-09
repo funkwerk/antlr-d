@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@ import std.array;
 import std.variant;
 import std.conv;
 import std.stdio;
-import std.typecons;
+//import std.typecons;
 import std.container.array;
 import std.algorithm.mutation : remove;
 import std.algorithm.searching : canFind;
@@ -44,7 +45,7 @@ import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 // Class Template Array2DHashSet
 /**
- * TODO add class description
+ * Set implementation with closed hashing (open addressing).
  */
 class Array2DHashSet(T)
 {
@@ -57,7 +58,10 @@ class Array2DHashSet(T)
 
     protected AbstractEqualityComparator!(T) comparator;
 
-    protected Nullable!(Nullable!T[])[] buckets;
+    protected size_t function(Object o) @trusted nothrow hashOfFp;
+    protected bool function(Object a, Object b) equalsFp;
+
+    protected T[][] buckets;
 
     /**
      * @uml
@@ -81,7 +85,18 @@ class Array2DHashSet(T)
 
     public this()
     {
-        this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+        return;
+        //this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+    }
+
+    public this(size_t function(Object) @trusted nothrow hashOfFp, bool function(Object a, Object b) equalsFp)
+    {
+        this.hashOfFp = hashOfFp;
+        this.equalsFp = equalsFp;
+        this.buckets = createBuckets(INITAL_CAPACITY);
+        this.initialBucketCapacity = INITAL_BUCKET_CAPACITY;
+        return;
+        //this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
     public this(AbstractEqualityComparator!(T) comparator)
@@ -117,12 +132,12 @@ class Array2DHashSet(T)
     protected T getOrAddImpl(T o)
     {
         auto b = getBucket(o);
-        Nullable!T[] bucket = buckets[b];
+        T[] bucket = buckets[b];
 
         // NEW BUCKET
         if (bucket.length == 0) {
             bucket = createBucket(initialBucketCapacity);
-            bucket ~= Nullable!T(o);
+            bucket ~= o;
             buckets[b] = bucket;
             n++;
             return o;
@@ -131,12 +146,12 @@ class Array2DHashSet(T)
         // LOOK FOR IT IN BUCKET
         for (int i=0; i < bucket.length; i++) {
             auto existing = bucket[i];
-            if (existing.isNull) { // empty slot; not there, add.
+            if (existing is null) { // empty slot; not there, add.
                 bucket[i] = o;
                 n++;
                 return o;
             }
-            if (comparator.equals(existing, o))
+            if (equalsFp(existing, o))
                 return existing; // found existing, quit
         }
 
@@ -149,16 +164,20 @@ class Array2DHashSet(T)
         return o;
     }
 
-    public Nullable!T get(Nullable!T o)
+    public T get(T o)
     {
-        Nullable!T nullElement;
-	if (o.isNull) return o;
+        T nullElement;
+	if (o is null)
+            return o;
         auto b = getBucket(o);
-        Nullable!T[] bucket = buckets[b];
-        if (bucket is null) return nullElement; // no bucket
+        T[] bucket = buckets[b];
+        if (bucket is null)
+            return nullElement; // no bucket
         foreach (e; bucket) {
-            if (e.isNull) return nullElement; // empty slot; not there
-            if (comparator.equals(e, o)) return e;
+            if (e is null)
+                return nullElement; // empty slot; not there
+            if (equalsFp(e, o))
+                return e;
         }
         return nullElement;
     }
@@ -169,7 +188,7 @@ class Array2DHashSet(T)
      */
     protected final size_t getBucket(T o)
     {
-        auto hash = comparator.hashOf(o);
+        auto hash = hashOfFp(o);
         auto b = hash & (buckets.length - 1); // assumes len is power of 2
         return b;
     }
@@ -178,14 +197,14 @@ class Array2DHashSet(T)
      * @uml
      * @override
      */
-    public override size_t toHash()
+    public override size_t toHash() @safe nothrow
     {
 	size_t hash = MurmurHash.initialize();
         foreach (bucket; buckets) {
-            if (bucket.isNull) continue;
+            if (bucket is null) continue;
             foreach (o; bucket) {
-                if (o.isNull) break;
-                hash = MurmurHash.update(hash, comparator.hashOf(o));
+                if (o is null) break;
+                hash = MurmurHash.update(hash, hashOfFp(o));
             }
         }
         hash = MurmurHash.finish(hash, size());
@@ -219,16 +238,16 @@ class Array2DHashSet(T)
         // rehash all existing entries
         int oldSize = size();
         foreach (bucket; old) {
-            if (bucket.isNull) {
+            if (bucket is null) {
                 continue;
             }
             foreach (o; bucket) {
-                if (o.isNull) {
+                if (o is null) {
                     break;
                 }
                 auto b = getBucket(o);
                 int bucketLength = newBucketLengths[b];
-                Nullable!T[] newBucket;
+                T[] newBucket;
                 if (bucketLength == 0) {
                     // new bucket
                     newBucket = createBucket(initialBucketCapacity);
@@ -282,17 +301,17 @@ class Array2DHashSet(T)
      * @uml
      * @final
      */
-    public final bool contains(Nullable!T o)
+    public final bool contains(T o)
     {
         return containsFast(o);
     }
 
-    public bool containsFast(Nullable!T obj)
+    public bool containsFast(T obj)
     {
-	if (obj.isNull) {
+	if (obj is null) {
             return false;
         }
-        return !get(obj).isNull;
+        return !(obj is null);
     }
 
     public void iterator()
@@ -303,11 +322,11 @@ class Array2DHashSet(T)
     {
 	T[] a;
         foreach (bucket; buckets) {
-            if (bucket.isNull) {
+            if (bucket is null) {
                 continue;
             }
             foreach (o; bucket) {
-                if (o.isNull) {
+                if (o is null) {
                     break;
                 }
                 a ~= o;
@@ -342,29 +361,29 @@ class Array2DHashSet(T)
      * @uml
      * @final
      */
-    public final bool remove(Nullable!T o)
+    public final bool remove(T o)
     {
         return removeFast(o);
     }
 
-    public bool removeFast(Nullable!T obj)
+    public bool removeFast(T obj)
     {
-	if (obj.isNull) {
+	if (obj is null) {
             return false;
         }
         size_t b = getBucket(obj);
         auto bucket = buckets[b];
-        if (bucket.isNull) {
+        if (bucket is null) {
             // no bucket
             return false;
         }
         for (int i=0; i<bucket.length; i++) {
             auto e = bucket[i];
-            if (e.isNull) {
+            if (e is null) {
                 // empty slot; not there
                 return false;
             }
-            if (comparator.equals(e, obj) ) {          // found it
+            if (equalsFp(e, obj) ) {          // found it
                 // shift all elements to the right down one
                 bucket = bucket[0..i-1] ~ bucket[i+1..$];
                 n--;
@@ -379,46 +398,48 @@ class Array2DHashSet(T)
 	if (collection.type == typeid(Array2DHashSet!T)) {
             auto s = collection.get!(Array2DHashSet!T);
             foreach (bucket; s.buckets) {
-                if (bucket.isNull) continue;
+                if (bucket is null) continue;
                 foreach (o; bucket) {
-                    if (o.isNull) break;
+                    if (o is null) break;
                     if (!this.containsFast(o)) return false;
                 }
             }
         }
         else {
-            // foreach (Object o; collection) {
-            //     if ( !this.containsFast(asElementType(o)) ) return false;
-            //}
+            foreach (T o; collection) {
+                if (!this.containsFast(o))
+                    return false;
+            }
             return false;
         }
         return true;
     }
 
-    public bool addAll(Nullable!T[] c)
+    public bool addAll(T[] c)
     {
 	bool changed = false;
         foreach (o; c) {
             T existing = getOrAdd(o);
-            if (existing != o) changed=true;
+            if (existing != o)
+                changed = true;
         }
         return changed;
     }
 
-    public bool retainAll(Nullable!T[] c)
+    public bool retainAll(T[] c)
     {
 	int newsize = 0;
         foreach (bucket; buckets) {
-            if (bucket.isNull) {
+            if (bucket is null) {
                 continue;
             }
             int i;
             int j;
             for (i = 0, j = 0; i < bucket.length; i++) {
-                if (bucket[i].isNull) {
+                if (bucket[i] is null) {
                     break;
                 }
-                auto bg = bucket[i].get;
+                auto bg = bucket[i];
                 if (!c.canFind(bg)) {
                     // removed
                     continue;
@@ -432,7 +453,7 @@ class Array2DHashSet(T)
             }
             newsize += j;
             while (j < i) {
-                bucket[j].nullify;
+                bucket[j] = null;
                 j++;
             }
         }
@@ -443,7 +464,7 @@ class Array2DHashSet(T)
 
     }
 
-    public bool removeAll(Nullable!T[] c)
+    public bool removeAll(T[] c)
     {
         bool changed = false;
         foreach (o; c) {
@@ -469,9 +490,9 @@ class Array2DHashSet(T)
         buf.put('{');
         bool first = true;
         foreach (bucket; buckets) {
-            if (bucket.isNull) continue;
+            if (bucket is null) continue;
             foreach (o; bucket) {
-                if (o.isNull) break;
+                if (o is null) break;
                 if ( first ) first=false;
                 else buf.put(", ");
                 buf.put(to!string(o));
@@ -485,7 +506,7 @@ class Array2DHashSet(T)
     {
 	auto buf = appender!string;
         foreach (bucket; buckets) {
-            if (bucket.isNull) {
+            if (bucket is null) {
                 buf.put("null\n");
                 continue;
             }
@@ -494,7 +515,7 @@ class Array2DHashSet(T)
             foreach (o; bucket) {
                 if (first) first=false;
                 else buf.put(" ");
-                if (o.isNull) buf.put("_");
+                if (o is null) buf.put("_");
                 else buf.put(to!string(o));
             }
             buf.put("]\n");
@@ -502,15 +523,19 @@ class Array2DHashSet(T)
         return buf.data;
     }
 
-    public Nullable!(Nullable!T[])[] createBuckets(int capacity)
+    public T[][] createBuckets(int capacity)
     {
-        Nullable!(Nullable!T[])[] obj;
+        T[][] obj;
+        obj.length = capacity;
+        debug {
+            writefln("T[][] obj -> %1$s, length -> %2$s", obj, obj.length);
+        }
         return obj;
     }
 
-    public Nullable!T[] createBucket(int capacity)
+    public T[] createBucket(int capacity)
     {
-        Nullable!(Nullable!T[]) obj;
+        T[] obj;
         return obj;
     }
 
@@ -518,9 +543,12 @@ class Array2DHashSet(T)
 
 unittest
 {
-    import antlr.v4.runtime.atn.ATNConfig;
-    auto x = new Array2DHashSet!ATNConfig;
-    writefln("result = \n%1$s", x.toString);
-    //x.add(1);
-    //writefln("result = \n%1$s", x.toTableString);
+    import antlr.v4.runtime.misc.ObjectEqualityComparator;
+    auto ec = new ObjectEqualityComparator;
+    class Y {};
+    Y y = new Y;
+    auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.equals);
+    //writefln("result = \n%1$s", x.toString);
+    x.add(y);
+    writefln("result = \n%1$s", x.toTableString);
 }

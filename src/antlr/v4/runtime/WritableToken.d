@@ -15,7 +15,7 @@ interface WritableToken :Token
 
     public void setLine(int line);
 
-    public void setCharPositionInLine();
+    public void setCharPositionInLine(int charPositionInLine);
 
     public void setChannel(int channel);
 

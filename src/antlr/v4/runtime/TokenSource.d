@@ -67,7 +67,7 @@ interface TokenSource
      *
      *  @param factory The {@link TokenFactory} to use for creating tokens.
      */
-    public void setTokenFactory(TokenFactory!CommonToken factory);
+    public void tokenFactory(TokenFactory!CommonToken factory);
 
     /**
      * @uml
@@ -76,6 +76,6 @@ interface TokenSource
      *
      *  @return The {@link TokenFactory} currently used by this token source.
      */
-    public TokenFactory!CommonToken getTokenFactory();
+    public TokenFactory!CommonToken tokenFactory();
 
 }

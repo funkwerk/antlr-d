@@ -76,7 +76,7 @@ class VocabularyImpl : Vocabulary
      *  @see #getLiteralName(int)
      *  @see #getSymbolicName(int)
      */
-    public this(string[] literalNames, string[] symbolicNames)
+    public this(const string[] literalNames, const string[] symbolicNames)
     {
         this(literalNames, symbolicNames, null);
     }
@@ -99,10 +99,10 @@ class VocabularyImpl : Vocabulary
      *  @see #getSymbolicName(int)
      *  @see #getDisplayName(int)
      */
-    public this(string[] literalNames, string[] symbolicNames, string[] displayNames)
+    public this(const string[] literalNames, const string[] symbolicNames, string[] displayNames)
     {
-        this.literalNames = literalNames !is null ? literalNames : to!(string[])(EMPTY_NAMES);
-        this.symbolicNames = symbolicNames !is null ? symbolicNames : to!(string[])(EMPTY_NAMES);
+        this.literalNames = literalNames !is null ? to!(string[])(literalNames) : to!(string[])(EMPTY_NAMES);
+        this.symbolicNames = symbolicNames !is null ? to!(string[])(symbolicNames) : to!(string[])(EMPTY_NAMES);
         this.displayNames = displayNames !is null ? displayNames : to!(string[])(EMPTY_NAMES);
         // See note here on -1 part: https://github.com/antlr/antlr4/pull/1146
         this.maxTokenType =

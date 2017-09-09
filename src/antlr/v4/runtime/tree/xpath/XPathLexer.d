@@ -19,8 +19,8 @@ import antlr.v4.runtime.dfa.DFA;
 public class XPathLexer : Lexer {
 	static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
-	protected static const DFA[] _decisionToDFA;
-	protected static const PredictionContextCache _sharedContextCache =
+	protected static DFA[] _decisionToDFA;
+	protected PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static const int
 		TOKEN_REF=1, RULE_REF=2, ANYWHERE=3, ROOT=4, WILDCARD=5, BANG=6, ID=7, 
@@ -138,12 +138,12 @@ public class XPathLexer : Lexer {
 	public static ATN _ATN;
 
 	static this() {
-	       _ATN = new ATNDeserializer();
-	       _ATN.deserialize(_serializedATN);
-	       VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
-		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
-			_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
-		}
+	    auto atnDeserializer = new ATNDeserializer;
+	    _ATN = atnDeserializer.deserialize(_serializedATN);
+	    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+	    _decisionToDFA.length = 0;
+	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
+	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);
+	    }
 	}
 }

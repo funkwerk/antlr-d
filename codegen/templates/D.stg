@@ -231,8 +231,8 @@ Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
 public class <parser.name> : <superClass; null="Parser"> {
 	static this() { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
-	protected static const DFA[] _decisionToDFA;
-	protected static const PredictionContextCache _sharedContextCache =
+	protected static DFA[] _decisionToDFA;
+	protected PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	<if(parser.tokens)>
 	public static const int
@@ -350,7 +350,7 @@ case <f.ruleIndex>:
 parser_ctor(p) ::= <<
 public this(TokenStream input) {
 	super(input);
-	_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
+	_interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
 }
 >>
 
@@ -896,8 +896,8 @@ Lexer(lexer, atn, actionFuncs, sempredFuncs, superClass) ::= <<
 public class <lexer.name> : <superClass; null="Lexer"> {
 	static this() { RuntimeMetaData.checkVersion("<lexerFile.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
-	protected static const DFA[] _decisionToDFA;
-	protected static const PredictionContextCache _sharedContextCache =
+	protected static DFA[] _decisionToDFA;
+	protected PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static const int
 		<lexer.tokens:{k | <k>=<lexer.tokens.(k)>}; separator=", ", wrap, anchor>;
@@ -963,13 +963,13 @@ public static const string _serializedATN =
 public static ATN _ATN;
 
 static this() {
-       _ATN = new ATNDeserializer();
-       _ATN.deserialize(_serializedATN);
-       VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-	_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
-	for (int i = 0; i \< _ATN.getNumberOfDecisions(); i++) {
-		_decisionToDFA[i] = new DFA(_ATN.getDecisionState(i), i);
-	}
+    auto atnDeserializer = new ATNDeserializer;
+    _ATN = atnDeserializer.deserialize(_serializedATN);
+    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+    _decisionToDFA.length = 0;
+    for (int i = 0; i \< _ATN.getNumberOfDecisions(); i++) {
+        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);
+    }
 <!	org.antlr.v4.tool.DOTGenerator dot = new org.antlr.v4.tool.DOTGenerator(null);!>
 <!	System.out.println(dot.getDOT(_ATN.decisionToState.get(0), ruleNames, false));!>
 <!	System.out.println(dot.getDOT(_ATN.ruleToStartState[2], ruleNames, false));!>

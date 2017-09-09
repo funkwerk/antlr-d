@@ -165,9 +165,15 @@ class MurmurHash
 unittest
 {
     auto testMurmurHash = new MurmurHash;
-    assert(testMurmurHash.hashCode!int([12], 3) == 8015155421799095863LU);
+    if (size_t.sizeof == 4)
+        assert(testMurmurHash.hashCode!int([12], 3) == 3080993568U);
+    else
+        assert(testMurmurHash.hashCode!int([12], 3) == 8015155421799095863LU);
     auto res = testMurmurHash.initialize;
     res = testMurmurHash.update!int(res, 33);
     res = testMurmurHash.update!int(res, 2);
-    assert(testMurmurHash.finish(res, 2) == 9650988314287891571LU);
+    if (size_t.sizeof == 4)
+        assert(testMurmurHash.finish(res, 2) == 857341099U);
+    else
+        assert(testMurmurHash.finish(res, 2) == 9650988314287891571LU);
 }

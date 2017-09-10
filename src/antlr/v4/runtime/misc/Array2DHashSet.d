@@ -538,7 +538,7 @@ unittest
 {
     class Y {};
     Y y = new Y;
-    auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.equals);
+    auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);
     //writefln("result = \n%1$s", x.toString);
     x.add(y);
     writefln("result = \n%1$s", x.toTableString);

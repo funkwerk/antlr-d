@@ -32,7 +32,7 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
         return obj.toHash;
     }
 
-    public static bool equals(Object a, Object b)
+    public static bool opEquals(Object a, Object b)
     {
 	if (a is null) {
             return b is null;
@@ -68,6 +68,6 @@ unittest
     auto testObj3 = ObjectEqualityComparator.instance;
     assert(testObj2.hashOf(testObj3) == testObj2.toHash);
     assert(testObj2.hashOf(null) == 0);
-    assert(testObj.equals(null, testObj2) == false);
-    assert(testObj2.equals(testObj3, testObj2) == true);
+    assert(testObj.opEquals(null, testObj2) == false);
+    assert(testObj2.opEquals(testObj3, testObj2) == true);
 }

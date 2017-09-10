@@ -35,7 +35,6 @@ import std.array;
 import std.variant;
 import std.conv;
 import std.stdio;
-//import std.typecons;
 import std.container.array;
 import std.algorithm.mutation : remove;
 import std.algorithm.searching : canFind;
@@ -56,10 +55,9 @@ class Array2DHashSet(T)
 
     public static immutable double LOAD_FACTOR = 0.75;
 
-    protected AbstractEqualityComparator!(T) comparator;
-
     protected size_t function(Object o) @trusted nothrow hashOfFp;
-    protected bool function(Object a, Object b) equalsFp;
+
+    protected bool function(Object a, Object b) opEqualsFp;
 
     protected T[][] buckets;
 
@@ -85,32 +83,25 @@ class Array2DHashSet(T)
 
     public this()
     {
-        return;
-        //this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+        this(null, null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(size_t function(Object) @trusted nothrow hashOfFp, bool function(Object a, Object b) equalsFp)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp)
     {
-        this.hashOfFp = hashOfFp;
-        this.equalsFp = equalsFp;
-        this.buckets = createBuckets(INITAL_CAPACITY);
-        this.initialBucketCapacity = INITAL_BUCKET_CAPACITY;
-        return;
-        //this(null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
+        this(hashOfFp, opEqualsFp, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(AbstractEqualityComparator!(T) comparator)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp,
+        int initialCapacity, int initialBucketCapacity)
     {
-        this(comparator, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
-    }
-
-    public this(AbstractEqualityComparator!(T) comparator, int initialCapacity, int initialBucketCapacity)
-    {
-	if (comparator is null) {
-            comparator = cast(AbstractEqualityComparator!T)ObjectEqualityComparator.instance;
+	if (hashOfFp is null || opEqualsFp is null) {
+            this.hashOfFp = &ObjectEqualityComparator.hashOf;
+            this.opEqualsFp = &ObjectEqualityComparator.opEquals;
         }
-
-        this.comparator = comparator;
+        else {
+            this.hashOfFp = hashOfFp;
+            this.opEqualsFp = opEqualsFp;
+        }
         this.buckets = createBuckets(initialCapacity);
         this.initialBucketCapacity = initialBucketCapacity;
     }
@@ -151,7 +142,7 @@ class Array2DHashSet(T)
                 n++;
                 return o;
             }
-            if (equalsFp(existing, o))
+            if (opEqualsFp(existing, o))
                 return existing; // found existing, quit
         }
 
@@ -176,7 +167,7 @@ class Array2DHashSet(T)
         foreach (e; bucket) {
             if (e is null)
                 return nullElement; // empty slot; not there
-            if (equalsFp(e, o))
+            if (opEqualsFp(e, o))
                 return e;
         }
         return nullElement;
@@ -196,6 +187,8 @@ class Array2DHashSet(T)
     /**
      * @uml
      * @override
+     * @safe
+     * @nothrow
      */
     public override size_t toHash() @safe nothrow
     {
@@ -383,7 +376,7 @@ class Array2DHashSet(T)
                 // empty slot; not there
                 return false;
             }
-            if (equalsFp(e, obj) ) {          // found it
+            if (opEqualsFp(e, obj) ) {          // found it
                 // shift all elements to the right down one
                 bucket = bucket[0..i-1] ~ bucket[i+1..$];
                 n--;
@@ -543,8 +536,6 @@ class Array2DHashSet(T)
 
 unittest
 {
-    import antlr.v4.runtime.misc.ObjectEqualityComparator;
-    auto ec = new ObjectEqualityComparator;
     class Y {};
     Y y = new Y;
     auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.equals);

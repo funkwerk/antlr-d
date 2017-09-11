@@ -137,8 +137,7 @@ class LexerATNConfig : ATNConfig
         if (passedThroughNonGreedyDecision != lexerOther.passedThroughNonGreedyDecision) {
             return false;
         }
-        auto objectEqualityComparator = new ObjectEqualityComparator();
-        if (!objectEqualityComparator.equals(lexerActionExecutor, lexerOther.lexerActionExecutor)) {
+        if (!ObjectEqualityComparator.opEquals(lexerActionExecutor, lexerOther.lexerActionExecutor)) {
             return false;
         }
 

@@ -11,24 +11,33 @@ import antlr.v4.runtime.misc.AbstractEqualityComparator;
 abstract class AbstractConfigHashSet : Array2DHashSet!ATNConfig
 {
 
-    public this(AbstractEqualityComparator!ATNConfig comparator)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp)
     {
-        this(comparator, 16, 2);
+        this(hashOfFp, opEqualsFp, 16, 2);
     }
 
-    public this(AbstractEqualityComparator!ATNConfig comparator, int initialCapacity, int initialBucketCapacity)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp,
+        int initialCapacity, int initialBucketCapacity)
     {
-        super(comparator, initialCapacity, initialBucketCapacity);
+        super(hashOfFp, opEqualsFp, initialCapacity, initialBucketCapacity);
     }
 
-    public ATNConfig[][] createBuckets(int capacity)
+    /**
+     * @uml
+     * @override
+     */
+    public override ATNConfig[][] createBuckets(int capacity)
     {
         ATNConfig[][] atnConfigs;
         atnConfigs.length = capacity;
         return atnConfigs;
     }
 
-    public ATNConfig[] createBucket(int capacity)
+    /**
+     * @uml
+     * @override
+     */
+    public override ATNConfig[] createBucket(int capacity)
     {
         ATNConfig[] atnConfig;
         atnConfig.length = capacity;

@@ -304,7 +304,7 @@ class Array2DHashSet(T)
 	if (obj is null) {
             return false;
         }
-        return !(obj is null);
+        return get(obj) !is null;
     }
 
     public void iterator()
@@ -539,7 +539,18 @@ unittest
     class Y {};
     Y y = new Y;
     auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);
-    //writefln("result = \n%1$s", x.toString);
     x.add(y);
-    writefln("result = \n%1$s", x.toTableString);
+    auto sr = x.toString;
+    assert(sr[0..48] == "{antlr.v4.runtime.misc.Array2DHashSet.__unittest");
+    assert(x.toTableString.length == 133);
+    x.clear;
+    assert(x.toTableString.length == 80);
+    x.add(y);
+    Y y1 = new Y;
+    x.add(y1);
+    Y y2 = new Y;
+    assert(x.toTableString.length == 189);
+    assert(x.contains(y) == true);
+    assert(x.contains(y1) == true);
+    assert(x.contains(y2) == false);
 }

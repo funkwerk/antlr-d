@@ -29,10 +29,7 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
         if (obj is null) {
             return 0;
         }
-        if (size_t.sizeof == 4)
-            return obj.toHash >> 3;
-        else
-            return obj.toHash >> 5;
+        return obj.toHash >> 3;
     }
 
     public static bool opEquals(Object a, Object b)

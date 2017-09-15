@@ -124,12 +124,8 @@ class Array2DHashSet(T)
     {
         auto b = getBucket(o);
         T[] bucket = buckets[b];
-        debug {
-            writefln("getOrAddImpl:buckets -> %1$s index -> %2$s", buckets, b);
-            writefln("getOrAddImpl:bucket -> %1$s number of el -> %2$s", bucket, n);
-        }
         // NEW BUCKET
-        if (!bucket) {
+        if (bucket is null) {
             debug {
                 writefln("\ngetOrAddImpl:bucket is null -> %1$s", bucket);
             }
@@ -137,7 +133,7 @@ class Array2DHashSet(T)
             bucket[0] = o;
             buckets[b] = bucket;
             n++;
-            return null;
+            return o;
         }
 
         // LOOK FOR IT IN BUCKET
@@ -152,14 +148,14 @@ class Array2DHashSet(T)
                 bucket[i] = o;
                 n++;
                 debug {
-                    writefln("-------------\ngetOrAddImpl:bucket does not exists -> %1$s", o);
+                    writefln("\ngetOrAddImpl:bucket does not exists -> %1$s", o);
                     writefln("getOrAddImpl:buckets -> %1$s index -> %2$s", buckets, b);
                 }
                 return o;
             }
             if (opEqualsFp(existing, o)) {
                 debug {
-                    writefln("++++++++++++++\ngetOrAddImpl:bucket is found -> %1$s", o);
+                    writefln("\ngetOrAddImpl:bucket is found -> %1$s", o);
                 }
                 return existing; // found existing, quit
             }
@@ -171,12 +167,6 @@ class Array2DHashSet(T)
         buckets[b] = bucket;
         bucket[oldLength] = o; // add to end
         n++;
-
-        debug {
-            writefln("...............\ngetOrAddImpl:end of function -> %1$s", bucket);
-            writefln("getOrAddImpl:buckets -> %1$s index -> %2$s", buckets, b);
-            writefln("getOrAddImpl:bucket -> %1$s number of el -> %2$s", bucket, n);
-        }
         return o;
     }
 
@@ -205,7 +195,7 @@ class Array2DHashSet(T)
     protected final size_t getBucket(T o)
     {
         debug {
-            writefln("############getBucket(T o) %1$s -> %2$s", o, hashOfFp(o));
+            writefln("getBucket(T o) %1$s -> %2$s", o, hashOfFp(o));
         }
         return hashOfFp(o) & (buckets.length - 1);
     }
@@ -240,7 +230,7 @@ class Array2DHashSet(T)
         if (o.classinfo != Array2DHashSet.classinfo) return false;
         Array2DHashSet!T other = cast(Array2DHashSet!T)o;
         if (other.size() != size()) return false;
-        bool same = this.containsAll(Variant(other));
+        bool same = this.containsAll(other);
         return same;
     }
 
@@ -333,10 +323,6 @@ class Array2DHashSet(T)
         return get(obj) !is null;
     }
 
-    public void iterator()
-    {
-    }
-
     public T[] toArray()
     {
 	T[] a;
@@ -420,10 +406,10 @@ class Array2DHashSet(T)
         return false;
     }
 
-    public bool containsAll(Variant collection)
+    public bool containsAll(Object collection)
     {
-	if (collection.type == typeid(Array2DHashSet!T)) {
-            auto s = collection.get!(Array2DHashSet!T);
+	if (collection.classinfo == Array2DHashSet!T.classinfo) {
+            Array2DHashSet!T s = to!(Array2DHashSet!T)(collection);
             foreach (bucket; s.buckets) {
                 if (bucket is null) continue;
                 foreach (o; bucket) {
@@ -433,7 +419,7 @@ class Array2DHashSet(T)
             }
         }
         else {
-            foreach (T o; collection) {
+            foreach (o; collection.tupleof) {
                 if (!this.containsFast(o))
                     return false;
             }
@@ -577,37 +563,66 @@ unittest
     };
     class Z : Y {};
     Y y = new Y;
+    auto x0 = new Array2DHashSet!Z;
     auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);
     auto ex = x.add(y);
-    writefln("x1 %1$s exists? -> %2$s", x.toTableString, ex);
+    assert(x.toTableString.length > 140);
     auto sr = x.toTableString;
-    // assert(sr[0..48] == "{antlr.v4.runtime.misc.Array2DHashSet.__unittest");
-    // assert(x.toTableString.length == 133);
-    // x.clear;
-    // assert(x.toTableString.length == 80);
     ex = x.add(y);
-    writefln("x3 %1$s exists? -> %2$s", x.toString, ex);
+    assert(x.toString.length > 50);
     Y y1 = new Y();
     ex = x.add(y1);
     Y y2 = new Y();
     ex = x.add(y2);
-    writefln("\ntoArray -> %1$s", x.toArray);
+    assert(x.toArray.length == 3);
+    assert(x.toArray.length == 3);
     Y y3 = new Z;
     ex = x.add(y3);
-    writefln("x, y =  %1$s, %2$s", y1.toHash, y2.toHash);
-    writefln("x4 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
+    assert(y1.toHash != y2.toHash);
+    assert(x.toArray.length == 4);
+    //writefln("x4 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
     ex = x.remove(y3);
-    writefln("x5 %1$s %2$s, removed? -> %2$s", x.toString, ex);
+    assert(x.toArray.length == 3);
     ex = x.removeAll([y, y3]);
-    writefln("x6 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
+    assert(x.toArray.length == 2);
     x.clear;
-    writefln("x7 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
-    // Y y2 = new Y;
-    // assert(x.toTableString.length == 189);
-    // assert(x.contains(y) == true);
-    // assert(x.contains(y1) == true);
-    // assert(x.contains(y2) == false);
-    // auto bb = x.remove(y1);
-    writefln("x5 %1$s %2$s", x);
-    writefln("compare  %1$s %2$s", y3 == y2);
+    assert(x.size == 0);
+    x = new Array2DHashSet!Y(null, null, 16, 1);
+
+    foreach (el; 0..120) {
+    y2 = new Y();
+    ex = x.add(y2);
+    }
+    //writefln("x8 %1$s, number of elements %2$s", x.toTableString, x.n);
+    assert(y3 != y2);
+    assert(x.get(y) is null);
+    assert(x.get(y2) !is null);
+    assert(x.get(null) is null);
+    assert(x.toHash > 1000);
+    assert(x.contains(y) == false);
+    assert(x.contains(y2) == true);
+    assert(x.contains(null) == false);
+    assert(x.containsAll(x0) == false);
+    assert(x.containsAll(x) == true);
+    x.clear;
+    assert(x.isEmpty == true);
+
+    auto x1 = new Array2DHashSet!Y(null, null, 16, 8);
+    foreach (el; 0..120) {
+    y2 = new Y();
+    ex = x1.add(y2);
+    ex = x.add(y2);
+    }
+    assert(x.containsAll(x1) == true);
+    assert(x.opEquals(x1) == true);
+    ex = x1.remove(y2);
+    assert(x.containsAll(x1) == true);
+    assert(x.opEquals(x1) == false);
+    assert(x.isEmpty == false);
+    assert(x.size == 120);
+    ex = x.addAll([y, y1, y2]);
+    assert(x.size == 122);
+    assert(ex == false);
+    assert(x.retainAll([y, y2]) == true);
+    assert(x.toArray.length == 2);
 }

@@ -195,10 +195,11 @@ class XPath
                 break loop;
 
             default :
-                throw new IllegalArgumentException("Unknowth path element " ~ el.toString);
+                throw new IllegalArgumentException("Unknowth path element " ~ to!string(el));
             }
         }
-        return elements.toArray(new XPathElement[0]);
+        XPathElement[] nullArray;
+        return elements = nullArray;
     }
 
     /**

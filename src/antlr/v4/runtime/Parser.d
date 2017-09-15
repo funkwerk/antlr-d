@@ -416,7 +416,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      */
     public override TokenFactory!CommonToken tokenFactory()
     {
-        return _input.getTokenSource().getTokenFactory();
+        return _input.getTokenSource().tokenFactory();
     }
 
     /**

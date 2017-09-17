@@ -16,7 +16,7 @@ class ConfigHashSet : AbstractConfigHashSet
 
     public this()
     {
-        super(ConfigEqualityComparator.instance);
+        super(&ConfigEqualityComparator.hashOf, &ConfigEqualityComparator.opEquals);
     }
 
 }

@@ -20,8 +20,9 @@ class ConfigEqualityComparator : AbstractEqualityComparator!ATNConfig
      * @nothrow
      * @safe
      */
-    public static size_t hashOf(ATNConfig o) @safe nothrow
+    public static size_t hashOf(Object obj) @safe nothrow
     {
+        auto o = cast(ATNConfig) obj;
 	size_t hashCode = 7;
         hashCode = 31 * hashCode + o.state.stateNumber;
         hashCode = 31 * hashCode + o.alt;
@@ -29,8 +30,10 @@ class ConfigEqualityComparator : AbstractEqualityComparator!ATNConfig
         return hashCode;
     }
 
-    public static bool opEquals(ATNConfig a, ATNConfig b)
+    public static bool opEquals(Object aObj, Object bObj)
     {
+        auto a = cast(ATNConfig) aObj;
+        auto b = cast(ATNConfig) bObj;
 	if (a == b)
             return true;
         if (a is null || b is null)

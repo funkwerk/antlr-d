@@ -134,7 +134,7 @@ class ATNConfigSet
     public this(ATNConfigSet old)
     {
         this(old.fullCtx);
-        addAll(old);
+        addAll(old.configs);
         this.uniqueAlt = old.uniqueAlt;
         this.conflictingAlts = old.conflictingAlts;
         this.hasSemanticContext = old.hasSemanticContext;
@@ -275,7 +275,7 @@ class ATNConfigSet
         // System.out.print("equals " + this + ", " + o+" = ");
         ATNConfigSet other = cast(ATNConfigSet)o;
         bool same = configs !is null &&
-            configs.opEquals(other.configs) &&  // includes stack context
+            this.opEquals(other) &&  // includes stack context
             this.fullCtx == other.fullCtx &&
             this.uniqueAlt == other.uniqueAlt &&
             this.conflictingAlts == other.conflictingAlts &&
@@ -313,7 +313,7 @@ class ATNConfigSet
 	return !configs.length;
     }
 
-    public bool contains(Object o)
+    public bool contains(ATNConfig o)
     {
         if (configLookup is null) {
             throw new UnsupportedOperationException("This method is not implemented for readonly sets.");
@@ -334,7 +334,7 @@ class ATNConfigSet
     public void clear()
     {
         if (readonly_) throw new IllegalStateException("This set is readonly");
-        configs.clear();
+        configs.length = 0;
         cachedHashCode = -1;
         configLookup.clear();
     }

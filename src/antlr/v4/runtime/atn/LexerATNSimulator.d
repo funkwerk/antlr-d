@@ -55,6 +55,7 @@ import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.ActionTransition;
+import antlr.v4.runtime.atn.OrderedATNConfigSet;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
@@ -356,13 +357,13 @@ class LexerATNSimulator : ATNSimulator
      * we can reach upon input {@code t}. Parameter {@code reach} is a return
      * parameter.
      */
-    protected void getReachableConfigSet(CharStream input, ATNConfigSet closure, ATNConfigSet reach,
+    protected void getReachableConfigSet(CharStream input, ATNConfigSet closureLexer, ATNConfigSet reach,
                                          int t)
     {
 	// this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
         int skipAlt = ATN.INVALID_ALT_NUMBER;
-        foreach (ATNConfig c; closure.configs) {
+        foreach (ATNConfig c; closureLexer.configs) {
             bool currentAltReachedAcceptState = c.alt == skipAlt;
             if (currentAltReachedAcceptState && (cast(LexerATNConfig)c).hasPassedThroughNonGreedyDecision()) {
                 continue;
@@ -383,7 +384,8 @@ class LexerATNSimulator : ATNSimulator
                     }
 
                     bool treatEofAsEpsilon = t == CharStream.EOF;
-                    if (closure(input, new LexerATNConfig(cast(LexerATNConfig)c, target, lexerActionExecutor), reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
+                    auto xx = closureLexer(input, new LexerATNConfig(cast(LexerATNConfig)c, target, lexerActionExecutor), reach, currentAltReachedAcceptState, true, treatEofAsEpsilon);
+                    if (false) {
                         // any remaining configs for this alt have a lower priority than
                         // the one that just reached an accept state.
                         skipAlt = c.alt;
@@ -428,7 +430,7 @@ class LexerATNSimulator : ATNSimulator
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             ATNState target = p.transition(i).target;
             LexerATNConfig c = new LexerATNConfig(target, i+1, initialContext);
-            closure(input, c, configs, false, false, false);
+            closureLexer(input, c, configs, false, false, false);
         }
         return configs;
     }
@@ -444,7 +446,7 @@ class LexerATNSimulator : ATNSimulator
      *  @return {@code true} if an accept state is reached, otherwise
      * {@code false}.
      */
-    protected bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs,
+    protected bool closureLexer(CharStream input, LexerATNConfig config, ATNConfigSet configs,
         bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
     {
         debug {
@@ -478,7 +480,7 @@ class LexerATNSimulator : ATNSimulator
                         PredictionContext newContext = config.context.getParent(i); // "pop" return state
                         ATNState returnState = atn.states[config.context.getReturnState(i)];
                         LexerATNConfig c = new LexerATNConfig(config, returnState, newContext);
-                        currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState,
+                        currentAltReachedAcceptState = closureLexer(input, c, configs, currentAltReachedAcceptState,
                                                                speculative, treatEofAsEpsilon);
                     }
                 }
@@ -499,7 +501,7 @@ class LexerATNSimulator : ATNSimulator
             Transition t = p.transition(i);
             LexerATNConfig c = getEpsilonTarget(input, config, t, configs, speculative, treatEofAsEpsilon);
             if (c !is null) {
-                currentAltReachedAcceptState = closure(input, c, configs, currentAltReachedAcceptState,
+                currentAltReachedAcceptState = closureLexer(input, c, configs, currentAltReachedAcceptState,
                                                        speculative, treatEofAsEpsilon);
             }
         }

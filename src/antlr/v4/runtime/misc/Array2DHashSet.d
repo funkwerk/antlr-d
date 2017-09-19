@@ -172,9 +172,9 @@ class Array2DHashSet(T)
 
     public T get(T o)
     {
-        T nullElement;
 	if (o is null)
             return o;
+        T nullElement;
         auto b = getBucket(o);
         T[] bucket = buckets[b];
         if (bucket is null)

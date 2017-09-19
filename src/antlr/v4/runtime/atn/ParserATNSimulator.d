@@ -1484,7 +1484,7 @@ class ParserATNSimulator : ATNSimulator
             return "EOF";
         }
 
-        Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : cast(Vocabulary)VocabularyImpl.EMPTY_VOCABULARY;
+        Vocabulary vocabulary = parser !is null ? parser.getVocabulary() : new VocabularyImpl(null, null, null);
         string displayName = vocabulary.getDisplayName(t);
         if (displayName == to!string(t)) {
             return displayName;

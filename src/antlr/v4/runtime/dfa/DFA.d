@@ -201,7 +201,7 @@ class DFA
      */
     public override string toString()
     {
-        return to!string(VocabularyImpl.EMPTY_VOCABULARY);
+        return to!string(new VocabularyImpl(null, null, null));
     }
 
     public string toString(string[] tokenNames)

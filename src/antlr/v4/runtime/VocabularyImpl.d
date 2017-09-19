@@ -61,8 +61,6 @@ class VocabularyImpl : Vocabulary
      */
     private int maxTokenType;
 
-    public static const VocabularyImpl EMPTY_VOCABULARY = new VocabularyImpl(null, null, null);
-
     /**
      * @uml
      * Constructs a new instance of {@link VocabularyImpl} from the specified

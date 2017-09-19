@@ -14,7 +14,7 @@ class LexerDFASerializer : DFASerializer
 
     public this(DFA dfa)
     {
-	super(dfa, VocabularyImpl.EMPTY_VOCABULARY);
+	super(dfa, new VocabularyImpl(null, null, null));
     }
 
     /**

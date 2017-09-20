@@ -420,12 +420,13 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     }
 
     /**
-     * @uml
      * Tell our token source and error strategy about a new way to create tokens.
+     * @uml
+     * @override
      */
-    public void tokenFactory(T)(T factory)
+    public override void tokenFactory(TokenFactory!CommonToken factory)
     {
-        _input.getTokenSource().setTokenFactory(factory);
+        _input.getTokenSource().tokenFactory(factory);
     }
 
     /**

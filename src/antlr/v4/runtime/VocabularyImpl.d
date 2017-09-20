@@ -40,7 +40,6 @@ import antlr.v4.runtime.TokenConstants;
 
 // Class VocabularyImpl
 /**
- * @uml
  * This class provides a default implementation of the {@link Vocabulary}
  * interface.
  */
@@ -62,7 +61,6 @@ class VocabularyImpl : Vocabulary
     private int maxTokenType;
 
     /**
-     * @uml
      * Constructs a new instance of {@link VocabularyImpl} from the specified
      * literal and symbolic token names.
      *

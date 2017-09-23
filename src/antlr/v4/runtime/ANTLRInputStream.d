@@ -114,18 +114,13 @@ class ANTLRInputStream : CharStream
         load(r, initialSize, readChunkSize);
     }
 
-    public this(string input, int initialSize)
-    {
-        load(input, 0, 0);
-    }
-
     public void load(File r, int size, int readChunkSize)
     {
         if (readChunkSize <= 0) {
             readChunkSize = READ_BUFFER_SIZE;
         }
         debug writefln("load %1$s in chunks of %2$s", size, readChunkSize);
-        data = r.readText;
+        data = to!(char[])(r.name.readText);
         int p = to!int(data.length);
         // set the actual size of the data available;
         // EOF subtracted one above in p+=numRead; add one back

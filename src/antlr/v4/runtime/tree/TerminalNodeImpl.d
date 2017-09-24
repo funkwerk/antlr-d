@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -69,9 +70,9 @@ class TerminalNodeImpl : TerminalNode
         return parent;
     }
 
-    public Token getPayload()
+    public Object getPayload()
     {
-        return symbol;
+        return cast(Object)symbol;
     }
 
     public Interval getSourceInterval()

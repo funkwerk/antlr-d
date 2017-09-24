@@ -33,12 +33,16 @@ module antlr.v4.runtime.DefaultErrorStrategy;
 
 import std.stdio;
 import std.format;
+import std.typecons;
+import std.array;
 import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.InputMismatchException;
 import antlr.v4.runtime.RecognitionException;
@@ -49,6 +53,8 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.StateNames;
+
+alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class DefaultErrorStrategy
 /**
@@ -216,7 +222,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public void sync(Parser recognizer)
     {
-	ATNState s = recognizer.getInterpreter().atn.states.get(recognizer.getState());
+	ATNState s = recognizer.getInterpreter().atn.states[recognizer.getState];
         //		System.err.println("sync @ "+s.stateNumber+"="+s.getClass().getSimpleName());
         // If already recovering, don't try to sync
         if (inErrorRecoveryMode(recognizer)) {
@@ -304,16 +310,87 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
     }
 
+    /**
+     * This is called by {@link #reportError} when the exception is a
+     * {@link FailedPredicateException}.
+     *
+     * @see #reportError
+     *
+     * @param recognizer the parser instance
+     * @param e the recognition exception
+     */
     protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e)
     {
+	string ruleName = recognizer.getRuleNames[recognizer.ctx.getRuleIndex()];
+        string msg = "rule " ~ ruleName ~ " " ~ e.msg;
+        recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
     }
 
+    /**
+     * This method is called to report a syntax error which requires the removal
+     * of a token from the input stream. At the time this method is called, the
+     * erroneous symbol is current {@code LT(1)} symbol and has not yet been
+     * removed from the input stream. When this method returns,
+     * {@code recognizer} is in error recovery mode.
+     *
+     * <p>This method is called when {@link #singleTokenDeletion} identifies
+     * single-token deletion as a viable recovery strategy for a mismatched
+     * input error.</p>
+     *
+     * <p>The default implementation simply returns if the handler is already in
+     * error recovery mode. Otherwise, it calls {@link #beginErrorCondition} to
+     * enter error recovery mode, followed by calling
+     * {@link Parser#notifyErrorListeners}.</p>
+     *
+     * @param recognizer the parser instance
+     */
     protected void reportUnwantedToken(Parser recognizer)
     {
+	if (inErrorRecoveryMode(recognizer)) {
+            return;
+        }
+
+        beginErrorCondition(recognizer);
+
+        Token t = recognizer.getCurrentToken();
+        string tokenName = getTokenErrorDisplay(t);
+        IntervalSet expecting = getExpectedTokens(recognizer);
+        string msg = "extraneous input " ~ tokenName ~ " expecting " ~
+            expecting.toString(recognizer.getVocabulary());
+        recognizer.notifyErrorListeners(t, msg, null);
     }
 
+    /**
+     * This method is called to report a syntax error which requires the
+     * insertion of a missing token into the input stream. At the time this
+     * method is called, the missing token has not yet been inserted. When this
+     * method returns, {@code recognizer} is in error recovery mode.
+     *
+     * <p>This method is called when {@link #singleTokenInsertion} identifies
+     * single-token insertion as a viable recovery strategy for a mismatched
+     * input error.</p>
+     *
+     * <p>The default implementation simply returns if the handler is already in
+     * error recovery mode. Otherwise, it calls {@link #beginErrorCondition} to
+     * enter error recovery mode, followed by calling
+     * {@link Parser#notifyErrorListeners}.</p>
+     *
+     * @param recognizer the parser instance
+     */
     protected void reportMissingToken(Parser recognizer)
     {
+	if (inErrorRecoveryMode(recognizer)) {
+            return;
+        }
+
+        beginErrorCondition(recognizer);
+
+        Token t = recognizer.getCurrentToken();
+        IntervalSet expecting = getExpectedTokens(recognizer);
+        string msg = format("missing %1$s at %2$s", expecting.toString(recognizer.getVocabulary),
+                            getTokenErrorDisplay(t));
+
+        recognizer.notifyErrorListeners(t, msg, null);
     }
 
     /**
@@ -368,26 +445,166 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public Token recoverInline(Parser recognizer)
     {
+	// SINGLE TOKEN DELETION
+        Token matchedSymbol = singleTokenDeletion(recognizer);
+        if (matchedSymbol !is null) {
+            // we have deleted the extra token.
+            // now, move past ttype token as if all were ok
+            recognizer.consume();
+            return matchedSymbol;
+        }
+
+        // SINGLE TOKEN INSERTION
+        if (singleTokenInsertion(recognizer)) {
+            return getMissingSymbol(recognizer);
+        }
+
+        // even that didn't work; must throw the exception
+        throw new InputMismatchException(recognizer);
     }
 
+    /**
+     * This method implements the single-token insertion inline error recovery
+     * strategy. It is called by {@link #recoverInline} if the single-token
+     * deletion strategy fails to recover from the mismatched input. If this
+     * method returns {@code true}, {@code recognizer} will be in error recovery
+     * mode.
+     *
+     * <p>This method determines whether or not single-token insertion is viable by
+     * checking if the {@code LA(1)} input symbol could be successfully matched
+     * if it were instead the {@code LA(2)} symbol. If this method returns
+     * {@code true}, the caller is responsible for creating and inserting a
+     * token with the correct type to produce this behavior.</p>
+     *
+     * @param recognizer the parser instance
+     * @return {@code true} if single-token insertion is a viable recovery
+     * strategy for the current mismatched input, otherwise {@code false}
+     */
     protected bool singleTokenInsertion(Parser recognizer)
     {
+	int currentSymbolType = recognizer.getInputStream().LA(1);
+        // if current token is consistent with what could come after current
+        // ATN state, then we know we're missing a token; error recovery
+        // is free to conjure up and insert the missing token
+        ATNState currentState = recognizer.getInterpreter().atn.states[recognizer.getState];
+        ATNState next = currentState.transition(0).target;
+        ATN atn = recognizer.getInterpreter().atn;
+        IntervalSet expectingAtLL2 = atn.nextTokens(next, recognizer.ctx);
+        //		System.out.println("LT(2) set="+expectingAtLL2.toString(recognizer.getTokenNames()));
+        if ( expectingAtLL2.contains(currentSymbolType) ) {
+            reportMissingToken(recognizer);
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * This method implements the single-token deletion inline error recovery
+     * strategy. It is called by {@link #recoverInline} to attempt to recover
+     * from mismatched input. If this method returns null, the parser and error
+     * handler state will not have changed. If this method returns non-null,
+     * {@code recognizer} will <em>not</em> be in error recovery mode since the
+     * returned token was a successful match.
+     *
+     * <p>If the single-token deletion is successful, this method calls
+     * {@link #reportUnwantedToken} to report the error, followed by
+     * {@link Parser#consume} to actually "delete" the extraneous token. Then,
+     * before returning {@link #reportMatch} is called to signal a successful
+     * match.</p>
+     *
+     * @param recognizer the parser instance
+     * @return the successfully matched {@link Token} instance if single-token
+     * deletion successfully recovers from the mismatched input, otherwise
+     * {@code null}
+     */
     protected Token singleTokenDeletion(Parser recognizer)
     {
+	int nextTokenType = recognizer.getInputStream().LA(2);
+        IntervalSet expecting = getExpectedTokens(recognizer);
+        if ( expecting.contains(nextTokenType) ) {
+            reportUnwantedToken(recognizer);
+            /*
+              System.err.println("recoverFromMismatchedToken deleting "+
+              ((TokenStream)recognizer.getInputStream()).LT(1)+
+              " since "+((TokenStream)recognizer.getInputStream()).LT(2)+
+              " is what we want");
+            */
+            recognizer.consume(); // simply delete extra token
+            // we want to return the token we're actually matching
+            Token matchedSymbol = recognizer.getCurrentToken();
+            reportMatch(recognizer);  // we know current token is correct
+            return matchedSymbol;
+        }
+        return null;
     }
 
-    protected Token ngetMissingSymbol(Parser recognizer)
+    /**
+     *
+     *  The recognizer attempts to recover from single missing
+     *  symbols. But, actions might refer to that missing symbol.
+     *  For example, x=ID {f($x);}. The action clearly assumes
+     *  that there has been an identifier matched previously and that
+     *  $x points at that token. If that token is missing, but
+     *  the next token in the stream is what we want we assume that
+     *  this token is missing and we keep going. Because we
+     *  have to return some token to replace the missing token,
+     *  we have to conjure one up. This method gives the user control
+     *  over the tokens returned for missing tokens. Mostly,
+     *  you will want to create something special for identifier
+     *  tokens. For literals such as '{' and ',', the default
+     *  action in the parser or tree parser works. It simply creates
+     *  a CommonToken of the appropriate type. The text will be the token.
+     *  If you change what tokens must be created by the lexer,
+     *  override this method to create the appropriate tokens.
+     */
+    protected Token getMissingSymbol(Parser recognizer)
     {
+	Token currentSymbol = recognizer.getCurrentToken();
+        IntervalSet expecting = getExpectedTokens(recognizer);
+        int expectedTokenType = expecting.getMinElement(); // get any element
+        string tokenText;
+        if (expectedTokenType == TokenConstants.EOF) tokenText = "<missing EOF>";
+        else tokenText = format("<missing %s>", recognizer.getVocabulary().getDisplayName(expectedTokenType));
+        Token current = currentSymbol;
+        Token lookback = recognizer.getInputStream().LT(-1);
+        if ( current.getType() == TokenConstants.EOF && lookback !is null) {
+            current = lookback;
+        }
+        TokenFactorySourcePair tsp = tuple(current.getTokenSource(), current.getTokenSource().getInputStream());
+        return
+            recognizer.tokenFactory().create(tsp, expectedTokenType, tokenText,
+                                             TokenConstants.DEFAULT_CHANNEL,
+                                             -1, -1,
+                                             current.getLine(), current.getCharPositionInLine());
+
     }
 
     protected IntervalSet getExpectedTokens(Parser recognizer)
     {
+	return recognizer.getExpectedTokens();
     }
 
+    /**
+     *  is to display just the text, but during development you might
+     *  want to have a lot of information spit out.  Override in that case
+     *  to use t.toString() (which, for CommonToken, dumps everything about
+     *  the token). This is better than forcing you to override a method in
+     *  your token objects because you don't have to go modify your lexer
+     *  so that it creates a new Java type.
+     */
     protected string getTokenErrorDisplay(Token t)
     {
+	if (t is null) return "<no token>";
+        string s = getSymbolText(t);
+        if (s is null) {
+            if (getSymbolType(t) == TokenConstants.EOF) {
+                s = "<EOF>";
+            }
+            else {
+                s = format("<%s>", getSymbolType(t));
+            }
+        }
+        return escapeWSAndQuote(s);
     }
 
     protected string getSymbolText(Token symbol)
@@ -397,13 +614,19 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected int getSymbolType(Token symbol)
     {
+	return symbol.getType();
     }
 
-    protected string escapeWSAndQuote(string S)
+    protected string escapeWSAndQuote(string s)
     {
+        //		if ( s==null ) return s;
+        s = s.replace("\n","\\n");
+        s = s.replace("\r","\\r");
+        s = s.replace("\t","\\t");
+        return "'" ~ s ~ "'";
     }
 
-    /**  Compute the error recovery set for the current rule.  During
+    /**
      *  rule invocation, the parser pushes the set of tokens that can
      *  follow that rule reference on the stack; this amounts to
      *  computing FIRST of what follows the rule reference in the
@@ -502,7 +725,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         IntervalSet recoverSet = new IntervalSet();
         while (ctx !is null && ctx.invokingState >= 0) {
             // compute what follows who invoked us
-            ATNState invokingState = atn.states.get(ctx.invokingState);
+            ATNState invokingState = atn.states[ctx.invokingState];
             RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
             IntervalSet follow = atn.nextTokens(rt.followState);
             recoverSet.addAll(follow);
@@ -510,7 +733,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         }
         recoverSet.remove(TokenConstants.EPSILON);
         //		System.out.println("recover set "+recoverSet.toString(recognizer.getTokenNames()));
-        return recoverSet;        
+        return recoverSet;
     }
 
     /**
@@ -518,7 +741,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void consumeUntil(Parser recognizer, IntervalSet set)
     {
-	stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
+	//stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
         int ttype = recognizer.getInputStream().LA(1);
         while (ttype != TokenConstants.EOF && !set.contains(ttype) ) {
             //System.out.println("consume during recover LA(1)="+getTokenNames()[input.LA(1)]);
@@ -527,4 +750,5 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             ttype = recognizer.getInputStream().LA(1);
         }
     }
+
 }

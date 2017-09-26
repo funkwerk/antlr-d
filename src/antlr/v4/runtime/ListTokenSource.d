@@ -16,7 +16,6 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class ListTokenSource
 /**
- * TODO add class description
  * @uml
  * Provides an implementation of {@link TokenSource} as a wrapper around a list
  * of {@link Token} objects.
@@ -221,12 +220,12 @@ class ListTokenSource : TokenSource
         return "List";
     }
 
-    public void setTokenFactory(TokenFactory!CommonToken factory)
+    public void tokenFactory(TokenFactory!CommonToken factory)
     {
         this._factory = factory;
     }
 
-    public TokenFactory!CommonToken getTokenFactory()
+    public TokenFactory!CommonToken tokenFactory()
     {
         return _factory;
     }

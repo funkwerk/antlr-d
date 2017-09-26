@@ -14,9 +14,11 @@ import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.LexerNoViableAltException;
 //import antlr.v4.runtime.misc.*;
 
 public class XPathLexer : Lexer {
+    alias recover = Lexer.recover;
 	static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
 	protected static DFA[] _decisionToDFA;
@@ -43,6 +45,11 @@ public class XPathLexer : Lexer {
 	];
 	public static Vocabulary VOCABULARY;
 
+    public override void recover(LexerNoViableAltException e)
+    {
+        throw e;
+    }
+    
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */

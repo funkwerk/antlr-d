@@ -749,16 +749,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
         return null;
     }
 
-    public ParserRuleContext getInvokingContext(int ruleIndex)
-    {
-        ParserRuleContext p = ctx_;
-        while (p !is null ) {
-            if ( p.getRuleIndex() == ruleIndex ) return p;
-            p = cast(ParserRuleContext)p.parent;
-        }
-        return null;
-    }
-
     /**
      * @uml
      * @override

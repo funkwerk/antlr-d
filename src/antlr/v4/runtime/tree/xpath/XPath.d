@@ -50,7 +50,6 @@ import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.xpath.XPathLexerErrorListener;
 import antlr.v4.runtime.tree.xpath.XPathLexer;
-import antlr.v4.runtime.tree.xpath.XPathLexerRecover;
 import antlr.v4.runtime.tree.xpath.XPathWildcardAnywhereElement;
 import antlr.v4.runtime.tree.xpath.XPathWildcardElement;
 import antlr.v4.runtime.tree.xpath.XPathRuleElement;
@@ -145,7 +144,7 @@ class XPath
         catch (Exception ioe) {
             throw new IllegalArgumentException("Could not read path: " ~ path, ioe);
         }
-        XPathLexer lexer = new XPathLexerRecover(ins);
+        XPathLexer lexer = new XPathLexer(ins);
         lexer.removeErrorListeners();
         lexer.addErrorListener(new XPathLexerErrorListener());
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);

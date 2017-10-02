@@ -1,4 +1,5 @@
 # Make for Antlr4DTarget
+
 SHELL = bash
 MKDIR_P = mkdir -p
 

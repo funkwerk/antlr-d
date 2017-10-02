@@ -37,7 +37,7 @@ import antlr.v4.runtime.RuleContext;
 /**
  * TODO add interface description
  */
-interface RuleNode :ParseTree
+interface RuleNode : ParseTree
 {
 
     public RuleContext getRuleContext();

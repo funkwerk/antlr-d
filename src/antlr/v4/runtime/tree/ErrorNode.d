@@ -36,7 +36,7 @@ import antlr.v4.runtime.tree.TerminalNode;
 /**
  * TODO add interface description
  */
-interface ErrorNode :TerminalNode
+interface ErrorNode : TerminalNode
 {
 
 

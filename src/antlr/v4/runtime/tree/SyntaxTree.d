@@ -41,7 +41,7 @@ import antlr.v4.runtime.misc.Interval;
  * is some kind of syntax tree. Subinterfaces distinguish
  * between parse trees and other kinds of syntax trees we might want to create.
  */
-interface SyntaxTree :Tree
+interface SyntaxTree : Tree
 {
 
     /**

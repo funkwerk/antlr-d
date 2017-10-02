@@ -44,7 +44,7 @@ import antlr.v4.runtime.Parser;
  *
  * <p>The payload is either a {@link Token} or a {@link RuleContext} object.</p>
  */
-interface ParseTree :SyntaxTree
+interface ParseTree : SyntaxTree
 {
 
     /**

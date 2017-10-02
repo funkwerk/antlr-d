@@ -37,7 +37,7 @@ import antlr.v4.runtime.Token;
 /**
  * TODO add interface description
  */
-interface TerminalNode :ParseTree
+interface TerminalNode : ParseTree
 {
 
     public Token getSymbol();

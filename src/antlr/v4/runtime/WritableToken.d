@@ -6,7 +6,7 @@ import antlr.v4.runtime.Token;
 /**
  * Add write functions for Token attributes
  */
-interface WritableToken :Token
+interface WritableToken : Token
 {
 
     public void setText(string text);

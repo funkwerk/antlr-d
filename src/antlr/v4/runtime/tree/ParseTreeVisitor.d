@@ -30,10 +30,8 @@
 
 module antlr.v4.runtime.tree.ParseTreeVisitor;
 
-// Class Template ParseTreeVisitor
+// Interface Template ParseTreeVisitor
 /**
- * TODO add class description
- * @uml
  * This interface defines the basic notion of a parse tree visitor. Generated
  * visitors implement this interface and the {@code XVisitor} interface for
  * grammar {@code X}.
@@ -41,52 +39,40 @@ module antlr.v4.runtime.tree.ParseTreeVisitor;
  *  @param <T> The return type of the visit operation. Use {@link Void} for
  *  operations with no return type.
  */
-abstract class ParseTreeVisitor(T)
+interface ParseTreeVisitor(T)
 {
 
     /**
-     * @uml
      * Visit a parse tree, and return a user-defined result of the operation.
      *
      *  @param tree The {@link ParseTree} to visit.
      *  @return The result of visiting the parse tree.
      */
-    public T visit(ParseTree tree)
-    {
-    }
+    public T visit(ParseTree tree);
 
     /**
-     * @uml
      * Visit the children of a node, and return a user-defined result of the
      * operation.
      *
      *  @param node The {@link RuleNode} whose children should be visited.
      *  @return The result of visiting the children of the node.
      */
-    public T visitChildren(RuleNode node)
-    {
-    }
+    public T visitChildren(RuleNode node);
 
     /**
-     * @uml
      * Visit a terminal node, and return a user-defined result of the operation.
      *
      *  @param node The {@link TerminalNode} to visit.
      *  @return The result of visiting the node.
      */
-    public T visitTerminal(TerminalNode node)
-    {
-    }
+    public T visitTerminal(TerminalNode node);
 
     /**
-     * @uml
      * Visit an error node, and return a user-defined result of the operation.
      *
      *  @param node The {@link ErrorNode} to visit.
      *  @return The result of visiting the node.
      */
-    public T visitErrorNode(ErrorNode node)
-    {
-    }
+    public T visitErrorNode(ErrorNode node);
 
 }

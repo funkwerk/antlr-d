@@ -36,7 +36,7 @@ import antlr.v4.runtime.tree.ParseTreeVisitor;
 /**
  * TODO add class description
  */
-abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor
+abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
 {
 
     /**

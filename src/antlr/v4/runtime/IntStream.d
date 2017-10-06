@@ -1,23 +1,13 @@
 module antlr.v4.runtime.IntStream;
 
-// Class IntStream
+// Interface IntStream
 /**
- * TODO add class description
+ * TODO add interface description
  */
-class IntStream
+interface IntStream
 {
 
-    public static immutable int EOF = -1;
-
     /**
-     * @uml
-     * The value returned by {@link #getSourceName} when the actual name of the
-     * underlying source is not known.
-     */
-    public static immutable string UNKNOWN_SOURCE_NAME = "<unknown>";
-
-    /**
-     * @uml
      * Consumes the current symbol in the stream. This method has the following
      * effects:
      *
@@ -39,10 +29,9 @@ class IntStream
      * end of the stream (i.e. if {@code LA(1)==}{@link #EOF EOF} before calling
      * {@code consume}).
      */
-    abstract public void consume();
+    public void consume();
 
     /**
-     * @uml
      * Gets the value of the symbol at offset {@code i} from the current
      * position. When {@code i==1}, this method returns the value of the current
      * symbol in the stream (which is the next symbol to be consumed). When
@@ -76,10 +65,9 @@ class IntStream
      *  @throws UnsupportedOperationException if the stream does not support
      * retrieving the value of the specified symbol
      */
-    abstract public int LA(int i);
+    public int LA(int i);
 
     /**
-     * @uml
      * A mark provides a guarantee that {@link #seek seek()} operations will be
      * valid over a "marked range" extending from the index where {@code mark()}
      * was called to the current {@link #index index()}. This allows the use of
@@ -125,10 +113,9 @@ class IntStream
      *  @return An opaque marker which should be passed to
      * {@link #release release()} when the marked range is no longer required.
      */
-    abstract public int mark();
+    public int mark();
 
     /**
-     * @uml
      * This method releases a marked range created by a call to
      * {@link #mark mark()}. Calls to {@code release()} must appear in the
      * reverse order of the corresponding calls to {@code mark()}. If a mark is
@@ -140,10 +127,9 @@ class IntStream
      *  @param marker A marker returned by a call to {@code mark()}.
      *  @see #mark
      */
-    abstract public void release(int marker);
+    public void release(int marker);
 
     /**
-     * @uml
      * eturn the index into the stream of the input symbol referred to by
      * {@code LA(1)}.
      *
@@ -151,10 +137,9 @@ class IntStream
      * {@link IntStream initializing method} has occurred after this stream was
      * constructed.</p>
      */
-    abstract public int index();
+    public int index();
 
     /**
-     * @uml
      * Set the input cursor to the position indicated by {@code index}. If the
      * specified index lies past the end of the stream, the operation behaves as
      * though {@code index} was the index of the EOF symbol. After this method
@@ -181,23 +166,21 @@ class IntStream
      *  @throws IllegalArgumentException if {@code index} is less than 0
      *  @throws UnsupportedOperationException if the stream does not support
      */
-    abstract public void seek(int index);
+    public void seek(int index);
 
     /**
-     * @uml
      * Returns the total number of symbols in the stream, including a single EOF
      * symbol.
      *
      *  @throws UnsupportedOperationException if the size of the stream is unknown.
      */
-    abstract public int size();
+    public int size();
 
     /**
-     * @uml
      * Gets the name of the underlying symbol source. This method returns a
      * non-null, non-empty string. If such a name is not known, this method
      * returns {@link #UNKNOWN_SOURCE_NAME}.
      */
-    abstract public string getSourceName();
+    public string getSourceName();
 
 }

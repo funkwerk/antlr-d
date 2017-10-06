@@ -35,6 +35,7 @@ import std.conv;
 import std.format;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.dfa.DFA;
@@ -250,13 +251,13 @@ class LexerATNSimulator : ATNSimulator
             // capturing the accept state so the input index, line, and char
             // position accurately reflect the state of the interpreter at the
             // end of the token.
-            if (t != IntStream.EOF) {
+            if (t != IntStreamConstant.EOF) {
                 consume(input);
             }
 
             if (target.isAcceptState) {
                 captureSimState(prevAccept, input, target);
-                if (t == IntStream.EOF) {
+                if (t == IntStreamConstant.EOF) {
                     break;
                 }
             }
@@ -343,7 +344,7 @@ class LexerATNSimulator : ATNSimulator
         }
         else {
             // if no accept and EOF is first char, return EOF
-            if (t==IntStream.EOF && input.index() == startIndex) {
+            if (t==IntStreamConstant.EOF && input.index() == startIndex) {
                 return TokenConstants.EOF;
             }
 
@@ -383,7 +384,7 @@ class LexerATNSimulator : ATNSimulator
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index() - startIndex);
                     }
 
-                    bool treatEofAsEpsilon = t == CharStream.EOF;
+                    bool treatEofAsEpsilon = t == IntStreamConstant.EOF;
                     if (closure(input, new LexerATNConfig(cast(LexerATNConfig)c, target, lexerActionExecutor),
                                      reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
                         // any remaining configs for this alt have a lower priority than
@@ -586,7 +587,7 @@ class LexerATNSimulator : ATNSimulator
         case TransitionStates.RANGE:
         case TransitionStates.SET:
             if (treatEofAsEpsilon) {
-                if (t.matches(CharStream.EOF, 0, 0xfffe)) {
+                if (t.matches(IntStreamConstant.EOF, 0, 0xfffe)) {
                     c = new LexerATNConfig(config, t.target);
                     break;
                 }

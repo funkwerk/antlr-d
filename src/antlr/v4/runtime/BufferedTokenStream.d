@@ -42,6 +42,7 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.misc.Interval;
 
@@ -125,29 +126,17 @@ class BufferedTokenStream : TokenStream
         return tokenSource;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override int index()
+    public int index()
     {
         return p;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override int mark()
+    public int mark()
     {
         return 0;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override void release(int marker)
+    public void release(int marker)
     {
         // no resources to release
     }
@@ -157,30 +146,18 @@ class BufferedTokenStream : TokenStream
         seek(0);
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override void seek(int index)
+    public void seek(int index)
     {
         lazyInit();
         p = adjustSeekIndex(index);
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override int size()
+    public int size()
     {
         return to!int(tokens.length);
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override void consume()
+    public void consume()
     {
         bool skipEofCheck;
         if (p >= 0) {
@@ -199,7 +176,7 @@ class BufferedTokenStream : TokenStream
             skipEofCheck = false;
         }
 
-        if (!skipEofCheck && LA(1) == EOF) {
+        if (!skipEofCheck && LA(1) == IntStreamConstant.EOF) {
             throw new IllegalStateException("cannot consume EOF");
         }
 
@@ -278,11 +255,7 @@ class BufferedTokenStream : TokenStream
         return subset;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override int LA(int i)
+    public int LA(int i)
     {
         return LT(i).getType();
     }
@@ -554,11 +527,7 @@ class BufferedTokenStream : TokenStream
         return hidden;
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override string getSourceName()
+    public string getSourceName()
     {
         return tokenSource.getSourceName();
     }

@@ -38,6 +38,7 @@ import std.format;
 import std.algorithm;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.misc.Interval;
 
 // Class ANTLRInputStream
@@ -146,7 +147,7 @@ class ANTLRInputStream : CharStream
     public override void consume()
     {
 	if (p >= n) {
-            assert (LA(1) == IntStream.EOF, "cannot consume EOF");
+            assert (LA(1) == IntStreamConstant.EOF, "cannot consume EOF");
         }
         //System.out.println("prev p="+p+", c="+(char)data[p]);
         if (p < n) {
@@ -167,12 +168,12 @@ class ANTLRInputStream : CharStream
         if (i < 0) {
             i++; // e.g., translate LA(-1) to use offset i=0; then data[p+0-1]
             if ((p + i - 1) < 0) {
-                return IntStream.EOF; // invalid; no char before first char
+                return IntStreamConstant.EOF; // invalid; no char before first char
             }
         }
         if (( p + i - 1) >= n) {
             //System.out.println("char LA("+i+")=EOF; p="+p);
-            return IntStream.EOF;
+            return IntStreamConstant.EOF;
         }
         //System.out.println("char LA("+i+")="+(char)data[p+i-1]+"; p="+p);
         //System.out.println("LA("+i+"); p="+p+" n="+n+" data.length="+data.length);
@@ -263,7 +264,7 @@ class ANTLRInputStream : CharStream
     public override string getSourceName()
     {
         if (name is null || name.length == 0) {
-            return UNKNOWN_SOURCE_NAME;
+            return IntStreamConstant.UNKNOWN_SOURCE_NAME;
         }
         return name;
     }

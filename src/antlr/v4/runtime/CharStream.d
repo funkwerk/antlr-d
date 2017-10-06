@@ -3,16 +3,14 @@ module antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.misc.Interval;
 
-// Class CharStream
+// Interface CharStream
 /**
- * @uml
  * A source of characters for an ANTLR lexer.
  */
-class CharStream : IntStream
+interface CharStream : IntStream
 {
 
     /**
-     * @uml
      * This method returns the text for a range of characters within this input
      * stream. This method is guaranteed to not throw an exception if the
      * specified {@code interval} lies entirely within a marked range. For more
@@ -28,6 +26,6 @@ class CharStream : IntStream
      *  @throws UnsupportedOperationException if the stream does not support
      *  getting the text of the specified interval
      */
-    abstract public string getText(Interval interval);
+    public string getText(Interval interval);
 
 }

@@ -45,6 +45,7 @@ import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.IllegalStateException;
@@ -219,7 +220,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
                         recover(e);
                         ttype = SKIP;
                     }
-                    if (_input.LA(1) == IntStream.EOF) {
+                    if (_input.LA(1) == IntStreamConstant.EOF) {
                         _hitEOF = true;
                     }
                     if (_type == TokenConstants.INVALID_TYPE) _type = ttype;
@@ -440,7 +441,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
      * @uml
      * Used to print out token names like ID during debugging and
      * error reporting.  The generated parsers implement a method
-     * that overrides this to point to their String[] tokenNames.
+     * that overrides this to point to their String[] tokenNames
      * @override
      */
     public override string[] getTokenNames()
@@ -466,7 +467,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
 
     public void recover(LexerNoViableAltException e)
     {
-	if (_input.LA(1) != IntStream.EOF) {
+	if (_input.LA(1) != IntStreamConstant.EOF) {
             // skip a char and try again
             getInterpreter().consume(_input);
         }

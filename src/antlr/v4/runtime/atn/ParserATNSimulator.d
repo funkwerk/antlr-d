@@ -37,6 +37,7 @@ import std.conv;
 import std.stdio;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
@@ -585,7 +586,7 @@ class ParserATNSimulator : ATNSimulator
 
             previousD = D;
 
-            if (t != IntStream.EOF) {
+            if (t != IntStreamConstant.EOF) {
                 input.consume();
                 t = input.LA(1);
             }
@@ -775,7 +776,7 @@ class ParserATNSimulator : ATNSimulator
             }
 
             previous = reach;
-            if (t != IntStream.EOF) {
+            if (t != IntStreamConstant.EOF) {
                 input.consume();
                 t = input.LA(1);
             }
@@ -850,7 +851,7 @@ class ParserATNSimulator : ATNSimulator
 
             if (typeid(c.state) == typeid(RuleStopState)) {
                 assert (!c.context.isEmpty);
-                if (fullCtx || t == IntStream.EOF) {
+                if (fullCtx || t == IntStreamConstant.EOF) {
                     if (skippedStopStates is null) {
                         skippedStopStates.length = 0;
                     }
@@ -911,7 +912,7 @@ class ParserATNSimulator : ATNSimulator
             }
         }
 
-        if (t == IntStream.EOF) {
+        if (t == IntStreamConstant.EOF) {
             /* After consuming EOF no additional input is possible, so we are
              * only interested in configurations which reached the end of the
              * decision rule (local context) or end of the start rule (full

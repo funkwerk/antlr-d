@@ -31,7 +31,8 @@
 module antlr.v4.runtime.TrimToSizeListener;
 
 import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.ParserRuleContext;
 
 // Class TrimToSizeListener
@@ -51,19 +52,15 @@ class TrimToSizeListener : ParseTreeListener
     {
     }
 
-    public void visitTerminal()
+    public void visitTerminal(TerminalNode node)
     {
     }
 
-    public void visitErrorNode()
+    public void visitErrorNode(ErrorNode node)
     {
     }
 
-    /**
-     * @uml
-     * @override
-     */
-    public override void exitEveryRule(ParserRuleContext ctx)
+    public void exitEveryRule(ParserRuleContext ctx)
     {
         // if (ctx.children.classinfo == ArrayList.classinfo) {
         //     ((ArrayList<?>)ctx.children).trimToSize();

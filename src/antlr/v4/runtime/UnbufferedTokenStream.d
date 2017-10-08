@@ -82,7 +82,7 @@ class UnbufferedTokenStream : TokenStream
 	int bufferStartIndex = getBufferStartIndex();
         assert(i < bufferStartIndex || i >= bufferStartIndex + n,
                format("get(%1$s) outside buffer: %2$s..%3$s", i, bufferStartIndex,
-                     bufferStartIndex+n));
+                      bufferStartIndex+n));
         return tokens[i - bufferStartIndex];
     }
 
@@ -131,7 +131,7 @@ class UnbufferedTokenStream : TokenStream
     {
 	if (LA(1) == TokenConstants.EOF) {
             throw new IllegalStateException("cannot consume EOF");
-        }     
+        }
         // buf always has at least tokens[p==0] in this method due to ctor
         lastToken = tokens[p];   // track last token for LT(-1)
         // if we're at last token and no markers, opportunity to flush buffer
@@ -145,7 +145,8 @@ class UnbufferedTokenStream : TokenStream
         sync(1);
     }
 
-    /** Make sure we have 'need' elements from current position {@link #p p}. Last valid
+    /** 
+     * Make sure we have 'need' elements from current position {@link #p p}. Last valid
      *  {@code p} index is {@code tokens.length-1}.  {@code p+need-1} is the tokens index 'need' elements
      *  ahead.  If we need 1 element, {@code (p+1-1)==p} must be less than {@code tokens.length}.
      */
@@ -186,12 +187,12 @@ class UnbufferedTokenStream : TokenStream
     }
 
     /**
-	 * Return a marker that we can release later.
-	 *
-	 * <p>The specific marker value used for this class allows for some level of
-	 * protection against misuse where {@code seek()} is called on a mark or
-	 * {@code release()} is called in the wrong order.</p>
-	 */
+     * Return a marker that we can release later.
+     *
+     * <p>The specific marker value used for this class allows for some level of
+     * protection against misuse where {@code seek()} is called on a mark or
+     * {@code release()} is called in the wrong order.</p>
+     */
     public int mark()
     {
 	if (numMarkers == 0) {
@@ -218,9 +219,9 @@ class UnbufferedTokenStream : TokenStream
                 tokens = tokens[p..(n-p)];
                 n = n - p;
                 p = 0;
-            }         
+            }
             lastTokenBufferStart = lastToken;
-        }   
+        }
     }
 
     /**
@@ -251,10 +252,10 @@ class UnbufferedTokenStream : TokenStream
         }
         else if (i >= n) {
             auto msg = format("seek to index outside buffer: %1$s not in %2$s..%3$s",
-                               index, bufferStartIndex, bufferStartIndex + n);
+                              index, bufferStartIndex, bufferStartIndex + n);
             throw new UnsupportedOperationException(msg);
         }
-        
+
         p = i;
         currentTokenIndex = index;
         if (p == 0) {
@@ -265,7 +266,7 @@ class UnbufferedTokenStream : TokenStream
         }
 
     }
-    
+
     public int size()
     {
         throw new UnsupportedOperationException("Unbuffered stream cannot know its size");

@@ -36,15 +36,14 @@ import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.misc.Interval;
 
-// Class TokenStream
+// Interface TokenStream
 /**
- * TODO add class description
+ * TODO add interface description
  */
-class TokenStream : IntStream
+interface TokenStream : IntStream
 {
 
     /**
-     * @uml
      * Get the {@link Token} instance associated with the value returned by
      * {@link #LA LA(k)}. This method has the same pre- and post-conditions as
      * {@link IntStream#LA}. In addition, when the preconditions of this method
@@ -53,10 +52,9 @@ class TokenStream : IntStream
      *
      *  @see IntStream#LA
      */
-    abstract public Token LT(int k);
+    public Token LT(int k);
 
     /**
-     * @uml
      * Gets the {@link Token} at the specified {@code index} in the stream. When
      * the preconditions of this method are met, the return value is non-null.
      *
@@ -74,17 +72,15 @@ class TokenStream : IntStream
      *  @throws UnsupportedOperationException if the stream does not support
      *  retrieving the token at the specified index
      */
-    abstract public Token get(int index);
+    public Token get(int index);
 
     /**
-     * @uml
      * Gets the underlying {@link TokenSource} which provides tokens for this
      * stream.
      */
-    abstract public TokenSource getTokenSource();
+    public TokenSource getTokenSource();
 
     /**
-     * @uml
      * Return the text of all tokens within the specified {@code interval}. This
      * method behaves like the following code (including potential exceptions
      * for violating preconditions of {@link #get}, but may be optimized by the
@@ -105,10 +101,9 @@ class TokenStream : IntStream
      *
      *  @throws NullPointerException if {@code interval} is {@code null}
      */
-    abstract public string getText(Interval interval);
+    public string getText(Interval interval);
 
     /**
-     * @uml
      * Return the text of all tokens in the stream. This method behaves like the
      * following code, including potential exceptions from the calls to
      * {@link IntStream#size} and {@link #getText(Interval)}, but may be
@@ -121,10 +116,9 @@ class TokenStream : IntStream
      *
      *  @return The text of all tokens in the stream.
      */
-    abstract public string getText();
+    public string getText();
 
     /**
-     * @uml
      * Return the text of all tokens in the source interval of the specified
      * context. This method behaves like the following code, including potential
      * exceptions from the call to {@link #getText(Interval)}, but may be
@@ -142,10 +136,9 @@ class TokenStream : IntStream
      *  text for.
      *  @return The text of all tokens within the source interval of {@code ctx}.
      */
-    abstract public string getText(RuleContext ctx);
+    public string getText(RuleContext ctx);
 
     /**
-     * @uml
      * Return the text of all tokens in this stream between {@code start} and
      * {@code stop} (inclusive).
      *
@@ -174,6 +167,6 @@ class TokenStream : IntStream
      *  @throws UnsupportedOperationException if this stream does not support
      *  this method for the specified tokens
      */
-    abstract public string getText(Token start, Token stop);
+    public string getText(Token start, Token stop);
 
 }

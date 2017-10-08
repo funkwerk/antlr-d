@@ -38,7 +38,7 @@ import antlr.v4.runtime.ParserRuleContext;
 /**
  * TODO add class description
  */
-class TrimToSizeListener : Parser, ParseTreeListener
+class TrimToSizeListener : ParseTreeListener
 {
 
     public static TrimToSizeListener INSTANCE;

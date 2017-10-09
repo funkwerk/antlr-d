@@ -43,7 +43,6 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.UnsupportedOperationException;
-import antlr.v4.runtime.TraceListener;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenFactory;
@@ -75,6 +74,41 @@ import antlr.v4.runtime.misc.IntervalSet;
  */
 abstract class Parser : Recognizer!(Token, ParserATNSimulator)
 {
+    // Class TraceListener
+    /**
+     * TODO add class description
+     */
+    class TraceListener : ParseTreeListener
+    {
+
+        public void enterEveryRule(ParserRuleContext ctx)
+        {
+            writeln("enter   " ~ getRuleNames()[ctx.getRuleIndex()] ~
+                    ", LT(1)=" ~ _input.LT(1).getText());
+        }
+
+        public void visitTerminal(TerminalNode node)
+        {
+            writeln("consume " ~ node.getSymbol().getText ~ " rule " ~
+                    getRuleNames()[ctx_.getRuleIndex()]);
+        }
+
+        public void visitErrorNode(ErrorNode node)
+        {
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override void exitEveryRule(ParserRuleContext ctx)
+        {
+            writeln("exit   " ~ getRuleNames()[ctx.getRuleIndex()] ~
+                    ", LT(1)=" ~ _input.LT(1).getText());
+        }
+
+    }
+
     // Singleton TrimToSizeListener
     /**
      * TODO add class description

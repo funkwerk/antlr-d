@@ -42,7 +42,8 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
-import antlr.v4.runtime.atn.ConfigHashSet;
+import antlr.v4.runtime.misc.AbstractEqualityComparator;
+//import antlr.v4.runtime.atn.ConfigHashSet;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.ATNSimulator;
@@ -64,6 +65,81 @@ import antlr.v4.runtime.misc.BitSet;
  */
 class ATNConfigSet
 {
+
+    // Class ConfigHashSet
+    /**
+     * The reason that we need this is because we don't want the hash map to use
+     * the standard hash code and equals. We need all configurations with the same
+     * {@code (s,i,_,semctx)} to be equal. Unfortunately, this key effectively doubles
+     * the number of objects associated with ATNConfigs. The other solution is to
+     * use a hash table that lets us specify the equals/hashcode operation.
+     */
+    class ConfigHashSet : AbstractConfigHashSet
+    {
+
+        public this()
+        {
+            super(&ConfigEqualityComparator.hashOf, &ConfigEqualityComparator.opEquals);
+        }
+
+    }
+    // Singleton ConfigEqualityComparator
+    /**
+     * TODO add class description
+     */
+    static class ConfigEqualityComparator : AbstractEqualityComparator!ATNConfig
+    {
+
+        /**
+         * The single instance of ConfigEqualityComparator.
+         */
+        private static __gshared ATNConfigSet.ConfigEqualityComparator instance_;
+
+        /**
+         * @uml
+         * @nothrow
+         * @safe
+         */
+        public static size_t hashOf(Object obj) @safe nothrow
+        {
+            auto o = cast(ATNConfig) obj;
+            size_t hashCode = 7;
+            hashCode = 31 * hashCode + o.state.stateNumber;
+            hashCode = 31 * hashCode + o.alt;
+            hashCode = 31 * hashCode + o.semanticContext.toHash;
+            return hashCode;
+        }
+
+        public static bool opEquals(Object aObj, Object bObj)
+        {
+            auto a = cast(ATNConfig) aObj;
+            auto b = cast(ATNConfig) bObj;
+            if (a == b)
+                return true;
+            if (a is null || b is null)
+                return false;
+            return a.state.stateNumber == b.state.stateNumber
+                && a.alt == b.alt
+                && a.semanticContext.opEquals(b.semanticContext);
+        }
+
+        /**
+         * Creates the single instance of ConfigEqualityComparator.
+         */
+        private shared static this()
+        {
+            instance_ = new ConfigEqualityComparator;
+        }
+
+        /**
+         * Returns: A single instance of ConfigEqualityComparator.
+         */
+        public static ConfigEqualityComparator instance()
+        {
+            return instance_;
+        }
+
+    }
 
     /**
      * @uml

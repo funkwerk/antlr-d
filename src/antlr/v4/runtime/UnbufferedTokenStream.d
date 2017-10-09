@@ -145,7 +145,7 @@ class UnbufferedTokenStream : TokenStream
         sync(1);
     }
 
-    /** 
+    /**
      * Make sure we have 'need' elements from current position {@link #p p}. Last valid
      *  {@code p} index is {@code tokens.length-1}.  {@code p+need-1} is the tokens index 'need' elements
      *  ahead.  If we need 1 element, {@code (p+1-1)==p} must be less than {@code tokens.length}.

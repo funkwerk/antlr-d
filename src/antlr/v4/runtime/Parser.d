@@ -44,7 +44,6 @@ import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.TraceListener;
-import antlr.v4.runtime.TrimToSizeListener;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenFactory;
@@ -76,6 +75,54 @@ import antlr.v4.runtime.misc.IntervalSet;
  */
 abstract class Parser : Recognizer!(Token, ParserATNSimulator)
 {
+    // Singleton TrimToSizeListener
+    /**
+     * TODO add class description
+     */
+    static class TrimToSizeListener : ParseTreeListener
+    {
+
+        /**
+         * The single instance of TrimToSizeListener.
+         */
+        private static __gshared Parser.TrimToSizeListener instance_;
+
+        public void enterEveryRule(ParserRuleContext ctx)
+        {
+        }
+
+        public void visitTerminal(TerminalNode node)
+        {
+        }
+
+        public void visitErrorNode(ErrorNode node)
+        {
+        }
+
+        public void exitEveryRule(ParserRuleContext ctx)
+        {
+            // if (ctx.children.classinfo == ArrayList.classinfo) {
+            //     ((ArrayList<?>)ctx.children).trimToSize();
+            // }
+        }
+
+        /**
+         * Creates the single instance of TrimToSizeListener.
+         */
+        private shared static this()
+        {
+            instance_ = new TrimToSizeListener;
+        }
+
+        /**
+         * Returns: A single instance of TrimToSizeListener.
+         */
+        public static TrimToSizeListener instance()
+        {
+            return instance_;
+        }
+
+    }
 
     /**
      * @uml
@@ -285,10 +332,10 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     {
         if (trimParseTrees) {
             if (getTrimParseTree()) return;
-            addParseListener(TrimToSizeListener.INSTANCE);
+            addParseListener(TrimToSizeListener.instance);
         }
         else {
-            removeParseListener(TrimToSizeListener.INSTANCE);
+            removeParseListener(TrimToSizeListener.instance);
         }
     }
 
@@ -299,7 +346,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      */
     public bool getTrimParseTree()
     {
-        return canFind(getParseListeners(), TrimToSizeListener.INSTANCE);
+        return canFind(getParseListeners(), TrimToSizeListener.instance);
     }
 
     public ParseTreeListener[] getParseListeners()
@@ -391,11 +438,11 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     protected void triggerExitRuleEvent()
     {
         // reverse order walk of listeners
-		for (auto i = _parseListeners.length-1; i >= 0; i--) {
-			ParseTreeListener listener = _parseListeners[i];
-			ctx_.exitRule(listener);
-			listener.exitEveryRule(ctx_);
-		}
+        for (auto i = _parseListeners.length-1; i >= 0; i--) {
+            ParseTreeListener listener = _parseListeners[i];
+            ctx_.exitRule(listener);
+            listener.exitEveryRule(ctx_);
+        }
     }
 
     /**
@@ -472,7 +519,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      * {@link Lexer} rather than trying to deduce it from this parser.
      */
     public ParseTreePattern compileParseTreePattern(string pattern, int patternRuleIndex,
-        Lexer lexer)
+                                                    Lexer lexer)
     {
         ParseTreePatternMatcher m = new ParseTreePatternMatcher(lexer, this);
         return m.compile(pattern, patternRuleIndex);
@@ -679,7 +726,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
     }
 
     public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
-        int precedence)
+                                   int precedence)
     {
         setState(state);
         _precedenceStack.push(precedence);

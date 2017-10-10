@@ -4,7 +4,7 @@ import std.array;
 import std.conv;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.tree.RuleNode;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATN;
@@ -232,7 +232,7 @@ class RuleContext : RuleNode
         return toString([""]);
     }
 
-    public string toString(Recognizer!(Token, ParserATNSimulator) recog)
+    public string toString(InterfaceRecognizer recog)
     {
         return toString(recog, ParserRuleContext.EMPTY);
     }
@@ -246,7 +246,7 @@ class RuleContext : RuleNode
      * @uml
      * recog null unless ParserRuleContext, in which case we use subclass toString(...)
      */
-    public string toString(Recognizer!(Token, ParserATNSimulator) recog, RuleContext stop)
+    public string toString(InterfaceRecognizer recog, RuleContext stop)
     {
         string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
         string[] ruleNamesList = ruleNames !is null ? ruleNames : null;

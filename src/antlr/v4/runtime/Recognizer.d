@@ -40,6 +40,7 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.IntStream;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.TokenFactory;
@@ -55,7 +56,7 @@ import antlr.v4.runtime.atn.ParserATNSimulator;
 /**
  * TODO add class description
  */
-abstract class Recognizer(U, V)
+abstract class Recognizer(U, V) : InterfaceRecognizer
 {
 
     public static immutable int EOF = -1;

@@ -32,7 +32,7 @@
 module antlr.v4.runtime.RecognitionException;
 
 import antlr.v4.runtime.RuntimeException;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.IntStream;
@@ -46,7 +46,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 class RecognitionException(U, V) : RuntimeException
 {
 
-    public Recognizer!(U, V) recognizer;
+    public InterfaceRecognizer recognizer;
 
     private RuleContext ctx;
 
@@ -56,7 +56,7 @@ class RecognitionException(U, V) : RuntimeException
 
     private int offendingState = -1;
 
-    public this(Recognizer!(U, V) recognizer, IntStream input, ParserRuleContext ctx)
+    public this(InterfaceRecognizer recognizer, IntStream input, ParserRuleContext ctx)
     {
         this.recognizer = recognizer;
         this.input = input;
@@ -64,7 +64,7 @@ class RecognitionException(U, V) : RuntimeException
         if (recognizer !is null) this.offendingState = recognizer.getState();
     }
 
-    public this(string message, Recognizer!(U, V) recognizer, IntStream input, ParserRuleContext ctx)
+    public this(string message, InterfaceRecognizer recognizer, IntStream input, ParserRuleContext ctx)
     {
         super(message);
         this.recognizer = recognizer;
@@ -150,7 +150,7 @@ class RecognitionException(U, V) : RuntimeException
      *  @return The recognizer where this exception occurred, or {@code null} if
      *  the recognizer is not available.
      */
-    public Recognizer!(U, V) getRecognizer()
+    public InterfaceRecognizer getRecognizer()
     {
         return recognizer;
     }

@@ -1521,7 +1521,7 @@ class ParserATNSimulator : ATNSimulator
                     trans = (not?"~":"") ~ "Set "~ st.set.toString();
                 }
             }
-            writefln("%1$s:%2$s", c.toString(true), trans);
+            writefln("%1$s:%2$s", c.toString(parser, true), trans);
         }
     }
 

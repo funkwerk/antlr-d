@@ -32,7 +32,7 @@ module antlr.v4.runtime.ANTLRErrorListener;
 
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.RecognitionException;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.dfa.DFA;
@@ -78,7 +78,7 @@ interface ANTLRErrorListener(U, V)
      *        the parser was able to recover in line without exiting the
      *        surrounding rule.
      */
-    public void syntaxError(Recognizer!(U, V) recognizer, Object offendingSymbol, int line,
+    public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
                             int charPositionInLine, string msg, RecognitionException!(U,V) e);
 
     /**

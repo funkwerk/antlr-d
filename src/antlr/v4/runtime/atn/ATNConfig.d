@@ -34,6 +34,7 @@ module antlr.v4.runtime.atn.ATNConfig;
 import std.array;
 import std.conv;
 import std.stdio;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
@@ -247,12 +248,16 @@ class ATNConfig
      */
     public override string toString()
     {
-        return toString(true);
+        return toString(null, true);
     }
 
-    public string toString(bool showAlt)
+    public string toString(InterfaceRecognizer recog, bool showAlt)
     {
         auto buf = appender!string;
+        //		if ( state.ruleIndex>=0 ) {
+        //			if ( recog!=null ) buf.append(recog.getRuleNames()[state.ruleIndex]+":");
+        //			else buf.append(state.ruleIndex+":");
+        //		}
         buf.put('(');
         buf.put(state.toString);
         if ( showAlt ) {

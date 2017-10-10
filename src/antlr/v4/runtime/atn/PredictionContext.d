@@ -33,16 +33,14 @@ module antlr.v4.runtime.atn.PredictionContext;
 import std.array;
 import std.conv;
 import std.algorithm.sorting;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
 import antlr.v4.runtime.atn.RuleTransition;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -413,109 +411,109 @@ abstract class PredictionContext
      * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
      */
     public static PredictionContext mergeArrays(ArrayPredictionContext a, ArrayPredictionContext b,
-        bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
+                                                bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-        		if (mergeCache !is null) {
-			PredictionContext previous = mergeCache.get(a,b);
-			if ( previous !is null ) return previous;
-			previous = mergeCache.get(b,a);
-			if ( previous !is null ) return previous;
-		}
+        if (mergeCache !is null) {
+            PredictionContext previous = mergeCache.get(a,b);
+            if ( previous !is null ) return previous;
+            previous = mergeCache.get(b,a);
+            if ( previous !is null ) return previous;
+        }
 
-		// merge sorted payloads a + b => M
-		int i = 0; // walks a
-		int j = 0; // walks b
-		int k = 0; // walks target M array
+        // merge sorted payloads a + b => M
+        int i = 0; // walks a
+        int j = 0; // walks b
+        int k = 0; // walks target M array
 
-		int[] mergedReturnStates =
-			new int[a.returnStates.length + b.returnStates.length];
-		PredictionContext[] mergedParents =
-			new PredictionContext[a.returnStates.length + b.returnStates.length];
-		// walk and merge to yield mergedParents, mergedReturnStates
-		while ( i<a.returnStates.length && j<b.returnStates.length ) {
-			PredictionContext a_parent = a.parents[i];
-			PredictionContext b_parent = b.parents[j];
-			if ( a.returnStates[i]==b.returnStates[j] ) {
-				// same payload (stack tops are equal), must yield merged singleton
-				int payload = a.returnStates[i];
-				// $+$ = $
-				bool both = payload == EMPTY_RETURN_STATE &&
-								a_parent is null && b_parent is null;
-				bool ax_ax = (a_parent !is null && b_parent !is null) &&
-								a_parent.opEquals(b_parent); // ax+ax -> ax
-				if (both || ax_ax ) {
-					mergedParents[k] = a_parent; // choose left
-					mergedReturnStates[k] = payload;
-				}
-				else { // ax+ay -> a'[x,y]
-					PredictionContext mergedParent =
-						merge(a_parent, b_parent, rootIsWildcard, mergeCache);
-					mergedParents[k] = mergedParent;
-					mergedReturnStates[k] = payload;
-				}
-				i++; // hop over left one as usual
-				j++; // but also skip one in right side since we merge
-			}
-			else if ( a.returnStates[i]<b.returnStates[j] ) { // copy a[i] to M
-				mergedParents[k] = a_parent;
-				mergedReturnStates[k] = a.returnStates[i];
-				i++;
-			}
-			else { // b > a, copy b[j] to M
-				mergedParents[k] = b_parent;
-				mergedReturnStates[k] = b.returnStates[j];
-				j++;
-			}
-			k++;
-		}
+        int[] mergedReturnStates =
+            new int[a.returnStates.length + b.returnStates.length];
+        PredictionContext[] mergedParents =
+            new PredictionContext[a.returnStates.length + b.returnStates.length];
+        // walk and merge to yield mergedParents, mergedReturnStates
+        while ( i<a.returnStates.length && j<b.returnStates.length ) {
+            PredictionContext a_parent = a.parents[i];
+            PredictionContext b_parent = b.parents[j];
+            if ( a.returnStates[i]==b.returnStates[j] ) {
+                // same payload (stack tops are equal), must yield merged singleton
+                int payload = a.returnStates[i];
+                // $+$ = $
+                bool both = payload == EMPTY_RETURN_STATE &&
+                    a_parent is null && b_parent is null;
+                bool ax_ax = (a_parent !is null && b_parent !is null) &&
+                    a_parent.opEquals(b_parent); // ax+ax -> ax
+                if (both || ax_ax ) {
+                    mergedParents[k] = a_parent; // choose left
+                    mergedReturnStates[k] = payload;
+                }
+                else { // ax+ay -> a'[x,y]
+                    PredictionContext mergedParent =
+                        merge(a_parent, b_parent, rootIsWildcard, mergeCache);
+                    mergedParents[k] = mergedParent;
+                    mergedReturnStates[k] = payload;
+                }
+                i++; // hop over left one as usual
+                j++; // but also skip one in right side since we merge
+            }
+            else if ( a.returnStates[i]<b.returnStates[j] ) { // copy a[i] to M
+                mergedParents[k] = a_parent;
+                mergedReturnStates[k] = a.returnStates[i];
+                i++;
+            }
+            else { // b > a, copy b[j] to M
+                mergedParents[k] = b_parent;
+                mergedReturnStates[k] = b.returnStates[j];
+                j++;
+            }
+            k++;
+        }
 
-		// copy over any payloads remaining in either array
-		if (i < a.returnStates.length) {
-			for (int p = i; p < a.returnStates.length; p++) {
-				mergedParents[k] = a.parents[p];
-				mergedReturnStates[k] = a.returnStates[p];
-				k++;
-			}
-		}
-		else {
-			for (int p = j; p < b.returnStates.length; p++) {
-				mergedParents[k] = b.parents[p];
-				mergedReturnStates[k] = b.returnStates[p];
-				k++;
-			}
-		}
+        // copy over any payloads remaining in either array
+        if (i < a.returnStates.length) {
+            for (int p = i; p < a.returnStates.length; p++) {
+                mergedParents[k] = a.parents[p];
+                mergedReturnStates[k] = a.returnStates[p];
+                k++;
+            }
+        }
+        else {
+            for (int p = j; p < b.returnStates.length; p++) {
+                mergedParents[k] = b.parents[p];
+                mergedReturnStates[k] = b.returnStates[p];
+                k++;
+            }
+        }
 
-		// trim merged if we combined a few that had same stack tops
-		if ( k < mergedParents.length ) { // write index < last position; trim
-			if ( k == 1 ) { // for just one merged element, return singleton top
-				PredictionContext a_ =
-					SingletonPredictionContext.create(mergedParents[0],
-													  mergedReturnStates[0]);
-				if ( mergeCache !is null ) mergeCache.put(a,b,a_);
-				return a_;
-			}
-			mergedParents = mergedParents[0..k];
-			mergedReturnStates = mergedReturnStates[0..k];
-		}
+        // trim merged if we combined a few that had same stack tops
+        if ( k < mergedParents.length ) { // write index < last position; trim
+            if ( k == 1 ) { // for just one merged element, return singleton top
+                PredictionContext a_ =
+                    SingletonPredictionContext.create(mergedParents[0],
+                                                      mergedReturnStates[0]);
+                if ( mergeCache !is null ) mergeCache.put(a,b,a_);
+                return a_;
+            }
+            mergedParents = mergedParents[0..k];
+            mergedReturnStates = mergedReturnStates[0..k];
+        }
 
-		PredictionContext M =
-			new ArrayPredictionContext(mergedParents, mergedReturnStates);
+        PredictionContext M =
+            new ArrayPredictionContext(mergedParents, mergedReturnStates);
 
-		// if we created same array as a or b, return that instead
-		// TODO: track whether this is possible above during merge sort for speed
-		if ( M.opEquals(a) ) {
-			if ( mergeCache !is null ) mergeCache.put(a,b,a);
-			return a;
-		}
-		if ( M.opEquals(b) ) {
-			if ( mergeCache !is null ) mergeCache.put(a,b,b);
-			return b;
-		}
+        // if we created same array as a or b, return that instead
+        // TODO: track whether this is possible above during merge sort for speed
+        if ( M.opEquals(a) ) {
+            if ( mergeCache !is null ) mergeCache.put(a,b,a);
+            return a;
+        }
+        if ( M.opEquals(b) ) {
+            if ( mergeCache !is null ) mergeCache.put(a,b,b);
+            return b;
+        }
 
-		combineCommonParents(mergedParents);
+        combineCommonParents(mergedParents);
 
-		if ( mergeCache !is null ) mergeCache.put(a,b,M);
-		return M;
+        if ( mergeCache !is null ) mergeCache.put(a,b,M);
+        return M;
     }
 
     /**
@@ -550,56 +548,56 @@ abstract class PredictionContext
     {
         if (context is null) return "";
         auto buf = appender!string;
-		buf.put("digraph G {\n");
-		buf.put("rankdir=LR;\n");
+        buf.put("digraph G {\n");
+        buf.put("rankdir=LR;\n");
 
-		PredictionContext[] nodes = getAllContextNodes(context);
-                nodes.sort();
-		foreach (PredictionContext current; nodes) {
-			if (current.classinfo == SingletonPredictionContext.classinfo) {
-				string s = to!string(current.id);
-				buf.put("  s" ~ s);
-				string returnState = to!string(current.getReturnState(0));
-				if (current.classinfo == EmptyPredictionContext.classinfo)
-                                    returnState = "$";
-				buf.put(" [label=\"" ~ returnState ~ "\"];\n");
-				continue;
-			}
-			ArrayPredictionContext arr = cast(ArrayPredictionContext)current;
-			buf.put("  s" ~ to!string(arr.id));
-			buf.put(" [shape=box, label=\"");
-			buf.put("[");
-			bool first = true;
-			foreach (int inv; arr.returnStates) {
-				if (!first) buf.put(", ");
-				if (inv == EMPTY_RETURN_STATE) buf.put("$");
-				else buf.put(to!string(inv));
-				first = false;
-			}
-			buf.put("]");
-			buf.put("\"];\n");
-		}
+        PredictionContext[] nodes = getAllContextNodes(context);
+        nodes.sort();
+        foreach (PredictionContext current; nodes) {
+            if (current.classinfo == SingletonPredictionContext.classinfo) {
+                string s = to!string(current.id);
+                buf.put("  s" ~ s);
+                string returnState = to!string(current.getReturnState(0));
+                if (current.classinfo == EmptyPredictionContext.classinfo)
+                    returnState = "$";
+                buf.put(" [label=\"" ~ returnState ~ "\"];\n");
+                continue;
+            }
+            ArrayPredictionContext arr = cast(ArrayPredictionContext)current;
+            buf.put("  s" ~ to!string(arr.id));
+            buf.put(" [shape=box, label=\"");
+            buf.put("[");
+            bool first = true;
+            foreach (int inv; arr.returnStates) {
+                if (!first) buf.put(", ");
+                if (inv == EMPTY_RETURN_STATE) buf.put("$");
+                else buf.put(to!string(inv));
+                first = false;
+            }
+            buf.put("]");
+            buf.put("\"];\n");
+        }
 
-		foreach (PredictionContext current; nodes) {
-			if (current == EMPTY) continue;
-			for (int i = 0; i < current.size(); i++) {
-				if (current.getParent(i) is null) continue;
-				string s = to!string(current.id);
-				buf.put("  s" ~ s);
-				buf.put("->");
-				buf.put("s");
-				buf.put(to!string(current.getParent(i).id));
-				if ( current.size()>1 ) buf.put(" [label=\"parent[" ~ to!string(i) ~ "]\"];\n");
-				else buf.put(";\n");
-			}
-		}
+        foreach (PredictionContext current; nodes) {
+            if (current == EMPTY) continue;
+            for (int i = 0; i < current.size(); i++) {
+                if (current.getParent(i) is null) continue;
+                string s = to!string(current.id);
+                buf.put("  s" ~ s);
+                buf.put("->");
+                buf.put("s");
+                buf.put(to!string(current.getParent(i).id));
+                if ( current.size()>1 ) buf.put(" [label=\"parent[" ~ to!string(i) ~ "]\"];\n");
+                else buf.put(";\n");
+            }
+        }
 
-		buf.put("}\n");
-		return buf.data;
+        buf.put("}\n");
+        return buf.data;
     }
 
     public static PredictionContext getCachedContext(PredictionContext context, PredictionContextCache contextCache,
-        PredictionContext[PredictionContext] visited)
+                                                     PredictionContext[PredictionContext] visited)
     {
         if (context.isEmpty) {
             return context;
@@ -665,7 +663,7 @@ abstract class PredictionContext
     }
 
     public static void getAllContextNodes_(PredictionContext context, PredictionContext[] nodes,
-        PredictionContext[PredictionContext] visited)
+                                           PredictionContext[PredictionContext] visited)
     {
         if (context is null || (context in visited)) return;
         visited[context] = context;
@@ -675,13 +673,13 @@ abstract class PredictionContext
         }
     }
 
-    public string[] toStrings(Recognizer!(Token, ParserATNSimulator) recognizer, int currentState)
+    public string[] toStrings(InterfaceRecognizer recognizer, int currentState)
     {
         return toStrings(recognizer, EMPTY, currentState);
     }
 
-    public string[] toStrings(Recognizer!(Token, ParserATNSimulator) recognizer, PredictionContext stop,
-        int currentState)
+    public string[] toStrings(InterfaceRecognizer recognizer, PredictionContext stop,
+                              int currentState)
     {
         string[] result;
     outer:

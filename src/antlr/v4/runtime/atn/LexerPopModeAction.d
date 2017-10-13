@@ -1,7 +1,6 @@
 module antlr.v4.runtime.atn.LexerPopModeAction;
 
 import antlr.v4.runtime.InterfaceLexer;
-//import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;

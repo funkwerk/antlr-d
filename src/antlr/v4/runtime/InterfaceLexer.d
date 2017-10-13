@@ -1,7 +1,16 @@
 module antlr.v4.runtime.InterfaceLexer;
 
-interface InterfaceLexer {
+// Interface InterfaceLexer
+/**
+ * TODO add interface description
+ */
+interface InterfaceLexer
+{
+
     public void more();
+
     public void skip();
+
     public int popMode();
+
 }

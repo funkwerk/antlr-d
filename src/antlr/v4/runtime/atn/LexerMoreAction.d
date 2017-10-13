@@ -31,8 +31,8 @@
 
 module antlr.v4.runtime.atn.LexerMoreAction;
 
-import antlr.v4.runtime.Lexer;
-import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.InterfaceLexer;
+//import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
@@ -41,7 +41,7 @@ import antlr.v4.runtime.misc.Utils;
 /**
  * Provides a singleton instance of this parameterless lexer action.
  */
-class LexerMoreAction : LexerAction
+class LexerMoreAction
 {
 
     /**
@@ -66,7 +66,7 @@ class LexerMoreAction : LexerAction
         return false;
     }
 
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         lexer.more();
     }

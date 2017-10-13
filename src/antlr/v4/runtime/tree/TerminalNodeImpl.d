@@ -35,7 +35,7 @@ import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.atn.StateNames;
 
@@ -99,7 +99,7 @@ class TerminalNodeImpl : TerminalNode
         return symbol.getText();
     }
 
-    public string toStringTree(Parser parser)
+    public string toStringTree(InterfaceRecognizer parser)
     {
         return toString();
     }

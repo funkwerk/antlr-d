@@ -1,7 +1,7 @@
 module antlr.v4.runtime.atn.LexerPopModeAction;
 
-import antlr.v4.runtime.Lexer;
-import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.InterfaceLexer;
+//import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
@@ -16,7 +16,7 @@ import antlr.v4.runtime.misc.Utils;
  * @safe
  * @nothrow
  */
-class LexerPopModeAction : LexerAction
+class LexerPopModeAction
 {
 
     /**
@@ -52,7 +52,7 @@ class LexerPopModeAction : LexerAction
      *
      * <p>This action is implemented by calling {@link Lexer#popMode}.</p>
      */
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         lexer.popMode();
     }

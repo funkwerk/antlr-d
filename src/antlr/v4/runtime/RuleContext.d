@@ -8,7 +8,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+//import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.misc.Interval;
@@ -208,7 +208,7 @@ class RuleContext : RuleNode
      * (root child1 .. childN). Print just a node if this is a leaf.
      * We have to know the recognizer so we can get rule names.
      */
-    public string toStringTree(Parser recog)
+    public string toStringTree(InterfaceRecognizer recog)
     {
         return Trees.toStringTree(cast(ParseTree)this, recog);
     }

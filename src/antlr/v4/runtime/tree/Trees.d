@@ -33,7 +33,7 @@ module antlr.v4.runtime.tree.Trees;
 
 import std.array;
 import std.conv;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.CommonToken;
@@ -79,7 +79,7 @@ class Trees
      * node payloads to get the text for the nodes.  Detect
      * parse trees and extract data appropriately.
      */
-    public static string toStringTree(Tree t, Parser recog)
+    public static string toStringTree(Tree t, InterfaceRecognizer recog)
     {
         string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
         string[] ruleNamesList = ruleNames !is null ? ruleNames : null;
@@ -108,7 +108,7 @@ class Trees
 		return buf.data;
     }
 
-    public static string getNodeText(Tree t, Parser recog)
+    public static string getNodeText(Tree t, InterfaceRecognizer recog)
     {
         string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
         string[] ruleNamesList = ruleNames !is null ? ruleNames : null;

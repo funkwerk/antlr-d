@@ -3,8 +3,7 @@ module antlr.v4.runtime.atn.AND;
 import std.conv;
 import std.algorithm.comparison;
 import std.algorithm.iteration;
-import antlr.v4.runtime.Parser;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.Operator;
 import antlr.v4.runtime.RuleContext;
@@ -60,7 +59,7 @@ class AND : Operator
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public override bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
 	foreach (SemanticContext opnd; opnds) {
             if (!opnd.eval(parser, parserCallStack)) return false;
@@ -72,7 +71,7 @@ class AND : Operator
      * @uml
      * @override
      */
-    public override SemanticContext evalPrecedence(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
 	bool differs = false;
         SemanticContext[] operands;

@@ -801,16 +801,16 @@ class ATNDeserializer
             return new LexerModeAction(data1);
 
         case LexerActionType.MORE:
-            return LexerMoreAction.instance;
+            return cast(LexerAction)LexerMoreAction.instance;
 
         case LexerActionType.POP_MODE:
-            return LexerPopModeAction.instance;
+            return cast(LexerAction)LexerPopModeAction.instance;
 
         case LexerActionType.PUSH_MODE:
             return new LexerPushModeAction(data1);
 
         case LexerActionType.SKIP:
-            return LexerSkipAction.instance;
+            return cast(LexerAction)LexerSkipAction.instance;
 
         case LexerActionType.TYPE:
             return new LexerTypeAction(data1);

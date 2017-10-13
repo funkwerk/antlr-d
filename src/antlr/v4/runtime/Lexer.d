@@ -42,6 +42,7 @@ import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
@@ -63,7 +64,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
  * uses simplified match() and error recovery mechanisms in the interest
  * of speed.
  */
-abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource
+abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, InterfaceLexer
 {
 
     public static immutable int DEFAULT_MODE = 0;

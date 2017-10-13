@@ -1,7 +1,7 @@
 module antlr.v4.runtime.atn.LexerSkipAction;
 
-import antlr.v4.runtime.Lexer;
-import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.InterfaceLexer;
+//import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
@@ -10,7 +10,7 @@ import antlr.v4.runtime.misc.Utils;
 /**
  * TODO add class description
  */
-class LexerSkipAction : LexerAction
+class LexerSkipAction
 {
 
     /**
@@ -46,7 +46,7 @@ class LexerSkipAction : LexerAction
      *
      * <p>This action is implemented by calling {@link Lexer#skip}.</p>
      */
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         lexer.skip();
     }

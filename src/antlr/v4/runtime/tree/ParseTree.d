@@ -31,7 +31,7 @@
 module antlr.v4.runtime.tree.ParseTree;
 
 import antlr.v4.runtime.tree.SyntaxTree;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceRecognizer;
 
 // Interface ParseTree
 /**
@@ -78,6 +78,6 @@ interface ParseTree : SyntaxTree
      * Specialize toStringTree so that it can print out more information
      * based upon the parser.
      */
-    public string toStringTree(Parser parser);
+    public string toStringTree(InterfaceRecognizer parser);
 
 }

@@ -35,11 +35,10 @@ import std.conv;
 import std.algorithm.searching;
 import std.algorithm.iteration;
 import std.algorithm.comparison;
-import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.Operator;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -103,7 +102,7 @@ class OR : Operator
      * @uml
      * @override
      */
-    public override bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public override bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
         foreach (SemanticContext opnd; opnds) {
             if (opnd.eval(parser, parserCallStack))
@@ -116,8 +115,7 @@ class OR : Operator
      * @uml
      * @override
      */
-    public override SemanticContext evalPrecedence(Recognizer!(Token, ParserATNSimulator) parser,
-                                                   RuleContext parserCallStack)
+    public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
         bool differs = false;
         SemanticContext[] operands;

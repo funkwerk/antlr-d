@@ -32,9 +32,9 @@
 module antlr.v4.runtime.atn.SemanticContext;
 
 import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.Recognizer;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.InterfaceRecognizer;
+//import antlr.v4.runtime.Token;
+//import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.atn.AND;
 import antlr.v4.runtime.atn.OR;
@@ -73,7 +73,7 @@ abstract class SemanticContext
      * prediction, so we passed in the outer context here in case of context
      * dependent predicate evaluation.</p>
      */
-    abstract public bool eval(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack);
+    abstract public bool eval(InterfaceRecognizer parser, RuleContext parserCallStack);
 
     /**
      * @uml
@@ -94,7 +94,7 @@ abstract class SemanticContext
      *  semantic context after precedence predicates are evaluated.</li>
      * </ul>
      */
-    public SemanticContext evalPrecedence(Recognizer!(Token, ParserATNSimulator) parser, RuleContext parserCallStack)
+    public SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
         return this;
     }

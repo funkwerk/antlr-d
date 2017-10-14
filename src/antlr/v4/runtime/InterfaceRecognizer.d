@@ -1,7 +1,7 @@
 module antlr.v4.runtime.InterfaceRecognizer;
 
 import antlr.v4.runtime.Vocabulary;
-import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.IntStream;
 
@@ -24,8 +24,8 @@ interface InterfaceRecognizer
 
     public IntStream getInputStream();
 
-    public bool sempred(RuleContext _localctx, int ruleIndex, int actionIndex);
+    public bool sempred(InterfaceRuleContext _localctx, int ruleIndex, int actionIndex);
 
-    public bool precpred(RuleContext _localctx, int precedence);
+    public bool precpred(InterfaceRuleContext _localctx, int precedence);
 
 }

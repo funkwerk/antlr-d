@@ -3,7 +3,8 @@ module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
-import antlr.v4.runtime.RuleContext;
+//import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
@@ -103,15 +104,15 @@ public class XPathLexer : Lexer {
 	public ATN getATN() { return _ATN; }
 
 	override
-	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
+	public void action(InterfaceRuleContext _localctx, int ruleIndex, int actionIndex) {
 		switch (ruleIndex) {
 		case 4:
-			ID_action(cast(RuleContext)_localctx, actionIndex);
+			ID_action(_localctx, actionIndex);
 			break;
 	        default: break;
 		}
 	}
-	private void ID_action(RuleContext _localctx, int actionIndex) {
+	private void ID_action(InterfaceRuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 0:
 

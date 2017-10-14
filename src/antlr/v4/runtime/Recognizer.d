@@ -36,7 +36,7 @@ import std.algorithm;
 import std.array;
 import std.conv;
 import antlr.v4.runtime.ANTLRErrorListener;
-import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.IntStream;
@@ -295,17 +295,17 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
      * subclass needs to override these if there are sempreds or actions
      * that the ATN interp needs to execute
      */
-    public bool sempred(RuleContext _localctx, int ruleIndex, int actionIndex)
+    public bool sempred(InterfaceRuleContext localctx, int ruleIndex, int actionIndex)
     {
         return true;
     }
 
-    public bool precpred(RuleContext localctx, int precedence)
+    public bool precpred(InterfaceRuleContext localctx, int precedence)
     {
         return true;
     }
 
-    public void action(RuleContext _localctx, int ruleIndex, int actionIndex)
+    public void action(InterfaceRuleContext localctx, int ruleIndex, int actionIndex)
     {
     }
 

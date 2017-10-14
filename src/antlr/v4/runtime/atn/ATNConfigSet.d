@@ -38,12 +38,10 @@ import std.format;
 import std.algorithm;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
-import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
-//import antlr.v4.runtime.atn.ConfigHashSet;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.ATNSimulator;
@@ -430,7 +428,7 @@ class ATNConfigSet
 	auto buf = appender!string;
         buf.put(to!string(elements));
         if (hasSemanticContext) buf.put(format(",hasSemanticContext=%s", hasSemanticContext));
-        if (uniqueAlt != ATN.INVALID_ALT_NUMBER )
+        if (uniqueAlt != 0) // ATN.INVALID_ALT_NUMBER
             buf.put(format(",uniqueAlt=%s", uniqueAlt));
         if (!conflictingAlts.isEmpty)
             buf.put(format(",conflictingAlts=%s", conflictingAlts));

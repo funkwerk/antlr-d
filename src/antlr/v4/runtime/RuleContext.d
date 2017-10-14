@@ -2,11 +2,11 @@ module antlr.v4.runtime.RuleContext;
 
 import std.array;
 import std.conv;
-import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
@@ -65,7 +65,7 @@ import antlr.v4.runtime.misc.Interval;
  *
  *  @see ParserRuleContext
  */
-class RuleContext : RuleNode
+class RuleContext : RuleNode, InterfaceRuleContext
 {
 
     /**

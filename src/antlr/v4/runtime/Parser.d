@@ -38,7 +38,7 @@ import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IntStream;
-import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -834,7 +834,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
      * @uml
      * @override
      */
-    public override bool precpred(RuleContext localctx, int precedence)
+    public override bool precpred(InterfaceRuleContext localctx, int precedence)
     {
         return precedence >= _precedenceStack.peek();
     }
@@ -945,7 +945,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
 	return getRuleInvocationStack(ctx_);
     }
 
-    public string[] getRuleInvocationStack(RuleContext p)
+    public string[] getRuleInvocationStack(InterfaceRuleContext p)
     {
 	string[] ruleNames = getRuleNames();
         string[] stack;
@@ -955,7 +955,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator)
             if (ruleIndex <0)
                 stack ~= "n/a";
             else stack ~= ruleNames[ruleIndex];
-            p = p.parent;
+            p = p.getParent;
         }
         return stack;
     }

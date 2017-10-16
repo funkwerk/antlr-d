@@ -72,25 +72,6 @@ abstract class Transition
 
     public static string[] serializationNames;
 
-    public static TransitionStates[object.TypeInfo_Class] serializationTypes;
-
-    public static this()
-    {
-        foreach (el; __traits(allMembers, TransitionStates)) {
-            serializationNames ~= to!string(el);
-        }
-        serializationTypes[typeid(EpsilonTransition)] = TransitionStates.EPSILON;
-        serializationTypes[typeid(RangeTransition)] = TransitionStates.RANGE;
-        serializationTypes[typeid(RuleTransition)] = TransitionStates.RULE;
-        serializationTypes[typeid(PredicateTransition)] = TransitionStates.PREDICATE;
-        serializationTypes[typeid(AtomTransition)] = TransitionStates.ATOM;
-        serializationTypes[typeid(ActionTransition)] = TransitionStates.ACTION;
-        serializationTypes[typeid(SetTransition)] = TransitionStates.SET;
-        serializationTypes[typeid(NotSetTransition)] = TransitionStates.NOT_SET;
-        serializationTypes[typeid(WildcardTransition)] = TransitionStates.WILDCARD;
-        serializationTypes[typeid(PrecedencePredicateTransition)] = TransitionStates.PRECEDENCE;
-    }
-
     public this(ATNState target)
     {
         this.target = target;

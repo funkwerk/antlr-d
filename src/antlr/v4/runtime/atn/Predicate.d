@@ -31,7 +31,6 @@
 module antlr.v4.runtime.atn.Predicate;
 
 import std.conv;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.Token;

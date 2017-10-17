@@ -20,7 +20,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class XPathLexer : Lexer {
     alias recover = Lexer.recover;
-	static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
 	protected static DFA[] _decisionToDFA;
 	protected PredictionContextCache _sharedContextCache =
@@ -57,17 +57,17 @@ public class XPathLexer : Lexer {
 	deprecated
 	public static string[] tokenNames;
 	static this() {
-		string[_SYMBOLIC_NAMES.length] tokenNames;
-		for (int i = 0; i < tokenNames.length; i++) {
-			tokenNames[i] = VOCABULARY.getLiteralName(i);
-			if (tokenNames[i] is null) {
-				tokenNames[i] = VOCABULARY.getSymbolicName(i);
-			}
+		// string[_SYMBOLIC_NAMES.length] tokenNames;
+		// for (int i = 0; i < tokenNames.length; i++) {
+		// 	tokenNames[i] = VOCABULARY.getLiteralName(i);
+		// 	if (tokenNames[i] is null) {
+		// 		tokenNames[i] = VOCABULARY.getSymbolicName(i);
+		// 	}
 
-			if (tokenNames[i] is null) {
-				tokenNames[i] = "<INVALID>";
-			}
-		}
+		// 	if (tokenNames[i] is null) {
+		// 		tokenNames[i] = "<INVALID>";
+		// 	}
+		// }
 	}
 
 	override
@@ -149,6 +149,17 @@ public class XPathLexer : Lexer {
 	    auto atnDeserializer = new ATNDeserializer;
 	    _ATN = atnDeserializer.deserialize(_serializedATN);
 	    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+            string[_SYMBOLIC_NAMES.length] tokenNames;
+		// for (int i = 0; i < tokenNames.length; i++) {
+		// 	tokenNames[i] = VOCABULARY.getLiteralName(i);
+		// 	if (tokenNames[i] is null) {
+		// 		tokenNames[i] = VOCABULARY.getSymbolicName(i);
+		// 	}
+
+		// 	if (tokenNames[i] is null) {
+		// 		tokenNames[i] = "<INVALID>";
+		// 	}
+		// }
 	    _decisionToDFA.length = 0;
 	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
 	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);

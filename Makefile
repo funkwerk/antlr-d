@@ -18,7 +18,7 @@ UNITTEST_DIR = unittest
 UNITTEST_LIB = /usr/lib/d-unit.a
 UNITTESTS := $(shell find $(UNITTEST_DIR) -name "*.d")
 
-TEST_FLAGS = -cov -Isrc
+TEST_FLAGS = -debug -cov -Isrc -gc -gs
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

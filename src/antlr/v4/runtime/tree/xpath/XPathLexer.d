@@ -3,7 +3,6 @@ module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
-//import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Token;
@@ -16,16 +15,15 @@ import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.LexerNoViableAltException;
-//import antlr.v4.runtime.misc.*;
 
 public class XPathLexer : Lexer {
     alias recover = Lexer.recover;
     static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
-	protected static DFA[] _decisionToDFA;
-	protected PredictionContextCache _sharedContextCache =
-		new PredictionContextCache();
-	public static const int
+    protected static DFA[] _decisionToDFA;
+    protected PredictionContextCache _sharedContextCache =
+        new PredictionContextCache();
+    public static const int
 		TOKEN_REF=1, RULE_REF=2, ANYWHERE=3, ROOT=4, WILDCARD=5, BANG=6, ID=7, 
 		STRING=8;
 	public static string[] modeNames = [
@@ -46,28 +44,29 @@ public class XPathLexer : Lexer {
 	];
 	public static Vocabulary VOCABULARY;
 
-    public override void recover(LexerNoViableAltException e)
-    {
-        throw e;
-    }
-    
+	public override void recover(LexerNoViableAltException e)
+	    {
+	        throw e;
+	    }
+
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */
 	deprecated
 	public static string[] tokenNames;
 	static this() {
-		// string[_SYMBOLIC_NAMES.length] tokenNames;
-		// for (int i = 0; i < tokenNames.length; i++) {
-		// 	tokenNames[i] = VOCABULARY.getLiteralName(i);
-		// 	if (tokenNames[i] is null) {
-		// 		tokenNames[i] = VOCABULARY.getSymbolicName(i);
-		// 	}
+	    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+	    string[_SYMBOLIC_NAMES.length] tokenNames;
+	    for (int i = 0; i < tokenNames.length; i++) {
+	        tokenNames[i] = VOCABULARY.getLiteralName(i);
+			if (tokenNames[i] is null) {
+				tokenNames[i] = VOCABULARY.getSymbolicName(i);
+			}
 
-		// 	if (tokenNames[i] is null) {
-		// 		tokenNames[i] = "<INVALID>";
-		// 	}
-		// }
+			if (tokenNames[i] is null) {
+				tokenNames[i] = "<INVALID>";
+			}
+		}
 	}
 
 	override
@@ -107,7 +106,7 @@ public class XPathLexer : Lexer {
 	public void action(InterfaceRuleContext _localctx, int ruleIndex, int actionIndex) {
 		switch (ruleIndex) {
 		case 4:
-			ID_action(_localctx, actionIndex);
+			ID_action(cast(InterfaceRuleContext)_localctx, actionIndex);
 			break;
 	        default: break;
 		}
@@ -148,18 +147,6 @@ public class XPathLexer : Lexer {
 	static this() {
 	    auto atnDeserializer = new ATNDeserializer;
 	    _ATN = atnDeserializer.deserialize(_serializedATN);
-	    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-            string[_SYMBOLIC_NAMES.length] tokenNames;
-		// for (int i = 0; i < tokenNames.length; i++) {
-		// 	tokenNames[i] = VOCABULARY.getLiteralName(i);
-		// 	if (tokenNames[i] is null) {
-		// 		tokenNames[i] = VOCABULARY.getSymbolicName(i);
-		// 	}
-
-		// 	if (tokenNames[i] is null) {
-		// 		tokenNames[i] = "<INVALID>";
-		// 	}
-		// }
 	    _decisionToDFA.length = 0;
 	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
 	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);

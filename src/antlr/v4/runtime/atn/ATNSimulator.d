@@ -35,6 +35,7 @@ import std.uuid;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
+import antlr.v4.runtime.atn.InterfaceATNSimulator;
 import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.PredictionContext;
@@ -43,7 +44,7 @@ import antlr.v4.runtime.atn.PredictionContext;
 /**
  * TODO add class description
  */
-abstract class ATNSimulator
+abstract class ATNSimulator : InterfaceATNSimulator
 {
 
     public static int SERIALIZED_VERSION;

@@ -38,14 +38,14 @@ import std.conv;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.ErrorNodeImpl;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.misc.Interval;
 
 // Class ParserRuleContext
@@ -93,7 +93,7 @@ class ParserRuleContext : RuleContext
      * The exception that forced this rule to return. If the rule successfully
      * completed, this is {@code null}.
      */
-    public RecognitionException!(Token, ParserATNSimulator) exception;
+    public RecognitionException!(Token, InterfaceParserATNSimulator) exception;
 
     public this()
     {
@@ -334,7 +334,7 @@ class ParserRuleContext : RuleContext
     /**
      * Used for rule context info debugging during parse-time, not so much for ATN debugging
      */
-    public string toInfoString(Parser recognizer)
+    public string toInfoString(InterfaceParser recognizer)
     {
         string[] rules = recognizer.getRuleInvocationStack(this);
         rules.reverse();

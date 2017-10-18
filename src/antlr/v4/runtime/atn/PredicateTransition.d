@@ -3,7 +3,7 @@ module antlr.v4.runtime.atn.PredicateTransition;
 import std.conv;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.Predicate;
+import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.TransitionStates;
 
 // Class PredicateTransition
@@ -67,9 +67,10 @@ class PredicateTransition : AbstractPredicateTransition
         return false;
     }
 
-    public Predicate getPredicate()
+    public SemanticContext.Predicate getPredicate()
     {
-        return new Predicate(ruleIndex, predIndex, isCtxDependent);
+        auto sp = new SemanticContext;
+        return sp.new Predicate(ruleIndex, predIndex, isCtxDependent);
     }
 
     /**

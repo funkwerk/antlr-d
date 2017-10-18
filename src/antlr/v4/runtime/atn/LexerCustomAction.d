@@ -34,7 +34,7 @@ import std.traits;
 import std.conv;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
 
@@ -117,7 +117,7 @@ class LexerCustomAction : LexerAction
      * <p>Custom actions are implemented by calling {@link Lexer#action} with the
      * appropriate rule and action indexes.</p>
      */
-    public override void execute(Lexer lexer)
+    public override void execute(InterfaceLexer lexer)
     {
         lexer.action(null, ruleIndex, actionIndex);
     }

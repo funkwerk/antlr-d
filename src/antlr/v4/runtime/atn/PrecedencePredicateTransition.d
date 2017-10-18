@@ -4,7 +4,7 @@ import std.conv;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.TransitionStates;
-import antlr.v4.runtime.atn.PrecedencePredicate;
+import antlr.v4.runtime.atn.SemanticContext;
 
 // Class PrecedencePredicateTransition
 /**
@@ -52,9 +52,10 @@ class PrecedencePredicateTransition : AbstractPredicateTransition
         return false;
     }
 
-    public PrecedencePredicate getPredicate()
+    public SemanticContext.PrecedencePredicate getPredicate()
     {
-        return new PrecedencePredicate(precedence);
+        auto sc = new SemanticContext;
+        return sc.new PrecedencePredicate(precedence);
     }
 
     /**

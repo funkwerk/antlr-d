@@ -31,7 +31,7 @@
 module antlr.v4.runtime.atn.LexerActionExecutor;
 
 import std.conv;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerIndexedCustomAction;
@@ -178,7 +178,7 @@ class LexerActionExecutor
      * {@link IntStream#seek} to set the {@code input} position to the beginning
      * of the token.
      */
-    public void execute(Lexer lexer, CharStream input, int startIndex)
+    public void execute(InterfaceLexer lexer, CharStream input, int startIndex)
     {
         bool requiresSeek = false;
         int stopIndex = input.index();

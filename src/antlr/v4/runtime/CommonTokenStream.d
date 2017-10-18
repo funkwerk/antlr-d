@@ -31,6 +31,7 @@
 module antlr.v4.runtime.CommonTokenStream;
 
 import std.conv;
+import std.stdio;
 import antlr.v4.runtime.BufferedTokenStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;

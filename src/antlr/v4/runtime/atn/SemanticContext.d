@@ -31,11 +31,13 @@
 
 module antlr.v4.runtime.atn.SemanticContext;
 
+import std.conv;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.InterfaceRecognizer;
-import antlr.v4.runtime.atn.PrecedencePredicate;
+//import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.atn.AND;
 import antlr.v4.runtime.atn.OR;
+import antlr.v4.runtime.misc.MurmurHash;
 
 // Class SemanticContext
 /**
@@ -47,9 +49,12 @@ import antlr.v4.runtime.atn.OR;
  * <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
  * {@link SemanticContext} within the scope of this outer class.</p>
  */
-abstract class SemanticContext
+ class SemanticContext
 {
-
+    public bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
+    {
+        return true;
+    }
     /**
      * @uml
      * The default {@link SemanticContext}, which is semantically equivalent to
@@ -71,7 +76,7 @@ abstract class SemanticContext
      * prediction, so we passed in the outer context here in case of context
      * dependent predicate evaluation.</p>
      */
-    abstract public bool eval(InterfaceRecognizer parser, RuleContext parserCallStack);
+    //abstract public bool eval(InterfaceRecognizer parser, RuleContext parserCallStack);
 
     /**
      * @uml
@@ -95,6 +100,184 @@ abstract class SemanticContext
     public SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
         return this;
+    }
+    // Class Predicate
+    /**
+     * TODO add class description
+     */
+    class Predicate : SemanticContext
+    {
+
+        public int ruleIndex;
+
+        public int predIndex;
+
+        /**
+         * @uml
+         * e.g., $i ref in pred
+         */
+        public bool isCtxDependent;
+
+        public this()
+        {
+            this.ruleIndex = -1;
+            this.predIndex = -1;
+            this.isCtxDependent = false;
+        }
+
+        public this(int ruleIndex, int predIndex, bool isCtxDependent)
+        {
+            this.ruleIndex = ruleIndex;
+            this.predIndex = predIndex;
+            this.isCtxDependent = isCtxDependent;
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
+        {
+            RuleContext localctx = isCtxDependent ? parserCallStack : null;
+            return parser.sempred(localctx, ruleIndex, predIndex);
+        }
+
+        /**
+         * @uml
+         * @override
+         * @safe
+         * @nothrow
+         */
+        public override size_t toHash() @safe nothrow
+        {
+            size_t hashCode = MurmurHash.initialize();
+            hashCode = MurmurHash.update(hashCode, ruleIndex);
+            hashCode = MurmurHash.update(hashCode, predIndex);
+            hashCode = MurmurHash.update(hashCode, isCtxDependent ? 1 : 0);
+            hashCode = MurmurHash.finish(hashCode, 3);
+            return hashCode;
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override bool opEquals(Object obj)
+        {
+            if (typeid(typeof(obj)) != typeid(Predicate*)) return false;
+            if ( this is obj ) return true;
+            Predicate p = cast(Predicate)obj;
+            return this.ruleIndex == p.ruleIndex &&
+                this.predIndex == p.predIndex &&
+                this.isCtxDependent == p.isCtxDependent;
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override string toString()
+        {
+            return "{" ~ to!string(ruleIndex) ~ ":" ~ to!string(predIndex) ~ "}?";
+        }
+
+    }
+    // Class PrecedencePredicate
+    /**
+     * TODO add class description
+     */
+    class PrecedencePredicate : SemanticContext
+    {
+
+        /**
+         * @uml
+         * @final
+         */
+        public int precedence;
+
+        protected this()
+        {
+            this.precedence = 0;
+        }
+
+        public this(int precedence)
+        {
+            this.precedence = precedence;
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
+        {
+            return parser.precpred(parserCallStack, precedence);
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
+        {
+            if (parser.precpred(parserCallStack, precedence)) {
+                return SemanticContext.NONE;
+            }
+            else {
+                return null;
+            }
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override int opCmp(Object o)
+        {
+            return precedence - (cast(PrecedencePredicate)o).precedence;
+        }
+
+        /**
+         * @uml
+         * @override
+         * @safe
+         * @nothrow
+         */
+        public override size_t toHash() @safe nothrow
+        {
+            int hashCode = 1;
+            hashCode = 31 * hashCode + precedence;
+            return hashCode;
+        }
+
+        /**
+         * @uml
+         * @override
+         */
+        public override bool opEquals(Object obj)
+        {
+            if (obj.classinfo != PrecedencePredicate.classinfo) {
+                return false;
+            }
+
+            if (this == obj) {
+                return true;
+            }
+
+            PrecedencePredicate other = cast(PrecedencePredicate)obj;
+            return this.precedence == other.precedence;
+        }
+
+        /**
+         * @uml
+         * @override
+         * precedence >= _precedenceStack.peek()
+         */
+        public override string toString()
+        {
+            return "{" ~ to!string(precedence) ~ ">=prec}?";
+        }
+
     }
 
     /**

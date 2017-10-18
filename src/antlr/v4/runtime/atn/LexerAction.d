@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.atn.LexerAction;
 
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.atn.LexerActionType;
 
 // Interface LexerAction
@@ -77,7 +77,7 @@ interface LexerAction
      *
      *  @param lexer The lexer instance.
      */
-    public void execute(Lexer lexer);
+    public void execute(InterfaceLexer lexer);
 
     /**
      * @uml

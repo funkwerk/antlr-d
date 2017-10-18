@@ -1,7 +1,7 @@
 module antlr.v4.runtime.atn.LexerTypeAction;
 
 import std.format;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -68,7 +68,7 @@ class LexerTypeAction : LexerAction
      *  <p>This action is implemented by calling {@link Lexer#setType} with the
      * value provided by {@link #getType}.</p>
      */
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         lexer.setType(type);
     }

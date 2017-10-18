@@ -39,7 +39,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.Operator;
-import antlr.v4.runtime.atn.PrecedencePredicate;
+//import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
 
@@ -61,10 +61,10 @@ class OR : Operator
         if (b.classinfo == OR.classinfo) operands ~= (cast(OR)b).opnds;
         else operands ~= b;
 
-        PrecedencePredicate[] precedencePredicates = filterPrecedencePredicates(operands);
+        SemanticContext.PrecedencePredicate[] precedencePredicates = filterPrecedencePredicates(operands);
         if (precedencePredicates.length) {
             // interested in the transition with the highest precedence
-            PrecedencePredicate reduced = maxElement(precedencePredicates);
+            SemanticContext.PrecedencePredicate reduced = maxElement(precedencePredicates);
             operands ~= reduced;
         }
         this.opnds = operands;

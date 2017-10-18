@@ -38,7 +38,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.Predicate;
+//import antlr.v4.runtime.atn.Predicate;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class ATNConfig
@@ -125,7 +125,7 @@ class ATNConfig
 
     public this(ATNState state, int alt, PredictionContext context)
     {
-        this(state, alt, context, new Predicate());
+        this(state, alt, context, SemanticContext.NONE);
     }
 
     public this(ATNState state, int alt, PredictionContext context, const SemanticContext semanticContext)

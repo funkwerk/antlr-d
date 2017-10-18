@@ -18,8 +18,8 @@ class RuntimeException : Exception
 
     public this(string elementDescription)
     {
-        super("");
         this.elementDescription = elementDescription;
+        super(elementDescription);
     }
 
     public this(Exception cause)

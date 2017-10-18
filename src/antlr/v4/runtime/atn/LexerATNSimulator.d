@@ -33,6 +33,7 @@ module antlr.v4.runtime.atn.LexerATNSimulator;
 
 import std.conv;
 import std.format;
+import std.stdio;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
@@ -402,7 +403,7 @@ class LexerATNSimulator : ATNSimulator
                           int index, int line, int charPos)
     {
 	debug {
-            writefln(Locale.getDefault(), "ACTION %s\n", lexerActionExecutor);
+            writefln("ACTION %s\n", lexerActionExecutor);
         }
 
         // seek to after last char in token
@@ -547,7 +548,7 @@ class LexerATNSimulator : ATNSimulator
             */
             PredicateTransition pt = cast(PredicateTransition)t;
             debug {
-                writefln("EVAL rule %1$s:%2$s", ruleIndex, pt.predIndex);
+                writefln("EVAL rule %1$s:%2$s", pt.ruleIndex, pt.predIndex);
             }
             configs.hasSemanticContext = true;
             if (evaluatePredicate(input, pt.ruleIndex, pt.predIndex, speculative)) {

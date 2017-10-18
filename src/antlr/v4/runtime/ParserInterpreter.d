@@ -60,6 +60,7 @@ import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.dfa.DFA;
@@ -285,7 +286,7 @@ class ParserInterpreter : Parser
                 }
                 catch (RecognitionException!(Token, ParserATNSimulator) e) {
                     setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
-                    ctx.exception = e;
+                    ctx.exception = cast(RecognitionException!(Token, InterfaceParserATNSimulator))e;
                     getErrorHandler().reportError(this, e);
                     recover(e);
                 }

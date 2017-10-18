@@ -31,7 +31,7 @@
 module antlr.v4.runtime.atn.LexerChannelAction;
 
 import std.format;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -93,7 +93,7 @@ class LexerChannelAction : LexerAction
      * value provided by {@link #getChannel}.</p>
      * @override
      */
-    public override void execute(Lexer lexer)
+    public override void execute(InterfaceLexer lexer)
     {
         lexer.setChannel(channel);
     }

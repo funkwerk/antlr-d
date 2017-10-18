@@ -44,7 +44,7 @@ import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.PrecedencePredicate;
+//import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
 
@@ -216,7 +216,7 @@ class ProfilingATNSimulator : ParserATNSimulator
         int alt, bool fullCtx)
     {
 	bool result = super.evalSemanticContext(pred, parserCallStack, alt, fullCtx);
-        if (pred.classinfo != PrecedencePredicate.classinfo) {
+        if (pred.classinfo != SemanticContext.PrecedencePredicate.classinfo) {
             bool fullContext = _llStopIndex >= 0;
             int stopIndex = fullContext ? _llStopIndex : _sllStopIndex;
             decisions[currentDecision].predicateEvals

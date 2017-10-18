@@ -35,7 +35,6 @@ import std.conv;
 import std.array;
 import std.algorithm;
 import std.container.rbtree;
-import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.misc.IntegerList;
@@ -74,7 +73,7 @@ class IntervalSet : IntSet
 
     public this()
     {
-        COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
+        COMPLETE_CHAR_SET = IntervalSet.of(char.min, char.min);
         COMPLETE_CHAR_SET.setReadonly(true);
         EMPTY_SET = new IntervalSet(1);
         EMPTY_SET.clear;

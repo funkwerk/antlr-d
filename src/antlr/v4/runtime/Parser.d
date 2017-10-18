@@ -49,6 +49,7 @@ import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ParserATNSimulator;
@@ -72,7 +73,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 /**
  * TODO add class description
  */
-abstract class Parser : Recognizer!(Token, ParserATNSimulator)
+abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 {
     // Class TraceListener
     /**

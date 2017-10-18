@@ -1,7 +1,7 @@
 module antlr.v4.runtime.atn.LexerPushModeAction;
 
 import std.format;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
@@ -66,7 +66,7 @@ class LexerPushModeAction : LexerAction
      * <p>This action is implemented by calling {@link Lexer#pushMode} with the
      * value provided by {@link #getMode}.</p>
      */
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         lexer.pushMode(mode);
     }

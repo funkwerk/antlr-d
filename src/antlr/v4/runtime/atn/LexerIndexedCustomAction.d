@@ -33,7 +33,7 @@ module antlr.v4.runtime.atn.LexerIndexedCustomAction;
 
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
-import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class LexerIndexedCustomAction
@@ -121,7 +121,7 @@ class LexerIndexedCustomAction : LexerAction
      * <p>This method calls {@link #execute} on the result of {@link #getAction}
      * using the provided {@code lexer}.</p>
      */
-    public void execute(Lexer lexer)
+    public void execute(InterfaceLexer lexer)
     {
         // assume the input stream position was properly set by the calling code
         action.execute(lexer);

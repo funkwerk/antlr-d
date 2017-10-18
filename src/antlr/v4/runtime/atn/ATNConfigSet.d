@@ -44,7 +44,7 @@ import antlr.v4.runtime.atn.AbstractConfigHashSet;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.ATNSimulator;
+import antlr.v4.runtime.atn.InterfaceATNSimulator;
 import antlr.v4.runtime.misc.DoubleKeyMap;
 import antlr.v4.runtime.misc.BitSet;
 
@@ -315,7 +315,7 @@ class ATNConfigSet
         return configs[i];
     }
 
-    public void optimizeConfigs(ATNSimulator interpreter)
+    public void optimizeConfigs(InterfaceATNSimulator interpreter)
     {
 	if (readonly_) throw new IllegalStateException("This set is readonly");
         if ( configLookup.isEmpty() ) return;

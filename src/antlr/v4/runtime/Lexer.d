@@ -53,6 +53,7 @@ import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.misc.IntegerStack;
 import antlr.v4.runtime.misc.Interval;
+import antlr.v4.runtime.InterfaceRuleContext;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -153,6 +154,10 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
      */
     public string _text;
 
+    override
+    public void action(InterfaceRuleContext, int, int)
+    {}
+    
     public this()
     {
     }
@@ -276,7 +281,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
     public int popMode()
     {
         assert (!_modeStack.isEmpty, "Empty stack");
-        debug writefln("popMode back to %s", modeStack.peek());
+        debug writefln("popMode back to %s", _modeStack.peek());
         mode( _modeStack.pop() );
         return _mode;
     }

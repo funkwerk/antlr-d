@@ -56,6 +56,7 @@ import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ActionTransition;
+import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.dfa.PredPrediction;
 import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.PredictionModeConst;
@@ -304,7 +305,7 @@ alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b"
  * both SLL and LL parsing. Erroneous input will therefore require 2 passes over
  * the input.</p>
  */
-class ParserATNSimulator : ATNSimulator
+class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 {
 
     /**
@@ -488,10 +489,11 @@ class ParserATNSimulator : ATNSimulator
     {
 	debug {
             writefln("execATN decision %1$s"~
-                     " exec LA(1)==%2$s"+ getLookaheadName(input)+
-                     " line %3$s:%4$s",
-                     dfa.decision, getLookaheadName(input),
-                     input.LT(1).getLine, input.LT(1).getCharPositionInLine());
+                     " exec LA(1)==%2$s line %3$s:%4$s",
+                     dfa.decision,
+                     getLookaheadName(input),
+                     input.LT(1).getLine,
+                     input.LT(1).getCharPositionInLine());
         }
 
         DFAState previousD = s0;
@@ -641,10 +643,14 @@ class ParserATNSimulator : ATNSimulator
 
         debug {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
-            writefln("SLL altSubSets=" ~ altSubSets ~
-                     ", configs=" ~reach ~
-                     ", predict="+predictedAlt ~ ", allSubsetsConflict="+
-                     PredictionMode.allSubsetsConflict(altSubSets) ~ ", conflictingAlts=" ~
+            writefln("SLL altSubSets=%1$s"~
+                     ", configs=%2$s"~
+                     ", predict=%3$s, allSubsetsConflict=%4$s"~
+                     "conflictingAlts=%5$s",
+                     altSubSets,
+                     reach,
+                     predictedAlt,
+                     PredictionMode.allSubsetsConflict(altSubSets), 
                      getConflictingAlts(reach));
         }
 
@@ -1322,8 +1328,8 @@ class ParserATNSimulator : ATNSimulator
                                           bool collectPredicates, bool inContext, bool fullCtx)
     {
         debug {
-            writefln("PRED (collectPredicates=%1$s"+collectPredicates+") %2$s" ~
-                     ">=_p, ctx dependent=true", collectPredicate,  pt.precedence);
+            writefln("PRED (collectPredicates=%1$s) %2$s" ~
+                     ">=_p, ctx dependent=true", collectPredicates,  pt.precedence);
             if ( parser !is null ) {
                 writefln("context surrounding pred is ",
                          parser.getRuleInvocationStack());
@@ -1407,7 +1413,7 @@ class ParserATNSimulator : ATNSimulator
     public ATNConfig ruleTransition(ATNConfig config, RuleTransition t)
     {
         debug {
-            writefln("CALL rule %1$s, ctx=%2$s", getRuleName(t.target.ruleIndex)+config.context);
+            writefln("CALL rule %1$s, ctx=%2$s", getRuleName(t.target.ruleIndex), config.context);
         }
         ATNState returnState = t.followState;
         PredictionContext newContext =
@@ -1591,7 +1597,7 @@ class ParserATNSimulator : ATNSimulator
         }
 
         debug {
-            writeln("DFA=\n" ~ dfa.toString(parser !is null ? parser.getVocabulary():VocabularyImpl.EMPTY_VOCABULARY));
+            //writeln("DFA=\n" ~ dfa.toString(parser !is null ? parser.getVocabulary():VocabularyImpl.EMPTY_VOCABULARY));
         }
 
         return to;

@@ -1,4 +1,12 @@
 module antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 
-interface InterfaceParserATNSimulator {
+// Interface InterfaceParserATNSimulator
+/**
+ * TODO add interface description
+ */
+interface InterfaceParserATNSimulator
+{
+
+
+
 }

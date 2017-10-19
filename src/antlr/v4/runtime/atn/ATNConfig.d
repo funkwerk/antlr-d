@@ -38,7 +38,6 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-//import antlr.v4.runtime.atn.Predicate;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class ATNConfig

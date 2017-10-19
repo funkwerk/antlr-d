@@ -650,7 +650,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                      altSubSets,
                      reach,
                      predictedAlt,
-                     PredictionMode.allSubsetsConflict(altSubSets), 
+                     PredictionMode.allSubsetsConflict(altSubSets),
                      getConflictingAlts(reach));
         }
 

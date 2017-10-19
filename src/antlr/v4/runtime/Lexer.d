@@ -154,10 +154,6 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
      */
     public string _text;
 
-    override
-    public void action(InterfaceRuleContext, int, int)
-    {}
-    
     public this()
     {
     }
@@ -539,6 +535,15 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
         //re.printStackTrace();
         // TODO: Do we lose character or line position information?
         _input.consume();
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override void action(InterfaceRuleContext interfaceRuleContext, int ruleIndex,
+        int actionIndex)
+    {
     }
 
     public override final TokenFactory!CommonToken tokenFactory()

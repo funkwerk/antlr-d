@@ -2,7 +2,7 @@ import dunit.ng;
 import std.conv;
 import std.stdio;
 
-import antlr.v4.runtime.atn.PrecedencePredicate;
+import antlr.v4.runtime.atn.SemanticContext;
 
 class Test
 {
@@ -11,7 +11,8 @@ class Test
     @Test
     public void constructPrecedencePredicate()
     {
-        auto pp = new PrecedencePredicate(1);
+        auto sc = new SemanticContext;
+        auto pp = sc.new PrecedencePredicate(1);
         pp.assertEquals(null);
     }
 

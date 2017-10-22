@@ -166,7 +166,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
      * <p>For interpreters, we don't know their serialized ATN despite having
      * created the interpreter from it.</p>
      */
-    public string getSerializedATN()
+    public wstring getSerializedATN()
     {
         throw new UnsupportedOperationException("there is no serialized ATN");
     }

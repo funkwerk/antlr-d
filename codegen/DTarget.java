@@ -86,13 +86,13 @@ public class DTarget extends Target {
             return String.valueOf((char)v);
         }
 
-        if ( v>=0 && v<=127 ) {
-            String oct = Integer.toOctalString(v);
-            return "\\"+ oct;
+        if ( v>=55296 && v<=55551 ) {
+            String octs = Integer.toOctalString(v);
+            return "["+ octs + "]";
         }
 
         String hex = Integer.toHexString(v|0x10000).substring(1,5);
-        return "\\x"+hex;
+        return "\\u"+hex;
     }
 
     public Set<String> getBadWords() {

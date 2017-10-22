@@ -252,7 +252,7 @@ public class <parser.name> : <superClass; null="Parser"> {
 	public string[] getRuleNames() { return ruleNames; }
 
 	override
-	public string getSerializedATN() { return _serializedATN; }
+	public wstring getSerializedATN() { return _serializedATN; }
 
 	override
 	public ATN getATN() { return _ATN; }
@@ -936,7 +936,7 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 	public string[] getRuleNames() { return ruleNames; }
 
 	override
-	public string getSerializedATN() { return _serializedATN; }
+	public wstring getSerializedATN() { return _serializedATN; }
 
 	override
 	public string[] getModeNames() { return modeNames; }
@@ -952,10 +952,10 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 SerializedATN(model) ::= <<
 <if(rest(model.segments))>
 <! requires segmented representation !>
-private static const int _serializedATNSegments = <length(model.segments)>;
-<model.segments:{segment|private static const string _serializedATNSegment<i0> =
+private static immutable int _serializedATNSegments = <length(model.segments)>;
+<model.segments:{segment|private static immutable wstring _serializedATNSegment<i0> =
 	"<segment; wrap={"~<\n><\t>"}>";}; separator="\n">
-public static const string _serializedATN = Utils.join(
+public static immutable wstring _serializedATN = Utils.join(
 	new string[] {
 		<model.segments:{segment | _serializedATNSegment<i0>}; separator=",\n">
 	},
@@ -963,7 +963,7 @@ public static const string _serializedATN = Utils.join(
 );
 <else>
 <! only one segment, can be inlined !>
-public static const string _serializedATN =
+public static immutable wstring _serializedATN =
 	"<model.serialized; wrap={"~<\n><\t>"}>";
 <endif>
 public static ATN _ATN;

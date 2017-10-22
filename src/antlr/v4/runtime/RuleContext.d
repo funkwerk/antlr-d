@@ -14,7 +14,6 @@ import antlr.v4.runtime.misc.Interval;
 
 // Class RuleContext
 /**
- * @uml
  * A rule context is a record of a single rule invocation.
  *
  * We form a stack of these context objects using the parent
@@ -122,11 +121,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     public RuleContext getRuleContext()
     {
         return this;
-    }
-
-    public RuleContext getParent()
-    {
-        return parent;
     }
 
     public RuleContext getPayload()
@@ -296,6 +290,11 @@ class RuleContext : RuleNode, InterfaceRuleContext
     public static ParserRuleContext EMPTY()
     {
         return EMPTY_;
+    }
+
+    public RuleContext getParent()
+    {
+        return parent;
     }
 
 }

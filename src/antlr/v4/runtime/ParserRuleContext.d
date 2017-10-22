@@ -172,8 +172,8 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * @uml
      * Override to make type more specific
+     * @uml
      * @override
      */
     public override ParserRuleContext getParent()

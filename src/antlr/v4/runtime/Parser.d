@@ -521,7 +521,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public ATN getATNWithBypassAlts()
     {
-        string serializedAtn = getSerializedATN();
+        wstring serializedAtn = getSerializedATN();
         if (serializedAtn is null) {
             throw new UnsupportedOperationException("The current parser does not support an ATN with bypass alternatives.");
         }

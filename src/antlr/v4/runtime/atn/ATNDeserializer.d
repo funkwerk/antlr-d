@@ -30,11 +30,13 @@
 
 module antlr.v4.runtime.atn.ATNDeserializer;
 
+import std.array;
 import std.uuid;
 import std.stdio;
 import std.conv;
 import std.format;
 import std.traits;
+import std.algorithm: map;
 import std.algorithm: canFind;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
@@ -129,6 +131,10 @@ class ATNDeserializer
 
     private ATNDeserializationOptions deserializationOptions;
 
+    private uint[] data;
+
+    private int p;
+
     public static this()
     {
         /* WARNING: DO NOT MERGE THESE LINES. If UUIDs differ during a merge,
@@ -191,30 +197,13 @@ class ATNDeserializer
         return false;
     }
 
-    public ATN deserialize(string input_data)
+    public ATN deserialize(wstring input_data)
     {
-        auto data = input_data.dup;
-        // don't adjust the first value since that's the version number
-        for (int i = 1; i < data.length; i++) {
-            data[i] = cast(char)(data[i] - 2);
-        }
-
-        int p = 0;
-        auto version_atn = to!int(data[p++]);
-        if (version_atn != SERIALIZED_VERSION) {
-            string reason = format("Could not deserialize ATN with version %d (expected %d).", version_atn, SERIALIZED_VERSION);
-            assert(false, reason);
-        }
-
-        UUID uuid = toUUID(data, p);
-        p += 8;
-        if (!SUPPORTED_UUIDS.canFind(uuid)) {
-            string reason = format("Could not deserialize ATN with UUID %s (expected %s or a legacy UUID).", uuid, SERIALIZED_UUID);
-            assert(false, reason);
-        }
-
-        bool supportsPrecedencePredicates = isFeatureSupported(ADDED_PRECEDENCE_TRANSITIONS, uuid);
-        bool supportsLexerActions = isFeatureSupported(ADDED_LEXER_ACTIONS, uuid);
+        reset(input_data);
+        checkVersion;
+        checkUUID;
+    //     bool supportsPrecedencePredicates = isFeatureSupported(ADDED_PRECEDENCE_TRANSITIONS, uuid);
+    //     bool supportsLexerActions = isFeatureSupported(ADDED_LEXER_ACTIONS, uuid);
 
         auto atnTypes = EnumMembers!ATNType;
         ATNType grammarType;
@@ -228,375 +217,375 @@ class ATNDeserializer
         int maxTokenType = to!int(data[p++]);
         ATN atn = new ATN(grammarType, maxTokenType);
 
-        //
-        // STATES
-        //
-        int[LoopEndState][] loopBackStateNumbers;
-        int[BlockStartState][] endStateNumbers;
-        int nstates = to!int(data[p++]);
-        for (int i=0; i<nstates; i++) {
-            int stype = to!int(data[p++]);
-            // ignore bad type of states
-            if (stype == StateNames.INVALID) {
-                atn.addState(null);
-                continue;
-            }
+    //     //
+    //     // STATES
+    //     //
+    //     int[LoopEndState][] loopBackStateNumbers;
+    //     int[BlockStartState][] endStateNumbers;
+    //     int nstates = to!int(data[p++]);
+    //     for (int i=0; i<nstates; i++) {
+    //         int stype = to!int(data[p++]);
+    //         // ignore bad type of states
+    //         if (stype == StateNames.INVALID) {
+    //             atn.addState(null);
+    //             continue;
+    //         }
 
-            int ruleIndex = to!int(data[p++]);
-            if (ruleIndex == char.max) {
-                ruleIndex = -1;
-            }
+    //         int ruleIndex = to!int(data[p++]);
+    //         if (ruleIndex == char.max) {
+    //             ruleIndex = -1;
+    //         }
 
-            ATNState s = stateFactory(stype, ruleIndex);
-            if (stype == StateNames.LOOP_END) { // special case
-                int loopBackStateNumber = to!int(data[p++]);
-                int[LoopEndState] _a;
-                _a[cast(LoopEndState)s] = loopBackStateNumber;
-                loopBackStateNumbers ~= _a;
-            }
-            else if (s.classinfo == BlockStartState.classinfo) {
-                int endStateNumber = to!int(data[p++]);
-                int[BlockStartState] _a;
-                _a[cast(BlockStartState)s] = endStateNumber;
-                endStateNumbers ~= _a;
-            }
-            atn.addState(s);
-        }
+    //         ATNState s = stateFactory(stype, ruleIndex);
+    //         if (stype == StateNames.LOOP_END) { // special case
+    //             int loopBackStateNumber = to!int(data[p++]);
+    //             int[LoopEndState] _a;
+    //             _a[cast(LoopEndState)s] = loopBackStateNumber;
+    //             loopBackStateNumbers ~= _a;
+    //         }
+    //         else if (s.classinfo == BlockStartState.classinfo) {
+    //             int endStateNumber = to!int(data[p++]);
+    //             int[BlockStartState] _a;
+    //             _a[cast(BlockStartState)s] = endStateNumber;
+    //             endStateNumbers ~= _a;
+    //         }
+    //         atn.addState(s);
+    //     }
 
-        // delay the assignment of loop back and end states until we know all the state instances have been initialized
-        foreach (ref pair; loopBackStateNumbers) {
-            pair.keys[0].loopBackState = atn.states[pair[pair.keys[0]]];
-        }
+    //     // delay the assignment of loop back and end states until we know all the state instances have been initialized
+    //     foreach (ref pair; loopBackStateNumbers) {
+    //         pair.keys[0].loopBackState = atn.states[pair[pair.keys[0]]];
+    //     }
 
-        foreach (ref pair; endStateNumbers) {
-            pair.keys[0].endState = cast(BlockEndState)atn.states[pair[pair.keys[0]]];
-        }
+    //     foreach (ref pair; endStateNumbers) {
+    //         pair.keys[0].endState = cast(BlockEndState)atn.states[pair[pair.keys[0]]];
+    //     }
 
-        int numNonGreedyStates = to!int(data[p++]);
-        for (int i = 0; i < numNonGreedyStates; i++) {
-            int stateNumber = to!int(data[p++]);
-            (cast(DecisionState)atn.states[stateNumber]).nonGreedy = true;
-        }
+    //     int numNonGreedyStates = to!int(data[p++]);
+    //     for (int i = 0; i < numNonGreedyStates; i++) {
+    //         int stateNumber = to!int(data[p++]);
+    //         (cast(DecisionState)atn.states[stateNumber]).nonGreedy = true;
+    //     }
 
-        if (supportsPrecedencePredicates) {
-            int numPrecedenceStates = to!int(data[p++]);
-            for (int i = 0; i < numPrecedenceStates; i++) {
-                int stateNumber = to!int(data[p++]);
-                (cast(RuleStartState)atn.states[stateNumber]).isLeftRecursiveRule = true;
-            }
-        }
+    //     if (supportsPrecedencePredicates) {
+    //         int numPrecedenceStates = to!int(data[p++]);
+    //         for (int i = 0; i < numPrecedenceStates; i++) {
+    //             int stateNumber = to!int(data[p++]);
+    //             (cast(RuleStartState)atn.states[stateNumber]).isLeftRecursiveRule = true;
+    //         }
+    //     }
 
-        //
-        // RULES
-        //
-        int nrules = to!int(data[p++]);
-        if ( atn.grammarType == ATNType.LEXER ) {
-            atn.ruleToTokenType = new int[nrules];
-        }
+    //     //
+    //     // RULES
+    //     //
+    //     int nrules = to!int(data[p++]);
+    //     if ( atn.grammarType == ATNType.LEXER ) {
+    //         atn.ruleToTokenType = new int[nrules];
+    //     }
 
-        atn.ruleToStartState = new RuleStartState[nrules];
-        for (int i=0; i<nrules; i++) {
-            int s = to!int(data[p++]);
-            RuleStartState startState = cast(RuleStartState)atn.states[s];
-            atn.ruleToStartState[i] = startState;
-            if ( atn.grammarType == ATNType.LEXER ) {
-                int tokenType = to!int(data[p++]);
-                if (tokenType == 0xFFFF) {
-                    tokenType = TokenConstants.EOF;
-                }
+    //     atn.ruleToStartState = new RuleStartState[nrules];
+    //     for (int i=0; i<nrules; i++) {
+    //         int s = to!int(data[p++]);
+    //         RuleStartState startState = cast(RuleStartState)atn.states[s];
+    //         atn.ruleToStartState[i] = startState;
+    //         if ( atn.grammarType == ATNType.LEXER ) {
+    //             int tokenType = to!int(data[p++]);
+    //             if (tokenType == 0xFFFF) {
+    //                 tokenType = TokenConstants.EOF;
+    //             }
 
-                atn.ruleToTokenType[i] = tokenType;
+    //             atn.ruleToTokenType[i] = tokenType;
 
-                if (!isFeatureSupported(ADDED_LEXER_ACTIONS, uuid)) {
-                    // this piece of unused metadata was serialized prior to the
-                    // addition of LexerAction
-                    int actionIndexIgnored = to!int(data[p++]);
-                }
-            }
-        }
+    //             if (!isFeatureSupported(ADDED_LEXER_ACTIONS, uuid)) {
+    //                 // this piece of unused metadata was serialized prior to the
+    //                 // addition of LexerAction
+    //                 int actionIndexIgnored = to!int(data[p++]);
+    //             }
+    //         }
+    //     }
 
-        atn.ruleToStopState = new RuleStopState[nrules];
-        foreach (ATNState state; atn.states) {
-            if (state.classinfo != RuleStopState.classinfo) {
-                continue;
-            }
+    //     atn.ruleToStopState = new RuleStopState[nrules];
+    //     foreach (ATNState state; atn.states) {
+    //         if (state.classinfo != RuleStopState.classinfo) {
+    //             continue;
+    //         }
 
-            RuleStopState stopState = cast(RuleStopState)state;
-            atn.ruleToStopState[state.ruleIndex] = stopState;
-            atn.ruleToStartState[state.ruleIndex].stopState = stopState;
-        }
+    //         RuleStopState stopState = cast(RuleStopState)state;
+    //         atn.ruleToStopState[state.ruleIndex] = stopState;
+    //         atn.ruleToStartState[state.ruleIndex].stopState = stopState;
+    //     }
 
-        //
-        // MODES
-        //
-        int nmodes = to!int(data[p++]);
-        for (int i=0; i<nmodes; i++) {
-            int s = to!int(data[p++]);
-            atn.modeToStartState ~= cast(TokensStartState)atn.states[s];
-        }
+    //     //
+    //     // MODES
+    //     //
+    //     int nmodes = to!int(data[p++]);
+    //     for (int i=0; i<nmodes; i++) {
+    //         int s = to!int(data[p++]);
+    //         atn.modeToStartState ~= cast(TokensStartState)atn.states[s];
+    //     }
 
-        //
-        // SETS
-        //
-        IntervalSet[] sets;
-        int nsets = to!int(data[p++]);
-        for (int i=0; i<nsets; i++) {
-            int nintervals = to!int(data[p]);
-            p++;
-            IntervalSet set = new IntervalSet();
-            sets ~= set;
+    //     //
+    //     // SETS
+    //     //
+    //     IntervalSet[] sets;
+    //     int nsets = to!int(data[p++]);
+    //     for (int i=0; i<nsets; i++) {
+    //         int nintervals = to!int(data[p]);
+    //         p++;
+    //         IntervalSet set = new IntervalSet();
+    //         sets ~= set;
 
-            bool containsEof = to!int(data[p++]) != 0;
-            if (containsEof) {
-                set.add(-1);
-            }
+    //         bool containsEof = to!int(data[p++]) != 0;
+    //         if (containsEof) {
+    //             set.add(-1);
+    //         }
 
-            for (int j=0; j<nintervals; j++) {
-                set.add(to!int(data[p]), to!int(data[p + 1]));
-                p += 2;
-            }
-        }
+    //         for (int j=0; j<nintervals; j++) {
+    //             set.add(to!int(data[p]), to!int(data[p + 1]));
+    //             p += 2;
+    //         }
+    //     }
 
-        //
-        // EDGES
-        //
-        int nedges = to!int(data[p++]);
-        for (int i=0; i<nedges; i++) {
-            int src = to!int(data[p]);
-            int trg = to!int(data[p+1]);
-            int ttype = to!int(data[p+2]);
-            int arg1 = to!int(data[p+3]);
-            int arg2 = to!int(data[p+4]);
-            int arg3 = to!int(data[p+5]);
-            Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
-            //			System.out.println("EDGE "+trans.getClass().getSimpleName()+" "+
-            //							   src+"->"+trg+
-            //					   " "+Transition.serializationNames[ttype]+
-            //					   " "+arg1+","+arg2+","+arg3);
-            ATNState srcState = atn.states[src];
-            srcState.addTransition(trans);
-            p += 6;
-        }
+    //     //
+    //     // EDGES
+    //     //
+    //     int nedges = to!int(data[p++]);
+    //     for (int i=0; i<nedges; i++) {
+    //         int src = to!int(data[p]);
+    //         int trg = to!int(data[p+1]);
+    //         int ttype = to!int(data[p+2]);
+    //         int arg1 = to!int(data[p+3]);
+    //         int arg2 = to!int(data[p+4]);
+    //         int arg3 = to!int(data[p+5]);
+    //         Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
+    //         //			System.out.println("EDGE "+trans.getClass().getSimpleName()+" "+
+    //         //							   src+"->"+trg+
+    //         //					   " "+Transition.serializationNames[ttype]+
+    //         //					   " "+arg1+","+arg2+","+arg3);
+    //         ATNState srcState = atn.states[src];
+    //         srcState.addTransition(trans);
+    //         p += 6;
+    //     }
 
-        // edges for rule stop states can be derived, so they aren't serialized
-        foreach (ATNState state; atn.states) {
-            for (int i = 0; i < state.getNumberOfTransitions(); i++) {
-                Transition t = state.transition(i);
-                if (t.classinfo != RuleTransition.classinfo) {
-                    continue;
-                }
+    //     // edges for rule stop states can be derived, so they aren't serialized
+    //     foreach (ATNState state; atn.states) {
+    //         for (int i = 0; i < state.getNumberOfTransitions(); i++) {
+    //             Transition t = state.transition(i);
+    //             if (t.classinfo != RuleTransition.classinfo) {
+    //                 continue;
+    //             }
 
-                RuleTransition ruleTransition = cast(RuleTransition)t;
-                int outermostPrecedenceReturn = -1;
-                if (atn.ruleToStartState[ruleTransition.target.ruleIndex].isLeftRecursiveRule) {
-                    if (ruleTransition.precedence == 0) {
-                        outermostPrecedenceReturn = ruleTransition.target.ruleIndex;
-                    }
-                }
+    //             RuleTransition ruleTransition = cast(RuleTransition)t;
+    //             int outermostPrecedenceReturn = -1;
+    //             if (atn.ruleToStartState[ruleTransition.target.ruleIndex].isLeftRecursiveRule) {
+    //                 if (ruleTransition.precedence == 0) {
+    //                     outermostPrecedenceReturn = ruleTransition.target.ruleIndex;
+    //                 }
+    //             }
 
-                EpsilonTransition returnTransition = new EpsilonTransition(ruleTransition.followState, outermostPrecedenceReturn);
-                atn.ruleToStopState[ruleTransition.target.ruleIndex].addTransition(returnTransition);
-            }
-        }
+    //             EpsilonTransition returnTransition = new EpsilonTransition(ruleTransition.followState, outermostPrecedenceReturn);
+    //             atn.ruleToStopState[ruleTransition.target.ruleIndex].addTransition(returnTransition);
+    //         }
+    //     }
 
-        foreach (ATNState state; atn.states) {
-            if (state.classinfo == BlockStartState.classinfo) {
-                // we need to know the end state to set its start state
-                if ((cast(BlockStartState)state).endState is null) {
-                    throw new IllegalStateException();
-                }
+    //     foreach (ATNState state; atn.states) {
+    //         if (state.classinfo == BlockStartState.classinfo) {
+    //             // we need to know the end state to set its start state
+    //             if ((cast(BlockStartState)state).endState is null) {
+    //                 throw new IllegalStateException();
+    //             }
 
-                // block end states can only be associated to a single block start state
-                if ((cast(BlockStartState)state).endState.startState !is null) {
-                    throw new IllegalStateException();
-                }
+    //             // block end states can only be associated to a single block start state
+    //             if ((cast(BlockStartState)state).endState.startState !is null) {
+    //                 throw new IllegalStateException();
+    //             }
 
-                (cast(BlockStartState)state).endState.startState = cast(BlockStartState)state;
-            }
+    //             (cast(BlockStartState)state).endState.startState = cast(BlockStartState)state;
+    //         }
 
-            if (state.classinfo == PlusLoopbackState.classinfo) {
-                PlusLoopbackState loopbackState = cast(PlusLoopbackState)state;
-                for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
-                    ATNState target = loopbackState.transition(i).target;
-                    if (target.classinfo == PlusBlockStartState.classinfo) {
-                        (cast(PlusBlockStartState)target).loopBackState = loopbackState;
-                    }
-                }
-            }
-            else if (state.classinfo == StarLoopbackState.classinfo) {
-                StarLoopbackState loopbackState = cast(StarLoopbackState)state;
-                for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
-                    ATNState target = loopbackState.transition(i).target;
-                    if (target.classinfo == StarLoopEntryState.classinfo) {
-                        (cast(StarLoopEntryState)target).loopBackState = loopbackState;
-                    }
-                }
-            }
-        }
+    //         if (state.classinfo == PlusLoopbackState.classinfo) {
+    //             PlusLoopbackState loopbackState = cast(PlusLoopbackState)state;
+    //             for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
+    //                 ATNState target = loopbackState.transition(i).target;
+    //                 if (target.classinfo == PlusBlockStartState.classinfo) {
+    //                     (cast(PlusBlockStartState)target).loopBackState = loopbackState;
+    //                 }
+    //             }
+    //         }
+    //         else if (state.classinfo == StarLoopbackState.classinfo) {
+    //             StarLoopbackState loopbackState = cast(StarLoopbackState)state;
+    //             for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
+    //                 ATNState target = loopbackState.transition(i).target;
+    //                 if (target.classinfo == StarLoopEntryState.classinfo) {
+    //                     (cast(StarLoopEntryState)target).loopBackState = loopbackState;
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        //
-        // DECISIONS
-        //
-        int ndecisions = to!int(data[p++]);
-        for (int i=1; i<=ndecisions; i++) {
-            int s = to!int(data[p++]);
-            DecisionState decState = cast(DecisionState)atn.states[s];
-            atn.decisionToState ~= decState;
-            decState.decision = i-1;
-        }
+    //     //
+    //     // DECISIONS
+    //     //
+    //     int ndecisions = to!int(data[p++]);
+    //     for (int i=1; i<=ndecisions; i++) {
+    //         int s = to!int(data[p++]);
+    //         DecisionState decState = cast(DecisionState)atn.states[s];
+    //         atn.decisionToState ~= decState;
+    //         decState.decision = i-1;
+    //     }
 
-        //
-        // LEXER ACTIONS
-        //
-        auto lexerActionTypes = EnumMembers!LexerActionType;
+    //     //
+    //     // LEXER ACTIONS
+    //     //
+    //     auto lexerActionTypes = EnumMembers!LexerActionType;
 
-        if (atn.grammarType == ATNType.LEXER) {
-            if (supportsLexerActions) {
-                atn.lexerActions = new LexerAction[to!int(data[p++])];
-                for (int i = 0; i < atn.lexerActions.length; i++) {
-                    LexerActionType actionType;
-                    foreach (int index, member; lexerActionTypes) {
-                        if (index == to!int(data[p])) {
-                            actionType = member;
-                            break;
-                        }
-                    }
-                    p++;
-                    //LexerActionType actionType = LexerActionType.values()[to!int(data[p++])];
-                    int data1 = to!int(data[p++]);
-                    if (data1 == 0xFFFF) {
-                        data1 = -1;
-                    }
+    //     if (atn.grammarType == ATNType.LEXER) {
+    //         if (supportsLexerActions) {
+    //             atn.lexerActions = new LexerAction[to!int(data[p++])];
+    //             for (int i = 0; i < atn.lexerActions.length; i++) {
+    //                 LexerActionType actionType;
+    //                 foreach (int index, member; lexerActionTypes) {
+    //                     if (index == to!int(data[p])) {
+    //                         actionType = member;
+    //                         break;
+    //                     }
+    //                 }
+    //                 p++;
+    //                 //LexerActionType actionType = LexerActionType.values()[to!int(data[p++])];
+    //                 int data1 = to!int(data[p++]);
+    //                 if (data1 == 0xFFFF) {
+    //                     data1 = -1;
+    //                 }
 
-                    int data2 = to!int(data[p++]);
-                    if (data2 == 0xFFFF) {
-                        data2 = -1;
-                    }
+    //                 int data2 = to!int(data[p++]);
+    //                 if (data2 == 0xFFFF) {
+    //                     data2 = -1;
+    //                 }
 
-                    LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
+    //                 LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
 
-                    atn.lexerActions[i] = lexerAction;
-                }
-            }
-            else {
-                // for compatibility with older serialized ATNs, convert the old
-                // serialized action index for action transitions to the new
-                // form, which is the index of a LexerCustomAction
-                LexerAction[] legacyLexerActions;
-                foreach (ATNState state; atn.states) {
-                    for (int i = 0; i < state.getNumberOfTransitions(); i++) {
-                        Transition transition = state.transition(i);
-                        if (transition.classinfo != ActionTransition.classinfo) {
-                            continue;
-                        }
+    //                 atn.lexerActions[i] = lexerAction;
+    //             }
+    //         }
+    //         else {
+    //             // for compatibility with older serialized ATNs, convert the old
+    //             // serialized action index for action transitions to the new
+    //             // form, which is the index of a LexerCustomAction
+    //             LexerAction[] legacyLexerActions;
+    //             foreach (ATNState state; atn.states) {
+    //                 for (int i = 0; i < state.getNumberOfTransitions(); i++) {
+    //                     Transition transition = state.transition(i);
+    //                     if (transition.classinfo != ActionTransition.classinfo) {
+    //                         continue;
+    //                     }
 
-                        int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
-                        int actionIndex = (cast(ActionTransition)transition).actionIndex;
-                        LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
-                        state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
-                        legacyLexerActions ~= lexerAction;
-                    }
-                }
+    //                     int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
+    //                     int actionIndex = (cast(ActionTransition)transition).actionIndex;
+    //                     LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
+    //                     state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
+    //                     legacyLexerActions ~= lexerAction;
+    //                 }
+    //             }
 
-                atn.lexerActions = legacyLexerActions;
-            }
-        }
+    //             atn.lexerActions = legacyLexerActions;
+    //         }
+    //     }
 
-        markPrecedenceDecisions(atn);
+    //     markPrecedenceDecisions(atn);
 
-        if (deserializationOptions.isVerifyATN()) {
-            verifyATN(atn);
-        }
+    //     if (deserializationOptions.isVerifyATN()) {
+    //         verifyATN(atn);
+    //     }
 
-        if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
-            atn.ruleToTokenType = new int[atn.ruleToStartState.length];
-            for (int i = 0; i < atn.ruleToStartState.length; i++) {
-                atn.ruleToTokenType[i] = atn.maxTokenType + i + 1;
-            }
+    //     if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
+    //         atn.ruleToTokenType = new int[atn.ruleToStartState.length];
+    //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
+    //             atn.ruleToTokenType[i] = atn.maxTokenType + i + 1;
+    //         }
 
-            for (int i = 0; i < atn.ruleToStartState.length; i++) {
-                BasicBlockStartState bypassStart = new BasicBlockStartState();
-                bypassStart.ruleIndex = i;
-                atn.addState(bypassStart);
+    //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
+    //             BasicBlockStartState bypassStart = new BasicBlockStartState();
+    //             bypassStart.ruleIndex = i;
+    //             atn.addState(bypassStart);
 
-                BlockEndState bypassStop = new BlockEndState();
-                bypassStop.ruleIndex = i;
-                atn.addState(bypassStop);
+    //             BlockEndState bypassStop = new BlockEndState();
+    //             bypassStop.ruleIndex = i;
+    //             atn.addState(bypassStop);
 
-                bypassStart.endState = bypassStop;
-                atn.defineDecisionState(bypassStart);
+    //             bypassStart.endState = bypassStop;
+    //             atn.defineDecisionState(bypassStart);
 
-                bypassStop.startState = bypassStart;
+    //             bypassStop.startState = bypassStart;
 
-                ATNState endState;
-                Transition excludeTransition = null;
-                if (atn.ruleToStartState[i].isLeftRecursiveRule) {
-                    // wrap from the beginning of the rule to the StarLoopEntryState
-                    endState = null;
-                    foreach (ATNState state; atn.states) {
-                        if (state.ruleIndex != i) {
-                            continue;
-                        }
+    //             ATNState endState;
+    //             Transition excludeTransition = null;
+    //             if (atn.ruleToStartState[i].isLeftRecursiveRule) {
+    //                 // wrap from the beginning of the rule to the StarLoopEntryState
+    //                 endState = null;
+    //                 foreach (ATNState state; atn.states) {
+    //                     if (state.ruleIndex != i) {
+    //                         continue;
+    //                     }
 
-                        if (state.classinfo != StarLoopEntryState.classinfo) {
-                            continue;
-                        }
+    //                     if (state.classinfo != StarLoopEntryState.classinfo) {
+    //                         continue;
+    //                     }
 
-                        ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
-                        if (maybeLoopEndState.classinfo != LoopEndState.classinfo) {
-                            continue;
-                        }
+    //                     ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
+    //                     if (maybeLoopEndState.classinfo != LoopEndState.classinfo) {
+    //                         continue;
+    //                     }
 
-                        if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
-                            endState = state;
-                            break;
-                        }
-                    }
+    //                     if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
+    //                         endState = state;
+    //                         break;
+    //                     }
+    //                 }
 
-                    if (endState is null) {
-                        throw new UnsupportedOperationException("Couldn't identify final state of the precedence rule prefix section.");
-                    }
+    //                 if (endState is null) {
+    //                     throw new UnsupportedOperationException("Couldn't identify final state of the precedence rule prefix section.");
+    //                 }
 
-                    excludeTransition = (cast(StarLoopEntryState)endState).loopBackState.transition(0);
-                }
-                else {
-                    endState = atn.ruleToStopState[i];
-                }
+    //                 excludeTransition = (cast(StarLoopEntryState)endState).loopBackState.transition(0);
+    //             }
+    //             else {
+    //                 endState = atn.ruleToStopState[i];
+    //             }
 
-                // all non-excluded transitions that currently target end state need to target blockEnd instead
-                foreach (ATNState state; atn.states) {
-                    foreach (Transition transition; state.transitions) {
-                        if (transition == excludeTransition) {
-                            continue;
-                        }
+    //             // all non-excluded transitions that currently target end state need to target blockEnd instead
+    //             foreach (ATNState state; atn.states) {
+    //                 foreach (Transition transition; state.transitions) {
+    //                     if (transition == excludeTransition) {
+    //                         continue;
+    //                     }
 
-                        if (transition.target == endState) {
-                            transition.target = bypassStop;
-                        }
-                    }
-                }
+    //                     if (transition.target == endState) {
+    //                         transition.target = bypassStop;
+    //                     }
+    //                 }
+    //             }
 
-                // all transitions leaving the rule start state need to leave blockStart instead
-                while (atn.ruleToStartState[i].getNumberOfTransitions() > 0) {
-                    Transition transition = atn.ruleToStartState[i].removeTransition(atn.ruleToStartState[i].getNumberOfTransitions() - 1);
-                    bypassStart.addTransition(transition);
-                }
+    //             // all transitions leaving the rule start state need to leave blockStart instead
+    //             while (atn.ruleToStartState[i].getNumberOfTransitions() > 0) {
+    //                 Transition transition = atn.ruleToStartState[i].removeTransition(atn.ruleToStartState[i].getNumberOfTransitions() - 1);
+    //                 bypassStart.addTransition(transition);
+    //             }
 
-                // link the new states
-                atn.ruleToStartState[i].addTransition(new EpsilonTransition(bypassStart));
-                bypassStop.addTransition(new EpsilonTransition(endState));
+    //             // link the new states
+    //             atn.ruleToStartState[i].addTransition(new EpsilonTransition(bypassStart));
+    //             bypassStop.addTransition(new EpsilonTransition(endState));
 
-                ATNState matchState = new BasicState();
-                atn.addState(matchState);
-                matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[i]));
-                bypassStart.addTransition(new EpsilonTransition(matchState));
-            }
+    //             ATNState matchState = new BasicState();
+    //             atn.addState(matchState);
+    //             matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[i]));
+    //             bypassStart.addTransition(new EpsilonTransition(matchState));
+    //         }
 
-            if (deserializationOptions.isVerifyATN()) {
-                // reverify after modification
-                verifyATN(atn);
-            }
-        }
+    //         if (deserializationOptions.isVerifyATN()) {
+    //             // reverify after modification
+    //             verifyATN(atn);
+    //         }
+    //     }
         return atn;
     }
 
@@ -819,6 +808,110 @@ class ATNDeserializer
             string message = format("The specified lexer action type %d is not valid.", type);
             throw new IllegalArgumentException(message);
         }
+    }
+
+    private void reset(immutable wstring data)
+    {
+        wchar el;
+        for(int i; i < data.length; i++) {
+            el =  data_i[i];
+            if (el == '[') {
+                if (i+7 >= data.length) {
+                    this.data ~=to!int('[') - 2;
+                    continue;
+                }
+                if (data_i[i+7] != ']') {
+                    this.data ~=to!int('[') - 2;
+                    continue; 
+                }
+                this.data ~= parseOct(data_i, i) -2;
+                i += 7;
+                continue;
+            }
+            if (el < 2)
+                this.data ~= -1;
+            else
+                this.data ~= el - 2;
+        }
+        // don't adjust the first value since that's the version number
+        this.data[0] = data_i[0];
+        p = 0;
+    }
+
+    private void checkVersion()
+    {
+        auto version_atn = readInt;
+        if (version_atn != SERIALIZED_VERSION) {
+            string reason = format("Could not deserialize ATN with version %d (expected %d).", version_atn, SERIALIZED_VERSION);
+            assert(false, reason);
+        }
+    }
+
+    private void checkUUID()
+    {
+        UUID uuid = readUUID;
+        if (!SUPPORTED_UUIDS.canFind(uuid)) {
+            string reason = format("Could not deserialize ATN with UUID %s (expected %s or a legacy UUID).", uuid, SERIALIZED_UUID);
+            assert(false, reason);
+        }
+    }
+
+    // private ATN readATN()
+    // {
+    // }
+
+    private void readStates(ATN atn)
+    {
+    }
+
+    private void readRules(ATN atn)
+    {
+    }
+
+    private void readSets(ATN atn)
+    {
+    }
+
+    private void readEdges(ATN atn, IntervalSet[] sets)
+    {
+    }
+
+    private void readDecisions(ATN atn)
+    {
+    }
+
+    private void readLexerActions(ATN atn)
+    {
+    }
+
+    private void optimizeATN(ATN atn)
+    {
+    }
+
+    private int readInt()
+    {
+        //writefln("readInt -> %x", data[p]);
+	return to!int(data[p++]);
+    }
+
+    private int readInt32()
+    {
+        writefln("readInt32 -> %x:%x", data[p], to!int(data[p]) | (to!int(data[p+1]) << 8) | (to!int(data[p+2]) << 16) | (to!int(data[p+3]) << 24));
+        return to!int(data[p++]) | (to!int(data[p++]) << 8) | (to!int(data[p++]) << 16) | (to!int(data[p++]) << 24);
+    }
+
+    private long readLong()
+    {
+        long lowOrder = to!long(readInt32) & 0x00000000FFFFFFFFL;
+        return lowOrder | (to!long(readInt32) << 32);
+    }
+
+    private UUID readUUID()
+    {
+        long b = readLong;
+        writefln("UUID -> %x", b);
+        UUID uuid;
+        return uuid;
     }
 
 }

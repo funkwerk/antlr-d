@@ -136,7 +136,7 @@ abstract class ATNSimulator : InterfaceATNSimulator
      * @uml
      * deprecated Use {@link ATNDeserializer#deserialize} instead.
      */
-    public ATN deserialize(string data)
+    public ATN deserialize(wstring data)
     {
         return new ATNDeserializer().deserialize(data);
     }

@@ -166,7 +166,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      *
      * @see ATNDeserializationOptions#isGenerateRuleBypassTransitions()
      */
-    private ATN[string] bypassAltsAtnCache;
+    private ATN[wstring] bypassAltsAtnCache;
 
     protected ANTLRErrorStrategy _errHandler;
 
@@ -531,7 +531,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         ATN result;
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
         deserializationOptions.setGenerateRuleBypassTransitions(true);
-        result = new ATNDeserializer(deserializationOptions).deserialize(to!(char[])(serializedAtn));
+        result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
         bypassAltsAtnCache[serializedAtn] = result;
         return result;
     }

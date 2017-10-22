@@ -38,6 +38,7 @@ import std.format;
 import std.traits;
 import std.algorithm: map;
 import std.algorithm: canFind;
+import std.algorithm: reverse;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstants;
 import antlr.v4.runtime.IllegalStateException;
@@ -131,7 +132,7 @@ class ATNDeserializer
 
     private ATNDeserializationOptions deserializationOptions;
 
-    private uint[] data;
+    private int[] data;
 
     private int p;
 
@@ -141,8 +142,8 @@ class ATNDeserializer
          * resolve the conflict by generating a new ID!
          */
         BASE_SERIALIZED_UUID = UUID("33761B2D-78BB-4A43-8B0B-4F5BEE8AACF3");
-        ADDED_PRECEDENCE_TRANSITIONS = sha1UUID("1DA0C57D-6C06-438A-9B27-10BCB3CE0F61");
-        ADDED_LEXER_ACTIONS = UUID("02312ed4-622f-802e-34ab-3062422f35ac");
+        ADDED_PRECEDENCE_TRANSITIONS = UUID("1DA0C57D-6C06-438A-9B27-10BCB3CE0F61");
+        ADDED_LEXER_ACTIONS = UUID("AADB8D7E-AEEF-4415-AD2B-8204D6CF042E");
         SUPPORTED_UUIDS ~= BASE_SERIALIZED_UUID;
         SUPPORTED_UUIDS ~= ADDED_PRECEDENCE_TRANSITIONS;
         SUPPORTED_UUIDS ~= ADDED_LEXER_ACTIONS;
@@ -810,21 +811,21 @@ class ATNDeserializer
         }
     }
 
-    private void reset(immutable wstring data)
+    private void reset(const wstring data)
     {
         wchar el;
         for(int i; i < data.length; i++) {
-            el =  data_i[i];
+            el =  data[i];
             if (el == '[') {
                 if (i+7 >= data.length) {
                     this.data ~=to!int('[') - 2;
                     continue;
                 }
-                if (data_i[i+7] != ']') {
+                if (data[i+7] != ']') {
                     this.data ~=to!int('[') - 2;
-                    continue; 
+                    continue;
                 }
-                this.data ~= parseOct(data_i, i) -2;
+                this.data ~= parseOct(data, i) -2;
                 i += 7;
                 continue;
             }
@@ -834,7 +835,7 @@ class ATNDeserializer
                 this.data ~= el - 2;
         }
         // don't adjust the first value since that's the version number
-        this.data[0] = data_i[0];
+        this.data[0] = data[0];
         p = 0;
     }
 
@@ -890,14 +891,12 @@ class ATNDeserializer
 
     private int readInt()
     {
-        //writefln("readInt -> %x", data[p]);
-	return to!int(data[p++]);
+	return data[p++];
     }
 
     private int readInt32()
     {
-        writefln("readInt32 -> %x:%x", data[p], to!int(data[p]) | (to!int(data[p+1]) << 8) | (to!int(data[p+2]) << 16) | (to!int(data[p+3]) << 24));
-        return to!int(data[p++]) | (to!int(data[p++]) << 8) | (to!int(data[p++]) << 16) | (to!int(data[p++]) << 24);
+        return data[p++] | data[p++] << 16;
     }
 
     private long readLong()
@@ -908,10 +907,30 @@ class ATNDeserializer
 
     private UUID readUUID()
     {
+        ubyte[16] data;
         long b = readLong;
-        writefln("UUID -> %x", b);
-        UUID uuid;
+        for(int i = 0; i < 8; i++) {
+            data[i] = b & 0xff;
+            b = b >>> 8;
+        }
+        long a = readLong;
+        for(int i = 8; i < 16; i++) {
+            data[i] = a & 0xff;
+            a = a >>> 8;
+        }
+        data[].reverse();
+        auto uuid = UUID(data);
+        writefln("UUID -> %s", uuid);
         return uuid;
+    }
+
+    public int parseOct(wstring data, ulong p)
+    {
+        int res = 0;
+        for (ulong i = p + 1; i < p + 7; i++) {
+        res = res<<3 | to!int(data[i] - 0x30);
+        }
+        return res;
     }
 
 }

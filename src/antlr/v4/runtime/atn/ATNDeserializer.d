@@ -203,118 +203,10 @@ class ATNDeserializer
         reset(input_data);
         checkVersion;
         checkUUID;
-    //     bool supportsPrecedencePredicates = isFeatureSupported(ADDED_PRECEDENCE_TRANSITIONS, uuid);
-    //     bool supportsLexerActions = isFeatureSupported(ADDED_LEXER_ACTIONS, uuid);
+        ATN atn = readATN;
+        readStates(atn);
+        readRules(atn);
 
-        auto atnTypes = EnumMembers!ATNType;
-        ATNType grammarType;
-        foreach (int i, member; atnTypes) {
-            if (i == to!int(data[p])) {
-                grammarType = member;
-                break;
-            }
-        }
-        p++;
-        int maxTokenType = to!int(data[p++]);
-        ATN atn = new ATN(grammarType, maxTokenType);
-
-    //     //
-    //     // STATES
-    //     //
-    //     int[LoopEndState][] loopBackStateNumbers;
-    //     int[BlockStartState][] endStateNumbers;
-    //     int nstates = to!int(data[p++]);
-    //     for (int i=0; i<nstates; i++) {
-    //         int stype = to!int(data[p++]);
-    //         // ignore bad type of states
-    //         if (stype == StateNames.INVALID) {
-    //             atn.addState(null);
-    //             continue;
-    //         }
-
-    //         int ruleIndex = to!int(data[p++]);
-    //         if (ruleIndex == char.max) {
-    //             ruleIndex = -1;
-    //         }
-
-    //         ATNState s = stateFactory(stype, ruleIndex);
-    //         if (stype == StateNames.LOOP_END) { // special case
-    //             int loopBackStateNumber = to!int(data[p++]);
-    //             int[LoopEndState] _a;
-    //             _a[cast(LoopEndState)s] = loopBackStateNumber;
-    //             loopBackStateNumbers ~= _a;
-    //         }
-    //         else if (s.classinfo == BlockStartState.classinfo) {
-    //             int endStateNumber = to!int(data[p++]);
-    //             int[BlockStartState] _a;
-    //             _a[cast(BlockStartState)s] = endStateNumber;
-    //             endStateNumbers ~= _a;
-    //         }
-    //         atn.addState(s);
-    //     }
-
-    //     // delay the assignment of loop back and end states until we know all the state instances have been initialized
-    //     foreach (ref pair; loopBackStateNumbers) {
-    //         pair.keys[0].loopBackState = atn.states[pair[pair.keys[0]]];
-    //     }
-
-    //     foreach (ref pair; endStateNumbers) {
-    //         pair.keys[0].endState = cast(BlockEndState)atn.states[pair[pair.keys[0]]];
-    //     }
-
-    //     int numNonGreedyStates = to!int(data[p++]);
-    //     for (int i = 0; i < numNonGreedyStates; i++) {
-    //         int stateNumber = to!int(data[p++]);
-    //         (cast(DecisionState)atn.states[stateNumber]).nonGreedy = true;
-    //     }
-
-    //     if (supportsPrecedencePredicates) {
-    //         int numPrecedenceStates = to!int(data[p++]);
-    //         for (int i = 0; i < numPrecedenceStates; i++) {
-    //             int stateNumber = to!int(data[p++]);
-    //             (cast(RuleStartState)atn.states[stateNumber]).isLeftRecursiveRule = true;
-    //         }
-    //     }
-
-    //     //
-    //     // RULES
-    //     //
-    //     int nrules = to!int(data[p++]);
-    //     if ( atn.grammarType == ATNType.LEXER ) {
-    //         atn.ruleToTokenType = new int[nrules];
-    //     }
-
-    //     atn.ruleToStartState = new RuleStartState[nrules];
-    //     for (int i=0; i<nrules; i++) {
-    //         int s = to!int(data[p++]);
-    //         RuleStartState startState = cast(RuleStartState)atn.states[s];
-    //         atn.ruleToStartState[i] = startState;
-    //         if ( atn.grammarType == ATNType.LEXER ) {
-    //             int tokenType = to!int(data[p++]);
-    //             if (tokenType == 0xFFFF) {
-    //                 tokenType = TokenConstants.EOF;
-    //             }
-
-    //             atn.ruleToTokenType[i] = tokenType;
-
-    //             if (!isFeatureSupported(ADDED_LEXER_ACTIONS, uuid)) {
-    //                 // this piece of unused metadata was serialized prior to the
-    //                 // addition of LexerAction
-    //                 int actionIndexIgnored = to!int(data[p++]);
-    //             }
-    //         }
-    //     }
-
-    //     atn.ruleToStopState = new RuleStopState[nrules];
-    //     foreach (ATNState state; atn.states) {
-    //         if (state.classinfo != RuleStopState.classinfo) {
-    //             continue;
-    //         }
-
-    //         RuleStopState stopState = cast(RuleStopState)state;
-    //         atn.ruleToStopState[state.ruleIndex] = stopState;
-    //         atn.ruleToStartState[state.ruleIndex].stopState = stopState;
-    //     }
 
     //     //
     //     // MODES
@@ -704,15 +596,6 @@ class ATNDeserializer
         return lowOrder | (to!long(toInt32(data, offset + 2)) << 32);
     }
 
-    protected UUID toUUID(char[] data, int offset)
-    {
-        UUID uuid;
-        for (int i = 0; i < 16; i++) {
-            uuid.data[i] = to!ubyte(data[i + offset]);
-        }
-        return uuid;
-    }
-
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,
                                      int arg3, IntervalSet[] sets)
     {
@@ -857,16 +740,107 @@ class ATNDeserializer
         }
     }
 
-    // private ATN readATN()
-    // {
-    // }
+    private ATN readATN()
+    {
+        ATNType grammarType = cast(ATNType)readInt;
+        int maxTokenType = readInt;
+        return new ATN(grammarType, maxTokenType);
+    }
 
     private void readStates(ATN atn)
     {
+        // STATES
+        int[LoopEndState][] loopBackStateNumbers;
+        int[BlockStartState][] endStateNumbers;
+        int nstates = readInt;
+        for (int i=0; i<nstates; i++) {
+            int stype = readInt;
+            // ignore bad type of states
+            if (stype == StateNames.INVALID) {
+                atn.addState(null);
+                continue;
+            }
+
+            int ruleIndex = readInt;
+            if (ruleIndex == char.max) {
+                ruleIndex = -1;
+            }
+
+            ATNState s = stateFactory(stype, ruleIndex);
+            if (stype == StateNames.LOOP_END) {
+                // special case
+                int loopBackStateNumber = readInt;
+                int[LoopEndState] _a;
+                _a[cast(LoopEndState)s] = loopBackStateNumber;
+                loopBackStateNumbers ~= _a;
+            }
+            else
+                if (s.classinfo.base == BlockStartState.classinfo) {
+                    int endStateNumber = readInt;
+                    int[BlockStartState] _a;
+                    _a[cast(BlockStartState)s] = endStateNumber;
+                    endStateNumbers ~= _a;
+                }
+            atn.addState(s);
+        }
+
+        // delay the assignment of loop back and end states until we know all the state instances have been initialized
+        foreach (ref pair; loopBackStateNumbers) {
+            pair.keys[0].loopBackState = atn.states[pair[pair.keys[0]]];
+        }
+
+        foreach (ref pair; endStateNumbers) {
+            pair.keys[0].endState = cast(BlockEndState)atn.states[pair[pair.keys[0]]];
+        }
+
+        int numNonGreedyStates = readInt;
+        for (int i = 0; i < numNonGreedyStates; i++) {
+            int stateNumber = readInt;;
+            (cast(DecisionState)atn.states[stateNumber]).nonGreedy = true;
+        }
+
+        int numPrecedenceStates = readInt;
+        for (int i = 0; i < numPrecedenceStates; i++) {
+            int stateNumber = readInt;
+            (cast(RuleStartState)atn.states[stateNumber]).isLeftRecursiveRule = true;
+        }
+
     }
 
     private void readRules(ATN atn)
     {
+    //     // RULES
+        int nrules = readInt;
+        writefln("nrules %s", nrules);
+        if ( atn.grammarType == ATNType.LEXER ) {
+            atn.ruleToTokenType = new int[nrules];
+        }
+
+        atn.ruleToStartState = new RuleStartState[nrules];
+        for (int i=0; i<nrules; i++) {
+            int s = readInt;
+            RuleStartState startState = cast(RuleStartState)atn.states[s];
+            atn.ruleToStartState[i] = startState;
+            if ( atn.grammarType == ATNType.LEXER ) {
+                int tokenType = readInt;
+                if (tokenType == 0xFFFF) {
+                    tokenType = TokenConstants.EOF;
+                }
+
+                atn.ruleToTokenType[i] = tokenType;
+            }
+        }
+
+        atn.ruleToStopState = new RuleStopState[nrules];
+        foreach (ATNState state; atn.states) {
+            if (state.classinfo != RuleStopState.classinfo) {
+                continue;
+            }
+            RuleStopState stopState = cast(RuleStopState)state;
+            atn.ruleToStopState[state.ruleIndex] = stopState;
+            atn.ruleToStartState[state.ruleIndex].stopState = stopState;
+        }
+
     }
 
     private void readSets(ATN atn)

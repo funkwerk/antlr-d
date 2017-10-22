@@ -16,7 +16,7 @@ class Test
     public void assertEqualsFailure()
     {
         string expected = "bar";
-        string actual = "baz";
+        string actual = "bar";
 
         actual.assertEquals(expected);
     }

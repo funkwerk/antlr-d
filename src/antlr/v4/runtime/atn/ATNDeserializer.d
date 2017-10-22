@@ -920,7 +920,6 @@ class ATNDeserializer
         }
         data[].reverse();
         auto uuid = UUID(data);
-        writefln("UUID -> %s", uuid);
         return uuid;
     }
 

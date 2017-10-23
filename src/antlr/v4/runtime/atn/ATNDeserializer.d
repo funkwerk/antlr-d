@@ -206,279 +206,173 @@ class ATNDeserializer
         ATN atn = readATN;
         readStates(atn);
         readRules(atn);
+        readModes(atn);
+        IntervalSet[] sets = readSets(atn);
+        readEdges(atn, sets);
 
+        //     //
+        //     // DECISIONS
+        //     //
+        //     int ndecisions = to!int(data[p++]);
+        //     for (int i=1; i<=ndecisions; i++) {
+        //         int s = to!int(data[p++]);
+        //         DecisionState decState = cast(DecisionState)atn.states[s];
+        //         atn.decisionToState ~= decState;
+        //         decState.decision = i-1;
+        //     }
 
-    //     //
-    //     // MODES
-    //     //
-    //     int nmodes = to!int(data[p++]);
-    //     for (int i=0; i<nmodes; i++) {
-    //         int s = to!int(data[p++]);
-    //         atn.modeToStartState ~= cast(TokensStartState)atn.states[s];
-    //     }
+        //     //
+        //     // LEXER ACTIONS
+        //     //
+        //     auto lexerActionTypes = EnumMembers!LexerActionType;
 
-    //     //
-    //     // SETS
-    //     //
-    //     IntervalSet[] sets;
-    //     int nsets = to!int(data[p++]);
-    //     for (int i=0; i<nsets; i++) {
-    //         int nintervals = to!int(data[p]);
-    //         p++;
-    //         IntervalSet set = new IntervalSet();
-    //         sets ~= set;
+        //     if (atn.grammarType == ATNType.LEXER) {
+        //         if (supportsLexerActions) {
+        //             atn.lexerActions = new LexerAction[to!int(data[p++])];
+        //             for (int i = 0; i < atn.lexerActions.length; i++) {
+        //                 LexerActionType actionType;
+        //                 foreach (int index, member; lexerActionTypes) {
+        //                     if (index == to!int(data[p])) {
+        //                         actionType = member;
+        //                         break;
+        //                     }
+        //                 }
+        //                 p++;
+        //                 //LexerActionType actionType = LexerActionType.values()[to!int(data[p++])];
+        //                 int data1 = to!int(data[p++]);
+        //                 if (data1 == 0xFFFF) {
+        //                     data1 = -1;
+        //                 }
 
-    //         bool containsEof = to!int(data[p++]) != 0;
-    //         if (containsEof) {
-    //             set.add(-1);
-    //         }
+        //                 int data2 = to!int(data[p++]);
+        //                 if (data2 == 0xFFFF) {
+        //                     data2 = -1;
+        //                 }
 
-    //         for (int j=0; j<nintervals; j++) {
-    //             set.add(to!int(data[p]), to!int(data[p + 1]));
-    //             p += 2;
-    //         }
-    //     }
+        //                 LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
 
-    //     //
-    //     // EDGES
-    //     //
-    //     int nedges = to!int(data[p++]);
-    //     for (int i=0; i<nedges; i++) {
-    //         int src = to!int(data[p]);
-    //         int trg = to!int(data[p+1]);
-    //         int ttype = to!int(data[p+2]);
-    //         int arg1 = to!int(data[p+3]);
-    //         int arg2 = to!int(data[p+4]);
-    //         int arg3 = to!int(data[p+5]);
-    //         Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
-    //         //			System.out.println("EDGE "+trans.getClass().getSimpleName()+" "+
-    //         //							   src+"->"+trg+
-    //         //					   " "+Transition.serializationNames[ttype]+
-    //         //					   " "+arg1+","+arg2+","+arg3);
-    //         ATNState srcState = atn.states[src];
-    //         srcState.addTransition(trans);
-    //         p += 6;
-    //     }
+        //                 atn.lexerActions[i] = lexerAction;
+        //             }
+        //         }
+        //         else {
+        //             // for compatibility with older serialized ATNs, convert the old
+        //             // serialized action index for action transitions to the new
+        //             // form, which is the index of a LexerCustomAction
+        //             LexerAction[] legacyLexerActions;
+        //             foreach (ATNState state; atn.states) {
+        //                 for (int i = 0; i < state.getNumberOfTransitions(); i++) {
+        //                     Transition transition = state.transition(i);
+        //                     if (transition.classinfo != ActionTransition.classinfo) {
+        //                         continue;
+        //                     }
 
-    //     // edges for rule stop states can be derived, so they aren't serialized
-    //     foreach (ATNState state; atn.states) {
-    //         for (int i = 0; i < state.getNumberOfTransitions(); i++) {
-    //             Transition t = state.transition(i);
-    //             if (t.classinfo != RuleTransition.classinfo) {
-    //                 continue;
-    //             }
+        //                     int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
+        //                     int actionIndex = (cast(ActionTransition)transition).actionIndex;
+        //                     LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
+        //                     state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
+        //                     legacyLexerActions ~= lexerAction;
+        //                 }
+        //             }
 
-    //             RuleTransition ruleTransition = cast(RuleTransition)t;
-    //             int outermostPrecedenceReturn = -1;
-    //             if (atn.ruleToStartState[ruleTransition.target.ruleIndex].isLeftRecursiveRule) {
-    //                 if (ruleTransition.precedence == 0) {
-    //                     outermostPrecedenceReturn = ruleTransition.target.ruleIndex;
-    //                 }
-    //             }
+        //             atn.lexerActions = legacyLexerActions;
+        //         }
+        //     }
 
-    //             EpsilonTransition returnTransition = new EpsilonTransition(ruleTransition.followState, outermostPrecedenceReturn);
-    //             atn.ruleToStopState[ruleTransition.target.ruleIndex].addTransition(returnTransition);
-    //         }
-    //     }
+        //     markPrecedenceDecisions(atn);
 
-    //     foreach (ATNState state; atn.states) {
-    //         if (state.classinfo == BlockStartState.classinfo) {
-    //             // we need to know the end state to set its start state
-    //             if ((cast(BlockStartState)state).endState is null) {
-    //                 throw new IllegalStateException();
-    //             }
+        //     if (deserializationOptions.isVerifyATN()) {
+        //         verifyATN(atn);
+        //     }
 
-    //             // block end states can only be associated to a single block start state
-    //             if ((cast(BlockStartState)state).endState.startState !is null) {
-    //                 throw new IllegalStateException();
-    //             }
+        //     if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
+        //         atn.ruleToTokenType = new int[atn.ruleToStartState.length];
+        //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
+        //             atn.ruleToTokenType[i] = atn.maxTokenType + i + 1;
+        //         }
 
-    //             (cast(BlockStartState)state).endState.startState = cast(BlockStartState)state;
-    //         }
+        //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
+        //             BasicBlockStartState bypassStart = new BasicBlockStartState();
+        //             bypassStart.ruleIndex = i;
+        //             atn.addState(bypassStart);
 
-    //         if (state.classinfo == PlusLoopbackState.classinfo) {
-    //             PlusLoopbackState loopbackState = cast(PlusLoopbackState)state;
-    //             for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
-    //                 ATNState target = loopbackState.transition(i).target;
-    //                 if (target.classinfo == PlusBlockStartState.classinfo) {
-    //                     (cast(PlusBlockStartState)target).loopBackState = loopbackState;
-    //                 }
-    //             }
-    //         }
-    //         else if (state.classinfo == StarLoopbackState.classinfo) {
-    //             StarLoopbackState loopbackState = cast(StarLoopbackState)state;
-    //             for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
-    //                 ATNState target = loopbackState.transition(i).target;
-    //                 if (target.classinfo == StarLoopEntryState.classinfo) {
-    //                     (cast(StarLoopEntryState)target).loopBackState = loopbackState;
-    //                 }
-    //             }
-    //         }
-    //     }
+        //             BlockEndState bypassStop = new BlockEndState();
+        //             bypassStop.ruleIndex = i;
+        //             atn.addState(bypassStop);
 
-    //     //
-    //     // DECISIONS
-    //     //
-    //     int ndecisions = to!int(data[p++]);
-    //     for (int i=1; i<=ndecisions; i++) {
-    //         int s = to!int(data[p++]);
-    //         DecisionState decState = cast(DecisionState)atn.states[s];
-    //         atn.decisionToState ~= decState;
-    //         decState.decision = i-1;
-    //     }
+        //             bypassStart.endState = bypassStop;
+        //             atn.defineDecisionState(bypassStart);
 
-    //     //
-    //     // LEXER ACTIONS
-    //     //
-    //     auto lexerActionTypes = EnumMembers!LexerActionType;
+        //             bypassStop.startState = bypassStart;
 
-    //     if (atn.grammarType == ATNType.LEXER) {
-    //         if (supportsLexerActions) {
-    //             atn.lexerActions = new LexerAction[to!int(data[p++])];
-    //             for (int i = 0; i < atn.lexerActions.length; i++) {
-    //                 LexerActionType actionType;
-    //                 foreach (int index, member; lexerActionTypes) {
-    //                     if (index == to!int(data[p])) {
-    //                         actionType = member;
-    //                         break;
-    //                     }
-    //                 }
-    //                 p++;
-    //                 //LexerActionType actionType = LexerActionType.values()[to!int(data[p++])];
-    //                 int data1 = to!int(data[p++]);
-    //                 if (data1 == 0xFFFF) {
-    //                     data1 = -1;
-    //                 }
+        //             ATNState endState;
+        //             Transition excludeTransition = null;
+        //             if (atn.ruleToStartState[i].isLeftRecursiveRule) {
+        //                 // wrap from the beginning of the rule to the StarLoopEntryState
+        //                 endState = null;
+        //                 foreach (ATNState state; atn.states) {
+        //                     if (state.ruleIndex != i) {
+        //                         continue;
+        //                     }
 
-    //                 int data2 = to!int(data[p++]);
-    //                 if (data2 == 0xFFFF) {
-    //                     data2 = -1;
-    //                 }
+        //                     if (state.classinfo != StarLoopEntryState.classinfo) {
+        //                         continue;
+        //                     }
 
-    //                 LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
+        //                     ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
+        //                     if (maybeLoopEndState.classinfo != LoopEndState.classinfo) {
+        //                         continue;
+        //                     }
 
-    //                 atn.lexerActions[i] = lexerAction;
-    //             }
-    //         }
-    //         else {
-    //             // for compatibility with older serialized ATNs, convert the old
-    //             // serialized action index for action transitions to the new
-    //             // form, which is the index of a LexerCustomAction
-    //             LexerAction[] legacyLexerActions;
-    //             foreach (ATNState state; atn.states) {
-    //                 for (int i = 0; i < state.getNumberOfTransitions(); i++) {
-    //                     Transition transition = state.transition(i);
-    //                     if (transition.classinfo != ActionTransition.classinfo) {
-    //                         continue;
-    //                     }
+        //                     if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
+        //                         endState = state;
+        //                         break;
+        //                     }
+        //                 }
 
-    //                     int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
-    //                     int actionIndex = (cast(ActionTransition)transition).actionIndex;
-    //                     LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
-    //                     state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
-    //                     legacyLexerActions ~= lexerAction;
-    //                 }
-    //             }
+        //                 if (endState is null) {
+        //                     throw new UnsupportedOperationException("Couldn't identify final state of the precedence rule prefix section.");
+        //                 }
 
-    //             atn.lexerActions = legacyLexerActions;
-    //         }
-    //     }
+        //                 excludeTransition = (cast(StarLoopEntryState)endState).loopBackState.transition(0);
+        //             }
+        //             else {
+        //                 endState = atn.ruleToStopState[i];
+        //             }
 
-    //     markPrecedenceDecisions(atn);
+        //             // all non-excluded transitions that currently target end state need to target blockEnd instead
+        //             foreach (ATNState state; atn.states) {
+        //                 foreach (Transition transition; state.transitions) {
+        //                     if (transition == excludeTransition) {
+        //                         continue;
+        //                     }
 
-    //     if (deserializationOptions.isVerifyATN()) {
-    //         verifyATN(atn);
-    //     }
+        //                     if (transition.target == endState) {
+        //                         transition.target = bypassStop;
+        //                     }
+        //                 }
+        //             }
 
-    //     if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
-    //         atn.ruleToTokenType = new int[atn.ruleToStartState.length];
-    //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
-    //             atn.ruleToTokenType[i] = atn.maxTokenType + i + 1;
-    //         }
+        //             // all transitions leaving the rule start state need to leave blockStart instead
+        //             while (atn.ruleToStartState[i].getNumberOfTransitions() > 0) {
+        //                 Transition transition = atn.ruleToStartState[i].removeTransition(atn.ruleToStartState[i].getNumberOfTransitions() - 1);
+        //                 bypassStart.addTransition(transition);
+        //             }
 
-    //         for (int i = 0; i < atn.ruleToStartState.length; i++) {
-    //             BasicBlockStartState bypassStart = new BasicBlockStartState();
-    //             bypassStart.ruleIndex = i;
-    //             atn.addState(bypassStart);
+        //             // link the new states
+        //             atn.ruleToStartState[i].addTransition(new EpsilonTransition(bypassStart));
+        //             bypassStop.addTransition(new EpsilonTransition(endState));
 
-    //             BlockEndState bypassStop = new BlockEndState();
-    //             bypassStop.ruleIndex = i;
-    //             atn.addState(bypassStop);
+        //             ATNState matchState = new BasicState();
+        //             atn.addState(matchState);
+        //             matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[i]));
+        //             bypassStart.addTransition(new EpsilonTransition(matchState));
+        //         }
 
-    //             bypassStart.endState = bypassStop;
-    //             atn.defineDecisionState(bypassStart);
-
-    //             bypassStop.startState = bypassStart;
-
-    //             ATNState endState;
-    //             Transition excludeTransition = null;
-    //             if (atn.ruleToStartState[i].isLeftRecursiveRule) {
-    //                 // wrap from the beginning of the rule to the StarLoopEntryState
-    //                 endState = null;
-    //                 foreach (ATNState state; atn.states) {
-    //                     if (state.ruleIndex != i) {
-    //                         continue;
-    //                     }
-
-    //                     if (state.classinfo != StarLoopEntryState.classinfo) {
-    //                         continue;
-    //                     }
-
-    //                     ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
-    //                     if (maybeLoopEndState.classinfo != LoopEndState.classinfo) {
-    //                         continue;
-    //                     }
-
-    //                     if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
-    //                         endState = state;
-    //                         break;
-    //                     }
-    //                 }
-
-    //                 if (endState is null) {
-    //                     throw new UnsupportedOperationException("Couldn't identify final state of the precedence rule prefix section.");
-    //                 }
-
-    //                 excludeTransition = (cast(StarLoopEntryState)endState).loopBackState.transition(0);
-    //             }
-    //             else {
-    //                 endState = atn.ruleToStopState[i];
-    //             }
-
-    //             // all non-excluded transitions that currently target end state need to target blockEnd instead
-    //             foreach (ATNState state; atn.states) {
-    //                 foreach (Transition transition; state.transitions) {
-    //                     if (transition == excludeTransition) {
-    //                         continue;
-    //                     }
-
-    //                     if (transition.target == endState) {
-    //                         transition.target = bypassStop;
-    //                     }
-    //                 }
-    //             }
-
-    //             // all transitions leaving the rule start state need to leave blockStart instead
-    //             while (atn.ruleToStartState[i].getNumberOfTransitions() > 0) {
-    //                 Transition transition = atn.ruleToStartState[i].removeTransition(atn.ruleToStartState[i].getNumberOfTransitions() - 1);
-    //                 bypassStart.addTransition(transition);
-    //             }
-
-    //             // link the new states
-    //             atn.ruleToStartState[i].addTransition(new EpsilonTransition(bypassStart));
-    //             bypassStop.addTransition(new EpsilonTransition(endState));
-
-    //             ATNState matchState = new BasicState();
-    //             atn.addState(matchState);
-    //             matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[i]));
-    //             bypassStart.addTransition(new EpsilonTransition(matchState));
-    //         }
-
-    //         if (deserializationOptions.isVerifyATN()) {
-    //             // reverify after modification
-    //             verifyATN(atn);
-    //         }
-    //     }
+        //         if (deserializationOptions.isVerifyATN()) {
+        //             // reverify after modification
+        //             verifyATN(atn);
+        //         }
+        //     }
         return atn;
     }
 
@@ -809,7 +703,7 @@ class ATNDeserializer
 
     private void readRules(ATN atn)
     {
-    //     // RULES
+        //     // RULES
         int nrules = readInt;
         writefln("nrules %s", nrules);
         if ( atn.grammarType == ATNType.LEXER ) {
@@ -843,12 +737,113 @@ class ATNDeserializer
 
     }
 
-    private void readSets(ATN atn)
+    public void readModes(ATN atn)
     {
+        // MODES
+        int nmodes = readInt;
+        for (int i=0; i<nmodes; i++) {
+            int s = readInt;
+            atn.modeToStartState ~= cast(TokensStartState)atn.states[s];
+        }
+    }
+
+    private IntervalSet[] readSets(ATN atn)
+    {
+        // SETS
+        IntervalSet[] sets;
+        int nsets = readInt;
+        for (int i=0; i<nsets; i++) {
+            IntervalSet set = new IntervalSet();
+            sets ~= set;
+            int nintervals = readInt;
+            bool containsEof = readInt != 0;
+            if (containsEof) {
+                set.add(-1);
+            }
+            for (int j=0; j<nintervals; j++) {
+                set.add(readInt, readInt);
+            }
+        }
+        return sets;
     }
 
     private void readEdges(ATN atn, IntervalSet[] sets)
     {
+        // EDGES
+
+        int nedges = readInt;
+        for (int i=0; i<nedges; i++) {
+            int src = readInt;
+            int trg = readInt;
+            int ttype = readInt;
+            int arg1 = readInt;
+            int arg2 = readInt;
+            int arg3 = readInt;
+            Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
+            //			System.out.println("EDGE "+trans.getClass().getSimpleName()+" "+
+            //							   src+"->"+trg+
+            //					   " "+Transition.serializationNames[ttype]+
+            //					   " "+arg1+","+arg2+","+arg3);
+            ATNState srcState = atn.states[src];
+            srcState.addTransition(trans);
+        }
+
+        // edges for rule stop states can be derived, so they aren't serialized
+        foreach (ATNState state; atn.states) {
+            for (int i = 0; i < state.getNumberOfTransitions(); i++) {
+                Transition t = state.transition(i);
+                if (t.classinfo != RuleTransition.classinfo) {
+                    continue;
+                }
+
+                RuleTransition ruleTransition = cast(RuleTransition)t;
+                int outermostPrecedenceReturn = -1;
+                if (atn.ruleToStartState[ruleTransition.target.ruleIndex].isLeftRecursiveRule) {
+                    if (ruleTransition.precedence == 0) {
+                        outermostPrecedenceReturn = ruleTransition.target.ruleIndex;
+                    }
+                }
+
+                EpsilonTransition returnTransition = new EpsilonTransition(ruleTransition.followState, outermostPrecedenceReturn);
+                atn.ruleToStopState[ruleTransition.target.ruleIndex].addTransition(returnTransition);
+            }
+        }
+
+        foreach (ATNState state; atn.states) {
+            if (state.classinfo == BlockStartState.classinfo) {
+                // we need to know the end state to set its start state
+                if ((cast(BlockStartState)state).endState is null) {
+                    throw new IllegalStateException();
+                }
+
+                // block end states can only be associated to a single block start state
+                if ((cast(BlockStartState)state).endState.startState !is null) {
+                    throw new IllegalStateException();
+                }
+
+                (cast(BlockStartState)state).endState.startState = cast(BlockStartState)state;
+            }
+
+            if (state.classinfo == PlusLoopbackState.classinfo) {
+                PlusLoopbackState loopbackState = cast(PlusLoopbackState)state;
+                for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
+                    ATNState target = loopbackState.transition(i).target;
+                    if (target.classinfo == PlusBlockStartState.classinfo) {
+                        (cast(PlusBlockStartState)target).loopBackState = loopbackState;
+                    }
+                }
+            }
+            else if (state.classinfo == StarLoopbackState.classinfo) {
+                StarLoopbackState loopbackState = cast(StarLoopbackState)state;
+                for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
+                    ATNState target = loopbackState.transition(i).target;
+                    if (target.classinfo == StarLoopEntryState.classinfo) {
+                        (cast(StarLoopEntryState)target).loopBackState = loopbackState;
+                    }
+                }
+            }
+        }
+
     }
 
     private void readDecisions(ATN atn)
@@ -863,20 +858,13 @@ class ATNDeserializer
     {
     }
 
-    private int readInt()
+    public int parseOct(wstring data, ulong p)
     {
-	return data[p++];
-    }
-
-    private int readInt32()
-    {
-        return data[p++] | data[p++] << 16;
-    }
-
-    private long readLong()
-    {
-        long lowOrder = to!long(readInt32) & 0x00000000FFFFFFFFL;
-        return lowOrder | (to!long(readInt32) << 32);
+        int res = 0;
+        for (ulong i = p + 1; i < p + 7; i++) {
+            res = res<<3 | to!int(data[i] - 0x30);
+        }
+        return res;
     }
 
     private UUID readUUID()
@@ -897,13 +885,20 @@ class ATNDeserializer
         return uuid;
     }
 
-    public int parseOct(wstring data, ulong p)
+    private long readLong()
     {
-        int res = 0;
-        for (ulong i = p + 1; i < p + 7; i++) {
-        res = res<<3 | to!int(data[i] - 0x30);
-        }
-        return res;
+        long lowOrder = to!long(readInt32) & 0x00000000FFFFFFFFL;
+        return lowOrder | (to!long(readInt32) << 32);
+    }
+
+    private int readInt32()
+    {
+        return data[p++] | data[p++] << 16;
+    }
+
+    private int readInt()
+    {
+	return data[p++];
     }
 
 }

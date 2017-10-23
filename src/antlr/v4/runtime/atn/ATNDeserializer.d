@@ -209,76 +209,19 @@ class ATNDeserializer
         readModes(atn);
         IntervalSet[] sets = readSets(atn);
         readEdges(atn, sets);
-
-        //     //
-        //     // DECISIONS
-        //     //
-        //     int ndecisions = to!int(data[p++]);
-        //     for (int i=1; i<=ndecisions; i++) {
-        //         int s = to!int(data[p++]);
-        //         DecisionState decState = cast(DecisionState)atn.states[s];
-        //         atn.decisionToState ~= decState;
-        //         decState.decision = i-1;
-        //     }
-
-        //     //
-        //     // LEXER ACTIONS
-        //     //
-        //     auto lexerActionTypes = EnumMembers!LexerActionType;
-
-        //     if (atn.grammarType == ATNType.LEXER) {
-        //         if (supportsLexerActions) {
-        //             atn.lexerActions = new LexerAction[to!int(data[p++])];
-        //             for (int i = 0; i < atn.lexerActions.length; i++) {
-        //                 LexerActionType actionType;
-        //                 foreach (int index, member; lexerActionTypes) {
-        //                     if (index == to!int(data[p])) {
-        //                         actionType = member;
-        //                         break;
-        //                     }
-        //                 }
-        //                 p++;
-        //                 //LexerActionType actionType = LexerActionType.values()[to!int(data[p++])];
-        //                 int data1 = to!int(data[p++]);
-        //                 if (data1 == 0xFFFF) {
-        //                     data1 = -1;
-        //                 }
-
-        //                 int data2 = to!int(data[p++]);
-        //                 if (data2 == 0xFFFF) {
-        //                     data2 = -1;
-        //                 }
-
-        //                 LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
-
-        //                 atn.lexerActions[i] = lexerAction;
-        //             }
-        //         }
-        //         else {
-        //             // for compatibility with older serialized ATNs, convert the old
-        //             // serialized action index for action transitions to the new
-        //             // form, which is the index of a LexerCustomAction
-        //             LexerAction[] legacyLexerActions;
-        //             foreach (ATNState state; atn.states) {
-        //                 for (int i = 0; i < state.getNumberOfTransitions(); i++) {
-        //                     Transition transition = state.transition(i);
-        //                     if (transition.classinfo != ActionTransition.classinfo) {
-        //                         continue;
-        //                     }
-
-        //                     int ruleIndex = (cast(ActionTransition)transition).ruleIndex;
-        //                     int actionIndex = (cast(ActionTransition)transition).actionIndex;
-        //                     LexerCustomAction lexerAction = new LexerCustomAction(ruleIndex, actionIndex);
-        //                     state.setTransition(i, new ActionTransition(transition.target, ruleIndex, to!int(legacyLexerActions.length), false));
-        //                     legacyLexerActions ~= lexerAction;
-        //                 }
-        //             }
-
-        //             atn.lexerActions = legacyLexerActions;
-        //         }
-        //     }
-
-        //     markPrecedenceDecisions(atn);
+        readDecisions(atn);
+	readLexerActions(atn);
+        markPrecedenceDecisions(atn);
+        if (deserializationOptions.isVerifyATN()) {
+            verifyATN(atn);
+        }
+        if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
+            generateRuleBypassTransitions(atn);
+        }
+        if (deserializationOptions.optimize) {
+            optimizeATN(atn);
+        }
+        identifyTailCalls(atn);
 
         //     if (deserializationOptions.isVerifyATN()) {
         //         verifyATN(atn);
@@ -705,7 +648,6 @@ class ATNDeserializer
     {
         //     // RULES
         int nrules = readInt;
-        writefln("nrules %s", nrules);
         if ( atn.grammarType == ATNType.LEXER ) {
             atn.ruleToTokenType = new int[nrules];
         }
@@ -848,14 +790,56 @@ class ATNDeserializer
 
     private void readDecisions(ATN atn)
     {
+        // DECISIONS
+
+        int ndecisions = readInt;
+        for (int i=1; i<=ndecisions; i++) {
+            int s = readInt;
+            DecisionState decState = cast(DecisionState)atn.states[s];
+            atn.decisionToState ~= decState;
+            decState.decision = i-1;
+        }
     }
 
     private void readLexerActions(ATN atn)
     {
+        // LEXER ACTIONS
+
+        auto lexerActionTypes = EnumMembers!LexerActionType;
+
+        if (atn.grammarType == ATNType.LEXER) {
+            atn.lexerActions = new LexerAction[readInt];
+            for (int i = 0; i < atn.lexerActions.length; i++) {
+                LexerActionType actionType = cast(LexerActionType)readInt;
+                foreach (int index, member; lexerActionTypes) {
+                    if (index == data[p]) {
+                        actionType = member;
+                        break;
+                    }
+                }
+                int data1 = readInt;
+                if (data1 == 0xFFFF) {
+                    data1 = -1;
+                }
+
+                int data2 = readInt;
+                if (data2 == 0xFFFF) {
+                    data2 = -1;
+                }
+
+                LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
+                atn.lexerActions[i] = lexerAction;
+            }
+        }
     }
 
     private void optimizeATN(ATN atn)
     {
+        if (deserializationOptions.isVerifyATN)
+            {
+                // reverify after modification
+                verifyATN(atn);
+            }
     }
 
     public int parseOct(wstring data, ulong p)
@@ -898,7 +882,15 @@ class ATNDeserializer
 
     private int readInt()
     {
-	return data[p++];
+        return data[p++];
+    }
+
+    public void identifyTailCalls(ATN atn)
+    {
+    }
+
+    public void generateRuleBypassTransitions(ATN atn)
+    {
     }
 
 }

@@ -45,6 +45,13 @@ class ATNDeserializationOptions
     private bool generateRuleBypassTransitions;
 
     /**
+     * @uml
+     * @read
+     * @write
+     */
+    private bool optimize_;
+
+    /**
      * The single instance of ATNDeserializationOptions.
      */
     private static __gshared ATNDeserializationOptions instance_;
@@ -90,6 +97,16 @@ class ATNDeserializationOptions
     private void throwIfReadOnly()
     {
         assert(!isReadOnly, "The object is read only.");
+    }
+
+    public final bool optimize()
+    {
+        return this.optimize_;
+    }
+
+    public final void optimize(bool optimize)
+    {
+        this.optimize_ = optimize;
     }
 
     /**

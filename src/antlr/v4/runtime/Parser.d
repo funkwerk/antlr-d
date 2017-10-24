@@ -530,7 +530,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         }
         ATN result;
         ATNDeserializationOptions deserializationOptions = new ATNDeserializationOptions();
-        deserializationOptions.setGenerateRuleBypassTransitions(true);
+        deserializationOptions.generateRuleBypassTransitions(true);
         result = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
         bypassAltsAtnCache[serializedAtn] = result;
         return result;

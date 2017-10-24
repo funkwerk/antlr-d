@@ -212,10 +212,10 @@ class ATNDeserializer
         readDecisions(atn);
 	readLexerActions(atn);
         markPrecedenceDecisions(atn);
-        if (deserializationOptions.isVerifyATN()) {
+        if (deserializationOptions.verifyATN) {
             verifyATN(atn);
         }
-        if (deserializationOptions.isGenerateRuleBypassTransitions() && atn.grammarType == ATNType.PARSER) {
+        if (deserializationOptions.generateRuleBypassTransitions && atn.grammarType == ATNType.PARSER) {
             generateRuleBypassTransitions(atn);
         }
         if (deserializationOptions.optimize) {
@@ -354,7 +354,10 @@ class ATNDeserializer
                 continue;
             }
 
-            checkCondition(state.onlyHasEpsilonTransitions() || state.getNumberOfTransitions() <= 1);
+            debug writefln("state.onlyHasEpsilonTransitions -> %s, state.getNumberOfTransitions -> %s",
+                           state.onlyHasEpsilonTransitions,
+                           state.getNumberOfTransitions);
+            checkCondition(state.onlyHasEpsilonTransitions || state.getNumberOfTransitions <= 1);
 
             if (state.classinfo == PlusBlockStartState.classinfo) {
                 checkCondition((cast(PlusBlockStartState)state).loopBackState !is null);
@@ -835,17 +838,17 @@ class ATNDeserializer
 
     private void optimizeATN(ATN atn)
     {
-        if (deserializationOptions.isVerifyATN)
+        if (deserializationOptions.verifyATN)
             {
                 // reverify after modification
                 verifyATN(atn);
             }
     }
 
-    public int parseOct(wstring data, ulong p)
+    public int parseOct(wstring data, int p)
     {
         int res = 0;
-        for (ulong i = p + 1; i < p + 7; i++) {
+        for (auto i = p + 1; i < p + 7; i++) {
             res = res<<3 | to!int(data[i] - 0x30);
         }
         return res;

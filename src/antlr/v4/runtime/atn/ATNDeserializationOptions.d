@@ -33,16 +33,32 @@ module antlr.v4.runtime.atn.ATNDeserializationOptions;
 
 // Singleton ATNDeserializationOptions
 /**
- * TODO add class description
+ * Options setting for deserialization
  */
 class ATNDeserializationOptions
 {
 
-    private bool readOnly;
+    private static ATNDeserializationOptions defaultOptions;
 
-    private bool verifyATN;
+    /**
+     * @uml
+     * @read
+     */
+    private bool readOnly_;
 
-    private bool generateRuleBypassTransitions;
+    /**
+     * @uml
+     * @read
+     * @write
+     */
+    private bool verifyATN_;
+
+    /**
+     * @uml
+     * @read
+     * @write
+     */
+    private bool generateRuleBypassTransitions_;
 
     /**
      * @uml
@@ -58,45 +74,57 @@ class ATNDeserializationOptions
 
     public static this()
     {
-        instance_.verifyATN = true;
-        instance_.generateRuleBypassTransitions = false;
+        defaultOptions = new ATNDeserializationOptions();
+        defaultOptions.readOnly_ = true;
     }
 
-    public bool isReadOnly()
+    public this()
     {
-        return readOnly;
+        this.verifyATN_ = true;
+        this.generateRuleBypassTransitions_ = false;
+        this.optimize_ = true;
+    }
+
+    public this(ATNDeserializationOptions options)
+    {
+        this.verifyATN_ = options.verifyATN;
+        this.generateRuleBypassTransitions_ = options.generateRuleBypassTransitions;
+        this.optimize_ = options.optimize;
     }
 
     public void makeReadOnly()
     {
-        readOnly = true;
-    }
-
-    public bool isVerifyATN()
-    {
-        return verifyATN;
-    }
-
-    public void setVerifyATN(bool verifyATN)
-    {
-        throwIfReadOnly();
-        this.verifyATN = verifyATN;
-    }
-
-    public bool isGenerateRuleBypassTransitions()
-    {
-        return generateRuleBypassTransitions;
-    }
-
-    public void setGenerateRuleBypassTransitions(bool generateRuleBypassTransitions)
-    {
-        throwIfReadOnly();
-        this.generateRuleBypassTransitions = generateRuleBypassTransitions;
+        readOnly_ = true;
     }
 
     private void throwIfReadOnly()
     {
-        assert(!isReadOnly, "The object is read only.");
+        assert(!readOnly_, "The object is read only.");
+    }
+
+    public final bool readOnly()
+    {
+        return this.readOnly_;
+    }
+
+    public final bool verifyATN()
+    {
+        return this.verifyATN_;
+    }
+
+    public final void verifyATN(bool verifyATN)
+    {
+        this.verifyATN_ = verifyATN;
+    }
+
+    public final bool generateRuleBypassTransitions()
+    {
+        return this.generateRuleBypassTransitions_;
+    }
+
+    public final void generateRuleBypassTransitions(bool generateRuleBypassTransitions)
+    {
+        this.generateRuleBypassTransitions_ = generateRuleBypassTransitions;
     }
 
     public final bool optimize()

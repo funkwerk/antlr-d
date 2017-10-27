@@ -70,7 +70,19 @@ abstract class Transition
      */
     public ATNState target;
 
-    public static string[] serializationNames;
+    public static string[] serializationNames = [
+        "INVALID",
+        "EPSILON",
+        "RANGE",
+        "RULE",
+        "PREDICATE",
+        "ATOM",
+        "ACTION",
+        "SET",
+        "NOT_SET",
+        "WILDCARD",
+        "PRECEDENCE"
+    ];
 
     public this(ATNState target)
     {

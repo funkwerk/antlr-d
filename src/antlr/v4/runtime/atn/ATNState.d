@@ -140,16 +140,16 @@ abstract class ATNState
         return to!int(transitions.length);
     }
 
-    /**
-     * @uml
-     * @safe
-     */
-    public void addTransition(Transition e) @safe
-    {
-        transitions ~= e;
-    }
+    // /**
+    //  * @uml
+    //  * @safe
+    //  */
+    // public void addTransition(Transition e) @safe
+    // {
+    //     transitions ~= e;
+    // }
 
-    public void addTransition(int index, Transition e)
+    public void addTransition(Transition e)
     {
         if (transitions.length == 0) {
             epsilonOnlyTransitions = e.isEpsilon;
@@ -159,7 +159,7 @@ abstract class ATNState
                 stderr.writefln("ATN state %1$s has both epsilon and non-epsilon transitions.\n", stateNumber);
                 epsilonOnlyTransitions = false;
             }
-        transitions.insertInPlace(index, e);
+        transitions ~= e;
     }
 
     public Transition transition(int i)

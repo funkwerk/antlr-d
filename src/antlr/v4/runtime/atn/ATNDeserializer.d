@@ -354,9 +354,6 @@ class ATNDeserializer
                 continue;
             }
 
-            debug writefln("state.onlyHasEpsilonTransitions -> %s, state.getNumberOfTransitions -> %s",
-                           state.onlyHasEpsilonTransitions,
-                           state.getNumberOfTransitions);
             checkCondition(state.onlyHasEpsilonTransitions || state.getNumberOfTransitions <= 1);
 
             if (state.classinfo == PlusBlockStartState.classinfo) {
@@ -402,7 +399,7 @@ class ATNDeserializer
                 checkCondition((cast(BlockEndState)state).startState !is null);
             }
 
-            if (state.classinfo == DecisionState.classinfo) {
+            if (cast(DecisionState)state) {
                 DecisionState decisionState = cast(DecisionState)state;
                 checkCondition(decisionState.getNumberOfTransitions() <= 1 || decisionState.decision >= 0);
             }
@@ -615,7 +612,7 @@ class ATNDeserializer
                 loopBackStateNumbers ~= _a;
             }
             else
-                if (s.classinfo.base == BlockStartState.classinfo) {
+                if (cast(BlockStartState)s) {
                     int endStateNumber = readInt;
                     int[BlockStartState] _a;
                     _a[cast(BlockStartState)s] = endStateNumber;
@@ -725,10 +722,12 @@ class ATNDeserializer
             int arg2 = readInt;
             int arg3 = readInt;
             Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
-            //			System.out.println("EDGE "+trans.getClass().getSimpleName()+" "+
-            //							   src+"->"+trg+
-            //					   " "+Transition.serializationNames[ttype]+
-            //					   " "+arg1+","+arg2+","+arg3);
+            debug(ATNDeserialize) {
+                writefln("EDGES %1$s %2$s->%3$s %4$s %5$s %6$s %7$s",
+                         trans.classinfo, src,
+                         trg, Transition.serializationNames[ttype],
+                         arg1, arg2, arg3);
+            }
             ATNState srcState = atn.states[src];
             srcState.addTransition(trans);
         }
@@ -748,14 +747,13 @@ class ATNDeserializer
                         outermostPrecedenceReturn = ruleTransition.target.ruleIndex;
                     }
                 }
-
                 EpsilonTransition returnTransition = new EpsilonTransition(ruleTransition.followState, outermostPrecedenceReturn);
                 atn.ruleToStopState[ruleTransition.target.ruleIndex].addTransition(returnTransition);
             }
         }
 
         foreach (ATNState state; atn.states) {
-            if (state.classinfo == BlockStartState.classinfo) {
+            if (cast(BlockStartState)state) {
                 // we need to know the end state to set its start state
                 if ((cast(BlockStartState)state).endState is null) {
                     throw new IllegalStateException();

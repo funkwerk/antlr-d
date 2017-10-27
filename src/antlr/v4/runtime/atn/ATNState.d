@@ -140,15 +140,6 @@ abstract class ATNState
         return to!int(transitions.length);
     }
 
-    // /**
-    //  * @uml
-    //  * @safe
-    //  */
-    // public void addTransition(Transition e) @safe
-    // {
-    //     transitions ~= e;
-    // }
-
     public void addTransition(Transition e)
     {
         if (transitions.length == 0) {

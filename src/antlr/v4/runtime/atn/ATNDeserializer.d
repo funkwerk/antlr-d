@@ -322,7 +322,7 @@ class ATNDeserializer
     protected void markPrecedenceDecisions(ATN atn)
     {
         foreach (ATNState state; atn.states) {
-            if (!(state.classinfo == StarLoopEntryState.classinfo)) {
+            if (!cast(StarLoopEntryState)state) {
                 continue;
             }
 
@@ -332,8 +332,8 @@ class ATNDeserializer
              */
             if (atn.ruleToStartState[state.ruleIndex].isLeftRecursiveRule) {
                 ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
-                if (maybeLoopEndState.classinfo == LoopEndState.classinfo) {
-                    if (maybeLoopEndState.epsilonOnlyTransitions && maybeLoopEndState.transition(0).target.classinfo == RuleStopState.classinfo) {
+                if (cast(LoopEndState)maybeLoopEndState) {
+                    if (maybeLoopEndState.epsilonOnlyTransitions && cast(RuleStopState)(maybeLoopEndState.transition(0))) {
                         (cast(StarLoopEntryState)state).isPrecedenceDecision = true;
                     }
                 }
@@ -356,21 +356,21 @@ class ATNDeserializer
 
             checkCondition(state.onlyHasEpsilonTransitions || state.getNumberOfTransitions <= 1);
 
-            if (state.classinfo == PlusBlockStartState.classinfo) {
+            if (cast(PlusBlockStartState)state) {
                 checkCondition((cast(PlusBlockStartState)state).loopBackState !is null);
             }
 
-            if (state.classinfo == StarLoopEntryState.classinfo) {
+            if (cast(StarLoopEntryState)state) {
                 StarLoopEntryState starLoopEntryState = cast(StarLoopEntryState)state;
                 checkCondition(starLoopEntryState.loopBackState !is null);
                 checkCondition(starLoopEntryState.getNumberOfTransitions() == 2);
 
-                if (starLoopEntryState.transition(0).target.classinfo == StarBlockStartState.classinfo) {
+                if (cast(StarBlockStartState)(starLoopEntryState.transition(0).target)) {
                     checkCondition(starLoopEntryState.transition(1).target.classinfo == LoopEndState.classinfo);
                     checkCondition(!starLoopEntryState.nonGreedy);
                 }
-                else if (starLoopEntryState.transition(0).target.classinfo == LoopEndState.classinfo) {
-                    checkCondition(starLoopEntryState.transition(1).target.classinfo == StarBlockStartState.classinfo);
+                else if (cast(LoopEndState)(starLoopEntryState.transition(0).target)) {
+                    checkCondition(cast(StarBlockStartState)(starLoopEntryState.transition(1).target) !is null);
                     checkCondition(starLoopEntryState.nonGreedy);
                 }
                 else {
@@ -378,24 +378,24 @@ class ATNDeserializer
                 }
             }
 
-            if (state.classinfo == StarLoopbackState.classinfo) {
+            if (cast(StarLoopbackState)state) {
                 checkCondition(state.getNumberOfTransitions() == 1);
-                checkCondition(state.transition(0).target.classinfo == StarLoopEntryState.classinfo);
+                checkCondition(cast(StarLoopEntryState)(state.transition(0).target) !is null);
             }
 
-            if (state.classinfo == LoopEndState.classinfo) {
+            if (cast(LoopEndState)state) {
                 checkCondition((cast(LoopEndState)state).loopBackState !is null);
             }
 
-            if (state.classinfo == RuleStartState.classinfo) {
+            if (cast(RuleStartState)state) {
                 checkCondition((cast(RuleStartState)state).stopState !is null);
             }
 
-            if (state.classinfo ==  BlockStartState.classinfo) {
+            if (cast(BlockStartState)state) {
                 checkCondition((cast(BlockStartState)state).endState !is null);
             }
 
-            if (state.classinfo == BlockEndState.classinfo) {
+            if (cast(BlockEndState)state) {
                 checkCondition((cast(BlockEndState)state).startState !is null);
             }
 
@@ -669,7 +669,7 @@ class ATNDeserializer
 
         atn.ruleToStopState = new RuleStopState[nrules];
         foreach (ATNState state; atn.states) {
-            if (state.classinfo != RuleStopState.classinfo) {
+            if (!cast(RuleStopState)state) {
                 continue;
             }
             RuleStopState stopState = cast(RuleStopState)state;
@@ -736,7 +736,7 @@ class ATNDeserializer
         foreach (ATNState state; atn.states) {
             for (int i = 0; i < state.getNumberOfTransitions(); i++) {
                 Transition t = state.transition(i);
-                if (t.classinfo != RuleTransition.classinfo) {
+                if (!cast(RuleTransition)t) {
                     continue;
                 }
 
@@ -767,20 +767,20 @@ class ATNDeserializer
                 (cast(BlockStartState)state).endState.startState = cast(BlockStartState)state;
             }
 
-            if (state.classinfo == PlusLoopbackState.classinfo) {
+            if (cast(PlusLoopbackState)state) {
                 PlusLoopbackState loopbackState = cast(PlusLoopbackState)state;
                 for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
                     ATNState target = loopbackState.transition(i).target;
-                    if (target.classinfo == PlusBlockStartState.classinfo) {
+                    if (cast(PlusBlockStartState)target) {
                         (cast(PlusBlockStartState)target).loopBackState = loopbackState;
                     }
                 }
             }
-            else if (state.classinfo == StarLoopbackState.classinfo) {
+            else if (cast(StarLoopbackState)state) {
                 StarLoopbackState loopbackState = cast(StarLoopbackState)state;
                 for (int i = 0; i < loopbackState.getNumberOfTransitions(); i++) {
                     ATNState target = loopbackState.transition(i).target;
-                    if (target.classinfo == StarLoopEntryState.classinfo) {
+                    if (cast(StarLoopEntryState)target) {
                         (cast(StarLoopEntryState)target).loopBackState = loopbackState;
                     }
                 }

@@ -2,18 +2,32 @@ import dunit.ng;
 import std.conv;
 import std.stdio;
 
-import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.atn.ATNDeserializationOptions;
 
 class Test
 {
     mixin UnitTest;
 
     @Test
-    public void constructPrecedencePredicate()
+    public void constructATNDeserializationOptions()
     {
-        auto sc = new SemanticContext;
-        auto pp = sc.new PrecedencePredicate(1);
-        pp.assertEquals(null);
+        auto so = new ATNDeserializationOptions();
+        so.assertOp!"!is"(null);
+        so.verifyATN.assertOp!"=="(true);
+        so.readOnly.assertOp!"=="(false);
+        so.generateRuleBypassTransitions.assertOp!"=="(false);
+        so.optimize.assertOp!"=="(true);
+    }
+
+    @Test
+    public void constructATNDeserializationDefaultOptions()
+    {
+        auto so = ATNDeserializationOptions.defaultOptions;
+        so.assertOp!"!is"(null);
+        so.verifyATN.assertOp!"=="(true);
+        so.readOnly.assertOp!"=="(true);
+        so.generateRuleBypassTransitions.assertOp!"=="(false);
+        so.optimize.assertOp!"=="(true);
     }
 
 }

@@ -38,7 +38,7 @@ module antlr.v4.runtime.atn.ATNDeserializationOptions;
 class ATNDeserializationOptions
 {
 
-    private static ATNDeserializationOptions defaultOptions;
+    public static ATNDeserializationOptions defaultOptions;
 
     /**
      * @uml

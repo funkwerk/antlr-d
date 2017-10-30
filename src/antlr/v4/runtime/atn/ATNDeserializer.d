@@ -153,8 +153,7 @@ class ATNDeserializer
 
     public this()
     {
-        deserializationOptions = new ATNDeserializationOptions();
-        //deserializationOptions.makeReadOnly;
+        this(ATNDeserializationOptions.defaultOptions);
     }
 
     public this(ATNDeserializationOptions deserializationOptions)
@@ -420,17 +419,6 @@ class ATNDeserializer
         if (!condition) {
             throw new IllegalStateException(message);
         }
-    }
-
-    protected static int toInt32(char[] data, int offset)
-    {
-        return to!int(data[offset]) | (to!int(data[offset + 1]) << 16);
-    }
-
-    protected long toLong(char[] data, int offset)
-    {
-        long lowOrder = to!long(toInt32(data, offset)) & 0x00000000FFFFFFFFL;
-        return lowOrder | (to!long(toInt32(data, offset + 2)) << 32);
     }
 
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,

@@ -52,32 +52,28 @@ public class XPathLexer : Lexer {
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
 	 */
-	deprecated
 	public static string[] tokenNames;
+
 	static this() {
 	    VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 	    string[_SYMBOLIC_NAMES.length] tokenNames;
 	    for (int i = 0; i < tokenNames.length; i++) {
 	        tokenNames[i] = VOCABULARY.getLiteralName(i);
-			if (tokenNames[i] is null) {
-				tokenNames[i] = VOCABULARY.getSymbolicName(i);
-			}
+	            if (tokenNames[i] is null) {
+	                tokenNames[i] = VOCABULARY.getSymbolicName(i);
+		    }
 
-			if (tokenNames[i] is null) {
-				tokenNames[i] = "<INVALID>";
-			}
-		}
+	            if (tokenNames[i] is null) {
+	                tokenNames[i] = "<INVALID>";
+	            }
+	    }
 	}
 
-	override
-	deprecated
-	public string[] getTokenNames() {
+	override public string[] getTokenNames() {
 		return tokenNames;
 	}
 
-	override
-
-	public Vocabulary getVocabulary() {
+	override public Vocabulary getVocabulary() {
 		return VOCABULARY;
 	}
 

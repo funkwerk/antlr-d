@@ -888,7 +888,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
             return true;
         }
 
-        return false;;
+        return false;
     }
 
     public bool isMatchedEOF()

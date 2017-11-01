@@ -731,7 +731,7 @@ class IntervalSet : IntSet
         }
         if (this.size() > 1) {
             buf.put("{");
-        };
+        }
         foreach (int index, I; this.intervals_) {
             int a = I.a;
             int b = I.b;

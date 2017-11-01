@@ -620,7 +620,7 @@ class ATNDeserializer
 
         int numNonGreedyStates = readInt;
         for (int i = 0; i < numNonGreedyStates; i++) {
-            int stateNumber = readInt;;
+            int stateNumber = readInt;
             (cast(DecisionState)atn.states[stateNumber]).nonGreedy = true;
         }
 

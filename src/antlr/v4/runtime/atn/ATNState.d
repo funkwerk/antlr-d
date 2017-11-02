@@ -37,10 +37,10 @@ import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.misc.IntervalSet;
+import std.algorithm.mutation: remove;
 
 // Class ATNState
 /**
- * @uml
  * The following images show the relation of states and
  * {@link ATNState#transitions} for various grammar constructs.
  */
@@ -78,6 +78,13 @@ abstract class ATNState
      * Used to cache lookahead during parsing, not used during construction
      */
     public IntervalSet nextTokenWithinRule;
+
+    /**
+     * @uml
+     * @read
+     * @write
+     */
+    private Transition[] optimizedTransitions_;
 
     /**
      * @uml
@@ -180,6 +187,63 @@ abstract class ATNState
     public void setRuleIndex(int ruleIndex)
     {
         this.ruleIndex = ruleIndex;
+    }
+
+    public bool isOptimized()
+    {
+        return optimizedTransitions != transitions;
+    }
+
+    public size_t numberOfOptimizedTransitions()
+    {
+        return optimizedTransitions.length;
+    }
+
+    public Transition getOptimizedTransition(size_t i)
+    {
+        return optimizedTransitions[i];
+    }
+
+    public void addOptimizedTransition(Transition e)
+    {
+        if (!isOptimized)
+            {
+                optimizedTransitions_.length = 0;
+            }
+            optimizedTransitions_ ~= e;
+    }
+
+    public void setOptimizedTransition(size_t i, Transition e)
+    {
+        if (!isOptimized)
+            {
+                assert(false, "InvalidOperationException");
+            }
+            optimizedTransitions_[i] = e;
+    }
+
+    public void removeOptimizedTransition(size_t i)
+    {
+        if (!isOptimized)
+            {
+                assert(false, "InvalidOperationException");
+            }
+            optimizedTransitions_.remove(i);
+    }
+
+    public this()
+    {
+        optimizedTransitions = transitions.dup;
+    }
+
+    public final Transition[] optimizedTransitions()
+    {
+        return this.optimizedTransitions_.dup;
+    }
+
+    public final void optimizedTransitions(Transition[] optimizedTransitions)
+    {
+        this.optimizedTransitions_ = optimizedTransitions.dup;
     }
 
 }

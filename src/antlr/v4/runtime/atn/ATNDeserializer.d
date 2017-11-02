@@ -85,6 +85,7 @@ import antlr.v4.runtime.atn.WildcardTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.RangeTransition;
 import antlr.v4.runtime.atn.TransitionStates;
+import antlr.v4.runtime.misc.BitSet;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.misc.IntervalSet;
 
@@ -793,8 +794,76 @@ class ATNDeserializer
         return data[p++];
     }
 
-    public void identifyTailCalls(ATN atn)
+    private static void identifyTailCalls(ATN atn)
     {
+        foreach (ATNState state; atn.states)
+            {
+                foreach (Transition transition; state.transitions)
+                    {
+                        if (!(cast(RuleTransition)transition))
+                            {
+                                continue;
+                            }
+                        RuleTransition ruleTransition = cast(RuleTransition)transition;
+                        ruleTransition.tailCall = testTailCall(atn, ruleTransition, false);
+                        ruleTransition.optimizedTailCall = testTailCall(atn, ruleTransition, true);
+                    }
+                if (!state.isOptimized)
+                    {
+                        continue;
+                    }
+                foreach (Transition transition; state.optimizedTransitions)
+                    {
+                        if (!(cast(RuleTransition)transition))
+                            {
+                                continue;
+                            }
+                        RuleTransition ruleTransition = cast(RuleTransition)transition;
+                        ruleTransition.tailCall = testTailCall(atn, ruleTransition, false);
+                        ruleTransition.optimizedTailCall = testTailCall(atn, ruleTransition, true);
+                    }
+            }
+    }
+
+    private static bool testTailCall(ATN atn, RuleTransition transition, bool optimizedPath)
+    {
+            {
+                return true;
+            }
+        if (optimizedPath && transition.optimizedTailCall)
+            {
+                return true;
+            }
+        BitSet *reachable = new BitSet(atn.states.length);
+        ATNState[] worklist;
+        worklist ~= transition.followState;
+        while (worklist.length > 0)
+            {
+                ATNState state = worklist[$-1];
+                worklist.length -= 1;
+                if (reachable.get(state.stateNumber))
+                    {
+                        continue;
+                    }
+                if (cast(RuleStopState)state)
+                    {
+                        continue;
+                    }
+                if (!state.onlyHasEpsilonTransitions)
+                    {
+                        return false;
+                    }
+                Transition[] transitions = optimizedPath ? state.optimizedTransitions : state.transitions;
+                foreach (Transition t; transitions)
+                    {
+                        if (t.getSerializationType != TransitionStates.EPSILON)
+                            {
+                                return false;
+                            }
+                        worklist ~= t.target;
+                    }
+            }
+        return true;
     }
 
     public void generateRuleBypassTransitions(ATN atn)
@@ -1047,7 +1116,7 @@ class ATNDeserializer
                         for (int j = 0; j < intermediate.numberOfOptimizedTransitions; j++)
                             {
                                 if (intermediate.getOptimizedTransition(j).getSerializationType != TransitionStates.EPSILON ||
-                                  
+
                                     (cast(EpsilonTransition)intermediate.getOptimizedTransition(j)).outermostPrecedenceReturn != -1)
                                     {
                                         if (optimizedTransitions != null)

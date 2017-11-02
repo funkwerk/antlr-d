@@ -228,7 +228,7 @@ abstract class ATNState
             {
                 assert(false, "InvalidOperationException");
             }
-            optimizedTransitions_.remove(i);
+            optimizedTransitions_ = optimizedTransitions_.remove(i);
     }
 
     public this()

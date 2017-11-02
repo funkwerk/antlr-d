@@ -48,6 +48,10 @@ class RuleTransition : Transition
 
     public ATNState followState;
 
+    public bool tailCall;
+
+    public bool optimizedTailCall;
+
     public this(RuleStartState ruleStart, int ruleIndex, int precedence, ATNState followState)
     {
         super(ruleStart);

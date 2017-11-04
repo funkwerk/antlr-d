@@ -15,7 +15,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = /usr/lib/d-unit.a /usr/lib/unit-threaded.a
+UNITTEST_LIB = /usr/lib/libd-unit.a /usr/lib/libunit-threaded.a
 UNITTESTS := $(shell find $(UNITTEST_DIR) -name "*.d")
 
 TEST_FLAGS = -debug -cov -Isrc -g -gs

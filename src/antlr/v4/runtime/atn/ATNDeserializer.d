@@ -827,9 +827,6 @@ class ATNDeserializer
 
     private static bool testTailCall(ATN atn, RuleTransition transition, bool optimizedPath)
     {
-            {
-                return true;
-            }
         if (optimizedPath && transition.optimizedTailCall)
             {
                 return true;

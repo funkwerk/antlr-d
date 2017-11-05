@@ -34,7 +34,7 @@ module antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.atn.StateNames;
@@ -110,7 +110,7 @@ class TerminalNodeImpl : TerminalNode
      */
     public override string toString()
     {
-        if (symbol.getType() == TokenConstants.EOF )
+        if (symbol.getType() == TokenConstantDefinition.EOF )
             return "<EOF>";
         return symbol.getText();
     }

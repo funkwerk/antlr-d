@@ -38,7 +38,7 @@ import std.conv;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.UnsupportedOperationException;
@@ -119,7 +119,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
                 }
             }
 
-            result["EOF"] = TokenConstants.EOF;
+            result["EOF"] = TokenConstantDefinition.EOF;
             result.rehash; // for faster lookups
             tokenTypeMapCache[vocabulary] = result;
         }
@@ -155,7 +155,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     {
         int ttype = getTokenTypeMap()[tokenName];
         if (ttype) return ttype;
-        return TokenConstants.INVALID_TYPE;
+        return TokenConstantDefinition.INVALID_TYPE;
     }
 
     /**
@@ -243,7 +243,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 	if (t is null) return "<no token>";
         string s = t.getText();
         if (s is null) {
-            if (t.getType() == TokenConstants.EOF) {
+            if (t.getType() == TokenConstantDefinition.EOF) {
                 s = "<EOF>";
             }
             else {

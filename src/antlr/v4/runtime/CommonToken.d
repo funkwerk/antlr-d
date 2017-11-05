@@ -7,7 +7,7 @@ import std.container : DList;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.misc.Interval;
 
@@ -47,7 +47,7 @@ class CommonToken : WritableToken
      * This is the backing field for {@link #getChannel} and
      * {@link #setChannel}.
      */
-    protected int channel = TokenConstants.DEFAULT_CHANNEL;
+    protected int channel = TokenConstantDefinition.DEFAULT_CHANNEL;
 
     /**
      * @uml
@@ -128,7 +128,7 @@ class CommonToken : WritableToken
     public this(int type, string text)
     {
 	this.type = type;
-        this.channel = TokenConstants.DEFAULT_CHANNEL;
+        this.channel = TokenConstantDefinition.DEFAULT_CHANNEL;
         this.text = text;
         this.source = EMPTY_SOURCE;
     }

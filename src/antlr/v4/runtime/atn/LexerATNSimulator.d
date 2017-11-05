@@ -61,7 +61,7 @@ import antlr.v4.runtime.atn.OrderedATNConfigSet;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.misc.Interval;
 
 // Class LexerATNSimulator
@@ -346,7 +346,7 @@ class LexerATNSimulator : ATNSimulator
         else {
             // if no accept and EOF is first char, return EOF
             if (t==IntStreamConstant.EOF && input.index() == startIndex) {
-                return TokenConstants.EOF;
+                return TokenConstantDefinition.EOF;
             }
 
             throw new LexerNoViableAltException(recog, input, startIndex, reach);

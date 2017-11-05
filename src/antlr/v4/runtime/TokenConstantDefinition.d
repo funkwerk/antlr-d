@@ -1,14 +1,13 @@
-module antlr.v4.runtime.TokenConstants;
+module antlr.v4.runtime.TokenConstantDefinition;
 
-import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStreamConstant;
 
-// Class TokenConstants
+// Class TokenConstantDefinition
 /**
  * @uml
  * Token constant definitions
  */
-class TokenConstants
+class TokenConstantDefinition
 {
 
     public static immutable int INVALID_TYPE = 0;
@@ -22,7 +21,7 @@ class TokenConstants
 
     public static immutable int MIN_USER_TOKEN_TYPE = 1;
 
-    public static const int EOF = IntStreamConstant.EOF;
+    public static immutable int EOF = IntStreamConstant.EOF;
 
     /**
      * @uml

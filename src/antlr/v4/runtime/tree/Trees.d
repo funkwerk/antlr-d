@@ -38,7 +38,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ErrorNode;
@@ -292,7 +292,7 @@ class Trees
             Interval range = child.getSourceInterval();
             if (child.classinfo == ParserRuleContext.classinfo && (range.b < startIndex || range.a > stopIndex) ) {
                 if (isAncestorOf(child, root)) { // replace only if subtree doesn't have displayed root
-                    CommonToken abbrev = new CommonToken(TokenConstants.INVALID_TYPE, "...");
+                    CommonToken abbrev = new CommonToken(TokenConstantDefinition.INVALID_TYPE, "...");
                     t.children[i] =  new TerminalNodeImpl(abbrev);
                 }
             }

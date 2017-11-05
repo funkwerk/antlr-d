@@ -40,7 +40,7 @@ import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.TokenFactory;
@@ -76,9 +76,9 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
     public static immutable int SKIP = -3;
 
-    public static immutable int DEFAULT_TOKEN_CHANNEL = TokenConstants.DEFAULT_CHANNEL;
+    public static immutable int DEFAULT_TOKEN_CHANNEL = TokenConstantDefinition.DEFAULT_CHANNEL;
 
-    public static immutable int HIDDEN = TokenConstants.HIDDEN_CHANNEL;
+    public static immutable int HIDDEN = TokenConstantDefinition.HIDDEN_CHANNEL;
 
     public static immutable int MIN_CHAR_VALUE = char.min;
 
@@ -172,8 +172,8 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
             _input.seek(0); // rewind the input
         }
         _token = null;
-        _type = TokenConstants.INVALID_TYPE;
-        _channel = TokenConstants.DEFAULT_CHANNEL;
+        _type = TokenConstantDefinition.INVALID_TYPE;
+        _channel = TokenConstantDefinition.DEFAULT_CHANNEL;
         _tokenStartCharIndex = -1;
         _tokenStartCharPositionInLine = -1;
         _tokenStartLine = -1;
@@ -205,13 +205,13 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
                     return _token;
                 }
                 _token = null;
-                _channel = TokenConstants.DEFAULT_CHANNEL;
+                _channel = TokenConstantDefinition.DEFAULT_CHANNEL;
                 _tokenStartCharIndex = _input.index();
                 _tokenStartCharPositionInLine = getInterpreter().getCharPositionInLine();
                 _tokenStartLine = getInterpreter().getLine();
                 _text = null;
                 do {
-                    _type = TokenConstants.INVALID_TYPE;
+                    _type = TokenConstantDefinition.INVALID_TYPE;
                     //				writeln("nextToken line "+tokenStartLine+" at "+((char)input.LA(1))+
                     //								   " in mode "+mode+
                     //								   " at index "+input.index());
@@ -227,7 +227,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
                     if (_input.LA(1) == IntStreamConstant.EOF) {
                         _hitEOF = true;
                     }
-                    if (_type == TokenConstants.INVALID_TYPE) _type = ttype;
+                    if (_type == TokenConstantDefinition.INVALID_TYPE) _type = ttype;
                     if (_type == SKIP) {
                         continue outer;
                     }
@@ -343,7 +343,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
     {
         int cpos = getCharPositionInLine();
         int line = getLine();
-        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstants.EOF, null, TokenConstants.DEFAULT_CHANNEL,
+        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstantDefinition.EOF, null, TokenConstantDefinition.DEFAULT_CHANNEL,
                                          _input.index(), _input.index()-1,
                                          line, cpos);
         emit(eof);
@@ -462,7 +462,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
     {
 	Token[] tokens;
         Token t = nextToken();
-        while (t.getType() != TokenConstants.EOF) {
+        while (t.getType() != TokenConstantDefinition.EOF) {
             tokens ~= t;
             t = nextToken();
         }
@@ -499,7 +499,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
     {
         string s = to!string(c);
         switch ( c ) {
-        case TokenConstants.EOF :
+        case TokenConstantDefinition.EOF :
             s = "<EOF>";
             break;
         case '\n' :

@@ -46,7 +46,7 @@ import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenFactory;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.InterfaceParser;
@@ -871,10 +871,10 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
             return true;
         }
         //        System.out.println("following "+s+"="+following);
-        if (!following.contains(TokenConstants.EPSILON))
+        if (!following.contains(TokenConstantDefinition.EPSILON))
             return false;
 
-        while (ctx !is null && ctx.invokingState>=0 && following.contains(TokenConstants.EPSILON) ) {
+        while (ctx !is null && ctx.invokingState>=0 && following.contains(TokenConstantDefinition.EPSILON) ) {
             ATNState invokingState = atn.states[ctx.invokingState];
             RuleTransition rt = cast(RuleTransition)invokingState.transition(0);
             following = atn.nextTokens(rt.followState);
@@ -884,7 +884,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
             ctx = cast(ParserRuleContext)ctx.parent;
         }
-        if ( following.contains(TokenConstants.EPSILON) && symbol == TokenConstants.EOF ) {
+        if ( following.contains(TokenConstantDefinition.EPSILON) && symbol == TokenConstantDefinition.EOF ) {
             return true;
         }
 

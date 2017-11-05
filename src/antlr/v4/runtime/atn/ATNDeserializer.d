@@ -41,7 +41,7 @@ import std.algorithm: map;
 import std.algorithm: canFind;
 import std.algorithm: reverse;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.IllegalArgumentException;
@@ -338,7 +338,7 @@ class ATNDeserializer
         case TransitionStates.EPSILON : return new EpsilonTransition(target);
         case TransitionStates.RANGE :
             if (arg3 != 0) {
-                return new RangeTransition(target, TokenConstants.EOF, arg2);
+                return new RangeTransition(target, TokenConstantDefinition.EOF, arg2);
             }
             else {
                 return new RangeTransition(target, arg1, arg2);
@@ -353,7 +353,7 @@ class ATNDeserializer
             return new PrecedencePredicateTransition(target, arg1);
         case TransitionStates.ATOM :
             if (arg3 != 0) {
-                return new AtomTransition(target, TokenConstants.EOF);
+                return new AtomTransition(target, TokenConstantDefinition.EOF);
             }
             else {
                 return new AtomTransition(target, arg1);
@@ -565,7 +565,7 @@ class ATNDeserializer
             if ( atn.grammarType == ATNType.LEXER ) {
                 int tokenType = readInt;
                 if (tokenType == 0xFFFF) {
-                    tokenType = TokenConstants.EOF;
+                    tokenType = TokenConstantDefinition.EOF;
                 }
 
                 atn.ruleToTokenType[i] = tokenType;

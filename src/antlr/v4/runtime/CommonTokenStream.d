@@ -34,7 +34,7 @@ import std.conv;
 import std.stdio;
 import antlr.v4.runtime.BufferedTokenStream;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 
 // Class CommonTokenStream
@@ -73,7 +73,7 @@ class CommonTokenStream : BufferedTokenStream
      * The default value is {@link Token#DEFAULT_CHANNEL}, which matches the
      * default channel assigned to tokens created by the lexer.</p>
      */
-    protected int channel = TokenConstants.DEFAULT_CHANNEL;
+    protected int channel = TokenConstantDefinition.DEFAULT_CHANNEL;
 
     /**
      * @uml
@@ -157,7 +157,7 @@ class CommonTokenStream : BufferedTokenStream
         for (int i = 0; i < to!int(tokens.length); i++) {
             Token t = tokens[i];
             if (t.getChannel() == channel) n++;
-            if (t.getType() == TokenConstants.EOF) break;
+            if (t.getType() == TokenConstantDefinition.EOF) break;
         }
         return n;
     }

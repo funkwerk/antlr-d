@@ -35,7 +35,7 @@ import std.conv;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 
 // Class RuleTagToken
@@ -136,7 +136,7 @@ class RuleTagToken : Token
      */
     public override int getChannel()
     {
-        return TokenConstants.DEFAULT_CHANNEL;
+        return TokenConstantDefinition.DEFAULT_CHANNEL;
     }
 
     /**

@@ -36,7 +36,7 @@ import std.conv;
 import std.stdio;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
@@ -57,7 +57,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 class LL1Analyzer
 {
 
-    public static const int HIT_PRED = TokenConstants.INVALID_TYPE;
+    public static const int HIT_PRED = TokenConstantDefinition.INVALID_TYPE;
 
     public ATN atn;
 
@@ -191,20 +191,20 @@ class LL1Analyzer
 
         if (s == stopState) {
             if (ctx is null) {
-                look.add(TokenConstants.EPSILON);
+                look.add(TokenConstantDefinition.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
-                look.add(TokenConstants.EOF);
+                look.add(TokenConstantDefinition.EOF);
                 return;
             }
         }
 
         if (s.classinfo == RuleStopState.classinfo) {
             if (ctx is null ) {
-                look.add(TokenConstants.EPSILON);
+                look.add(TokenConstantDefinition.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
-                look.add(TokenConstants.EOF);
+                look.add(TokenConstantDefinition.EOF);
                 return;
             }
 
@@ -260,14 +260,14 @@ class LL1Analyzer
                 _LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
             }
             else if (t.classinfo == WildcardTransition.classinfo) {
-                look.addAll( IntervalSet.of(TokenConstants.MIN_USER_TOKEN_TYPE, atn.maxTokenType) );
+                look.addAll( IntervalSet.of(TokenConstantDefinition.MIN_USER_TOKEN_TYPE, atn.maxTokenType) );
             }
             else {
                 debug writeln("adding " ~ to!string(t));
                 IntervalSet set = t.label();
                 if (set !is null) {
                     if (t.classinfo == NotSetTransition.classinfo) {
-                        set = set.complement(IntervalSet.of(TokenConstants.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
+                        set = set.complement(IntervalSet.of(TokenConstantDefinition.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
                     }
                     look.addAll(set);
                 }

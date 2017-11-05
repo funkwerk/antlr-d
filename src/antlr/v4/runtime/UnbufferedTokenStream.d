@@ -8,7 +8,7 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.IllegalStateException;
@@ -96,7 +96,7 @@ class UnbufferedTokenStream : TokenStream
         int index = p + i - 1;
         assert(index >= 0,  format("LT(%s) gives negative index",i));
         if ( index >= n ) {
-            assert (n > 0 && tokens[n-1].getType() == TokenConstants.EOF);
+            assert (n > 0 && tokens[n-1].getType() == TokenConstantDefinition.EOF);
             return tokens[n-1];
         }
         return tokens[index];
@@ -129,7 +129,7 @@ class UnbufferedTokenStream : TokenStream
 
     public void consume()
     {
-	if (LA(1) == TokenConstants.EOF) {
+	if (LA(1) == TokenConstantDefinition.EOF) {
             throw new IllegalStateException("cannot consume EOF");
         }
         // buf always has at least tokens[p==0] in this method due to ctor
@@ -166,7 +166,7 @@ class UnbufferedTokenStream : TokenStream
     protected int fill(int n)
     {
 	for (int i=0; i<n; i++) {
-            if (this.n > 0 && tokens[this.n-1].getType() == TokenConstants.EOF) {
+            if (this.n > 0 && tokens[this.n-1].getType() == TokenConstantDefinition.EOF) {
                 return i;
             }
             Token t = tokenSource.nextToken();

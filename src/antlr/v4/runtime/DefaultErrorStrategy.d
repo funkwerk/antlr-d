@@ -41,7 +41,7 @@ import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.InputMismatchException;
@@ -233,7 +233,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         int la = tokens.LA(1);
 
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
-        if ( recognizer.getATN().nextTokens(s).contains(la) || la == TokenConstants.EOF) return;
+        if ( recognizer.getATN().nextTokens(s).contains(la) || la == TokenConstantDefinition.EOF) return;
 
         // Return but don't end recovery. only do that upon valid token match
         if (recognizer.isExpectedToken(la)) {
@@ -283,7 +283,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 	TokenStream tokens = recognizer.getInputStream();
         string input;
         if (tokens !is null) {
-            if (e.getStartToken().getType == TokenConstants.EOF) input = "<EOF>";
+            if (e.getStartToken().getType == TokenConstantDefinition.EOF) input = "<EOF>";
             else input = tokens.getText(e.getStartToken(), e.getOffendingToken());
         }
         else {
@@ -563,17 +563,17 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         IntervalSet expecting = getExpectedTokens(recognizer);
         int expectedTokenType = expecting.getMinElement(); // get any element
         string tokenText;
-        if (expectedTokenType == TokenConstants.EOF) tokenText = "<missing EOF>";
+        if (expectedTokenType == TokenConstantDefinition.EOF) tokenText = "<missing EOF>";
         else tokenText = format("<missing %s>", recognizer.getVocabulary().getDisplayName(expectedTokenType));
         Token current = currentSymbol;
         Token lookback = recognizer.getInputStream().LT(-1);
-        if ( current.getType() == TokenConstants.EOF && lookback !is null) {
+        if ( current.getType() == TokenConstantDefinition.EOF && lookback !is null) {
             current = lookback;
         }
         TokenFactorySourcePair tsp = tuple(current.getTokenSource(), current.getTokenSource().getInputStream());
         return
             recognizer.tokenFactory().create(tsp, expectedTokenType, tokenText,
-                                             TokenConstants.DEFAULT_CHANNEL,
+                                             TokenConstantDefinition.DEFAULT_CHANNEL,
                                              -1, -1,
                                              current.getLine(), current.getCharPositionInLine());
 
@@ -597,7 +597,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 	if (t is null) return "<no token>";
         string s = getSymbolText(t);
         if (s is null) {
-            if (getSymbolType(t) == TokenConstants.EOF) {
+            if (getSymbolType(t) == TokenConstantDefinition.EOF) {
                 s = "<EOF>";
             }
             else {
@@ -731,7 +731,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             recoverSet.addAll(follow);
             ctx = ctx.parent;
         }
-        recoverSet.remove(TokenConstants.EPSILON);
+        recoverSet.remove(TokenConstantDefinition.EPSILON);
         //		System.out.println("recover set "+recoverSet.toString(recognizer.getTokenNames()));
         return recoverSet;
     }
@@ -743,7 +743,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     {
 	//stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
         int ttype = recognizer.getInputStream().LA(1);
-        while (ttype != TokenConstants.EOF && !set.contains(ttype) ) {
+        while (ttype != TokenConstantDefinition.EOF && !set.contains(ttype) ) {
             //System.out.println("consume during recover LA(1)="+getTokenNames()[input.LA(1)]);
             //			recognizer.getInputStream().consume();
             recognizer.consume();

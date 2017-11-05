@@ -45,7 +45,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.tree.ParseTree;
@@ -267,7 +267,7 @@ class ParseTreePatternMatcher
         }
 
         // Make sure tree pattern compilation checks for a complete parse
-        if ( tokens.LA(1)!=TokenConstants.EOF ) {
+        if ( tokens.LA(1)!=TokenConstantDefinition.EOF ) {
             throw new StartRuleDoesNotConsumeFullPattern();
         }
         return new ParseTreePattern(this, pattern, patternRuleIndex, tree);
@@ -422,7 +422,7 @@ class ParseTreePatternMatcher
                 // add special rule token or conjure up new token from name
                 if (isUpper(tagChunk.getTag()[0])) {
                     int ttype = parser.getTokenType(tagChunk.getTag());
-                    if (ttype == TokenConstants.INVALID_TYPE ) {
+                    if (ttype == TokenConstantDefinition.INVALID_TYPE ) {
                         throw new IllegalArgumentException("Unknown token " ~ tagChunk.getTag() ~ " in pattern: " ~ pattern);
                     }
                     TokenTagToken t = new TokenTagToken(tagChunk.getTag(), ttype, tagChunk.getLabel());
@@ -445,7 +445,7 @@ class ParseTreePatternMatcher
                 ANTLRInputStream ins = new ANTLRInputStream(textChunk.getText());
                 lexer.setInputStream(ins);
                 Token t = lexer.nextToken();
-                while (t.getType() != TokenConstants.EOF) {
+                while (t.getType() != TokenConstantDefinition.EOF) {
                     tokens ~= t;
                     t = lexer.nextToken();
                 }

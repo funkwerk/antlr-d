@@ -43,7 +43,7 @@ import antlr.v4.runtime.FailedPredicateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.InputMismatchException;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.Vocabulary;
@@ -345,7 +345,7 @@ class ParserInterpreter : Parser
         case TransitionStates.RANGE:
         case TransitionStates.SET:
         case TransitionStates.NOT_SET:
-            if (!transition.matches(_input.LA(1), TokenConstants.MIN_USER_TOKEN_TYPE, 65535)) {
+            if (!transition.matches(_input.LA(1), TokenConstantDefinition.MIN_USER_TOKEN_TYPE, 65535)) {
                 recoverInline();
             }
             matchWildcard();
@@ -495,7 +495,7 @@ class ParserInterpreter : Parser
                 auto errToken =
                     tokenFactory().create(tokenFactorySourcePair,
                                              expectedTokenType, tok.getText(),
-                                             TokenConstants.DEFAULT_CHANNEL,
+                                             TokenConstantDefinition.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop
                                              tok.getLine(), tok.getCharPositionInLine());
                 ctx_.addErrorNode(errToken);
@@ -505,8 +505,8 @@ class ParserInterpreter : Parser
                 tokenFactorySourcePair = tuple(tok.getTokenSource(), tok.getTokenSource().getInputStream());
                 auto errToken =
                     tokenFactory().create(tokenFactorySourcePair,
-                                             TokenConstants.INVALID_TYPE, tok.getText(),
-                                             TokenConstants.DEFAULT_CHANNEL,
+                                             TokenConstantDefinition.INVALID_TYPE, tok.getText(),
+                                             TokenConstantDefinition.DEFAULT_CHANNEL,
                                              -1, -1, // invalid start/stop
                                              tok.getLine(), tok.getCharPositionInLine());
                 ctx_.addErrorNode(errToken);

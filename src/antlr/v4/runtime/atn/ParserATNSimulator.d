@@ -41,7 +41,7 @@ import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.TokenConstants;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
@@ -891,7 +891,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
          * condition is not true when one or more configurations have been
          * withheld in skippedStopStates, or when the current symbol is EOF.
          */
-        if (skippedStopStates is null && t != TokenConstants.EOF) {
+        if (skippedStopStates is null && t != TokenConstantDefinition.EOF) {
             if (intermediate.size() == 1 ) {
                 // Don't pursue the closure if there is just one state.
                 // It can only have one alternative; just add to result
@@ -912,7 +912,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         if (reach is null) {
             reach = new ATNConfigSet(fullCtx);
             ATNConfig[] closureBusy;
-            bool treatEofAsEpsilon = t == TokenConstants.EOF;
+            bool treatEofAsEpsilon = t == TokenConstantDefinition.EOF;
             foreach (c; intermediate.configs) {
                 closureATN(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
             }
@@ -973,7 +973,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
             if (lookToEndOfRule && config.state.onlyHasEpsilonTransitions()) {
                 IntervalSet nextTokens = atn.nextTokens(config.state);
-                if (nextTokens.contains(TokenConstants.EPSILON)) {
+                if (nextTokens.contains(TokenConstantDefinition.EPSILON)) {
                     ATNState endOfRuleState = atn.ruleToStopState[config.state.ruleIndex];
                     result.add(new ATNConfig(config, endOfRuleState), mergeCache);
                 }
@@ -1305,7 +1305,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             // EOF transitions act like epsilon transitions after the first EOF
             // transition is traversed
             if (treatEofAsEpsilon) {
-                if (t.matches(TokenConstants.EOF, 0, 1)) {
+                if (t.matches(TokenConstantDefinition.EOF, 0, 1)) {
                     return new ATNConfig(config, t.target);
                 }
             }
@@ -1487,7 +1487,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public string getTokenName(int t)
     {
-	if (t == TokenConstants.EOF) {
+	if (t == TokenConstantDefinition.EOF) {
             return "EOF";
         }
 

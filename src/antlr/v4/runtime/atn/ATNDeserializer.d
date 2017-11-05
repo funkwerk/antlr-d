@@ -100,20 +100,17 @@ class ATNDeserializer
     public static immutable int SERIALIZED_VERSION = 3;
 
     /**
-     * @uml
      * This is the earliest supported serialized UUID.
      */
     public static UUID BASE_SERIALIZED_UUID;
 
     /**
-     * @uml
      * This UUID indicates an extension of {@link BASE_SERIALIZED_UUID} for the
      * addition of precedence predicates.
      */
     public static UUID ADDED_PRECEDENCE_TRANSITIONS;
 
     /**
-     * @uml
      * This UUID indicates an extension of {@link #ADDED_PRECEDENCE_TRANSITIONS}
      * for the addition of lexer actions encoded as a sequence of
      * {@link LexerAction} instances.
@@ -121,14 +118,12 @@ class ATNDeserializer
     public static UUID ADDED_LEXER_ACTIONS;
 
     /**
-     * @uml
      * This list contains all of the currently supported UUIDs, ordered by when
      * the feature first appeared in this branch.
      */
     public static UUID[] SUPPORTED_UUIDS;
 
     /**
-     * @uml
      * This is the current serialized UUID.
      */
     public static UUID SERIALIZED_UUID;
@@ -168,7 +163,6 @@ class ATNDeserializer
     }
 
     /**
-     * @uml
      * Determines if a particular serialized representation of an ATN supports
      * a particular feature, identified by the {@link UUID} used for serializing
      * the ATN at the time the feature was first introduced.

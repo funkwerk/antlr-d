@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2013 Terence Parr
  *  Copyright (c) 2013 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -486,6 +487,8 @@ class ATNDeserializer
         int[LoopEndState][] loopBackStateNumbers;
         int[BlockStartState][] endStateNumbers;
         int nstates = readInt;
+        debug(deserializer)
+            writefln("%s: Number of states %s", this.p-1 , nstates);
         for (int i=0; i<nstates; i++) {
             int stype = readInt;
             // ignore bad type of states
@@ -498,7 +501,12 @@ class ATNDeserializer
             if (ruleIndex == char.max) {
                 ruleIndex = -1;
             }
-
+            debug(deserializer)
+                writefln("%s: readState %s, ruleIndex %s, index %s",
+                         this.p-1,
+                         stype,
+                         ruleIndex,
+                         i);
             ATNState s = stateFactory(stype, ruleIndex);
             if (stype == StateNames.LOOP_END) {
                 // special case
@@ -547,7 +555,8 @@ class ATNDeserializer
         if ( atn.grammarType == ATNType.LEXER ) {
             atn.ruleToTokenType = new int[nrules];
         }
-
+        debug(deserializer)
+            writefln("%s: Number of rules %s", this.p-1 , nrules);
         atn.ruleToStartState = new RuleStartState[nrules];
         for (int i=0; i<nrules; i++) {
             int s = readInt;
@@ -618,7 +627,7 @@ class ATNDeserializer
             int arg2 = readInt;
             int arg3 = readInt;
             Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
-            debug(ATNDeserialize) {
+            debug(deserializer) {
                 writefln("EDGES %1$s %2$s->%3$s %4$s %5$s %6$s %7$s",
                          trans.classinfo, src,
                          trg, Transition.serializationNames[ttype],

@@ -18,7 +18,8 @@ UNITTEST_DIR = unittest
 UNITTEST_LIB = /usr/lib/libd-unit.a /usr/lib/libunit-threaded.a
 UNITTESTS := $(shell find $(UNITTEST_DIR) -name "*.d")
 
-TEST_FLAGS = -debug -cov -Isrc -g -gs
+#TEST_FLAGS = -debug=deserializer -cov -Isrc -g -gs
+TEST_FLAGS = -cov -Isrc -g -gs
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

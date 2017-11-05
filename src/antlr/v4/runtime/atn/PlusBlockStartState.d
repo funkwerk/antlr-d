@@ -1,6 +1,6 @@
 module antlr.v4.runtime.atn.PlusBlockStartState;
 
-import antlr.v4.runtime.atn.TokensStartState;
+import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.PlusLoopbackState;
 import antlr.v4.runtime.atn.StateNames;
 
@@ -12,7 +12,7 @@ import antlr.v4.runtime.atn.StateNames;
  * it for completeness. In reality, the {@link PlusLoopbackState} node is the
  * real decision-making note for {@code A+}.
  */
-class PlusBlockStartState : TokensStartState
+class PlusBlockStartState : BlockStartState
 {
 
     public PlusLoopbackState loopBackState;

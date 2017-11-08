@@ -16,7 +16,18 @@ BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = /usr/lib/libd-unit.a /usr/lib/libunit-threaded.a
-UNITTESTS := $(shell find $(UNITTEST_DIR) -name "*.d")
+MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
+
+# escape ,
+, = ,
+define NEWLINE
+
+
+endef
+UNITTEST_FILES := $(filter-out Makefile,\
+            $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest))))
+UNITTEST_MODULES := $(subst src.,,$(subst /,.,$(patsubst %.d,%$(,)$(NEWLINE),\
+	$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))
 
 #TEST_FLAGS = -debug=deserializer -cov -Isrc -g -gs
 TEST_FLAGS = -cov -Isrc -g -gs
@@ -33,11 +44,13 @@ TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codege
 all : generate unittest
 .PHONY : all
 
+
 .PHONY : generate
 generate : $(MODELS_R)
 
-$(BUILD_DIR)/TestRunner : $(SRC) $(UNITTESTS)
-	$(DMD) $(TEST_FLAGS) $(UNITTESTS) $(SRC) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
+$(BUILD_DIR)/TestRunner : $(UNITTEST_FILES)
+	$(file > $(BUILD_DIR)/modules, $(UNITTEST_MODULES))
+	$(DMD) $(TEST_FLAGS) $(MODULE_FILES) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
 
 .PHONY : unittest
 unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)

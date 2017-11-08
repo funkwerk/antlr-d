@@ -1,6 +1,7 @@
 import dunit.ng;
 import std.conv;
 import std.stdio;
+//import unit_threaded;
 
 import antlr.v4.runtime.misc.DoubleKeyMap;
 
@@ -16,6 +17,11 @@ class Test
         string actual = "baz";
 
         actual.assertEquals(expected);
+    }
+
+    @("check unit threaded")
+    unittest {
+        assert(false);
     }
     
     @Test

@@ -559,8 +559,7 @@ class Array2DHashSet(T)
 
 unittest
 {
-    class Y {
-    }
+    class Y {}
     class Z : Y {}
     Y y = new Y;
     auto x0 = new Array2DHashSet!Z;

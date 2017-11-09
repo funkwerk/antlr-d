@@ -31,7 +31,7 @@
 
 module antlr.v4.runtime.atn.ATNDeserializationOptions;
 
-// Singleton ATNDeserializationOptions
+// Class ATNDeserializationOptions
 /**
  * Options setting for deserialization
  */
@@ -66,11 +66,6 @@ class ATNDeserializationOptions
      * @write
      */
     private bool optimize_;
-
-    /**
-     * The single instance of ATNDeserializationOptions.
-     */
-    private static __gshared ATNDeserializationOptions instance_;
 
     public static this()
     {
@@ -135,22 +130,6 @@ class ATNDeserializationOptions
     public final void optimize(bool optimize)
     {
         this.optimize_ = optimize;
-    }
-
-    /**
-     * Creates the single instance of ATNDeserializationOptions.
-     */
-    private shared static this()
-    {
-        instance_ = new ATNDeserializationOptions;
-    }
-
-    /**
-     * Returns: A single instance of ATNDeserializationOptions.
-     */
-    public static ATNDeserializationOptions instance()
-    {
-        return instance_;
     }
 
 }

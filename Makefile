@@ -18,19 +18,17 @@ UNITTEST_DIR = unittest
 UNITTEST_LIB = /usr/lib/libd-unit.a /usr/lib/libunit-threaded.a
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 
-# escape ,
-, = ,
 define NEWLINE
 
 
 endef
-UNITTEST_FILES := $(filter-out Makefile,\
+UNITTEST_FILES := $(filter-out Makefile%,\
             $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest))))
-UNITTEST_MODULES := $(subst src.,,$(subst /,.,$(patsubst %.d,%$(,)$(NEWLINE),\
-	$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))
+UNITTEST_MODULES := $(subst unittest.,,$(subst src.,,$(subst /,.,\
+		$(patsubst %.d,%$(NEWLINE),\
+		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))
 
-#TEST_FLAGS = -debug=deserializer -cov -Isrc -g -gs
-TEST_FLAGS = -cov -Isrc -g -gs
+TEST_FLAGS = -cov -Isrc -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

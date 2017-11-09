@@ -1,44 +1,25 @@
-import dunit.ng;
-import std.conv;
-import std.stdio;
-//import unit_threaded;
+module misc;
 
+import unit_threaded.should : shouldBeIn, shouldEqual, shouldNotEqual;
 import antlr.v4.runtime.misc.DoubleKeyMap;
-
 
 class Test
 {
-    mixin UnitTest;
-
-    //@Test
-    public void assertEqualsFailure()
-    {
-        string expected = "bar";
-        string actual = "baz";
-
-        actual.assertEquals(expected);
-    }
-
-    @("check unit threaded")
-    unittest {
-        assert(false);
-    }
     
-    @Test
-    public void initAndOperationsDoubleKeyMap()
-    {
+    @("initAndOperationsDoubleKeyMap")
+    unittest {
         auto t1 = new DoubleKeyMap!(int, int, int);
         t1.put(7,1,12);
         t1.put(7,1,13);
         auto x = t1.get(7,1);
-        x.assertEquals(13);
+        x.shouldEqual(13);
         x = t1.get(7,2);
         assert(x.isNull);
 
         auto y = t1.get(7);
         int[int] c;
         c[1] = 13;
-        c.assertEquals(y);
+        c.shouldEqual(y);
         y = t1.get(6);
         assert(y.length == 0);
         t1.put(7,4,71);

@@ -560,8 +560,8 @@ class Array2DHashSet(T)
 unittest
 {
     class Y {
-    };
-    class Z : Y {};
+    }
+    class Z : Y {}
     Y y = new Y;
     auto x0 = new Array2DHashSet!Z;
     auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);

@@ -68,8 +68,6 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, InterfaceLexer
 {
 
-alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
-
     public static immutable int DEFAULT_MODE = 0;
 
     public static immutable int MORE = -2;
@@ -214,7 +212,13 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
                     _type = TokenConstantDefinition.INVALID_TYPE;
                     //				writeln("nextToken line "+tokenStartLine+" at "+((char)input.LA(1))+
                     //								   " in mode "+mode+
-                    //								   " at index "+input.index());
+                    //                                                             " at index "+input.index());
+                    debug(Lexer) {
+                        import std.stdio;
+                        writefln("interp = %s i= %s %s %s, %s input=%s, mode=%s",
+                                 getInterpreter,_tokenStartCharIndex, _tokenStartLine, _type,
+                                 cast(char)_input.LA(1), _input, _mode);
+                    }
                     int ttype;
                     try {
                         ttype = getInterpreter().match(_input, _mode);
@@ -542,7 +546,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
      * @override
      */
     public override void action(InterfaceRuleContext interfaceRuleContext, int ruleIndex,
-        int actionIndex)
+                                int actionIndex)
     {
     }
 

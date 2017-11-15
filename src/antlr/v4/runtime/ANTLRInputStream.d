@@ -120,13 +120,13 @@ class ANTLRInputStream : CharStream
         if (readChunkSize <= 0) {
             readChunkSize = READ_BUFFER_SIZE;
         }
-        debug writefln("load %1$s in chunks of %2$s", size, readChunkSize);
+        debug(ANTLRInput) writefln("load %1$s in chunks of %2$s", size, readChunkSize);
         data = to!(char[])(r.name.readText);
         int p = to!int(data.length);
         // set the actual size of the data available;
         // EOF subtracted one above in p+=numRead; add one back
         n = p + 1;
-        debug writefln("n= $s",n);
+        debug(ANTLRInput) writefln("n= $s",n);
     }
 
     /**

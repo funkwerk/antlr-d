@@ -33,6 +33,8 @@ module antlr.v4.runtime.misc.MurmurHash;
 
 import std.conv;
 import std.stdio;
+import fluent.asserts;
+import unit_threaded;
 
 // Class MurmurHash
 /**
@@ -162,18 +164,20 @@ class MurmurHash
 
 }
 
+@Tags("murmurHash")
+@("testMurmurHash")
 unittest
 {
     auto testMurmurHash = new MurmurHash;
     if (size_t.sizeof == 4)
-        assert(testMurmurHash.hashCode!int([12], 3) == 3080993568U);
+        testMurmurHash.hashCode!int([12], 3).should.equal(3080993568U);
     else
-        assert(testMurmurHash.hashCode!int([12], 3) == 8015155421799095863LU);
+        testMurmurHash.hashCode!int([12], 3).should.equal(8015155421799095863LU);
     auto res = testMurmurHash.initialize;
     res = testMurmurHash.update!int(res, 33);
     res = testMurmurHash.update!int(res, 2);
     if (size_t.sizeof == 4)
-        assert(testMurmurHash.finish(res, 2) == 857341099U);
+        testMurmurHash.finish(res, 2).should.equal(857341099U);
     else
-        assert(testMurmurHash.finish(res, 2) == 9650988314287891571LU);
+        testMurmurHash.finish(res, 2).should.equal(9650988314287891571LU);
 }

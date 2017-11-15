@@ -15,15 +15,16 @@ XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse\
+ -debug=BuffertTokenStream -debug=Lexer
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 
 define NEWLINE
 
 
 endef
-UNITTEST_FILES := $(filter-out Makefile%,\
-            $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest))))
+UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
+            $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
 UNITTEST_MODULES := $(subst unittest.,,$(subst src.,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))

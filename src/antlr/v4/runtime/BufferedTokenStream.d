@@ -108,14 +108,14 @@ class BufferedTokenStream : TokenStream
     protected bool fetchedEOF;
 
     public this(TokenSource tokenSource)
-        in
-            {
-                assert (tokenSource !is null, "tokenSource cannot be null");
-            }
+    in
+    {
+        assert (tokenSource !is null, "tokenSource cannot be null");
+    }
     body
-        {
+    {
             this.tokenSource = tokenSource;
-        }
+    }
 
     /**
      * @uml
@@ -186,12 +186,12 @@ class BufferedTokenStream : TokenStream
     }
 
     protected bool sync(int i)
-        in
-            {
-                assert (i >= 0);
-            }
+    in
+    {
+        assert (i >= 0);
+    }
     body
-        {
+    {
             int n = i - to!int(tokens.length) + 1; // how many more elements we need?
             //System.out.println("sync("+i+") needs "+n);
             if ( n > 0 ) {
@@ -200,7 +200,7 @@ class BufferedTokenStream : TokenStream
             }
 
             return true;
-        }
+    }
 
     protected int fetch(int n)
     {
@@ -234,17 +234,16 @@ class BufferedTokenStream : TokenStream
      * @override
      */
     public override Token get(int i)
-        in
-            {
-                assert( i >= 0 && i < tokens.length, format("token index %1$s out of range 0..%2$s", i, tokens.length-1));
-            }
+    in
+    {
+        assert( i >= 0 && i < tokens.length, format("token index %1$s out of range 0..%2$s", i, tokens.length-1));
+    }
     body
-        {
-            return tokens[i];
-        }
+    {
+        return tokens[i];
+    }
 
     /**
-     * @uml
      * Get all tokens from start..stop inclusively
      */
     public Token[] get(int start, int stop)
@@ -351,15 +350,15 @@ class BufferedTokenStream : TokenStream
      * method looks at both on and off channel tokens.
      */
     public Token[] getTokens(int start, int stop, int[] types)
-        in
-            {
-                lazyInit();
-                assert(start >= 0 && stop < tokens.length &&
-                       stop > 0  && start < tokens.length,
-                       format("start %1$s or stop %2$s not in 0..%3$s", start, stop, tokens.length - 1));
-            }
+    in
+    {
+        lazyInit();
+        assert(start >= 0 && stop < tokens.length &&
+               stop > 0  && start < tokens.length,
+               format("start %1$s or stop %2$s not in 0..%3$s", start, stop, tokens.length - 1));
+    }
     body
-        {
+    {
             if ( start>stop ) return null;
 
             // list = tokens[start:stop]:{T t, t.getType() in types}
@@ -374,7 +373,7 @@ class BufferedTokenStream : TokenStream
                 filteredTokens = null;
             }
             return filteredTokens;
-        }
+    }
 
     public Token[] getTokens(int start, int stop, int ttype)
     {
@@ -446,13 +445,13 @@ class BufferedTokenStream : TokenStream
      * EOF. If channel is -1, find any non default channel token.
      */
     public Token[] getHiddenTokensToRight(int tokenIndex, int channel)
-        in
-            {
-                lazyInit();
-                assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
-            }
+    in
+    {
+        lazyInit();
+        assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
+    }
     body
-        {
+    {
             int nextOnChannel =
                 nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
             int to;
@@ -461,11 +460,10 @@ class BufferedTokenStream : TokenStream
             if ( nextOnChannel == -1 ) to = size()-1;
             else to = nextOnChannel;
             return filterForChannel(from, to, channel);
-        }
+    }
 
     /**
-     * @uml
-     * ollect all hidden tokens (any off-default channel) to the right of
+     * Collect all hidden tokens (any off-default channel) to the right of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL
      * of EOF.
      */
@@ -481,13 +479,13 @@ class BufferedTokenStream : TokenStream
      * If channel is -1, find any non default channel token.
      */
     public Token[] getHiddenTokensToLeft(int tokenIndex, int channel)
-        in
-            {
-                lazyInit();
-                assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
-            }
+    in
+    {
+        lazyInit();
+        assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
+    }
     body
-        {
+    {
 
             if (tokenIndex == 0) {
                 // obviously no tokens can appear before the first token
@@ -500,10 +498,9 @@ class BufferedTokenStream : TokenStream
             int from = prevOnChannel+1;
             int to = tokenIndex-1;
             return filterForChannel(from, to, channel);
-        }
+    }
 
     /**
-     * @uml
      * Collect all hidden tokens (any off-default channel) to the left of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      */

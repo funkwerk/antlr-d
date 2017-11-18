@@ -275,7 +275,7 @@ class Array2DHashSet(T)
                 newBucketLengths[b]++;
             }
         }
-        assert(n == oldSize);	
+        assert(n == oldSize);
     }
 
     /**

@@ -1,6 +1,7 @@
 module antlr.v4.runtime.atn.OrderedATNConfigSet;
 
 import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.atn.LexerConfigHashSet;
 
 // Class OrderedATNConfigSet
 /**
@@ -11,6 +12,7 @@ class OrderedATNConfigSet : ATNConfigSet
 
     public this()
     {
+        this.configLookup = new LexerConfigHashSet();
     }
 
 }

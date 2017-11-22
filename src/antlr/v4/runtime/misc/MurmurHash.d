@@ -169,14 +169,14 @@ class MurmurHash
 unittest
 {
     auto testMurmurHash = new MurmurHash;
-    if (size_t.sizeof == 4)
+    static if (size_t.sizeof == 4)
         testMurmurHash.hashCode!int([12], 3).should.equal(3080993568U);
     else
         testMurmurHash.hashCode!int([12], 3).should.equal(8015155421799095863LU);
     auto res = testMurmurHash.initialize;
     res = testMurmurHash.update!int(res, 33);
     res = testMurmurHash.update!int(res, 2);
-    if (size_t.sizeof == 4)
+    static if (size_t.sizeof == 4)
         testMurmurHash.finish(res, 2).should.equal(857341099U);
     else
         testMurmurHash.finish(res, 2).should.equal(9650988314287891571LU);

@@ -2,6 +2,7 @@
  * [The "BSD license"]
  *  Copyright (c) 2012 Terence Parr
  *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -32,6 +33,8 @@ module antlr.v4.runtime.dfa.DFA;
 
 import std.conv;
 import std.algorithm.sorting;
+import fluent.asserts;
+import unit_threaded;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
@@ -45,13 +48,12 @@ import antlr.v4.runtime.atn.StarLoopEntryState;
 
 // Class DFA
 /**
- * TODO add class description
+ * A set of DFA states
  */
 class DFA
 {
 
     /**
-     * @uml
      * A set of all DFA states. Use {@link Map} so we can get old state back
      * ({@link Set} only allows you to see if it's there).
      */
@@ -62,13 +64,11 @@ class DFA
     public int decision;
 
     /**
-     * @uml
      * From which ATN state did we create this DFA?
      */
     public DecisionState atnStartState;
 
     /**
-     * @uml
      * {@code true} if this DFA is for a precedence decision; otherwise,
      *  {@code false}. This is the backing field for {@link #isPrecedenceDfa}.
      */
@@ -76,15 +76,15 @@ class DFA
 
     public this(DecisionState atnStartState)
     {
-	this(atnStartState, 0);
+        this(atnStartState, 0);
     }
 
     public this(DecisionState atnStartState, int decision)
     {
-	this.atnStartState = atnStartState;
+        this.atnStartState = atnStartState;
         this.decision = decision;
         bool precedenceDfa = false;
-        if (atnStartState.classinfo == StarLoopEntryState.classinfo) {
+        if (cast(StarLoopEntryState)atnStartState) {
             if ((cast(StarLoopEntryState)atnStartState).isPrecedenceDecision) {
                 precedenceDfa = true;
                 DFAState precedenceState = new DFAState(new ATNConfigSet());
@@ -98,7 +98,6 @@ class DFA
     }
 
     /**
-     * @uml
      * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
      * start state {@link #s0} which is not stored in {@link #states}. The
      * {@link DFAState#edges} array for this start state contains outgoing edges
@@ -115,7 +114,6 @@ class DFA
     }
 
     /**
-     * @uml
      * Get the start state for a specific precedence value.
      *
      *  @param precedence The current precedence.
@@ -127,7 +125,7 @@ class DFA
      */
     public DFAState getPrecedenceStartState(int precedence)
     {
-	if (!isPrecedenceDfa()) {
+        if (!isPrecedenceDfa()) {
             throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");
         }
         // s0.edges is never null for a precedence DFA
@@ -151,23 +149,23 @@ class DFA
      */
     public final void setPrecedenceStartState(int precedence, DFAState startState)
     {
-	if (!isPrecedenceDfa()) {
-			throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");
-		}
+        if (!isPrecedenceDfa()) {
+            throw new IllegalStateException("Only precedence DFAs may contain a precedence start state.");
+        }
 
-		if (precedence < 0) {
-			return;
-		}
+        if (precedence < 0) {
+            return;
+        }
 
-		// synchronization on s0 here is ok. when the DFA is turned into a
-		// precedence DFA, s0 will be initialized once and not updated again
-		synchronized (s0) {
-			// s0.edges is never null for a precedence DFA
-			if (precedence >= s0.edges.length) {
-				s0.edges.length = precedence + 1;
-			}
-			s0.edges[precedence] = startState;
-		}
+        // synchronization on s0 here is ok. when the DFA is turned into a
+        // precedence DFA, s0 will be initialized once and not updated again
+        synchronized (s0) {
+            // s0.edges is never null for a precedence DFA
+            if (precedence >= s0.edges.length) {
+                s0.edges.length = precedence + 1;
+            }
+            s0.edges[precedence] = startState;
+        }
     }
 
     /**
@@ -183,14 +181,14 @@ class DFA
      */
     public void setPrecedenceDfa(bool precedenceDfa)
     {
-	if (precedenceDfa != isPrecedenceDfa()) {
-			throw new UnsupportedOperationException("The precedenceDfa field cannot change after a DFA is constructed.");
+        if (precedenceDfa != isPrecedenceDfa()) {
+            throw new UnsupportedOperationException("The precedenceDfa field cannot change after a DFA is constructed.");
         }
     }
 
     public DFAState[] getStates()
     {
-	DFAState[] result = states.keys;
+        DFAState[] result = states.keys;
         result.sort!("a.stateNumber < b.stateNumber");
         return result;
     }
@@ -206,9 +204,9 @@ class DFA
 
     public string toString(string[] tokenNames)
     {
-	if (s0 is null)
+        if (s0 is null)
             return "";
-        DFASerializer serializer = new DFASerializer(this,tokenNames);
+        DFASerializer serializer = new DFASerializer(this, tokenNames);
         return serializer.toString();
     }
 
@@ -229,4 +227,17 @@ class DFA
         return serializer.toString();
     }
 
+}
+
+@Tags("dfa")
+@("testDFA")
+unittest {
+    import std.stdio;
+    import antlr.v4.runtime.atn.TokensStartState;
+    DecisionState startState = new TokensStartState;
+    DFA dfa = new DFA(startState);
+    dfa.should.not.beNull;
+    dfa.toString.should.equal("antlr.v4.runtime.VocabularyImpl.VocabularyImpl");
+    dfa.isPrecedenceDfa.should.equal(false);
+    //writefln("dfa.getStates = %s", dfa.getStates);
 }

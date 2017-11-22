@@ -41,7 +41,6 @@ import antlr.v4.runtime.dfa.PredPrediction;
 
 // Class DFAState
 /**
- * @uml
  * A DFA state represents a set of possible ATN configurations.
  * As Aho, Sethi, Ullman p. 117 says "The DFA uses its state
  * to keep track of all possible states the ATN can be in after
@@ -71,7 +70,7 @@ class DFAState
 
     public int stateNumber = -1;
 
-    public ATNConfigSet configs;
+    public ATNConfigSet configs = new ATNConfigSet;
 
     /**
      * @uml
@@ -139,7 +138,7 @@ class DFAState
     public int[] getAltSet()
     {
         int[] alts;
-        if (configs !is null) {
+        if (configs) {
             foreach (ATNConfig c; configs.configs) {
                 alts ~= c.alt;
             }
@@ -163,22 +162,36 @@ class DFAState
     }
 
     /**
+     * Two {@link DFAState} instances are equal if their ATN configuration sets
+     * are the same. This method is used to see if a state already exists.
+     *
+     * <p>Because the number of alternatives and number of ATN configurations are
+     * finite, there is a finite number of DFA states that can be processed.
+     * This is necessary to show that the algorithm terminates.</p>
+     *
+     * <p>Cannot test the DFA state numbers here because in
+     * {@link ParserATNSimulator#addDFAState} we need to know if any other state
+     * exists that has this exact set of ATN configurations. The
+     * {@link #stateNumber} is irrelevant.</p>
      * @uml
      * @override
      */
     public override bool opEquals(Object o)
     {
-        // compare set of ATN configurations in this set with other
-        if (this == o) return true;
-
-        if (o.classinfo != DFAState.classinfo) {
-            return false;
+        if (o is null) return false;
+        if (this is o) {
+            return true;
         }
-
+        if (o.classinfo != DFAState.classinfo) {
+             return false;
+        }
+        // compare set of ATN configurations in this set with other
         DFAState other = cast(DFAState)o;
-        // TODO (sam): what to do when configs==null?
+        // TODO: what to do when configs==null?
         bool sameSet = this.configs.opEquals(other.configs);
-        //		System.out.println("DFAState.equals: "+configs+(sameSet?"==":"!=")+other.configs);
+        debug(DFAState)
+            writefln("DFAState.equals: %s%s%s", configs,
+                     (sameSet?"==":"!="), other.configs);
         return sameSet;
     }
 
@@ -204,4 +217,39 @@ class DFAState
         return buf.data;
     }
 
+}
+
+version(unittest)
+{
+    import fluent.asserts;
+    import unit_threaded;
+    import std.stdio;            
+    import antlr.v4.runtime.dfa.DFA;
+    import antlr.v4.runtime.atn.DecisionState;
+    import antlr.v4.runtime.atn.TokensStartState;
+
+    @Tags("dfaState")
+        @("testDFAState")
+        unittest {
+            DFAState dfaState = new DFAState(0);
+            dfaState.should.not.beNull;
+            DFAState dfaState1 = new DFAState(1);
+            dfaState1.should.not.beNull;
+            dfaState1.toString.should.equal("1:[]");
+            DFAState[DFAState] dfa2dfa;
+            dfa2dfa[dfaState] = dfaState;
+            dfa2dfa.length.should.equal(1);
+            int[] alts = dfaState.getAltSet;
+            alts.length.should.equal(0);
+            DecisionState startState = new TokensStartState;
+            auto dfa = new DFA(startState);
+            Assert.equal(dfaState.opEquals(dfa), false);
+            Assert.equal(dfaState.opEquals(null), false);
+            Assert.equal(dfaState.opEquals(dfaState), true);
+            Assert.equal(dfaState.opEquals(dfaState1), true);
+            static if (size_t.sizeof == 4)
+                dfaState.toHash.should.equal(2565180293U);
+            else
+                dfaState.toHash.should.equal(10867659963865780077UL);
+        }
 }

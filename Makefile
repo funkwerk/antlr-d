@@ -48,7 +48,7 @@ all : generate unittest
 .PHONY : generate
 generate : $(MODELS_R)
 
-$(BUILD_DIR)/TestRunner : $(UNITTEST_FILES)
+$(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 	$(file > $(BUILD_DIR)/modules, $(UNITTEST_MODULES))
 	$(DMD) $(TEST_FLAGS) $(MODULE_FILES) $(UNITTEST_LIB) -of$(BUILD_DIR)/TestRunner
 

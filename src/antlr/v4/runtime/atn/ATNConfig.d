@@ -42,7 +42,6 @@ import antlr.v4.runtime.misc.MurmurHash;
 
 // Class ATNConfig
 /**
- * @uml
  * A tuple: (ATN state, predicted alt, syntactic, semantic context).
  * The syntactic context is a graph-structured stack node whose
  * path(s) to the root is the rule invocation(s)
@@ -54,7 +53,6 @@ class ATNConfig
 {
 
     /**
-     * @uml
      * This field stores the bit mask for implementing the
      * {@link #isPrecedenceFilterSuppressed} property as a bit within the
      * existing {@link #reachesIntoOuterContext} field.
@@ -62,7 +60,6 @@ class ATNConfig
     public static immutable int SUPPRESS_PRECEDENCE_FILTER = 0x40000000;
 
     /**
-     * @uml
      * The ATN state associated with this configuration.
      */
     public ATNState state;
@@ -74,7 +71,6 @@ class ATNConfig
     public int alt;
 
     /**
-     * @uml
      * The stack of invoking states leading to the rule/states associated
      * with this config.  We track only those contexts pushed during
      * execution of the ATN simulator.
@@ -110,7 +106,6 @@ class ATNConfig
     public SemanticContext semanticContext;
 
     /**
-     * @uml
      * Duplication
      */
     public this(ATNConfig old)
@@ -166,7 +161,6 @@ class ATNConfig
     }
 
     /**
-     * @uml
      * This method gets the value of the {@link #reachesIntoOuterContext} field
      * as it existed prior to the introduction of the
      * {@link #isPrecedenceFilterSuppressed} method.
@@ -192,11 +186,11 @@ class ATNConfig
     }
 
     /**
-     * @uml
-     * @override
      * An ATN configuration is equal to another if both have
      * the same state, they predict the same alternative, and
      * syntactic/semantic contexts are the same.
+     * @uml
+     * @override
      */
     public override bool opEquals(Object o)
     {

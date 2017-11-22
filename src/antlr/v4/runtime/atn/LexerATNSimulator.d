@@ -136,8 +136,12 @@ class LexerATNSimulator : ATNSimulator
 
     public int match(CharStream input, int mode)
     {
-	match_calls++;
+        match_calls++;
         this.mode = mode;
+        debug(LexerATNSimulator) {
+            import std.stdio;
+            writefln("LexerATNSimulator:match input=%s, mode=%s, match_calls=%s", input, mode, match_calls);
+        }
         int mark = input.mark();
         try {
             this.startIndex = input.index();
@@ -174,21 +178,19 @@ class LexerATNSimulator : ATNSimulator
      */
     public override void clearDFA()
     {
-	for (int d = 0; d < decisionToDFA.length; d++) {
+        for (int d = 0; d < decisionToDFA.length; d++) {
             decisionToDFA[d] = new DFA(atn.getDecisionState(d), d);
         }
     }
 
     protected int matchATN(CharStream input)
     {
-	ATNState startState = atn.modeToStartState[mode];
-        debug
-            writefln("matchATN mode %1$d start: %2$s\n", mode, startState);
+        ATNState startState = atn.modeToStartState[mode];
         int old_mode = mode;
-
         ATNConfigSet s0_closure = computeStartState(input, startState);
         bool suppressEdge = s0_closure.hasSemanticContext;
-
+        debug(LexerATNSimulator)
+            writefln("2matchATN mode %1$d start: %2$s\n", mode, startState);
         s0_closure.hasSemanticContext = false;
         DFAState next = addDFAState(s0_closure);
         if (!suppressEdge) {
@@ -197,7 +199,7 @@ class LexerATNSimulator : ATNSimulator
 
         int predict = execATN(input, next);
 
-        debug
+        debug(LexerATNSimulator)
             writefln("DFA after matchATN: %1$s\n", decisionToDFA[old_mode].toLexerString());
 
         return predict;
@@ -387,7 +389,7 @@ class LexerATNSimulator : ATNSimulator
 
                     bool treatEofAsEpsilon = t == IntStreamConstant.EOF;
                     if (closure(input, new LexerATNConfig(cast(LexerATNConfig)c, target, lexerActionExecutor),
-                                     reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
+                                reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
                         // any remaining configs for this alt have a lower priority than
                         // the one that just reached an accept state.
                         skipAlt = c.alt;
@@ -428,11 +430,16 @@ class LexerATNSimulator : ATNSimulator
     protected ATNConfigSet computeStartState(CharStream input, ATNState p)
     {
         PredictionContext initialContext = PredictionContext.EMPTY;
-        ATNConfigSet configs;
+        ATNConfigSet configs = new OrderedATNConfigSet();
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             ATNState target = p.transition(i).target;
+                    debug(LexerATNSimulator)
+                        writefln("computeStartState initialContext = %3$s, input %1$s, start: %2$s\n", input, p, initialContext);
             LexerATNConfig c = new LexerATNConfig(target, i+1, initialContext);
+            debug(LexerATNSimulator)
+                writefln("1computeStartState initialContext = %3$s, input %1$s, start: %2$s\n", input, p, initialContext);
             closure(input, c, configs, false, false, false);
+            writefln("2computeStartState initialContext = %3$s, input %1$s, start: %2$s\n", input, p, initialContext);
         }
         return configs;
     }
@@ -449,14 +456,14 @@ class LexerATNSimulator : ATNSimulator
      * {@code false}.
      */
     protected bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs,
-        bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
+                           bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
     {
-        debug {
-            writefln("closure(%1$s)", config.toString(recog, true));
+        debug(LexerATNSimulator) {
+            writefln("closure start = (%1$s), config.state=%2$s, configs=%3$s", config.toString(recog, true), config.state, configs);
         }
-
-        if (config.state.classinfo == RuleStopState.classinfo) {
-            debug  {
+writefln("cl %s", cast(RuleStopState)config.state);
+        if (cast(RuleStopState)config.state) {
+            debug(LexerATNSimulator)  {
                 if (recog !is null) {
                     writefln("closure at %1$s rule stop %2$s\n", recog.getRuleNames()[config.state.ruleIndex], config);
                 }
@@ -468,14 +475,16 @@ class LexerATNSimulator : ATNSimulator
             if (config.context is null || config.context.hasEmptyPath()) {
                 if (config.context is null || config.context.isEmpty()) {
                     configs.add(config);
+                    writefln("cvvvvvvvvvvvvvvvvvvvvvvvvvvv");
                     return true;
                 }
                 else {
+                    writefln("chhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                     configs.add(new LexerATNConfig(config, config.state, PredictionContext.EMPTY));
                     currentAltReachedAcceptState = true;
                 }
             }
-
+            writefln("ppppppppppppppppp");
             if (config.context !is null && !config.context.isEmpty() ) {
                 for (auto i = 0; i < config.context.size; i++) {
                     if (config.context.getReturnState(i) != PredictionContext.EMPTY_RETURN_STATE) {
@@ -492,10 +501,14 @@ class LexerATNSimulator : ATNSimulator
         }
 
         // optimization
-        if ( !config.state.onlyHasEpsilonTransitions() ) {
+        if (!config.state.onlyHasEpsilonTransitions) {
             if (!currentAltReachedAcceptState || !config.hasPassedThroughNonGreedyDecision()) {
+                writefln("cl---------123 %s, %s: %s", currentAltReachedAcceptState, config.hasPassedThroughNonGreedyDecision, configs);
                 configs.add(config);
             }
+        }
+        debug(LexerATNSimulator) {
+            writefln("2closure(%1$s)", config.toString(recog, true));
         }
 
         ATNState p = config.state;
@@ -507,6 +520,7 @@ class LexerATNSimulator : ATNSimulator
                                                        speculative, treatEofAsEpsilon);
             }
         }
+        debug(LexerATNSimulator) writefln("end of closure");
         return currentAltReachedAcceptState;
     }
 
@@ -717,30 +731,34 @@ class LexerATNSimulator : ATNSimulator
          * should not contain any configurations with unevaluated predicates.
          */
         assert(!configs.hasSemanticContext);
-
+        writefln("------------->configs %s", configs);
         DFAState proposed = new DFAState(configs);
-        ATNConfig firstConfigWithRuleStopState = null;
+        ATNConfig firstConfigWithRuleStopState;
         foreach (ATNConfig c; configs.configs) {
-            if (c.state.classinfo == RuleStopState.classinfo)	{
+            writefln("------------->c %s: state %s, typeid c.state = %s", c, c.state, typeid(c.state));
+            if (cast(RuleStopState)c.state)	{
                 firstConfigWithRuleStopState = c;
                 break;
             }
         }
-        if (firstConfigWithRuleStopState !is null) {
+        if (firstConfigWithRuleStopState) {
+            writefln("------------->firstConfigWithRuleStopState = %s", firstConfigWithRuleStopState);
             proposed.isAcceptState = true;
             proposed.lexerActionExecutor = (cast(LexerATNConfig)firstConfigWithRuleStopState).getLexerActionExecutor();
             proposed.prediction = atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex];
         }
-
-		DFA dfa = decisionToDFA[mode];
-                DFAState existing = dfa.states[proposed];
-                if (existing !is null) return existing;
-                DFAState newState = proposed;
-                newState.stateNumber = to!int(dfa.states.length);
-                configs.readonly(true);
-                newState.configs = configs;
-                dfa.states[newState] =  newState;
-                return newState;
+        DFA dfa = decisionToDFA[mode];
+        //DFAState existing = dfa.states[proposed];
+        if (proposed in dfa.states)
+            return dfa.states[proposed];
+        DFAState newState = proposed;
+        newState.stateNumber = to!int(dfa.states.length);
+        configs.readonly(true);
+        newState.configs = configs;
+        writefln("------->  proposed = %s, dfa.states = %s, newState = %s, configs = %s", proposed, dfa.states, newState, configs);
+        dfa.states[newState] =  newState;
+        writefln("------------->proposed = %s, dfa.states = %s, mode = %s", proposed, dfa.states, mode);
+        return newState;
     }
 
     public DFA getDFA(int mode)

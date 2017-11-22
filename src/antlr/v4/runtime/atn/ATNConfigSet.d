@@ -112,7 +112,7 @@ class ATNConfigSet
         {
             auto a = cast(ATNConfig) aObj;
             auto b = cast(ATNConfig) bObj;
-            if (a == b)
+            if (a is b)
                 return true;
             if (a is null || b is null)
                 return false;
@@ -233,15 +233,19 @@ class ATNConfigSet
      */
     public bool add(ATNConfig config, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-	if ( readonly_ ) throw new IllegalStateException("This set is readonly");
-        if ( config.semanticContext!=SemanticContext.NONE ) {
+	if (readonly_) throw new IllegalStateException("This set is readonly");
+        if (config.semanticContext != SemanticContext.NONE) {
             hasSemanticContext = true;
         }
         if (config.getOuterContextDepth() > 0) {
             dipsIntoOuterContext = true;
         }
+        import std.stdio;
+        writefln("8888889999999 ATNConfigSet.d: %s, lup = %s", config, typeid(configLookup));
         ATNConfig existing = configLookup.getOrAdd(config);
-        if ( existing==config ) { // we added this new one
+        import std.stdio;
+        writefln("778888889999999 ATNConfigSet.d: %s, ouc = %s", config, config.getOuterContextDepth);
+        if (existing == config) { // we added this new one
             cachedHashCode = -1;
             configs ~= config;  // track order here
             return true;
@@ -441,4 +445,22 @@ class ATNConfigSet
         return this.readonly_;
     }
 
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+    import std.stdio;  
+    @Tags("atnConfig")
+	@("atnConfigSetTest")
+	unittest {
+            ATNConfigSet atnConfigSet = new ATNConfigSet;
+            atnConfigSet.should.not.beNull;
+            atnConfigSet.readonly.should.equal(false);
+            atnConfigSet.toString.should.equal("[]");
+            atnConfigSet.isEmpty.should.equal(true);
+            atnConfigSet.toHash.should.equal(12);
+            ATNConfig atnConf = new ATNConfig;
+            atnConfigSet.add(atnConf);
+        }
 }

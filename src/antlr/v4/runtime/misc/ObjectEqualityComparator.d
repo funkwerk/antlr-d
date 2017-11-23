@@ -37,7 +37,7 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
 	if (a is null) {
             return b is null;
         }
-        return a == b;
+        return a is b;
     }
 
     /**

@@ -34,7 +34,6 @@ module antlr.v4.runtime.atn.SemanticContext;
 import std.conv;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.InterfaceRecognizer;
-//import antlr.v4.runtime.atn.PrecedencePredicate;
 import antlr.v4.runtime.atn.AND;
 import antlr.v4.runtime.atn.OR;
 import antlr.v4.runtime.misc.MurmurHash;

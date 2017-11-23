@@ -73,7 +73,6 @@ class DFAState
     public ATNConfigSet configs = new ATNConfigSet;
 
     /**
-     * @uml
      * {@code edges[symbol]} points to target of symbol. Shift up by 1 so (-1)
      * {@link Token#EOF} maps to {@code edges[0]}.
      */
@@ -82,7 +81,6 @@ class DFAState
     public bool isAcceptState = false;
 
     /**
-     * @uml
      * if accept state, what ttype do we match or alt do we predict?
      * This is set to {@link ATN#INVALID_ALT_NUMBER} when {@link #predicates}{@code !=null} or
      * {@link #requiresFullContext}.
@@ -92,7 +90,6 @@ class DFAState
     public LexerActionExecutor lexerActionExecutor;
 
     /**
-     * @uml
      * Indicates that this state was created during SLL prediction that
      * discovered a conflict between the configurations in the state. Future
      * {@link ParserATNSimulator#execATN} invocations immediately jumped doing
@@ -101,7 +98,6 @@ class DFAState
     public bool requiresFullContext;
 
     /**
-     * @uml
      * During SLL parsing, this is a list of predicates associated with the
      * ATN configurations of the DFA state. When we have predicates,
      * {@link #requiresFullContext} is {@code false} since full context prediction evaluates predicates
@@ -131,7 +127,6 @@ class DFAState
     }
 
     /**
-     * @uml
      * Get the set of all alts mentioned by all ATN configurations in the
      * DFA state.
      */
@@ -235,6 +230,7 @@ version(unittest)
             dfaState.should.not.beNull;
             DFAState dfaState1 = new DFAState(1);
             dfaState1.should.not.beNull;
+            dfaState.toString.should.equal("0:[]");
             dfaState1.toString.should.equal("1:[]");
             DFAState[DFAState] dfa2dfa;
             dfa2dfa[dfaState] = dfaState;

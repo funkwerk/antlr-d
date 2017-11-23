@@ -48,6 +48,13 @@ import antlr.v4.runtime.misc.MurmurHash;
  * chain used to arrive at the state.  The semantic context is
  * the tree of semantic predicates encountered before reaching
  * an ATN state.
+ * @uml
+ * A tuple: (ATN state, predicted alt, syntactic, semantic context).
+ * The syntactic context is a graph-structured stack node whose
+ * path(s) to the root is the rule invocation(s)
+ * chain used to arrive at the state.  The semantic context is
+ * the tree of semantic predicates encountered before reaching
+ * an ATN state.
  */
 class ATNConfig
 {
@@ -65,7 +72,6 @@ class ATNConfig
     public ATNState state;
 
     /**
-     * @uml
      * What alt (or lexer rule) is predicted by this configuration?
      */
     public int alt;
@@ -78,7 +84,6 @@ class ATNConfig
     public PredictionContext context;
 
     /**
-     * @uml
      * We cannot execute predicates dependent upon local context unless
      * we know for sure we are in the correct context. Because there is
      * no way to do this efficiently, we simply cannot evaluate

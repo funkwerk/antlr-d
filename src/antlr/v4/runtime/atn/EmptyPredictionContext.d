@@ -87,7 +87,7 @@ class EmptyPredictionContext : SingletonPredictionContext
      */
     public override bool opEquals(Object o)
     {
-        return this == o;
+        return this is o;
     }
 
     /**

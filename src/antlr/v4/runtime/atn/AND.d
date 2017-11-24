@@ -38,7 +38,7 @@ class AND : Operator
      */
     public override bool opEquals(Object obj)
     {
-	if (this == obj) return true;
+	if (this is obj) return true;
         if (obj.classinfo != AND.classinfo) return false;
         AND other = cast(AND)obj;
         return equal(this.opnds, other.opnds);

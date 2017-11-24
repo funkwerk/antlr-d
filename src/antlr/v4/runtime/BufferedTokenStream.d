@@ -207,10 +207,6 @@ class BufferedTokenStream : TokenStream
         if (fetchedEOF) {
             return 0;
         }
-        debug(BuffertTokenStream) {
-            import std.stdio;
-            writefln("after fetchedEOF n=%s", n);
-        }
         for (int i = 0; i < n; i++) {
             Token t = tokenSource.nextToken();
             if (cast(WritableToken)t) {
@@ -218,7 +214,7 @@ class BufferedTokenStream : TokenStream
             }
             debug(BuffertTokenStream) {
                 import std.stdio;
-                writefln("readToken t=%s, index=%s", t, i);
+                writefln("readToken t=%s, index=%s, tokens=%s", t, i, tokens);
             }
             tokens ~= t;
             if (t.getType == TokenConstantDefinition.EOF) {

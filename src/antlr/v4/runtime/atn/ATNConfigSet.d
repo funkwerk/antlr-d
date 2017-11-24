@@ -110,12 +110,12 @@ class ATNConfigSet
 
         public static bool opEquals(Object aObj, Object bObj)
         {
+            if (aObj is null || bObj is null)
+                return false;
             auto a = cast(ATNConfig) aObj;
             auto b = cast(ATNConfig) bObj;
             if (a is b)
                 return true;
-            if (a is null || b is null)
-                return false;
             return a.state.stateNumber == b.state.stateNumber
                 && a.alt == b.alt
                 && a.semanticContext.opEquals(b.semanticContext);
@@ -240,11 +240,7 @@ class ATNConfigSet
         if (config.getOuterContextDepth() > 0) {
             dipsIntoOuterContext = true;
         }
-        import std.stdio;
-        writefln("8888889999999 ATNConfigSet.d: %s, lup = %s", config, typeid(configLookup));
         ATNConfig existing = configLookup.getOrAdd(config);
-        import std.stdio;
-        writefln("778888889999999 ATNConfigSet.d: %s, ouc = %s", config, config.getOuterContextDepth);
         if (existing == config) { // we added this new one
             cachedHashCode = -1;
             configs ~= config;  // track order here
@@ -460,7 +456,5 @@ version(unittest) {
             atnConfigSet.toString.should.equal("[]");
             atnConfigSet.isEmpty.should.equal(true);
             atnConfigSet.toHash.should.equal(0);
-            // ATNConfig atnConf = new ATNConfig;
-            // atnConfigSet.add(atnConf);
         }
 }

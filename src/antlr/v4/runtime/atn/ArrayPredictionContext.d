@@ -121,7 +121,7 @@ class ArrayPredictionContext : PredictionContext
      */
     public override bool opEquals(Object o)
     {
-        if (this == o) {
+        if (this is o) {
             return true;
         }
         else if (typeid(typeof(o)) != typeid(ArrayPredictionContext*) ) {

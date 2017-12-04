@@ -193,7 +193,10 @@ class BufferedTokenStream : TokenStream
     body
     {
             int n = i - to!int(tokens.length) + 1; // how many more elements we need?
-            //System.out.println("sync("+i+") needs "+n);
+            debug(Lexer) {
+                import std.stdio;
+                writefln("sync(%s) needs %s", i, n);
+            }
             if ( n > 0 ) {
                 int fetched = fetch(n);
                 return fetched >= n;

@@ -138,10 +138,10 @@ class LexerATNSimulator : ATNSimulator
     {
         match_calls++;
         this.mode = mode;
-        int mark = input.mark();
+        int mark = input.mark;
         try {
-            this.startIndex = input.index();
-            this.prevAccept.reset();
+            this.startIndex = input.index;
+            this.prevAccept.reset;
             DFA dfa = decisionToDFA[mode];
             if (dfa.s0 is null) {
                 return matchATN(input);
@@ -190,33 +190,28 @@ class LexerATNSimulator : ATNSimulator
         if (!suppressEdge) {
             decisionToDFA[mode].s0 = next;
         }
-
         int predict = execATN(input, next);
 
         debug(LexerATNSimulator)
-            writefln("DFA after matchATN: %1$s\n", decisionToDFA[old_mode].toLexerString());
-
+            writefln("DFA after matchATN:\n%1$s\n", decisionToDFA[old_mode].toLexerString());
         return predict;
     }
 
     protected int execATN(CharStream input, DFAState ds0)
     {
-	//System.out.println("enter exec index "+input.index()+" from "+ds0.configs);
-        debug {
-            writefln("start state closure=%s\n", ds0.configs);
+        debug(LexerATNSimulator) {
+            writefln("enter exec index %s from %s", input.index, ds0.configs);
         }
 
         if (ds0.isAcceptState) {
             // allow zero-length tokens
             captureSimState(prevAccept, input, ds0);
         }
-
         int t = input.LA(1);
-
         DFAState s = ds0; // s is current/from DFA state
 
         while (true) { // while more work
-            debug {
+            debug(LexerATNSimulator) {
                 writefln("execATN loop starting closure: %s\n", s.configs);
             }
             // As we move src->trg, src->trg, we keep track of the previous trg to
@@ -240,7 +235,6 @@ class LexerATNSimulator : ATNSimulator
             if (target is null) {
                 target = computeTargetState(input, s, t);
             }
-
             if (target == ERROR) {
                 break;
             }
@@ -258,11 +252,9 @@ class LexerATNSimulator : ATNSimulator
                     break;
                 }
             }
-
             t = input.LA(1);
             s = target; // flip; current DFA target becomes new src/from state
         }
-
         return failOrAccept(prevAccept, input, s.configs, t);
     }
 
@@ -344,7 +336,6 @@ class LexerATNSimulator : ATNSimulator
             if (t==IntStreamConstant.EOF && input.index() == startIndex) {
                 return TokenConstantDefinition.EOF;
             }
-
             throw new LexerNoViableAltException(recog, input, startIndex, reach);
         }
     }
@@ -641,9 +632,9 @@ class LexerATNSimulator : ATNSimulator
         }
     }
 
-    public void captureSimState(SimState settings, CharStream input, DFAState dfaState)
+    public void captureSimState(ref SimState settings, CharStream input, DFAState dfaState)
     {
-        settings.index = input.index();
+        settings.index = input.index;
         settings.line = line;
         settings.charPos = charPositionInLine;
         settings.dfaState = dfaState;
@@ -696,7 +687,6 @@ class LexerATNSimulator : ATNSimulator
     }
 
     /**
-     * @uml
      * Add a new DFA state if there isn't one with this set of
      * configurations already. This method also detects the first
      * configuration containing an ATN rule stop state. Later, when

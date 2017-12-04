@@ -215,9 +215,11 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                     //                                                             " at index "+input.index());
                     debug(Lexer) {
                         import std.stdio;
-                        writefln("interp = %s i= %s %s %s, %s input=%s, mode=%s",
-                                 getInterpreter,_tokenStartCharIndex, _tokenStartLine, _type,
-                                 cast(char)_input.LA(1), _input, _mode);
+                        writefln("nextToken line = %s at %s in mode %s at index %s",
+                                 _tokenStartLine,
+                                 cast(char)_input.LA(1),
+                                 _mode,
+                                 _input.index);
                     }
                     int ttype;
                     try {

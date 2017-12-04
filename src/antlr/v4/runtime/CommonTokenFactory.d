@@ -11,8 +11,6 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class CommonTokenFactory
 /**
- * TODO add class description
- * @uml
  * This default implementation of {@link TokenFactory} creates
  * {@link CommonToken} objects.
  */

@@ -18,6 +18,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
 {
 
     /**
+     * The single instance of CommonTokenFactory.
      * @uml
      * The default {@link CommonTokenFactory} instance.
      *
@@ -25,7 +26,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
      * This token factory does not explicitly copy token text when constructing
      * tokens.</p>
      */
-    public static TokenFactory!CommonToken DEFAULT;
+    private static __gshared CommonTokenFactory instance_;
 
     /**
      * @uml
@@ -93,6 +94,24 @@ class CommonTokenFactory : TokenFactory!CommonToken
     public CommonToken create(int type, string text)
     {
         return new CommonToken(type, text);
+    }
+
+    /**
+     * Creates the single instance of CommonTokenFactory.
+     * @uml
+     * @shared
+     */
+    private shared static this()
+    {
+        instance_ = new CommonTokenFactory;
+    }
+
+    /**
+     * Returns: A single instance of CommonTokenFactory.
+     */
+    public static CommonTokenFactory DEFAULT()
+    {
+        return instance_;
     }
 
 }

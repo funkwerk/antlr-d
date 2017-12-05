@@ -193,15 +193,10 @@ class BufferedTokenStream : TokenStream
     body
     {
             int n = i - to!int(tokens.length) + 1; // how many more elements we need?
-            debug(Lexer) {
-                import std.stdio;
-                writefln("sync(%s) needs %s", i, n);
-            }
             if ( n > 0 ) {
                 int fetched = fetch(n);
                 return fetched >= n;
             }
-
             return true;
     }
 
@@ -214,10 +209,6 @@ class BufferedTokenStream : TokenStream
             Token t = tokenSource.nextToken();
             if (cast(WritableToken)t) {
                 (cast(WritableToken)t).setTokenIndex(to!int(tokens.length));
-            }
-            debug(BuffertTokenStream) {
-                import std.stdio;
-                writefln("readToken t=%s, index=%s, tokens=%s", t, i, tokens);
             }
             tokens ~= t;
             if (t.getType == TokenConstantDefinition.EOF) {

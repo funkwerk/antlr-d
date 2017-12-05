@@ -43,7 +43,11 @@ import antlr.v4.runtime.misc.Interval;
 
 // Class ANTLRInputStream
 /**
- * TODO add class description
+ * Vacuum all input from a {@link Reader}/{@link InputStream} and then treat it
+ * like a {@code char[]} buffer. Can also pass in a {@link String} or
+ * {@code char[]} to use.
+ *
+ * <p>If you need encoding, pass in stream/reader with correct encoding.</p>
  */
 class ANTLRInputStream : CharStream
 {
@@ -117,16 +121,13 @@ class ANTLRInputStream : CharStream
 
     public void load(File r, int size, int readChunkSize)
     {
-        if (readChunkSize <= 0) {
-            readChunkSize = READ_BUFFER_SIZE;
-        }
-        debug(ANTLRInput) writefln("load %1$s in chunks of %2$s", size, readChunkSize);
+        debug(ANTLRInput)
+            writefln("load %1$s in chunks of %2$s", size, readChunkSize);
         data = to!(char[])(r.name.readText);
-        int p = to!int(data.length);
         // set the actual size of the data available;
-        // EOF subtracted one above in p+=numRead; add one back
-        n = p + 1;
-        debug(ANTLRInput) writefln("n= $s",n);
+        n = to!int(data.length);
+        debug(ANTLRInput)
+            writefln("n= $s", n);
     }
 
     /**
@@ -172,11 +173,17 @@ class ANTLRInputStream : CharStream
             }
         }
         if (( p + i - 1) >= n) {
-            //System.out.println("char LA("+i+")=EOF; p="+p);
+            debug(ANTLRInput) {
+                import std.stdio;
+                writefln("char LA(%s)=EOF; p=%s", i, p);
+            }
             return IntStreamConstant.EOF;
         }
-        //System.out.println("char LA("+i+")="+(char)data[p+i-1]+"; p="+p);
-        //System.out.println("LA("+i+"); p="+p+" n="+n+" data.length="+data.length);
+        debug(ANTLRInput) {
+                import std.stdio;
+                writefln("LA(%s); p=%s n=%s data.length=%s", i, p, n, data.length);
+                writefln("char LA(%s)=%s; p=%s", i, data[p+i-1], p);
+            }
         return data[p+i-1];
     }
 

@@ -204,15 +204,12 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                 }
                 _token = null;
                 _channel = TokenConstantDefinition.DEFAULT_CHANNEL;
-                _tokenStartCharIndex = _input.index();
-                _tokenStartCharPositionInLine = getInterpreter().getCharPositionInLine();
-                _tokenStartLine = getInterpreter().getLine();
+                _tokenStartCharIndex = _input.index;
+                _tokenStartCharPositionInLine = getInterpreter.getCharPositionInLine();
+                _tokenStartLine = getInterpreter.getLine;
                 _text = null;
                 do {
                     _type = TokenConstantDefinition.INVALID_TYPE;
-                    //				writeln("nextToken line "+tokenStartLine+" at "+((char)input.LA(1))+
-                    //								   " in mode "+mode+
-                    //                                                             " at index "+input.index());
                     debug(Lexer) {
                         import std.stdio;
                         writefln("nextToken line = %s at %s in mode %s at index %s",
@@ -223,7 +220,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                     }
                     int ttype;
                     try {
-                        ttype = getInterpreter().match(_input, _mode);
+                        ttype = getInterpreter.match(_input, _mode);
                     }
                     catch (LexerNoViableAltException e) {
                         notifyListeners(e);		// report error
@@ -238,7 +235,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                         continue outer;
                     }
                 } while (_type == MORE );
-                if (_token is null) emit();
+
+                if (_token is null)
+                    emit();
                 return _token;
             }
         }
@@ -325,7 +324,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public void emit(Token token)
     {
-        debug writefln("emit %s", token);
+        debug(Lexer) writefln("emit %s", token);
         this._token = token;
     }
 

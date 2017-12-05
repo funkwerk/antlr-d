@@ -20,7 +20,7 @@ class Test {
 		lexer.getRuleNames.should.equal(["T__0", "ID", "WS"]);
 		auto cts = new CommonTokenStream(lexer);
 		cts.should.not.beNull;
-		cts.getNumberOfOnChannelTokens.should.equal(1);
+		cts.getNumberOfOnChannelTokens.should.equal(5);
 		file.close();
 	}
 

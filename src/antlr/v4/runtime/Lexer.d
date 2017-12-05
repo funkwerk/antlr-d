@@ -324,7 +324,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public void emit(Token token)
     {
-        debug(Lexer) writefln("emit %s", token);
+        debug(Lexer) writefln("emit: token=%s", token);
         this._token = token;
     }
 

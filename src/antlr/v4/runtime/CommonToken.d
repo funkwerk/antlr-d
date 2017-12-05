@@ -338,10 +338,10 @@ class CommonToken : WritableToken
     public override string toString()
     {
         string channelStr = "";
-        if (channel>0) {
+        if (channel > 0) {
             channelStr=",channel=" ~ to!string(channel);
         }
-        string txt = getText();
+        string txt = getText;
         if (txt) {
             txt = txt.replace("\n","\\n");
             txt = txt.replace("\r","\\r");

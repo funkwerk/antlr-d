@@ -16,7 +16,7 @@ BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse\
- -debug=BuffertTokenStream -debug=Lexer -debug=LexerATNSimulator -debug=Array2HashSet
+ -debug=Lexer
 
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 

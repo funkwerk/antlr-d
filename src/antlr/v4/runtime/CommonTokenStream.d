@@ -154,10 +154,11 @@ class CommonTokenStream : BufferedTokenStream
     {
         int n = 0;
         fill();
-        for (int i = 0; i < to!int(tokens.length); i++) {
-            Token t = tokens[i];
-            if (t.getChannel() == channel) n++;
-            if (t.getType() == TokenConstantDefinition.EOF) break;
+        foreach (t; tokens) {
+            if (t.getChannel == channel)
+                n++;
+            if (t.getType == TokenConstantDefinition.EOF)
+                break;
         }
         return n;
     }

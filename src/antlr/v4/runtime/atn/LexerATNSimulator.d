@@ -71,8 +71,6 @@ import antlr.v4.runtime.misc.Interval;
 class LexerATNSimulator : ATNSimulator
 {
 
-    public static bool debug_flag = false;
-
     /**
      * @uml
      * false
@@ -278,7 +276,7 @@ class LexerATNSimulator : ATNSimulator
 
         DFAState target = s.edges[t - MIN_DFA_EDGE];
         if (target !is null)
-            debug {
+            debug(LexerATNSimulator) {
                 writefln("reuse state %1$s"~
                          " edge to %2$s", s.stateNumber, target.stateNumber);
             }
@@ -358,7 +356,7 @@ class LexerATNSimulator : ATNSimulator
                 continue;
             }
 
-            debug {
+            debug(LexerATNSimulator) {
                 writefln("testing %s at %s\n", getTokenName(t), c.toString(recog, true));
             }
 
@@ -389,7 +387,7 @@ class LexerATNSimulator : ATNSimulator
     protected void accept(CharStream input, LexerActionExecutor lexerActionExecutor, int startIndex,
                           int index, int line, int charPos)
     {
-	debug {
+	debug(LexerATNSimulator) {
             writefln("ACTION %s\n", lexerActionExecutor);
         }
 
@@ -529,7 +527,7 @@ class LexerATNSimulator : ATNSimulator
                 test them, we cannot cash the DFA state target of ID.
             */
             PredicateTransition pt = cast(PredicateTransition)t;
-            debug {
+            debug(LexerATNSimulator) {
                 writefln("EVAL rule %1$s:%2$s", pt.ruleIndex, pt.predIndex);
             }
             configs.hasSemanticContext = true;
@@ -673,7 +671,7 @@ class LexerATNSimulator : ATNSimulator
             return;
         }
 
-        debug {
+        debug(LexerATNSimulator) {
             writefln("EDGE %1$s -> %2$s upon %3$s", p, q, t);
         }
 
@@ -770,7 +768,7 @@ class LexerATNSimulator : ATNSimulator
     {
         if (t == -1) return "EOF";
         //if ( atn.g!=null ) return atn.g.getTokenDisplayName(t);
-        return format("'$s'", t);
+        return format("'%s'", t);
     }
 
 }

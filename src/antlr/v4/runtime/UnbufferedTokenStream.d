@@ -180,7 +180,7 @@ class UnbufferedTokenStream : TokenStream
 	if (n >= tokens.length) {
             tokens.length = tokens.length * 2;
         }
-        if (t.classinfo == WritableToken.classinfo) {
+        if (cast(WritableToken)t) {
             (cast(WritableToken)t).setTokenIndex(getBufferStartIndex() + n);
         }
         tokens[n++] = t;

@@ -54,6 +54,8 @@ version(unittest) {
             lexerHS.toString.should.equal("{(-1,1,[$]), (-1,2,[$])}");
             ATNConfig atnC2 = new ATNConfig(basicS, 3, predCo);
             resConfig = lexerHS.add(atnC2);
-            lexerHS.toString.should.equal("{(-1,1,[$]), (-1,2,[$]), (-1,3,[$])}");
+            Assert.equal(lexerHS.contains(atnC), true);
+            Assert.equal(lexerHS.contains(atnC1), true);
+            Assert.equal(lexerHS.contains(atnC2), true);
         }
 }

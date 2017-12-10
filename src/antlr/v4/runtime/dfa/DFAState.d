@@ -213,39 +213,3 @@ class DFAState
     }
 
 }
-
-version(unittest)
-{
-    import fluent.asserts;
-    import unit_threaded;
-    import std.stdio;            
-    import antlr.v4.runtime.dfa.DFA;
-    import antlr.v4.runtime.atn.DecisionState;
-    import antlr.v4.runtime.atn.TokensStartState;
-
-    @Tags("dfaState")
-        @("testDFAState")
-        unittest {
-            DFAState dfaState = new DFAState(0);
-            dfaState.should.not.beNull;
-            DFAState dfaState1 = new DFAState(1);
-            dfaState1.should.not.beNull;
-            dfaState.toString.should.equal("0:[]");
-            dfaState1.toString.should.equal("1:[]");
-            DFAState[DFAState] dfa2dfa;
-            dfa2dfa[dfaState] = dfaState;
-            dfa2dfa.length.should.equal(1);
-            int[] alts = dfaState.getAltSet;
-            alts.length.should.equal(0);
-            DecisionState startState = new TokensStartState;
-            auto dfa = new DFA(startState);
-            Assert.equal(dfaState.opEquals(dfa), false);
-            Assert.equal(dfaState.opEquals(null), false);
-            Assert.equal(dfaState.opEquals(dfaState), true);
-            Assert.equal(dfaState.opEquals(dfaState1), true);
-            static if (size_t.sizeof == 4)
-                dfaState.toHash.should.equal(2565180293U);
-            else
-                dfaState.toHash.should.equal(10867659963865780077UL);
-        }
-}

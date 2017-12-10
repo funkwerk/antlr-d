@@ -13,6 +13,9 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 /**
  * This default implementation of {@link TokenFactory} creates
  * {@link CommonToken} objects.
+ * <p>
+ * This token factory does not explicitly copy token text when constructing
+ * tokens.</p>
  */
 class CommonTokenFactory : TokenFactory!CommonToken
 {
@@ -107,7 +110,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
     }
 
     /**
-     * Returns: A single instance of CommonTokenFactory.
+     * Returns: A single default instance of CommonTokenFactory.
      */
     public static CommonTokenFactory DEFAULT()
     {

@@ -245,13 +245,13 @@ class ANTLRInputStream : CharStream
     {
         int start = interval.a;
         int stop = interval.b;
-        if (stop >= n) stop = n-1;
-        int count = stop - start + 1;
+        if (stop >= n)
+            stop = n-1;
         if (start >= n) return "";
         //		System.err.println("data: "+Arrays.toString(data)+", n="+n+
         //						   ", start="+start+
         //						   ", stop="+stop);
-        return format("%1$s %2$s %3$s", data, start, count);
+        return to!string(data[start..stop+1]);
     }
 
     /**

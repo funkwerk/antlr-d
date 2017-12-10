@@ -192,7 +192,6 @@ class RuntimeMetaData
 
 }
 
-@("Check version number 4.5")
 unittest
 {
     assert("4.5" == RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));

@@ -545,78 +545,72 @@ class Array2DHashSet(T)
     }
 
 }
-version(unittest) {
-    import fluent.asserts;
-    import unit_threaded;
-    import std.stdio;  
-    @Tags("array2Set")
-        @("Array2DHashSetTest")
-        unittest
-            {
-                class Y {}
-                class Z : Y {}
-                Y y = new Y;
-                auto x0 = new Array2DHashSet!Z;
-                auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);
-                auto ex = x.add(y);
-                assert(x.toTableString.length > 140);
-                auto sr = x.toTableString;
-                ex = x.add(y);
-                assert(x.toString.length > 50);
-                Y y1 = new Y();
-                ex = x.add(y1);
-                Y y2 = new Y();
-                ex = x.add(y2);
-                assert(x.toArray.length == 3);
-                assert(x.toArray.length == 3);
-                Y y3 = new Z;
-                ex = x.add(y3);
-                assert(y1.toHash != y2.toHash);
-                assert(x.toArray.length == 4);
-                //writefln("x4 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
-                ex = x.remove(y3);
-                assert(x.toArray.length == 3);
-                ex = x.removeAll([y, y3]);
-                assert(x.toArray.length == 2);
-                x.clear;
-                assert(x.size == 0);
-                x = new Array2DHashSet!Y(null, null, 16, 1);
 
-                foreach (el; 0..120) {
-                    y2 = new Y();
-                    ex = x.add(y2);
-                }
-                //writefln("x8 %1$s, number of elements %2$s", x.toTableString, x.n);
-                assert(y3 != y2);
-                assert(x.get(y) is null);
-                assert(x.get(y2) !is null);
-                assert(x.get(null) is null);
-                assert(x.toHash > 1000);
-                assert(x.contains(y) == false);
-                assert(x.contains(y2) == true);
-                assert(x.contains(null) == false);
-                assert(x.containsAll(x0) == false);
-                assert(x.containsAll(x) == true);
-                x.clear;
-                assert(x.isEmpty == true);
+unittest
+{
+    class Y {}
+    class Z : Y {}
+    Y y = new Y;
+    auto x0 = new Array2DHashSet!Z;
+    auto x = new Array2DHashSet!Y(&ObjectEqualityComparator.hashOf, &ObjectEqualityComparator.opEquals);
+    auto ex = x.add(y);
+    assert(x.toTableString.length > 140);
+    auto sr = x.toTableString;
+    ex = x.add(y);
+    assert(x.toString.length > 50);
+    Y y1 = new Y();
+    ex = x.add(y1);
+    Y y2 = new Y();
+    ex = x.add(y2);
+    assert(x.toArray.length == 3);
+    assert(x.toArray.length == 3);
+    Y y3 = new Z;
+    ex = x.add(y3);
+    assert(y1.toHash != y2.toHash);
+    assert(x.toArray.length == 4);
+    //writefln("x4 %1$s %2$s, exists? -> %2$s", x.toTableString, ex);
+    ex = x.remove(y3);
+    assert(x.toArray.length == 3);
+    ex = x.removeAll([y, y3]);
+    assert(x.toArray.length == 2);
+    x.clear;
+    assert(x.size == 0);
+    x = new Array2DHashSet!Y(null, null, 16, 1);
 
-                auto x1 = new Array2DHashSet!Y(null, null, 16, 8);
-                foreach (el; 0..120) {
-                    y2 = new Y();
-                    ex = x1.add(y2);
-                    ex = x.add(y2);
-                }
-                assert(x.containsAll(x1) == true);
-                assert(x.opEquals(x1) == true);
-                ex = x1.remove(y2);
-                assert(x.containsAll(x1) == true);
-                assert(x.opEquals(x1) == false);
-                assert(x.isEmpty == false);
-                assert(x.size == 120);
-                ex = x.addAll([y, y1, y2]);
-                assert(x.size == 122);
-                assert(ex == false);
-                assert(x.retainAll([y, y2]) == true);
-                assert(x.toArray.length == 2);
-            }
+    foreach (el; 0..120) {
+    y2 = new Y();
+    ex = x.add(y2);
+    }
+    //writefln("x8 %1$s, number of elements %2$s", x.toTableString, x.n);
+    assert(y3 != y2);
+    assert(x.get(y) is null);
+    assert(x.get(y2) !is null);
+    assert(x.get(null) is null);
+    assert(x.toHash > 1000);
+    assert(x.contains(y) == false);
+    assert(x.contains(y2) == true);
+    assert(x.contains(null) == false);
+    assert(x.containsAll(x0) == false);
+    assert(x.containsAll(x) == true);
+    x.clear;
+    assert(x.isEmpty == true);
+
+    auto x1 = new Array2DHashSet!Y(null, null, 16, 8);
+    foreach (el; 0..120) {
+    y2 = new Y();
+    ex = x1.add(y2);
+    ex = x.add(y2);
+    }
+    assert(x.containsAll(x1) == true);
+    assert(x.opEquals(x1) == true);
+    ex = x1.remove(y2);
+    assert(x.containsAll(x1) == true);
+    assert(x.opEquals(x1) == false);
+    assert(x.isEmpty == false);
+    assert(x.size == 120);
+    ex = x.addAll([y, y1, y2]);
+    assert(x.size == 122);
+    assert(ex == false);
+    assert(x.retainAll([y, y2]) == true);
+    assert(x.toArray.length == 2);
 }

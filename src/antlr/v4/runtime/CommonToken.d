@@ -118,8 +118,7 @@ class CommonToken : WritableToken
     }
 
     /**
-     * @uml
-     * onstructs a new {@link CommonToken} with the specified token type and
+     * Constructs a new {@link CommonToken} with the specified token type and
      * text.
      *
      *  @param type The token type.
@@ -134,7 +133,6 @@ class CommonToken : WritableToken
     }
 
     /**
-     * @uml
      * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
      * 	 *
      * <p>

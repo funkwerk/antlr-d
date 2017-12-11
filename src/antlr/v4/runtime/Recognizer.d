@@ -36,6 +36,7 @@ import std.algorithm;
 import std.array;
 import std.conv;
 import antlr.v4.runtime.ANTLRErrorListener;
+import antlr.v4.runtime.ConsoleErrorListener;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
@@ -65,7 +66,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public int[string][string] ruleIndexMapCache;
 
-    public ANTLRErrorListener!(U,V)[] _listeners;
+    public ANTLRErrorListener!(U,V)[] _listeners = [new ConsoleErrorListener!(U,V)];
 
     protected V _interp;
 

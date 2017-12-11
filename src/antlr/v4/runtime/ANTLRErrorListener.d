@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.ANTLRErrorListener;
 
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNSimulator;
@@ -121,7 +121,7 @@ interface ANTLRErrorListener(U, V)
      * @param configs the ATN configuration set where the ambiguity was
      * identified
      */
-    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportAmbiguity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
                                 bool exact, BitSet ambigAlts, ATNConfigSet configs);
 
     /**
@@ -147,7 +147,7 @@ interface ANTLRErrorListener(U, V)
      * @param configs the ATN configuration set where the SLL conflict was
      * detected
      */
-    public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
                                             BitSet conflictingAlts, ATNConfigSet configs);
 
     /**
@@ -188,7 +188,7 @@ interface ANTLRErrorListener(U, V)
      * @param configs the ATN configuration set where the unambiguous prediction
      * was determined
      */
-    public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
                                          int prediction, ATNConfigSet configs);
 
 }

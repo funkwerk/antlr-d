@@ -3,7 +3,7 @@ module antlr.v4.runtime.BaseErrorListener;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
-import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.misc.BitSet;
@@ -22,17 +22,17 @@ class BaseErrorListener(U, V) : ANTLRErrorListener!(U, V)
     {
     }
 
-    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportAmbiguity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
         bool exact, BitSet ambigAlts, ATNConfigSet configs)
     {
     }
 
-    public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
         BitSet conflictingAlts, ATNConfigSet configs)
     {
     }
 
-    public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
         int prediction, ATNConfigSet configs)
     {
     }

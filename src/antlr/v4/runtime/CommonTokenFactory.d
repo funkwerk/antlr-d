@@ -23,11 +23,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
     /**
      * The single instance of CommonTokenFactory.
      * @uml
-     * The default {@link CommonTokenFactory} instance.
-     *
-     * <p>
-     * This token factory does not explicitly copy token text when constructing
-     * tokens.</p>
+     * @__gshared
      */
     private static __gshared CommonTokenFactory instance_;
 

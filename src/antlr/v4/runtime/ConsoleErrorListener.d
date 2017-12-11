@@ -31,6 +31,7 @@
 
 module antlr.v4.runtime.ConsoleErrorListener;
 
+import std.stdio;
 import antlr.v4.runtime.BaseErrorListener;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -47,10 +48,14 @@ class ConsoleErrorListener(U, V) : BaseErrorListener!(U, V)
      */
     private static __gshared ConsoleErrorListener instance_;
 
-    override
-    public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
+    /**
+     * @uml
+     * @override
+     */
+    public override void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
         int charPositionInLine, string msg, RecognitionException!(U,V) e)
     {
+        writefln("line %1$s:%2$s %3$s", line, charPositionInLine, msg);
     }
 
     /**

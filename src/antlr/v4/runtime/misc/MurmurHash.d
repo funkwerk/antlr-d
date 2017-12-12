@@ -164,6 +164,8 @@ class MurmurHash
 
 }
 
+@Tags("murmurHash")
+@("testMurmurHash")
 unittest
 {
     auto testMurmurHash = new MurmurHash;

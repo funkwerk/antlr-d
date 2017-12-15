@@ -66,12 +66,6 @@ import antlr.v4.runtime.misc.Interval;
 class RuleContext : RuleNode, InterfaceRuleContext
 {
 
-    // /**
-    //  * @uml
-    //  * @__gshared
-    //  */
-    // private static __gshared ParserRuleContext EMPTY_;
-
     public RuleContext parent;
 
     public int invokingState = -1;

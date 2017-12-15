@@ -39,7 +39,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.misc.IntervalSet;
 
-// Class Template RecognitionException
+// Class RecognitionException
 /**
  * TODO add class description
  */

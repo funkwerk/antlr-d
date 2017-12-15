@@ -73,12 +73,13 @@ import antlr.v4.runtime.misc.Interval;
  */
 class ParserRuleContext : RuleContext
 {
+
     /**
      * @uml
      * @__gshared
      */
     private static __gshared ParserRuleContext EMPTY_;
-    
+
     /**
      * If we are debugging or building a parse tree for a visitor,
      * we need to track all of the tokens and rule invocations associated
@@ -343,15 +344,7 @@ class ParserRuleContext : RuleContext
                       "start=%2$s, stop=%3$s}", rules,
                       start.getText, stop.getText);
     }
-    
-    /**
-     * Returns: A single instance of ParserRuleContext
-     */
-    public static ParserRuleContext EMPTY()
-    {
-        return EMPTY_;
-    }
-    
+
     /**
      * @uml
      * @shared
@@ -360,4 +353,13 @@ class ParserRuleContext : RuleContext
     {
         EMPTY_ = new ParserRuleContext();
     }
+
+    /**
+     * Returns: A single instance of ParserRuleContext
+     */
+    public static ParserRuleContext EMPTY()
+    {
+        return EMPTY_;
+    }
+
 }

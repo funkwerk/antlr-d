@@ -257,9 +257,9 @@ class ParseTreePatternMatcher
             //			System.out.println("pattern tree = "+tree.toStringTree(parserInterp));
         }
         catch (ParseCancellationException e) {
-            throw cast(RecognitionException!(Token, ATNSimulator))e.getCause();
+            throw cast(RecognitionException)e.getCause();
         }
-        catch (RecognitionException!(Token, ATNSimulator) re) {
+        catch (RecognitionException re) {
             throw re;
         }
         catch (Exception e) {

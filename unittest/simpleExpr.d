@@ -4,6 +4,7 @@ import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
 import ExprLexer;
+import ExprParser;
 import fluent.asserts;
 import unit_threaded;
 
@@ -11,7 +12,7 @@ import unit_threaded;
 class Test {
     
     @Tags("simpleExpr")
-    @("simpleExprTestUnknownToken")
+    @("simpleExpr")
     unittest {
         auto input = "100+2*3";
         auto antlrInput = new ANTLRInputStream(input);

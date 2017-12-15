@@ -34,6 +34,7 @@ import std.array;
 import std.conv;
 import std.algorithm.sorting;
 import antlr.v4.runtime.InterfaceRecognizer;
+import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
@@ -111,12 +112,12 @@ abstract class PredictionContext
     public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
     {
         if (outerContext is null)
-            outerContext = new RuleContext().EMPTY;
+            outerContext = new ParserRuleContext().EMPTY;
 
         // if we are in RuleContext of start rule, s, then PredictionContext
         // is EMPTY. Nobody called us. (if we are empty, return empty)
         if ( outerContext.parent is null ||
-             outerContext == new RuleContext().EMPTY ) {
+             outerContext == new ParserRuleContext().EMPTY ) {
             return PredictionContext.EMPTY;
         }
 

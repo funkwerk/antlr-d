@@ -5,14 +5,13 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ATNConfigSet;
 
 // Class NoViableAltException
 /**
  * TODO add class description
  */
-class NoViableAltException : RecognitionException!(Token, ParserATNSimulator)
+class NoViableAltException : RecognitionException
 {
 
     private ATNConfigSet deadEndConfigs;

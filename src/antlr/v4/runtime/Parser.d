@@ -622,7 +622,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         notifyErrorListeners(getCurrentToken(), msg, null);
     }
 
-    public void notifyErrorListeners(Token offendingToken, string msg, RecognitionException!(Token, ParserATNSimulator) e)
+    public void notifyErrorListeners(Token offendingToken, string msg, RecognitionException e)
     {
         _syntaxErrors++;
         int line = -1;

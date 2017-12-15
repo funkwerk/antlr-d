@@ -45,7 +45,6 @@ import antlr.v4.runtime.tree.ErrorNodeImpl;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.misc.Interval;
 
 // Class ParserRuleContext
@@ -74,7 +73,12 @@ import antlr.v4.runtime.misc.Interval;
  */
 class ParserRuleContext : RuleContext
 {
-
+    /**
+     * @uml
+     * @__gshared
+     */
+    private static __gshared ParserRuleContext EMPTY_;
+    
     /**
      * If we are debugging or building a parse tree for a visitor,
      * we need to track all of the tokens and rule invocations associated
@@ -93,7 +97,7 @@ class ParserRuleContext : RuleContext
      * The exception that forced this rule to return. If the rule successfully
      * completed, this is {@code null}.
      */
-    public RecognitionException!(Token, InterfaceParserATNSimulator) exception;
+    public RecognitionException exception;
 
     public this()
     {
@@ -190,18 +194,18 @@ class ParserRuleContext : RuleContext
         return children !is null && i>=0 && i < to!int(children.length) ? *children[i].peek!(ParseTree) : null;
     }
 
-    public auto getChild(T)(T ctxType, int i)
+    public auto getChild(T)(int i)
     {
         if (children is null || i < 0 || i >= children.length) {
             return null;
         }
 
         int j = -1; // what element have we found with ctxType?
-        foreach (ParseTree o; children) {
-            if (ctxType.isInstance(o)) {
+        foreach (o; children) {
+            if (o.type == typeid(T)) {
                 j++;
                 if (j == i) {
-                    return cast(T)(o);
+                    return o.peek!T;
                 }
             }
         }
@@ -257,29 +261,26 @@ class ParserRuleContext : RuleContext
         return tokens;
     }
 
-    public auto getRuleContext(T)(T ctxType, int i)
+    public T getRuleContext(T)(int i)
     {
-        return getChild(ctxType, i);
+        return *getChild!T(i);
     }
 
-    public auto getRuleContexts(T)(T ctxType)
+    public T[] getRuleContexts(T)()
     {
         if (children is null) {
-            ParserRuleContext[] l;
+            T[] l;
             return l;
         }
         T[] contexts = null;
-        foreach (ParseTree o; children) {
-            if (ctxType.classinfo == o.classinfo) {
-                if (contexts is null) {
-                    contexts = new T[];
-                }
-                contexts ~= cast(o)ctxType;
+        foreach (o; children) {
+            if (T.classinfo == o.type.classinfo) {
+                contexts ~= o.get!T;
             }
         }
 
         if (contexts is null) {
-            ParserRuleContext[] l;
+            T[] l;
             return l;
         }
         return contexts;
@@ -342,5 +343,21 @@ class ParserRuleContext : RuleContext
                       "start=%2$s, stop=%3$s}", rules,
                       start.getText, stop.getText);
     }
-
+    
+    /**
+     * Returns: A single instance of ParserRuleContext
+     */
+    public static ParserRuleContext EMPTY()
+    {
+        return EMPTY_;
+    }
+    
+    /**
+     * @uml
+     * @shared
+     */
+    private shared static this()
+    {
+        EMPTY_ = new ParserRuleContext();
+    }
 }

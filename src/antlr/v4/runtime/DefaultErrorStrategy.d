@@ -47,7 +47,6 @@ import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.InputMismatchException;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.FailedPredicateException;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.RuleContext;
@@ -145,7 +144,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      * the exception</li>
      * </ul>
      */
-    public void reportError(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e)
+    public void reportError(Parser recognizer, RecognitionException e)
     {
 	// if we've already reported an error and have not matched a token
         // yet successfully, don't report any errors.
@@ -170,7 +169,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     }
 
-    public void recover(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e)
+    public void recover(Parser recognizer, RecognitionException e)
     {
     }
 

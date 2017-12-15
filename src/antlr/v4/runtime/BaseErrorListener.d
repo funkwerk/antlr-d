@@ -18,7 +18,7 @@ class BaseErrorListener(U, V) : ANTLRErrorListener!(U, V)
 {
 
     public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
-        int charPositionInLine, string msg, RecognitionException!(U,V) e)
+        int charPositionInLine, string msg, RecognitionException e)
     {
     }
 

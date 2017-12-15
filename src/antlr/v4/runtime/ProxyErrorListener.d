@@ -34,7 +34,6 @@ module antlr.v4.runtime.ProxyErrorListener;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.dfa.DFA;
@@ -62,7 +61,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
     }
 
     public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
-        int charPositionInLine, string msg, RecognitionException!(U,V) e)
+        int charPositionInLine, string msg, RecognitionException e)
     {
 	foreach (listener; delegates) {
             listener.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);

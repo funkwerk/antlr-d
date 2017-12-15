@@ -53,7 +53,7 @@ class ConsoleErrorListener(U, V) : BaseErrorListener!(U, V)
      * @override
      */
     public override void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
-        int charPositionInLine, string msg, RecognitionException!(U,V) e)
+        int charPositionInLine, string msg, RecognitionException e)
     {
         writefln("line %1$s:%2$s %3$s", line, charPositionInLine, msg);
     }

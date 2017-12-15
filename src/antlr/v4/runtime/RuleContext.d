@@ -5,7 +5,6 @@ import std.conv;
 import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.ParseTree;
@@ -67,11 +66,11 @@ import antlr.v4.runtime.misc.Interval;
 class RuleContext : RuleNode, InterfaceRuleContext
 {
 
-    /**
-     * @uml
-     * @__gshared
-     */
-    private static __gshared ParserRuleContext EMPTY_;
+    // /**
+    //  * @uml
+    //  * @__gshared
+    //  */
+    // private static __gshared ParserRuleContext EMPTY_;
 
     public RuleContext parent;
 
@@ -227,7 +226,8 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public string toString(InterfaceRecognizer recog)
     {
-        return toString(recog, ParserRuleContext.EMPTY);
+        //return toString(recog, ParserRuleContext.EMPTY);
+        return "";
     }
 
     public string toString(string[] ruleNames)
@@ -273,23 +273,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
         buf.put("]");
         return buf.data;
-    }
-
-    /**
-     * @uml
-     * @shared
-     */
-    private shared static this()
-    {
-        EMPTY_ = new ParserRuleContext();
-    }
-
-    /**
-     * Returns: A single instance of LexerSkipAction.
-     */
-    public static ParserRuleContext EMPTY()
-    {
-        return EMPTY_;
     }
 
     public RuleContext getParent()

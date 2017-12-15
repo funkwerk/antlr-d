@@ -17,7 +17,7 @@ class XPathLexerErrorListener : BaseErrorListener!(int, LexerATNSimulator)
      * @override
      */
     public override void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol,
-        int line, int charPositionInLine, string msg, RecognitionException!(int, LexerATNSimulator) e)
+        int line, int charPositionInLine, string msg, RecognitionException e)
     {
     }
 

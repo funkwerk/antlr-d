@@ -79,7 +79,7 @@ interface ANTLRErrorListener(U, V)
      *        surrounding rule.
      */
     public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,
-                            int charPositionInLine, string msg, RecognitionException!(U,V) e);
+                            int charPositionInLine, string msg, RecognitionException e);
 
     /**
      * This method is called by the parser when a full-context prediction

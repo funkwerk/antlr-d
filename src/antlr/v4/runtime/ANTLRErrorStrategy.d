@@ -33,7 +33,6 @@ module antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Interface ANTLRErrorStrategy
 /**
@@ -98,7 +97,7 @@ interface ANTLRErrorStrategy
      *  @throws RecognitionException if the error strategy could not recover from
      * the recognition exception
      */
-    public void recover(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e);
+    public void recover(Parser recognizer, RecognitionException e);
 
     /**
      * @uml
@@ -153,6 +152,6 @@ interface ANTLRErrorStrategy
      *  @param recognizer the parser instance
      *  @param e the recognition exception to report
      */
-    public void reportError(Parser recognizer, RecognitionException!(Token, ParserATNSimulator) e);
+    public void reportError(Parser recognizer, RecognitionException e);
 
 }

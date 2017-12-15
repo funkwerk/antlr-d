@@ -535,7 +535,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * it all works out.  You can instead use the rule invocation stack
      * to do sophisticated error recovery if you are in a fragment rule.
      */
-    public void recover(RecognitionException!(int, LexerATNSimulator) re)
+    public void recover(RecognitionException re)
     {
 	//System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
         //re.printStackTrace();

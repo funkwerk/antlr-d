@@ -6,14 +6,13 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.PredicateTransition;
 
 // Class FailedPredicateException
 /**
  * TODO add class description
  */
-class FailedPredicateException : RecognitionException!(Token, ParserATNSimulator)
+class FailedPredicateException : RecognitionException
 {
 
     private int ruleIndex;

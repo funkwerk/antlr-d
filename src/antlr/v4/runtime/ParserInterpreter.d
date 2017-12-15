@@ -60,7 +60,6 @@ import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.ParserATNSimulator;
-import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.dfa.DFA;
@@ -284,10 +283,10 @@ class ParserInterpreter : Parser
                 try {
                     visitState(p);
                 }
-                catch (RecognitionException!(Token, ParserATNSimulator) e) {
+                catch (RecognitionException e) {
                     setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
-                    ctx.exception = cast(RecognitionException!(Token, InterfaceParserATNSimulator))e;
-                    getErrorHandler().reportError(this, e);
+                    ctx_.exception = e;
+                    getErrorHandler.reportError(this, e);
                     recover(e);
                 }
 
@@ -393,7 +392,7 @@ class ParserInterpreter : Parser
     {
 	int predictedAlt = 1;
         if (p.getNumberOfTransitions() > 1) {
-            getErrorHandler().sync(this);
+            getErrorHandler.sync(this);
             int decision = p.decision;
             if (decision == overrideDecision && _input.index() == overrideDecisionInputIndex &&
                 !overrideDecisionReached )
@@ -480,11 +479,11 @@ class ParserInterpreter : Parser
      * to recover, add an error node. Otherwise, nothing is seen in the parse
      * tree.
      */
-    protected void recover(RecognitionException!(Token, ParserATNSimulator) e)
+    protected void recover(RecognitionException e)
     {
         TokenFactorySourcePair tokenFactorySourcePair;
 	int i = _input.index();
-        getErrorHandler().recover(this, e);
+        getErrorHandler.recover(this, e);
         if ( _input.index()==i ) {
             // no input consumed, better add an error node
             if (e.classinfo == InputMismatchException.classinfo) {

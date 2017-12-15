@@ -44,7 +44,7 @@ import antlr.v4.runtime.misc.Interval;
 /**
  * TODO add class description
  */
-class LexerNoViableAltException : RecognitionException!(int, LexerATNSimulator)
+class LexerNoViableAltException : RecognitionException
 {
 
     /**

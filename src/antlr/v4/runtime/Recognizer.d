@@ -51,7 +51,6 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ParseInfo;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 
 // Class Template Recognizer
 /**
@@ -217,7 +216,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
      * @uml
      * What is the error header, normally line/character position information?
      */
-    public string getErrorHeader(RecognitionException!(U,V) e)
+    public string getErrorHeader(RecognitionException e)
     {
         int line = e.getOffendingToken().getLine();
         int charPositionInLine = e.getOffendingToken().getCharPositionInLine();

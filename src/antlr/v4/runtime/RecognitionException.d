@@ -43,7 +43,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 /**
  * TODO add class description
  */
-class RecognitionException(U, V) : RuntimeException
+class RecognitionException : RuntimeException
 {
 
     public InterfaceRecognizer recognizer;

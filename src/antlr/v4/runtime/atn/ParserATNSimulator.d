@@ -415,7 +415,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 debug {
                     writefln("predictATN decision %1$s"~
                              " exec LA(1)==%2$s"~
-                             ", outerContext=%3Sc",
+                             ", outerContext=%3$s",
                              dfa.decision, getLookaheadName(input),
                              outerContext.toString(parser));
                 }
@@ -454,7 +454,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             input.seek(index);
             input.release(m);
         }
-        return -1;
+        return -1; // compiler dummy, will never been executed 
     }
 
     /**
@@ -500,7 +500,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         debug writefln("s0 = %1$s", s0);
 
-        int t = input.LA(1);
+        int t = input.LA(1);writefln("---------------t = %1$s, input = %2$s", t, input);
 
         while (true) { // while more work
             DFAState D = getExistingTargetState(previousD, t);
@@ -610,6 +610,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     public DFAState getExistingTargetState(DFAState previousD, int t)
     {
         DFAState[] edges = previousD.edges;
+        import std.stdio;
+        writefln("xxxxxxxxxxx edges = %s, previousD=%s, t = %s", edges, previousD, t);
         if (edges == null || t + 1 < 0 || t + 1 >= edges.length) {
             return null;
         }
@@ -1179,12 +1181,17 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                                                                           ParserRuleContext outerContext)
     {
 	IntervalSet alts = new IntervalSet();
+        import std.stdio;
+        writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule configs.configs = %s", configs.configs);
         foreach (ATNConfig c; configs.configs) {
-            if ( c.getOuterContextDepth()>0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
+            writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule c.getOuterContextDepth = %s", c.getOuterContextDepth);
+            if (c.getOuterContextDepth > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
         }
-        if ( alts.size()==0 ) return ATN.INVALID_ALT_NUMBER;
+        writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule end %s", alts);
+        if (alts.size == 0)
+            return ATN.INVALID_ALT_NUMBER;
         return alts.getMinElement();
     }
 
@@ -1623,23 +1630,25 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 	if (D == ERROR) {
             return D;
         }
-            DFAState existing = dfa.states[D];
-            if (existing !is null) return existing;
-
-            D.stateNumber = to!int(dfa.states.length);
-            if (!D.configs.readonly) {
-                D.configs.optimizeConfigs(this);
-                D.configs.readonly(true);
-            }
-            dfa.states[D] =  D;
-            debug writefln("adding new DFA state: %1$s", D);
+        debug writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D); 
+        if (D in dfa.states)
             return D;
+
+        D.stateNumber = to!int(dfa.states.length);
+        if (!D.configs.readonly) {
+            D.configs.optimizeConfigs(this);
+            D.configs.readonly(true);
+        }
+        dfa.states[D] =  D;
+        debug writefln("adding new DFA state: %1$s", D);
+        return D;
     }
 
     protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,
                                                int startIndex, int stopIndex)
     {
         debug(retry_debug) {
+            import antlr.v4.runtime.misc.Interval;
             Interval interval = Interval.of(startIndex, stopIndex);
             writefln("reportAttemptingFullContext decision=%1$s:%2$s, input=%3$s",
                      dfa.decision, configs,
@@ -1657,17 +1666,20 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                                             int startIndex, int stopIndex)
     {
         debug(retry_debug) {
+            import antlr.v4.runtime.misc.Interval;
             Interval interval = Interval.of(startIndex, stopIndex);
             writefln("reportContextSensitivity decision=%1$s:%2$s, input=%3$s",
-                     dfa.decision, config, parser.getTokenStream().getText(interval));
+                     dfa.decision, configs, parser.getTokenStream().getText(interval));
         }
-        if (parser !is null) parser.getErrorListenerDispatch().reportContextSensitivity(parser, dfa, startIndex, stopIndex, prediction, configs);
+        if (parser !is null)
+            parser.getErrorListenerDispatch().reportContextSensitivity(parser, dfa, startIndex, stopIndex, prediction, configs);
     }
 
     protected void reportAmbiguity(DFA dfa, DFAState D, int startIndex, int stopIndex, bool exact,
                                    BitSet ambigAlts, ATNConfigSet configs)
     {
 	debug(retry_debug) {
+            import antlr.v4.runtime.misc.Interval;
             Interval interval = Interval.of(startIndex, stopIndex);
             writefln("reportAmbiguity %1$s:%2$s, input=%3$s",
                      ambigAlts, configs, parser.getTokenStream().getText(interval));

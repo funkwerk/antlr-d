@@ -15,7 +15,8 @@ XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse\
+               -debug=ErrorHandling -debug -debug=retry_debug
 
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 

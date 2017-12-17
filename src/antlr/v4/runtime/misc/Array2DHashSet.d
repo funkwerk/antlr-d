@@ -33,6 +33,7 @@ module antlr.v4.runtime.misc.Array2DHashSet;
 
 import std.array;
 import std.variant;
+import std.stdio;
 import std.conv;
 import std.container.array;
 import std.algorithm.mutation : remove;

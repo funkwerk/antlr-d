@@ -128,7 +128,7 @@ class CommonTokenStream : BufferedTokenStream
      */
     public override Token LT(int k)
     {
-        debug writefln("enter LT($s)", k);
+        debug writefln("enter LT(%s)", k);
         lazyInit();
         if (k == 0 ) return null;
         if (k < 0) return LB(-k);

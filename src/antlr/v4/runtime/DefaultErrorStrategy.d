@@ -221,18 +221,20 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public void sync(Parser recognizer)
     {
-	ATNState s = recognizer.getInterpreter().atn.states[recognizer.getState];
-        //		System.err.println("sync @ "+s.stateNumber+"="+s.getClass().getSimpleName());
+	ATNState s = recognizer.getInterpreter.atn.states[recognizer.getState];
+        debug(ErrorHandling) {
+            import std.stdio;
+            writefln("sync @ %s=%s", s.stateNumber, s.classinfo);
+        }
         // If already recovering, don't try to sync
         if (inErrorRecoveryMode(recognizer)) {
             return;
         }
 
-        TokenStream tokens = recognizer.getInputStream();
+        TokenStream tokens = recognizer.getInputStream;
         int la = tokens.LA(1);
-
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
-        if ( recognizer.getATN().nextTokens(s).contains(la) || la == TokenConstantDefinition.EOF) return;
+        if ( recognizer.getATN.nextTokens(s).contains(la) || la == TokenConstantDefinition.EOF) return;
 
         // Return but don't end recovery. only do that upon valid token match
         if (recognizer.isExpectedToken(la)) {

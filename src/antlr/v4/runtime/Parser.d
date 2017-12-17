@@ -36,6 +36,7 @@ import std.algorithm;
 import std.conv;
 import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.ANTLRErrorListener;
+import antlr.v4.runtime.DefaultErrorStrategy;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -234,12 +235,13 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     {
         if (getInputStream() !is null)
             getInputStream().seek(0);
+        _errHandler = new DefaultErrorStrategy;
         _errHandler.reset(this);
         ctx_ = null;
         _syntaxErrors = 0;
         matchedEOF = false;
-        setTrace(false);
-        _precedenceStack.clear();
+        _precedenceStack = new IntegerStack();
+        _precedenceStack.clear;
         _precedenceStack.push(0);
         ATNSimulator interpreter = getInterpreter();
         if (interpreter !is null) {
@@ -597,7 +599,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      * Set the token stream and reset the parser.
      */
     public void setTokenStream(TokenStream input)
-    {
+    { 
         this._input = null;
         reset();
         this._input = input;
@@ -720,6 +722,8 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void enterOuterAlt(ParserRuleContext localctx, int altNum)
     {
+        import std.stdio;
+        writefln("xxxxxxxxxxxxx enterOutAlt localctx = %s, ctx_ = %s,  altNum = %s, _buildParseTrees = %s", localctx, ctx_, altNum, _buildParseTrees);
 	localctx.setAltNumber(altNum);
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree

@@ -187,18 +187,19 @@ class LL1Analyzer
     {
         //		System.out.println("_LOOK("+s.stateNumber+", ctx="+ctx);
         ATNConfig c = new ATNConfig(s, 0, ctx);
-        if (!lookBusy.insert(c) ) return;
-
+        foreach(lb; *lookBusy)
+            if (lb == c)
+                return;
+        *lookBusy = *lookBusy ~ c;
         if (s == stopState) {
             if (ctx is null) {
                 look.add(TokenConstantDefinition.EPSILON);
                 return;
-            } else if (ctx.isEmpty() && addEOF) {
+            } else if (ctx.isEmpty && addEOF) {
                 look.add(TokenConstantDefinition.EOF);
                 return;
             }
         }
-
         if (s.classinfo == RuleStopState.classinfo) {
             if (ctx is null ) {
                 look.add(TokenConstantDefinition.EPSILON);
@@ -228,19 +229,23 @@ class LL1Analyzer
                 return;
             }
         }
-
-        int n = s.getNumberOfTransitions();
+        
+        int n = s.getNumberOfTransitions;
         for (int i=0; i<n; i++) {
             Transition t = s.transition(i);
             if (t.classinfo == RuleTransition.classinfo) {
-                if (calledRuleStack.opSlice[(cast(RuleTransition)t).target.ruleIndex]) {
+                if (calledRuleStack.length >
+                    (cast(RuleTransition)t).target.ruleIndex &&
+                    (*calledRuleStack)[(cast(RuleTransition)t).target.ruleIndex]) {
                     continue;
                 }
 
                 PredictionContext newContext =
                     SingletonPredictionContext.create(ctx, (cast(RuleTransition)t).followState.stateNumber);
-
+                
                 try {
+                    if (calledRuleStack.length <= (cast(RuleTransition)t).target.ruleIndex)
+                        calledRuleStack.length = (cast(RuleTransition)t).target.ruleIndex +1;
                     calledRuleStack.opIndexAssign(true, (cast(RuleTransition)t).target.ruleIndex);
                     _LOOK(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                 }

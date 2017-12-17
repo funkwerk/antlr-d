@@ -89,8 +89,8 @@ public class ExprParser : Parser {
 	public ATN getATN() { return _ATN; }
 
 	public this(TokenStream input) {
-		super(input);
-		_interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
+            super(input);
+            _interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
 	}
 	public static class ProgContext : ParserRuleContext {
 		public ExprContext[] expr() {
@@ -125,7 +125,7 @@ public class ExprParser : Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(9);
-			_errHandler.sync(this);
+                _errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__4 || _la==INT) {
 				{
@@ -191,7 +191,7 @@ public class ExprParser : Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(18);
+                            setState(18);
 			switch (_input.LA(1)) {
 			case INT:
 				{
@@ -215,7 +215,7 @@ public class ExprParser : Parser {
 			ctx_.stop = _input.LT(-1);
 			setState(28);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,3, ctx_);
+			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
 			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();

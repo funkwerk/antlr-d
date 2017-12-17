@@ -15,7 +15,6 @@ import std.stdio;
  * and logical exclusive OR operations.
  *
  * By default, all bits in the set initially have the value false.
- *
  */
 struct BitSet
 {

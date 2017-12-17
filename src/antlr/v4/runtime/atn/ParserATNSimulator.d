@@ -454,7 +454,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             input.seek(index);
             input.release(m);
         }
-        return -1; // compiler dummy, will never been executed 
+        return -1; // compiler dummy, will never been executed
     }
 
     /**
@@ -1630,7 +1630,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 	if (D == ERROR) {
             return D;
         }
-        debug writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D); 
+        debug writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D);
         if (D in dfa.states)
             return D;
 

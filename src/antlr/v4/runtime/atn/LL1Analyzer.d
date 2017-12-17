@@ -229,7 +229,7 @@ class LL1Analyzer
                 return;
             }
         }
-        
+
         int n = s.getNumberOfTransitions;
         for (int i=0; i<n; i++) {
             Transition t = s.transition(i);
@@ -242,7 +242,7 @@ class LL1Analyzer
 
                 PredictionContext newContext =
                     SingletonPredictionContext.create(ctx, (cast(RuleTransition)t).followState.stateNumber);
-                
+
                 try {
                     if (calledRuleStack.length <= (cast(RuleTransition)t).target.ruleIndex)
                         calledRuleStack.length = (cast(RuleTransition)t).target.ruleIndex +1;

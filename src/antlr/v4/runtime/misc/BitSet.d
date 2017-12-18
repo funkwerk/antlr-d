@@ -6,7 +6,6 @@ import std.algorithm;
 
 // Struct BitSet
 /**
- * @uml
  * This struct implements a vector of bits that grows as needed. Each component
  * of the bit set has a bool value. The bits of a BitSet are indexed by nonnegative integers.
  * Individual indexed bits can be examined, set, or cleared. One BitSet may be used to modify

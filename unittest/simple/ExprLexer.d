@@ -39,10 +39,10 @@ public class ExprLexer : Lexer {
 	];
 	public static Vocabulary VOCABULARY;
 
-	public override void recover(LexerNoViableAltException e)
-	    {
-	        throw e;
-	    }
+	// public override void recover(LexerNoViableAltException e)
+	//     {
+	//         throw e;
+	//     }
 
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.

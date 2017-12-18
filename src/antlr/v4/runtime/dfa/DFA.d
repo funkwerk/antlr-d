@@ -229,13 +229,20 @@ class DFA
 
 }
 
-unittest
-{
-    import std.stdio;
-    import antlr.v4.runtime.atn.TokensStartState;
-    DecisionState startState = new TokensStartState;
-    DFA dfa = new DFA(startState);
-    dfa.should.not.beNull;
-    //dfa.toString.should.equal("");
-    writefln("dfa.toString = %s", dfa.toString);
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    @Tags("DFA")
+    @("simpleDFATest")
+    unittest
+        {
+            import std.stdio;
+            import antlr.v4.runtime.atn.TokensStartState;
+            DecisionState startState = new TokensStartState;
+            DFA dfa = new DFA(startState);
+            dfa.should.not.beNull;
+            //dfa.toString.should.equal("");
+            writefln("dfa.toString = %s", dfa.toString);
+        }
 }

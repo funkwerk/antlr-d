@@ -19,7 +19,6 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.TerminalNode;
-import ExprListener;
 
 public class ExprParser : Parser {
 	static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
@@ -42,11 +41,6 @@ public class ExprParser : Parser {
 		null, null, null, null, null, null, null, "NEWLINE", "INT"
 	];
 	public static Vocabulary VOCABULARY;
-
-	// public override void recover(LexerNoViableAltException e)
-	//     {
-	//         throw e;
-	//     }
 
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
@@ -89,15 +83,15 @@ public class ExprParser : Parser {
 	public ATN getATN() { return _ATN; }
 
 	public this(TokenStream input) {
-            super(input);
-            _interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
+		super(input);
+		_interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
 	}
 	public static class ProgContext : ParserRuleContext {
 		public ExprContext[] expr() {
 			return getRuleContexts!ExprContext;
 		}
 		public ExprContext expr(int i) {
-                    return getRuleContext!ExprContext(i);
+			return getRuleContext!ExprContext(i);
 		}
 		public TerminalNode[] NEWLINE() { return getTokens(ExprParser.NEWLINE); }
 		public TerminalNode NEWLINE(int i) {
@@ -107,25 +101,27 @@ public class ExprParser : Parser {
 			super(parent, invokingState);
 		}
 		override public int getRuleIndex() { return RULE_prog; }
+		import ExprListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
-                    if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).enterProg(this);
+			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).enterProg(this);
 		}
+		import ExprListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
 			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).exitProg(this);
 		}
 	}
 
-	public  ProgContext prog() {
-		ProgContext _localctx = new ProgContext(ctx_, getState);
+	public ProgContext prog() {
+		ProgContext _localctx = new ProgContext(ctx_, getState());
 		enterRule(_localctx, 0, RULE_prog);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(9);
-                _errHandler.sync(this);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__4 || _la==INT) {
 				{
@@ -156,19 +152,21 @@ public class ExprParser : Parser {
 	public static class ExprContext : ParserRuleContext {
 		public TerminalNode INT() { return getToken(ExprParser.INT, 0); }
 		public ExprContext[] expr() {
-                    return getRuleContexts!ExprContext();
+			return getRuleContexts!ExprContext;
 		}
 		public ExprContext expr(int i) {
-                    return getRuleContext!ExprContext(i);
+			return getRuleContext!ExprContext(i);
 		}
 		public this(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		override public int getRuleIndex() { return RULE_expr; }
+		import ExprListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
 			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).enterExpr(this);
 		}
+		import ExprListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
 			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).exitExpr(this);
@@ -191,7 +189,7 @@ public class ExprParser : Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-                            setState(18);
+			setState(18);
 			switch (_input.LA(1)) {
 			case INT:
 				{
@@ -223,7 +221,7 @@ public class ExprParser : Parser {
 					{
 					setState(26);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,2,ctx_) ) {
+					switch ( getInterpreter.adaptivePredict(_input,2, ctx_) ) {
 					case 1:
 						{
 						_localctx = new ExprContext(_parentctx, _parentState);
@@ -258,13 +256,13 @@ public class ExprParser : Parser {
 						expr(4);
 						}
 						break;
-                                        default: assert(0);
+					        default: assert(0);
 					}
 					} 
 				}
 				setState(30);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,3,ctx_);
+				_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
 			}
 			}
 		}
@@ -278,23 +276,23 @@ public class ExprParser : Parser {
 		}
 		return _localctx;
 	}
+
     override
-	public bool sempred(InterfaceRuleContext _localctx, int ruleIndex, int predIndex) {
+    public bool sempred(InterfaceRuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 1:
 			return expr_sempred(cast(ExprContext)_localctx, predIndex);
-                default: assert(0);
+    default: assert(0);
 		}
 		return true;
 	}
-
 	private bool expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
 			return precpred(ctx_, 4);
 		case 1:
 			return precpred(ctx_, 3);
-                default: assert(0);
+	        default: assert(0);
 		}
 		return true;
 	}

@@ -3,7 +3,6 @@ module antlr.v4.runtime.misc.BitSet;
 import std.bitmanip;
 import std.conv;
 import std.algorithm;
-import std.stdio;
 
 // Struct BitSet
 /**
@@ -124,43 +123,50 @@ struct BitSet
 
 }
 
-unittest
-{
-    auto bs = BitSet(12);
-    assert(bs.length == 12);
-    assert(bs.bitSet.dim == 1);
-    assert(bs.cardinality == 0);
-    assert(bs.isEmpty == true);
-    bs.set(2, true);
-    bs.set(7, true);
-    assert(bs.cardinality == 2);
-    assert(bs.isEmpty == false);
-    assert(bs.nextSetBit(1) == 2);
-    assert(bs.nextSetBit(7) == 7);
-    assert(bs.nextSetBit(9) == -1);
-    auto cs = BitSet(BitArray([0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0]));
-    assert(cs.cardinality == 5);
-    assert(cs.nextSetBit(1) == 1);
-    assert(cs.nextSetBit(7) == 10);
-    assert(cs.nextSetBit(88) == -1);
-    assert(cs.toString == "0101_10100010");
-    auto ds = BitSet(BitArray([0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0]));
-    assert(cs == ds);
-    assert(cs != bs);
-    assert(bs.toHash == 387427050);
-    assert(cs.toHash == 3534673149);
-    assert(ds.toHash == 3534673149);
-    assert(bs.get(2) == true);
-    assert(bs.get(3) == false);
-    bs.set(19, true);
-    assert(bs.toString == "001000_01000000_00000100");
-    ds.set(8, true);
-    ds.set(1, false);
-    auto x = cs.or(ds);
-    assert(x.toString == "0101_10101010");
-    cs.clear;
-    cs.set(5, true);
-    ds.set(0, true);
-    x = cs.or(ds);
-    assert(x.toString == "1001_11101010");
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    @Tags("BitSet")
+    @("testBitSet")
+    unittest
+        {
+            auto bs = BitSet(12);
+            assert(bs.length == 12);
+            assert(bs.bitSet.dim == 1);
+            assert(bs.cardinality == 0);
+            assert(bs.isEmpty == true);
+            bs.set(2, true);
+            bs.set(7, true);
+            assert(bs.cardinality == 2);
+            assert(bs.isEmpty == false);
+            assert(bs.nextSetBit(1) == 2);
+            assert(bs.nextSetBit(7) == 7);
+            assert(bs.nextSetBit(9) == -1);
+            auto cs = BitSet(BitArray([0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0]));
+            assert(cs.cardinality == 5);
+            assert(cs.nextSetBit(1) == 1);
+            assert(cs.nextSetBit(7) == 10);
+            assert(cs.nextSetBit(88) == -1);
+            assert(cs.toString == "0101_10100010");
+            auto ds = BitSet(BitArray([0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0]));
+            assert(cs == ds);
+            assert(cs != bs);
+            assert(bs.toHash == 387427050);
+            assert(cs.toHash == 3534673149);
+            assert(ds.toHash == 3534673149);
+            assert(bs.get(2) == true);
+            assert(bs.get(3) == false);
+            bs.set(19, true);
+            assert(bs.toString == "001000_01000000_00000100");
+            ds.set(8, true);
+            ds.set(1, false);
+            auto x = cs.or(ds);
+            assert(x.toString == "0101_10101010");
+            cs.clear;
+            cs.set(5, true);
+            ds.set(0, true);
+            x = cs.or(ds);
+            assert(x.toString == "1001_11101010");
+        }
 }

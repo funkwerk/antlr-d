@@ -1351,7 +1351,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
             // both epsilon transitions and non-epsilon transitions.
             //            if ( debug ) System.out.println("added config "+configs);
         }
-        
+
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             Transition t = p.transition(i);
             bool continueCollecting =
@@ -1367,7 +1367,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     else {
                         closureBusy ~= c;
                     }
-                
+
                 int newDepth = depth;
                 if ( config.state.classinfo ==  RuleStopState.classinfo) {
                     assert (!fullCtx);
@@ -1376,7 +1376,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    
+
                     if (count(closureBusy, c)) {
                         // avoid infinite recursion for right-recursive rules
                         continue;
@@ -1384,14 +1384,14 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     else {
                         closureBusy ~= c;
                     }
-                    
+
                     if (_dfa !is null && _dfa.isPrecedenceDfa) {
                         int outermostPrecedenceReturn = (cast(EpsilonTransition)t).outermostPrecedenceReturn();
                         if (outermostPrecedenceReturn == _dfa.atnStartState.ruleIndex) {
                             c.setPrecedenceFilterSuppressed(true);
                         }
                     }
-                    
+
                     c.reachesIntoOuterContext++;
                     configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
                     assert (newDepth > int.min);
@@ -1410,7 +1410,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                                          fullCtx, newDepth, treatEofAsEpsilon);
             }
         }
-        
+
     }
 
     public string getRuleName(int index)

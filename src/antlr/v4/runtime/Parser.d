@@ -40,6 +40,7 @@ import antlr.v4.runtime.DefaultErrorStrategy;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.InterfaceRuleContext;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -926,6 +927,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public int getRuleIndex(string ruleName)
     {
+        writefln("getRuleIndex: ruleName = %s", ruleName);
         if (ruleName in getRuleIndexMap)
             return getRuleIndexMap[ruleName];
         return -1;
@@ -950,16 +952,18 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 	return getRuleInvocationStack(ctx_);
     }
 
-    public string[] getRuleInvocationStack(InterfaceRuleContext p)
+    public string[] getRuleInvocationStack(RuleContext p)
     {
 	string[] ruleNames = getRuleNames();
         string[] stack;
         while (p) {
             // compute what follows who invoked us
             int ruleIndex = p.getRuleIndex();
+            writefln("getRuleInvocationStack: ruleIndex = %s, ruleNames = %s of %s", ruleIndex, ruleNames, p.classinfo);
             if (ruleIndex <0)
                 stack ~= "n/a";
-            else stack ~= ruleNames[ruleIndex];
+            else
+                stack ~= ruleNames[ruleIndex];
             p = p.getParent;
         }
         return stack;

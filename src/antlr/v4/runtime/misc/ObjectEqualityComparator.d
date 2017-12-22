@@ -57,23 +57,3 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
     }
 
 }
-
-unittest
-{
-    class X {static long b;}
-    class Y {int a;}
-    auto xx = new X;
-    auto yy = new Y;
-    auto zz = new X;
-    auto testObj = new ObjectEqualityComparator;
-    auto x = testObj.hashOf(testObj);
-    assert(ObjectEqualityComparator.hashOf(yy) != ObjectEqualityComparator.hashOf(xx));
-    assert(ObjectEqualityComparator.hashOf(zz) != ObjectEqualityComparator.hashOf(xx));
-    assert(ObjectEqualityComparator.hashOf(zz) != ObjectEqualityComparator.hashOf(yy));
-    auto testObj2 = ObjectEqualityComparator.instance;
-    assert(testObj.hashOf(testObj2) != testObj.toHash);
-    auto testObj3 = ObjectEqualityComparator.instance;
-    assert(testObj2.hashOf(null) == 0);
-    assert(testObj.opEquals(null, testObj2) == false);
-    assert(testObj2.opEquals(testObj3, testObj2) == true);
-}

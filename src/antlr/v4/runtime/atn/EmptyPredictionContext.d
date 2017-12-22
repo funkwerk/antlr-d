@@ -100,3 +100,24 @@ class EmptyPredictionContext : SingletonPredictionContext
     }
 
 }
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+    @Tags("emptyCont")
+    @("emptyPredictionContextTest")
+    unittest {
+        auto spc = new EmptyPredictionContext;
+        spc.should.not.beNull;
+        spc.isEmpty.should.equal(true);
+        auto spc1 = new EmptyPredictionContext;
+        spc1.isEmpty.should.equal(true);
+        if (spc == spc1)
+            assert(true);
+        auto spc2 = SingletonPredictionContext.create(null,
+                                                      PredictionContext.EMPTY_RETURN_STATE);
+        import std.stdio;
+        writefln("spc2 = %s", spc2);
+        //Assert.equal(spc.opEquals(spc1), true);
+    }
+}

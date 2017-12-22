@@ -35,6 +35,7 @@ import std.typecons;
 import std.format;
 import std.conv;
 import std.stdio;
+import std.algorithm.searching;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
@@ -51,6 +52,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.AtomTransition;
 import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.EpsilonTransition;
 import antlr.v4.runtime.atn.NotSetTransition;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.ATNConfigSet;
@@ -308,14 +310,6 @@ alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b"
 class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 {
 
-    /**
-     * @uml
-     * @final
-     */
-    public static bool debugFlag = false;
-
-    public static bool debug_list_atn_decisions = false;
-
     protected Parser parser;
 
     public DFA[] decisionToDFA;
@@ -323,7 +317,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     public PredictionModeConst mode = PredictionModeConst.LL;
 
     /**
-     * @uml
      * Each prediction operation uses a cache for merge of prediction contexts.
      * Don't keep around as it wastes huge amounts of memory. DoubleKeyMap
      * isn't synchronized but we're ok since two threads shouldn't reuse same
@@ -379,7 +372,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public int adaptivePredict(TokenStream input, int decision, ParserRuleContext outerContext)
     {
-	debug {
+	debug {writefln(".............. outerContext = %s", outerContext.children);
             writefln("adaptivePredict decision %1$s"~
                      " exec LA(1)==%2$s"~
                      " line %3$s:%4$s",
@@ -390,7 +383,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         _input = input;
         _startIndex = input.index();
         _outerContext = outerContext;
-        DFA dfa = decisionToDFA[decision];
+        DFA dfa = decisionToDFA[decision];writefln("................. dfa = %s, decisionToDFA = %s ", dfa, decisionToDFA[decision]);
         _dfa = dfa;
 
         int m = input.mark();
@@ -411,21 +404,22 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
 
             if (s0 is null) {
-                if ( outerContext is null ) outerContext = ParserRuleContext.EMPTY;
+                if ( outerContext is null )
+                    outerContext = ParserRuleContext.EMPTY;
                 debug {
-                    writefln("predictATN decision %1$s"~
+                    writefln("predictATN decision = %1$s"~
                              " exec LA(1)==%2$s"~
                              ", outerContext=%3$s",
                              dfa.decision, getLookaheadName(input),
-                             outerContext.toString(parser));
+                             outerContext.children);
                 }
 
-                bool fullCtx = false;
+                bool fullCtx = false; writefln("before computeStartState %s", dfa.atnStartState);
                 ATNConfigSet s0_closure =
                     computeStartState(dfa.atnStartState,
                                       ParserRuleContext.EMPTY,
                                       fullCtx);
-
+ writefln("after computeStartState s0_closure = %s", s0_closure.configs);
                 if (dfa.isPrecedenceDfa()) {
                     /* If this is a precedence DFA, we use applyPrecedenceFilter
                      * to convert the computed start state to a precedence start
@@ -435,11 +429,15 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                      */
                     dfa.s0.configs = s0_closure; // not used for prediction but useful to know start configs anyway
                     s0_closure = applyPrecedenceFilter(s0_closure);
+                    writefln("DFA s0 = addDFAState(dfa, new DFAState(s0_closure)); start1");
                     s0 = addDFAState(dfa, new DFAState(s0_closure));
+writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     dfa.setPrecedenceStartState(parser.getPrecedence(), s0);
                 }
                 else {
+                    writefln("DFA s0 = addDFAState(dfa, new DFAState(s0_closure)); start2 %s", dfa);
                     s0 = addDFAState(dfa, new DFAState(s0_closure));
+                    writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end %s", dfa);
                     dfa.s0 = s0;
                 }
             }
@@ -504,7 +502,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         while (true) { // while more work
             DFAState D = getExistingTargetState(previousD, t);
-            if (D is null) {
+            if (D is null) {writefln("--------------- computeTargetState dfa = %1$s, previousD = %2$s, t = %s", dfa.states, previousD, t);
                 D = computeTargetState(dfa, previousD, t);
             }
 
@@ -632,6 +630,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
     {
+        writefln("************ computeTargetState: previousD = %s, t = %s, dfa = %s", previousD, t, dfa);
         ATNConfigSet reach = computeReachSet(previousD.configs, t, false);
         if (reach is null) {
             addDFAEdge(dfa, previousD, t, ERROR);
@@ -1263,7 +1262,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         return pred.eval(parser, parserCallStack);
     }
 
-    protected void closureATN(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
+    protected void closureATN(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
                            bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
@@ -1273,9 +1272,145 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         assert (!fullCtx || !configs.dipsIntoOuterContext);
     }
 
-    protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ATNConfig[] closureBusy,
+    protected void closureCheckingStopState(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
+	debug {
+            writefln("closureCheckingStopState: closure(%s)", config.toString(parser, true));
+            writefln("closureCheckingStopState: config.state.ci(%s)", config.state.classinfo);
+            writefln("closureCheckingStopState: config.ci(%s)", config.classinfo);
+        }
+
+        if (cast(RuleStopState)config.state) {
+            // We hit rule end. If we have context info, use it
+            // run thru all possible stack tops in ctx
+            writefln("closureCheckingStopState:config.context.isEmpty %s", config.context);
+            if (!config.context.isEmpty) {
+                for (int i = 0; i < config.context.size; i++) {
+                    if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {
+                        if (fullCtx) {
+                            configs.add(new ATNConfig(config, config.state, PredictionContext.EMPTY), mergeCache);
+                            continue;
+                        }
+                        else {
+                            // we have no context info, just chase follow links (if greedy)
+                            debug
+                                writefln("FALLING off rule %s",
+                                         getRuleName(config.state.ruleIndex));
+                            closure_(config, configs, closureBusy, collectPredicates,
+                                     fullCtx, depth, treatEofAsEpsilon);
+                        }
+                        continue;
+                    }
+                    ATNState returnState = atn.states[config.context.getReturnState(i)];
+                    PredictionContext newContext = config.context.getParent(i); // "pop" return state
+                    ATNConfig c = new ATNConfig(returnState, config.alt, newContext,
+                                                config.semanticContext);
+                    // While we have context to pop back from, we may have
+                    // gotten that context AFTER having falling off a rule.
+                    // Make sure we track that we are now out of context.
+                    //
+                    // This assignment also propagates the
+                    // isPrecedenceFilterSuppressed() value to the new
+                    // configuration.
+                    c.reachesIntoOuterContext = config.reachesIntoOuterContext;
+                    assert(depth > int.min);
+                    closureCheckingStopState(c, configs, closureBusy, collectPredicates,
+                                             fullCtx, depth - 1, treatEofAsEpsilon);
+                }
+                return;
+            }
+            else if (fullCtx) {
+                // reached end of start rule
+                configs.add(config, mergeCache);
+                return;
+            }
+            else {
+                // else if we have no context info, just chase follow links (if greedy)
+                debug
+                    writefln("FALLING off rule %s",
+                             getRuleName(config.state.ruleIndex));
+            }
+        }
+
+        /**
+         * Do the actual work of walking epsilon edges
+         */
+        closure_(config, configs, closureBusy, collectPredicates,
+                 fullCtx, depth, treatEofAsEpsilon);
+    }
+
+    public void closure_(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
+        bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
+    {
+	ATNState p = config.state;
+        // optimization
+        if (!p.onlyHasEpsilonTransitions) {
+            configs.add(config, mergeCache);
+            // make sure to not return here, because EOF transitions can act as
+            // both epsilon transitions and non-epsilon transitions.
+            //            if ( debug ) System.out.println("added config "+configs);
+        }
+        
+        for (int i=0; i<p.getNumberOfTransitions(); i++) {
+            Transition t = p.transition(i);
+            bool continueCollecting =
+                !(t.classinfo == ActionTransition.classinfo ) && collectPredicates;
+            ATNConfig c = getEpsilonTarget(config, t, continueCollecting,
+                                           depth == 0, fullCtx, treatEofAsEpsilon);
+            if (c !is null) {
+                if (!t.isEpsilon)
+                    if (count(closureBusy, c)) {
+                        // avoid infinite recursion for EOF* and EOF+
+                        continue;
+                    }
+                    else {
+                        closureBusy ~= c;
+                    }
+                
+                int newDepth = depth;
+                if ( config.state.classinfo ==  RuleStopState.classinfo) {
+                    assert (!fullCtx);
+                    // target fell off end of rule; mark resulting c as having dipped into outer context
+                    // We can't get here if incoming config was rule stop and we had context
+                    // track how far we dip into outer context.  Might
+                    // come in handy and we avoid evaluating context dependent
+                    // preds if this is > 0.
+                    
+                    if (count(closureBusy, c)) {
+                        // avoid infinite recursion for right-recursive rules
+                        continue;
+                    }
+                    else {
+                        closureBusy ~= c;
+                    }
+                    
+                    if (_dfa !is null && _dfa.isPrecedenceDfa) {
+                        int outermostPrecedenceReturn = (cast(EpsilonTransition)t).outermostPrecedenceReturn();
+                        if (outermostPrecedenceReturn == _dfa.atnStartState.ruleIndex) {
+                            c.setPrecedenceFilterSuppressed(true);
+                        }
+                    }
+                    
+                    c.reachesIntoOuterContext++;
+                    configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
+                    assert (newDepth > int.min);
+                    newDepth--;
+                    debug
+                        writefln("dips into outer ctx: %s", c);
+                }
+                else if (t.classinfo == RuleTransition.classinfo) {
+                    // latch when newDepth goes negative - once we step out of the entry context we can't return
+                    if (newDepth >= 0) {
+                        newDepth++;
+                    }
+                }
+
+                closureCheckingStopState(c, configs, closureBusy, continueCollecting,
+                                         fullCtx, newDepth, treatEofAsEpsilon);
+            }
+        }
+        
     }
 
     public string getRuleName(int index)
@@ -1338,8 +1473,9 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             writefln("PRED (collectPredicates=%1$s) %2$s" ~
                      ">=_p, ctx dependent=true", collectPredicates,  pt.precedence);
             if ( parser !is null ) {
-                writefln("context surrounding pred is ",
-                         parser.getRuleInvocationStack());
+                writefln("context surrounding pred is %s",
+                         parser.getRuleInvocationStack);
+                //parser.classinfo);
             }
         }
 
@@ -1581,7 +1717,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * otherwise this method returns the result of calling {@link #addDFAState}
      * on {@code to}
      */
-    protected DFAState addDFAEdge(DFA dfa, DFAState from, int t, DFAState to)
+    protected DFAState addDFAEdge(ref DFA dfa, ref DFAState from, int t, DFAState to)
     {
         debug {
             writefln("EDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(t));
@@ -1625,7 +1761,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * state if {@code D} is already in the DFA, or {@code D} itself if the
      * state was not already present.
      */
-    protected DFAState addDFAState(DFA dfa, DFAState D)
+    protected DFAState addDFAState(ref DFA dfa, DFAState D)
     {
 	if (D == ERROR) {
             return D;
@@ -1640,7 +1776,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             D.configs.readonly(true);
         }
         dfa.states[D] =  D;
-        debug writefln("adding new DFA state: %1$s", D);
+        debug
+            writefln("adding new DFA state: %1$s, dfa.states = %2$s", D, dfa.states);
         return D;
     }
 

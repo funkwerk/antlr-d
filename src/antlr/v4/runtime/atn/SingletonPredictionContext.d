@@ -16,10 +16,6 @@ class SingletonPredictionContext : PredictionContext
 
     public int returnState;
 
-    public this()
-    {
-    }
-
     public this(PredictionContext parent, int returnState)
     {
         super(parent !is null ? calculateHashCode(parent, returnState) : calculateEmptyHashCode);

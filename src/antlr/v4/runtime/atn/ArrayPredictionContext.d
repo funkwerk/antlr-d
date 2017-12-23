@@ -171,9 +171,3 @@ class ArrayPredictionContext : PredictionContext
     }
 
 }
-
-unittest
-{
-    auto spc = new SingletonPredictionContext();
-    auto apc = new ArrayPredictionContext(spc);
-}

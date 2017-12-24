@@ -78,7 +78,7 @@ class ParserRuleContext : RuleContext
      * @uml
      * @__gshared
      */
-    private static __gshared ParserRuleContext EMPTY_;
+    public static __gshared ParserRuleContext EMPTY = new ParserRuleContext;
 
     /**
      * If we are debugging or building a parse tree for a visitor,
@@ -345,21 +345,25 @@ class ParserRuleContext : RuleContext
                       start.getText, stop.getText);
     }
 
-    /**
-     * @uml
-     * @shared
-     */
-    private shared static this()
-    {
-        EMPTY_ = new ParserRuleContext();
-    }
+}
 
-    /**
-     * Returns: A single instance of ParserRuleContext
-     */
-    public static ParserRuleContext EMPTY()
-    {
-        return EMPTY_;
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+    @Tags("parserRC")
+    @("emptyInstanceParserRuleContext")
+    unittest {
+        auto rpc = ParserRuleContext.EMPTY;
+        rpc.should.not.beNull;
+        rpc.getChildCount.should.equal(0);
+        auto rpc1 = ParserRuleContext.EMPTY;
+        rpc1.should.not.beNull;
+        import std.stdio;
+        Assert.equal(rpc1 is rpc, true);
+        Assert.equal(rpc1 == rpc, true);
+        rpc.getStart.should.equal(null);
+        rpc.getStop.should.equal(null);
+        rpc.getSourceInterval.toString.should.equal("-1..-2");
+        rpc.getParent.should.beNull;
     }
-
 }

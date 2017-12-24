@@ -108,6 +108,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
      */
     public Interval getSourceInterval()
     {
+        // satisfy the ParseTree / SyntaxTree interface
         return new Interval(-1, -2); // INVALID;
     }
 

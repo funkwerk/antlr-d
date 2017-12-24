@@ -117,6 +117,13 @@ version(unittest) {
         auto spc2 = SingletonPredictionContext.create(null,
                                                       PredictionContext.EMPTY_RETURN_STATE);
         import std.stdio;
+        import antlr.v4.runtime.ParserRuleContext;
+        auto prc = new ParserRuleContext;
+        writefln("ParserRuleContext ----- = %s", prc.EMPTY);
+        auto prc1 = new ParserRuleContext;
+        //        writefln("ParserRuleContext  = %s", prc.EMPTY == this.EMPTY);
+        writefln("spc2 = %s", spc2);
+        writefln("PredictionContext.EMPTY_RETURN_STATE = %s", PredictionContext.EMPTY_RETURN_STATE);
         writefln("spc2 = %s", spc2);
         //Assert.equal(spc.opEquals(spc1), true);
     }

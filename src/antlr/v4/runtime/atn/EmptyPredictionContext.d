@@ -110,6 +110,7 @@ version(unittest) {
         auto spc = new EmptyPredictionContext;
         spc.should.not.beNull;
         spc.isEmpty.should.equal(true);
+        spc.getReturnState(0).should.equal(int.max);
         auto spc1 = new EmptyPredictionContext;
         spc1.isEmpty.should.equal(true);
         if (spc == spc1)

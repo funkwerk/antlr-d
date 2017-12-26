@@ -1,7 +1,8 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
+ *  Copyright (c) 2012 Terence Parr
+ *  Copyright (c) 2012 Sam Harwell
+ *  Copyright (c) 2017 Egbert Voigt
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -54,19 +55,17 @@ abstract class PredictionContext
 {
 
     /**
-     * @uml
      * Represents {@code $} in local context prediction, which means wildcard.
      * {@code *+x = *}.
      */
-    public static EmptyPredictionContext EMPTY;
+    public static const EmptyPredictionContext EMPTY = new EmptyPredictionContext;
 
     /**
-     * @uml
      * Represents {@code $} in an array in full context mode, when {@code $}
      * doesn't mean wildcard: {@code $ + x = [$,x]}. Here,
      * {@code $} = {@link #EMPTY_RETURN_STATE}.
      */
-    public static const int EMPTY_RETURN_STATE = int.max;
+    public static immutable int EMPTY_RETURN_STATE = int.max;
 
     private static immutable int INITIAL_HASH = 1;
 
@@ -100,7 +99,7 @@ abstract class PredictionContext
 
     public this()
     {
-        EMPTY = new EmptyPredictionContext();
+        //EMPTY = new EmptyPredictionContext();
         id = globalNodeCount++;
     }
 
@@ -118,11 +117,11 @@ abstract class PredictionContext
         // is EMPTY. Nobody called us. (if we are empty, return empty)
         if ( outerContext.parent is null ||
              outerContext == new ParserRuleContext().EMPTY ) {
-            return PredictionContext.EMPTY;
+            return cast(PredictionContext)PredictionContext.EMPTY;
         }
 
         // If we have a parent, convert it to a PredictionContext graph
-        PredictionContext parent = EMPTY;
+        PredictionContext parent = cast(PredictionContext)EMPTY;
         parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
 
         ATNState state = atn.states[outerContext.invokingState];
@@ -368,11 +367,11 @@ abstract class PredictionContext
                                               bool rootIsWildcard)
     {
         if (rootIsWildcard) {
-            if ( a == EMPTY ) return EMPTY;  // * + b = *
-            if ( b == EMPTY ) return EMPTY;  // a + * = *
+            if ( a == EMPTY ) return cast(PredictionContext)EMPTY;  // * + b = *
+            if ( b == EMPTY ) return cast(PredictionContext)EMPTY;  // a + * = *
         }
         else {
-            if ( a == EMPTY && b == EMPTY ) return EMPTY; // $ + $ = $
+            if ( a == EMPTY && b == EMPTY ) return cast(PredictionContext)EMPTY; // $ + $ = $
             if ( a == EMPTY ) { // $ + x = [$,x]
                 int[] payloads = [b.returnState, EMPTY_RETURN_STATE];
                 PredictionContext[] parents = [b.parent, null];
@@ -634,7 +633,7 @@ abstract class PredictionContext
         }
         PredictionContext updated;
         if (parents.length == 0) {
-            updated = EMPTY;
+            updated = cast(PredictionContext)EMPTY;
         }
         else if (parents.length == 1) {
             updated = SingletonPredictionContext.create(parents[0], context.getReturnState(0));
@@ -676,7 +675,7 @@ abstract class PredictionContext
 
     public string[] toStrings(InterfaceRecognizer recognizer, int currentState)
     {
-        return toStrings(recognizer, EMPTY, currentState);
+        return toStrings(recognizer, cast(PredictionContext)EMPTY, currentState);
     }
 
     public string[] toStrings(InterfaceRecognizer recognizer, PredictionContext stop,

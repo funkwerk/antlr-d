@@ -54,7 +54,7 @@ class PredictionContextCache
     public PredictionContext add(PredictionContext ctx)
     {
 	if (ctx == PredictionContext.EMPTY)
-            return PredictionContext.EMPTY;
+            return ctx;
         PredictionContext existing = cache[ctx];
         if (existing !is null) {
             // System.out.println(name+" reuses "+existing);

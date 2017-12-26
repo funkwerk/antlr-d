@@ -1289,7 +1289,8 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                 for (int i = 0; i < config.context.size; i++) {
                     if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
-                            configs.add(new ATNConfig(config, config.state, PredictionContext.EMPTY), mergeCache);
+                            configs.add(new ATNConfig(config, config.state,
+                                                      cast(PredictionContext)PredictionContext.EMPTY), mergeCache);
                             continue;
                         }
                         else {

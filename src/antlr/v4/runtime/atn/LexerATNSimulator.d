@@ -412,7 +412,7 @@ class LexerATNSimulator : ATNSimulator
 
     protected ATNConfigSet computeStartState(CharStream input, ATNState p)
     {
-        PredictionContext initialContext = PredictionContext.EMPTY;
+        PredictionContext initialContext = cast(PredictionContext)PredictionContext.EMPTY;
         ATNConfigSet configs = new OrderedATNConfigSet();
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             ATNState target = p.transition(i).target;
@@ -452,7 +452,9 @@ class LexerATNSimulator : ATNSimulator
                     return true;
                 }
                 else {
-                    configs.add(new LexerATNConfig(config, config.state, PredictionContext.EMPTY));
+                    configs.add(new LexerATNConfig(config,
+                                                   config.state,
+                                                   cast(PredictionContext)PredictionContext.EMPTY));
                     currentAltReachedAcceptState = true;
                 }
             }

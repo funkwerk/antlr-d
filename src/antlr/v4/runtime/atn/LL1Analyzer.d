@@ -89,7 +89,7 @@ class LL1Analyzer
             look[alt] = new IntervalSet();
             auto lookBusy = new Array!ATNConfig();
             bool seeThruPreds = false; // fail to get lookahead upon pred
-            _LOOK(s.transition(alt).target, null, PredictionContext.EMPTY,
+            _LOOK(s.transition(alt).target, null, cast(PredictionContext)PredictionContext.EMPTY,
                   look[alt], lookBusy, new Array!bool(), seeThruPreds, false);
             // Wipe out lookahead for this alternative if we found nothing
             // or we had a predicate when we !seeThruPreds

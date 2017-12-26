@@ -87,6 +87,8 @@ class EmptyPredictionContext : SingletonPredictionContext
      */
     public override bool opEquals(Object o)
     {
+        if (o.classinfo == EmptyPredictionContext.classinfo)
+            return true;
         return this is o;
     }
 
@@ -117,15 +119,13 @@ version(unittest) {
             assert(true);
         auto spc2 = SingletonPredictionContext.create(null,
                                                       PredictionContext.EMPTY_RETURN_STATE);
-        import std.stdio;
+        spc2.isEmpty.should.equal(true);
+        spc2.toString.should.equal("$");
+        spc2.getReturnState(0).should.equal(int.max);
+        Assert.equal(spc2.classinfo == EmptyPredictionContext.classinfo, true);
+        Assert.equal(spc.opEquals(spc1), true);
         import antlr.v4.runtime.ParserRuleContext;
-        auto prc = new ParserRuleContext;
-        writefln("ParserRuleContext ----- = %s", prc.EMPTY);
         auto prc1 = new ParserRuleContext;
-        //        writefln("ParserRuleContext  = %s", prc.EMPTY == this.EMPTY);
-        writefln("spc2 = %s", spc2);
-        writefln("PredictionContext.EMPTY_RETURN_STATE = %s", PredictionContext.EMPTY_RETURN_STATE);
-        writefln("spc2 = %s", spc2);
-        //Assert.equal(spc.opEquals(spc1), true);
+        Assert.equal(spc2.opEquals(prc1), false);
     }
 }

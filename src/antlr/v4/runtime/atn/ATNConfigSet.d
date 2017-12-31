@@ -104,7 +104,8 @@ class ATNConfigSet
             size_t hashCode = 7;
             hashCode = 31 * hashCode + o.state.stateNumber;
             hashCode = 31 * hashCode + o.alt;
-            hashCode = 31 * hashCode + o.semanticContext.toHash;
+            if (o.semanticContext)
+                hashCode = 31 * hashCode + o.semanticContext.toHash;
             return hashCode;
         }
 
@@ -116,6 +117,11 @@ class ATNConfigSet
             auto b = cast(ATNConfig) bObj;
             if (a is b)
                 return true;
+            if (a.semanticContext is b.semanticContext)
+                return a.state.stateNumber == b.state.stateNumber
+                    && a.alt == b.alt;
+            if (a.semanticContext is null || b.semanticContext is null)
+                return false;
             return a.state.stateNumber == b.state.stateNumber
                 && a.alt == b.alt
                 && a.semanticContext.opEquals(b.semanticContext);
@@ -233,7 +239,9 @@ class ATNConfigSet
      */
     public bool add(ATNConfig config, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-	if (readonly_) throw new IllegalStateException("This set is readonly");
+	if (readonly_)
+            throw new IllegalStateException("This set is readonly");
+
         if (config.semanticContext != SemanticContext.NONE) {
             hasSemanticContext = true;
         }

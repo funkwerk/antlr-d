@@ -127,5 +127,6 @@ version(unittest) {
         import antlr.v4.runtime.ParserRuleContext;
         auto prc1 = new ParserRuleContext;
         Assert.equal(spc2.opEquals(prc1), false);
+        spc.toDOTString(spc2).should.equal("digraph G {\nrankdir=LR;\n}\n");
     }
 }

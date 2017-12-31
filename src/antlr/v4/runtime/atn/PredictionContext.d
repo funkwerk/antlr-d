@@ -34,6 +34,7 @@ module antlr.v4.runtime.atn.PredictionContext;
 import std.array;
 import std.conv;
 import std.algorithm.sorting;
+import core.atomic;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
@@ -69,12 +70,11 @@ abstract class PredictionContext
 
     private static immutable int INITIAL_HASH = 1;
 
-    public static int globalNodeCount = 0;
+    public static shared int globalNodeCount = 0;
 
     public int id;
 
     /**
-     * @uml
      * Stores the computed hash code of this {@link PredictionContext}. The hash
      * code is computed in parts to match the following reference algorithm.
      *
@@ -99,13 +99,13 @@ abstract class PredictionContext
 
     public this()
     {
-        //EMPTY = new EmptyPredictionContext();
-        id = globalNodeCount++;
+        atomicOp!"+="(globalNodeCount, 1);
     }
 
     public this(size_t cachedHashCode)
     {
         this.cachedHashCode = cachedHashCode;
+        //atomicOp!"+="(globalNodeCount, 1);
     }
 
     public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
@@ -533,15 +533,6 @@ abstract class PredictionContext
         for (int p = 0; p < parents.length; p++) {
             parents[p] = uniqueParents[parents[p]];
         }
-    }
-
-    /**
-     * @uml
-     * @override
-     */
-    public override int opCmp(Object o)
-    {
-        return (cast(PredictionContext)o).id - this.id;
     }
 
     public static string toDOTString(PredictionContext context)

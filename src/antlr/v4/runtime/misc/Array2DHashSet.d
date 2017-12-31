@@ -187,7 +187,7 @@ class Array2DHashSet(T)
      */
     protected final size_t getBucket(T o)
     {
-        return hashOfFp(o) & (buckets.length - 1);
+        return hashOfFp(o) & (buckets.length - 1); // assumes length is power of 2
     }
 
     /**

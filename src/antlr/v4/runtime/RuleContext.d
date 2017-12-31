@@ -77,7 +77,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     public this(RuleContext parent, int invokingState)
     {
         this.parent = parent;
-        //if ( parent!=null ) writeln("invoke " ~ stateNumber ~ " from " ~ parent);
         this.invokingState = invokingState;
     }
 
@@ -207,7 +206,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public string toStringTree()
     {
-        return toStringTree(cast(string[])null);
+        return toStringTree([]);
     }
 
     /**
@@ -216,7 +215,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
      */
     public override string toString()
     {
-        return toString([""]);
+        return toString([]);
     }
 
     public string toString(InterfaceRecognizer recog)
@@ -248,8 +247,8 @@ class RuleContext : RuleNode, InterfaceRuleContext
         RuleContext p = this;
         buf.put("[");
         while (p !is null && p != stop) {
-            if (ruleNames is null) {
-                if (!p.isEmpty()) {
+            if (ruleNames.length == 0) {
+                if (!p.isEmpty) {
                     buf.put(to!string(p.invokingState));
                 }
             }
@@ -258,14 +257,11 @@ class RuleContext : RuleNode, InterfaceRuleContext
                 string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames[ruleIndex] : to!string(ruleIndex);
                 buf.put(ruleName);
             }
-
-            if (p.parent !is null && (ruleNames !is null || !p.parent.isEmpty())) {
-                buf.put(" ");
+            if (p.parent !is null && (ruleNames.length || !p.parent.isEmpty)) {
+                                buf.put(" ");
             }
-
             p = p.parent;
         }
-
         buf.put("]");
         return buf.data;
     }
@@ -275,4 +271,36 @@ class RuleContext : RuleNode, InterfaceRuleContext
         return parent;
     }
 
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    class Test {
+        @Tags("ruleCont")
+        @("simpleRuleContext")
+        unittest {
+            auto rcp = new RuleContext(null, -1);
+            auto rc = new RuleContext(rcp, -1);
+            rc.should.not.beNull;
+            rcp.depth.should.equal(1);
+            rc.isEmpty.should.equal(true);
+            rc.parent.isEmpty.should.equal(true);
+            rc.getParent.isEmpty.should.equal(true);
+            rc.depth.should.equal(2);
+            rc.toString.should.equal("[]");
+            rc.toStringTree.should.equal("[]");
+            rc.getAltNumber.should.equal(0);
+        }
+
+        @Tags("ruleContVoc")
+        @("ruleContextWithVocabulary")
+        unittest {
+            auto rcp = new RuleContext(null, -1);
+            auto rc = new RuleContext(rcp, -1);
+            rc.should.not.beNull;
+            rc.toString(["A1", "B1"]).should.equal("[]");
+        }
+    }
 }

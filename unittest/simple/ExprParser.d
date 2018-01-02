@@ -161,7 +161,8 @@ public class ExprParser : Parser {
 			return getRuleContext!ExprContext(i);
 		}
 		public this(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
+                    writefln("ExprContext: entry public this(ParserRuleContext parent, int invokingState) %s, %s", parent, invokingState);
+			super(parent, invokingState);                    writefln("ExprContext: exit public this(ParserRuleContext parent, int invokingState) %s, %s", parent, invokingState);
 		}
 		override public int getRuleIndex() { return RULE_expr; }
 		import ExprListener;
@@ -180,13 +181,15 @@ public class ExprParser : Parser {
 		return expr(0);
 	}
 
-	private ExprContext expr(int _p) {
-		ParserRuleContext _parentctx = ctx_;
-		int _parentState = getState();
+    private ExprContext expr(int _p) {
+        ParserRuleContext _parentctx = ctx_;
+        int _parentState = getState;
+        writefln("ExprContext: startRecursionRule; %s, _p = %s, _parentState =%s", ctx_, _p, _parentState);
 		ExprContext _localctx = new ExprContext(ctx_, _parentState);
 		ExprContext _prevctx = _localctx;
 		int _startState = 2;
-		enterRecursionRule(_localctx, 2, RULE_expr, _p);
+                writefln("ExprContext: enterRecursionRule; ctx_ = %s _localctx = %s", ctx_, _localctx);
+		enterRecursionRule(_localctx, 2, RULE_expr, _p);writefln("ExprContext: exitRecursionRule; %s", ctx_);
 		int _la;
                 writefln("ExprContext start");
 		try {
@@ -217,9 +220,10 @@ public class ExprParser : Parser {
 			}
 			ctx_.stop = _input.LT(-1);
 			setState(28);
-                        writefln("ExprContext setState(28);");
-			_errHandler.sync(this);writefln("ExprContext setState(28); after sync");
-			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);writefln("ExprContext while alt = before while");
+                        writefln("ExprContext setState(28); ctx_ = %s", ctx_);
+			_errHandler.sync(this);writefln("ExprContext setState(28); after sync ctx_ = %s from %s", ctx_, getInterpreter);
+			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
+                        writefln("ExprContext while alt = before while _alt=%s", _alt);
 			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {writefln("ExprContext while alt = %s", _alt);
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();

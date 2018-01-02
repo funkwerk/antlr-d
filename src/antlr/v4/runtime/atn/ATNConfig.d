@@ -199,10 +199,9 @@ class ATNConfig
      */
     public override bool opEquals(Object o)
     {
-        if (typeid(typeof(o)) != typeid(ATNConfig*)) {
+        if (o.classinfo != ATNConfig.classinfo) {
             return false;
         }
-
         return this.opEquals(cast(ATNConfig)o);
     }
 
@@ -213,12 +212,17 @@ class ATNConfig
         } else if (other is null) {
             return false;
         }
-
+        bool scEqual = false;
+        if (this.semanticContext is other.semanticContext)
+            scEqual = true;
+        else
+            if (this.semanticContext is null || other.semanticContext is null)
+                return false;
         return this.state.stateNumber == other.state.stateNumber
             && this.alt == other.alt
             && (this.context is other.context ||
                 (this.context !is null && this.context.opEquals(other.context)))
-            //&& this.semanticContext.opEquals(other.semanticContext)
+            && scEqual
             && this.isPrecedenceFilterSuppressed() == other.isPrecedenceFilterSuppressed();
 
     }

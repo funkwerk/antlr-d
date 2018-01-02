@@ -723,8 +723,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void enterOuterAlt(ParserRuleContext localctx, int altNum)
     {
-        import std.stdio;
-        writefln("xxxxxxxxxxxxx enterOutAlt localctx = %s, ctx_ = %s,  altNum = %s, _buildParseTrees = %s", localctx, ctx_, altNum, _buildParseTrees);
 	localctx.setAltNumber(altNum);
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree
@@ -768,6 +766,8 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
                                    int precedence)
     {
+        import std.stdio;
+        writefln("Parser: public void enterRecursionRule: locctx = %s, state = %s", localctx, state);
         setState(state);
         _precedenceStack.push(precedence);
         ctx_ = localctx;
@@ -927,7 +927,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public int getRuleIndex(string ruleName)
     {
-        writefln("getRuleIndex: ruleName = %s", ruleName);
         if (ruleName in getRuleIndexMap)
             return getRuleIndexMap[ruleName];
         return -1;
@@ -959,8 +958,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         while (p) {
             // compute what follows who invoked us
             int ruleIndex = p.getRuleIndex();
-            writefln("getRuleInvocationStack: ruleIndex = %s, ruleNames = %s of %s", ruleIndex, ruleNames, p.classinfo);
-            if (ruleIndex <0)
+            if (ruleIndex < 0)
                 stack ~= "n/a";
             else
                 stack ~= ruleNames[ruleIndex];

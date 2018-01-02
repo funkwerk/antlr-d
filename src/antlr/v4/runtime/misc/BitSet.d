@@ -121,3 +121,34 @@ struct BitSet
     }
 
 }
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    class Test {
+
+        @Tags("bitSet")
+        @("bitSetFunction")
+        unittest {
+            BitSet bs;
+            bs.isEmpty.should.equal(true);
+            bs.toHash.should.equal(0);
+            bs.length.should.equal(0);
+            bs.set(5, true);
+            bs.length.should.equal(8);
+            bs.toString.should.equal("00000100");
+            auto bs1 = bs;
+            bs.clear;
+            bs1.toString.should.equal("00000100");
+            bs.length.should.equal(0);
+            bs.set(2, true);
+            bs.toString.should.equal("00100");
+            auto bs2 = bs1.or(bs);
+            bs2.toString.should.equal("00100100");
+            bs2.get(1).should.equal(false);
+            bs2.length.should.equal(8);
+            bs2.opEquals(bs1).should.equal(false);
+        }
+    }
+}

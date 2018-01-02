@@ -488,11 +488,11 @@ class PredictionMode
 	AltAndContextMap configToAlts;
         foreach (ATNConfig c; configs.configs) {
             BitSet *alts;
-            *alts = configToAlts.get(c);
-            if (alts.isEmpty) {
-                alts = new BitSet();
+            if (!(c in configToAlts.altAndContextMap)) {
+                alts = new BitSet;
                 configToAlts.put(c, *alts);
             }
+            else {
             alts.set(c.alt, true);
         }
         return configToAlts.values();

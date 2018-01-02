@@ -106,6 +106,10 @@ import antlr.v4.runtime.misc.MurmurHash;
      */
     class Predicate : SemanticContext
     {
+        /**
+         * The single instance of LexerMoreAction.
+         */
+        private static __gshared Predicate instance_;
 
         public int ruleIndex;
 
@@ -179,6 +183,22 @@ import antlr.v4.runtime.misc.MurmurHash;
         {
             return "{" ~ to!string(ruleIndex) ~ ":" ~ to!string(predIndex) ~ "}?";
         }
+
+        // /**
+        //  * Creates the single instance of Predicate.
+        //  */
+        // private shared static this()
+        // {
+        //     instance_ = new Predicate;
+        // }
+
+        // /**
+        //  * Returns: A single instance of LexerMoreAction.
+        //  */
+        // public static Predicate instance()
+        // {
+        //     return instance_;
+        // }
 
     }
     // Class PrecedencePredicate

@@ -70,6 +70,10 @@ abstract class PredictionContext
 
     private static immutable int INITIAL_HASH = 1;
 
+    /**
+     * @uml
+     * @shared
+     */
     public static shared int globalNodeCount = 0;
 
     public int id;

@@ -492,7 +492,6 @@ class PredictionMode
                 alts = new BitSet;
                 configToAlts.put(c, *alts);
             }
-            else {
             alts.set(c.alt, true);
         }
         return configToAlts.values();

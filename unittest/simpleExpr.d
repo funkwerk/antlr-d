@@ -20,7 +20,10 @@ class Test {
         auto lexer = new ExprLexer(antlrInput);
         lexer.should.not.beNull;
         lexer.getGrammarFileName.should.equal("Expr.g4");
-        lexer.getRuleNames.should.equal(["T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "NEWLINE", "INT"]);
+        lexer.getRuleNames.should.equal(["T__0", "T__1",
+                                         "T__2", "T__3",
+                                         "T__4", "T__5",
+                                         "NEWLINE", "INT"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
         cts.getNumberOfOnChannelTokens.should.equal(3);
@@ -34,6 +37,17 @@ class Test {
         ExprParser parser = new ExprParser(cts);
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
+        Assert.equal(progContext.children.length, 2);
+        Assert.equal(progContext.children[0].hasValue, true);
+        Assert.equal(progContext.children[1].hasValue, true);
+        Assert.equal((cast(CommonToken)progContext.start).toString, "[@0,0:2='100',<8>,1:0]");
+        Assert.equal((cast(CommonToken)progContext.stop).toString, "[@1,3:3='\\n',<7>,1:3]");
+        import std.stdio;
+        writefln("progContext.classinfo = %s", progContext.classinfo);
+        writefln("progContext.children[0] = %s", progContext.children[0].type);
+        writefln("progContext.children[1] = %s", progContext.children[1].type);
+        import antlr.v4.runtime.RuleContext;
+        writefln("progContext.children[1] = %s", progContext.children[0].peek!(RuleContext));
     }
 
     @Tags("simpleExpr2")
@@ -70,7 +84,10 @@ class Test {
         auto lexer = new ExprLexer(antlrInput);
         lexer.should.not.beNull;
         lexer.getGrammarFileName.should.equal("Expr.g4");
-        lexer.getRuleNames.should.equal(["T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "NEWLINE", "INT"]);
+        lexer.getRuleNames.should.equal(["T__0", "T__1",
+                                         "T__2", "T__3",
+                                         "T__4", "T__5",
+                                         "NEWLINE", "INT"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
         cts.getNumberOfOnChannelTokens.should.equal(8);
@@ -84,5 +101,7 @@ class Test {
         ExprParser parser = new ExprParser(cts);
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
+        import std.stdio;
+        writefln("progContext = %s", progContext);
     }
 }

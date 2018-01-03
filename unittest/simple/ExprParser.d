@@ -131,13 +131,16 @@ public class ExprParser : Parser {
 				{
 				setState(4);
 				expr(0);
-				setState(5);writefln("ProgContext setState(5);");
+				setState(5);
+                                writefln("ProgContext: setState(5);");
 				match(NEWLINE);
 				}
 				}
-				setState(11);setState(5);writefln("ProgContext setState(11);");
+				setState(11);
+                                writefln("ProgContext: setState(11);");
 				_errHandler.sync(this);
-				_la = _input.LA(1);setState(5);writefln("ProgContext setState(11); %s", _la);
+				_la = _input.LA(1);
+                                writefln("ProgContext: setState(11); %s", _la);
 			}
 			}
 		}
@@ -147,8 +150,10 @@ public class ExprParser : Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-                    exitRule();writefln("ProgContext exitRule");
-		}writefln("ProgContext returnRule _localctx =  %s(%s)",  _localctx.classinfo,  _localctx);
+                    exitRule();
+                    writefln("ProgContext: exitRule");
+		}
+                writefln("ProgContext: returnRule _localctx =  %s(%s)",  _localctx.classinfo,  _localctx);
 		return _localctx;
 	}
 

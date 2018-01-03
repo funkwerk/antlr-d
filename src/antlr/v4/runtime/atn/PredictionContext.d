@@ -598,19 +598,17 @@ abstract class PredictionContext
             return context;
         }
 
-        PredictionContext existing = visited[context];
-        if (existing !is null) {
-            return existing;
+        if (context in visited) {
+            return visited[context];
         }
 
-        existing = contextCache.get(context);
-        if (existing !is null) {
-            visited[context] = existing;
-            return existing;
+        if (contextCache.hasKey(context)) {
+            visited[context] = contextCache.get(context);
+            return contextCache.get(context);
         }
 
         bool changed = false;
-        PredictionContext[] parents = new PredictionContext[context.size()];
+        PredictionContext[] parents = new PredictionContext[context.size];
         for (int i = 0; i < parents.length; i++) {
             PredictionContext parent = getCachedContext(context.getParent(i), contextCache, visited);
             if (changed || parent != context.getParent(i)) {
@@ -619,10 +617,8 @@ abstract class PredictionContext
                     for (int j = 0; j < context.size(); j++) {
                         parents[j] = context.getParent(j);
                     }
-
                     changed = true;
                 }
-
                 parents[i] = parent;
             }
         }
@@ -637,7 +633,6 @@ abstract class PredictionContext
             ArrayPredictionContext arrayPredictionContext = cast(ArrayPredictionContext)context;
             updated = new ArrayPredictionContext(parents, arrayPredictionContext.returnStates);
         }
-
         contextCache.add(updated);
         visited[updated] = updated;
         visited[context] = updated;

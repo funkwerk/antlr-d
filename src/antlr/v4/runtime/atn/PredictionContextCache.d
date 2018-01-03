@@ -55,10 +55,9 @@ class PredictionContextCache
     {
 	if (ctx == PredictionContext.EMPTY)
             return ctx;
-        PredictionContext existing = cache[ctx];
-        if (existing !is null) {
+        if (hasKey(ctx)) {
             // System.out.println(name+" reuses "+existing);
-            return existing;
+            return cache[ctx];
         }
         cache[ctx] = ctx;
         return ctx;
@@ -72,6 +71,13 @@ class PredictionContextCache
     public int size()
     {
         return to!int(cache.length);
+    }
+
+    public bool hasKey(PredictionContext predictionContext)
+    {
+        if (predictionContext in cache)
+            return true;
+        return false;
     }
 
 }

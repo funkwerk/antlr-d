@@ -372,7 +372,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public int adaptivePredict(TokenStream input, int decision, ParserRuleContext outerContext)
     {
-	debug {writefln(".............. outerContext = %s", outerContext.children);
+	debug {
             writefln("adaptivePredict decision %1$s"~
                      " exec LA(1)==%2$s"~
                      " line %3$s:%4$s",
@@ -1337,9 +1337,8 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
             }
             else {
                 // else if we have no context info, just chase follow links (if greedy)
-                writefln("closureCheckingStopState9: ..........");
                 debug
-                    writefln("2FALLING off rule %s",
+                    writefln("FALLING off rule %s",
                              getRuleName(config.state.ruleIndex));
             }
         }

@@ -5,17 +5,22 @@ import antlr.v4.runtime.misc.BitSet;
 
 // Struct AltAndContextMap
 /**
- * TODO add class description
+ * A structure that ATN configurations maps to bit vectors
  */
 struct AltAndContextMap
 {
 
     public BitSet[ATNConfig] altAndContextMap;
 
+    public bool hasKey(ATNConfig aTNConfig)
+    {
+        if (aTNConfig in altAndContextMap)
+            return true;
+        return false;
+    }
+
     public BitSet get(ATNConfig c)
     {
-        // if (altAndContextMap.length == 0)
-        //     return null;
         return altAndContextMap[c];
     }
 

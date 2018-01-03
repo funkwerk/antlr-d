@@ -65,8 +65,6 @@ abstract class ATNSimulator : InterfaceATNSimulator
     public ATN atn;
 
     /**
-     * @uml
-     * @final
      * The context cache maps all PredictionContext objects that are equals()
      * to a single cached copy. This cache is shared across all contexts
      * in all ATNConfigs in all DFA states.  We rebuild each ATNConfigSet
@@ -125,7 +123,8 @@ abstract class ATNSimulator : InterfaceATNSimulator
 
     public PredictionContext getCachedContext(PredictionContext context)
     {
-        if (sharedContextCache is null) return context;
+        if (sharedContextCache is null)
+            return context;
         PredictionContext[PredictionContext] visited;
         return PredictionContext.getCachedContext(context,
                                                   sharedContextCache,

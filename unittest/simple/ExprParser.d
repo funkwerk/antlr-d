@@ -204,13 +204,13 @@ public class ExprParser : Parser {
 			setState(18);
                         writefln("ExprContext setState(18);");
 			switch (_input.LA(1)) {
-			case INT:writefln("ExprContext INT");
+			case INT:writefln("ExprContext: INT");
 				{
 				setState(13);writefln("ExprContext setState(13);");
 				match(INT);
 				}
 				break;
-			case T__4:writefln("ExprContext T__4");
+			case T__4:writefln("ExprContext: T__4");
 				{
 				setState(14);writefln("ExprContext setState(14);");
 				match(T__4);
@@ -225,10 +225,10 @@ public class ExprParser : Parser {
 			}
 			ctx_.stop = _input.LT(-1);
 			setState(28);
-                        writefln("ExprContext setState(28); ctx_ = %s", ctx_);
+                        writefln("ExprContext: setState(28); ctx_ = %s", ctx_);
 			_errHandler.sync(this);writefln("ExprContext setState(28); after sync ctx_ = %s from %s", ctx_, getInterpreter);
 			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
-                        writefln("ExprContext while alt = before while _alt=%s", _alt);
+                        writefln("ExprContext: while alt = before while _alt=%s", _alt);
 			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {writefln("ExprContext while alt = %s", _alt);
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -288,8 +288,10 @@ public class ExprParser : Parser {
 		}
 		finally {
 			unrollRecursionContexts(_parentctx);
-                        writefln("ExprContext unrollRecursionContexts;");
 		}
+                writefln("ExprContext: unrollRecursionContexts;  _localctx = %s", _localctx.classinfo);
+                writefln("ExprContext: unrollRecursionContexts;  _localctx.start = %s", _localctx.start);
+                writefln("ExprContext: unrollRecursionContexts;  _localctx.stop = %s", _localctx.stop);
 		return _localctx;
 	}
 

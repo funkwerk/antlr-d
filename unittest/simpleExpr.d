@@ -10,7 +10,7 @@ import unit_threaded;
 
 
 class Test {
-    
+
     @Tags("simpleExpr")
     @("simpleExprSimpleInput")
     unittest {
@@ -38,16 +38,14 @@ class Test {
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
         Assert.equal(progContext.children.length, 2);
-        Assert.equal(progContext.children[0].hasValue, true);
-        Assert.equal(progContext.children[1].hasValue, true);
         Assert.equal((cast(CommonToken)progContext.start).toString, "[@0,0:2='100',<8>,1:0]");
         Assert.equal((cast(CommonToken)progContext.stop).toString, "[@1,3:3='\\n',<7>,1:3]");
         import std.stdio;
         writefln("progContext.classinfo = %s", progContext.classinfo);
-        writefln("progContext.children[0] = %s", progContext.children[0].type);
-        writefln("progContext.children[1] = %s", progContext.children[1].type);
+        writefln("progContext.children[0] = %s", progContext.children[0].classinfo);
+        writefln("progContext.children[1] = %s", progContext.children[1].classinfo);
         import antlr.v4.runtime.RuleContext;
-        writefln("progContext.children[1] = %s", progContext.children[0].peek!(RuleContext));
+        Assert.equal((cast(RuleContext)progContext.getChild(0)).getText, "100");
     }
 
     @Tags("simpleExpr2")

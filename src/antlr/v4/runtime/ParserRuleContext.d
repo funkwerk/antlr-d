@@ -87,7 +87,7 @@ class ParserRuleContext : RuleContext
      * operation because we don't the need to track the details about
      * how we parse this rule.
      */
-    public Variant[] children;
+    public ParseTree[] children;
 
     public Token start;
 
@@ -105,7 +105,6 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * @uml
      * COPY a ctx (I'm deliberately not using copy constructor) to avoid
      * confusion with creating node with parent. Does not copy children.
      */
@@ -137,13 +136,19 @@ class ParserRuleContext : RuleContext
      */
     public TerminalNode addChild(TerminalNode t)
     {
-        children ~= Variant(t);
+        import std.stdio;
+        writefln("000000000000000 public TerminalNode addChild(TerminalNode t): addChild");
+        children ~= t;
         return t;
     }
 
     public RuleContext addChild(RuleContext ruleInvocation)
     {
-        children ~= Variant(ruleInvocation);
+        import std.stdio;
+        children ~= ruleInvocation;
+        writefln("22222222222222 public TerminalNode addChild(TerminalNode t): getChild(0).classinfo  = %s %s",
+                 cast(RuleContext)getChild(0).getPayload,
+                 (cast(RuleContext)getChild(0)).getText );
         return ruleInvocation;
     }
 
@@ -192,7 +197,8 @@ class ParserRuleContext : RuleContext
      */
     public override ParseTree getChild(int i)
     {
-        return children !is null && i>=0 && i < to!int(children.length) ? *children[i].peek!(ParseTree) : null;
+        return children !is null && i >= 0 &&
+            i < to!int(children.length) ? children[i] : null;
     }
 
     public auto getChild(T)(int i)
@@ -203,10 +209,10 @@ class ParserRuleContext : RuleContext
 
         int j = -1; // what element have we found with ctxType?
         foreach (o; children) {
-            if (o.type == typeid(T)) {
+            if (cast(T)o) {
                 j++;
                 if (j == i) {
-                    return o.peek!T;
+                    return cast(T)o;
                 }
             }
         }
@@ -221,10 +227,10 @@ class ParserRuleContext : RuleContext
 
         int j = -1; // what token with ttype have we found?
         foreach (o; children) {
-            if (o.type == typeid(TerminalNode)) {
-                TerminalNode tnode = o.get!(TerminalNode);
-                Token symbol = tnode.getSymbol();
-                if ( symbol.getType()==ttype ) {
+            if (cast(TerminalNode)o) {
+                TerminalNode tnode = cast(TerminalNode)o;
+                Token symbol = tnode.getSymbol;
+                if (symbol.getType == ttype) {
                     j++;
                     if ( j == i ) {
                         return tnode;
@@ -244,10 +250,10 @@ class ParserRuleContext : RuleContext
 
         TerminalNode[] tokens = null;
         foreach (o; children) {
-            if (o.type == typeid(TerminalNode)) {
-                TerminalNode tnode = o.get!(TerminalNode);
-                Token symbol = tnode.getSymbol();
-                if (symbol.getType() == ttype) {
+            if (cast(TerminalNode)o) {
+                TerminalNode tnode = cast(TerminalNode)o;
+                Token symbol = tnode.getSymbol;
+                if (symbol.getType == ttype) {
                     if (tokens is null) {
                         tokens.length = 0;
                     }
@@ -264,7 +270,7 @@ class ParserRuleContext : RuleContext
 
     public T getRuleContext(T)(int i)
     {
-        return *getChild!T(i);
+        return getChild!T(i);
     }
 
     public T[] getRuleContexts(T)()
@@ -275,8 +281,8 @@ class ParserRuleContext : RuleContext
         }
         T[] contexts = null;
         foreach (o; children) {
-            if (T.classinfo == o.type.classinfo) {
-                contexts ~= o.get!T;
+            if (cast(T)o) {
+                contexts ~= cast(T)o;
             }
         }
 

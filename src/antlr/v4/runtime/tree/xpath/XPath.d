@@ -37,7 +37,6 @@ import std.file;
 import std.format;
 import std.conv;
 import std.container : DList;
-import std.variant;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
@@ -259,7 +258,9 @@ class XPath
     public ParseTree[] evaluate(ParseTree t)
     {
 	ParserRuleContext dummyRoot = new ParserRuleContext();
-        dummyRoot.children = variantArray(t); // don't set t's parent.
+        ParseTree[1] pt;
+        pt[0] = t;
+        dummyRoot.children = pt; // don't set t's parent.
 
         ParseTree[] work = [dummyRoot];
 

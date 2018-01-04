@@ -136,19 +136,13 @@ class ParserRuleContext : RuleContext
      */
     public TerminalNode addChild(TerminalNode t)
     {
-        import std.stdio;
-        writefln("000000000000000 public TerminalNode addChild(TerminalNode t): addChild");
         children ~= t;
         return t;
     }
 
     public RuleContext addChild(RuleContext ruleInvocation)
     {
-        import std.stdio;
         children ~= ruleInvocation;
-        writefln("22222222222222 public TerminalNode addChild(TerminalNode t): getChild(0).classinfo  = %s %s",
-                 cast(RuleContext)getChild(0).getPayload,
-                 (cast(RuleContext)getChild(0)).getText );
         return ruleInvocation;
     }
 
@@ -318,7 +312,6 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * @uml
      * Get the initial token in this context.
      * Note that the range from start to stop is inclusive, so for rules that do not consume anything
      * (for example, zero length or error productions) this token may exceed stop.
@@ -329,7 +322,6 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * @uml
      * Get the final token in this context.
      * Note that the range from start to stop is inclusive, so for rules that do not consume anything
      * (for example, zero length or error productions) this token may precede start.

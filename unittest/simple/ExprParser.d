@@ -19,7 +19,7 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.TerminalNode;
-            import std.stdio;
+
 public class ExprParser : Parser {
 	static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
 
@@ -114,16 +114,13 @@ public class ExprParser : Parser {
 	}
 
 	public ProgContext prog() {
-
 		ProgContext _localctx = new ProgContext(ctx_, getState());
 		enterRule(_localctx, 0, RULE_prog);
 		int _la;
-                writefln("ProgContext start");
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(9);
-                        writefln("ProgContext setState(9);");
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__4 || _la==INT) {
@@ -132,15 +129,12 @@ public class ExprParser : Parser {
 				setState(4);
 				expr(0);
 				setState(5);
-                                writefln("ProgContext: setState(5);");
 				match(NEWLINE);
 				}
 				}
 				setState(11);
-                                writefln("ProgContext: setState(11);");
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-                                writefln("ProgContext: setState(11); %s", _la);
 			}
 			}
 		}
@@ -150,10 +144,8 @@ public class ExprParser : Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-                    exitRule();
-                    writefln("ProgContext: exitRule");
+			exitRule();
 		}
-                writefln("ProgContext: returnRule _localctx =  %s(%s)",  _localctx.classinfo,  _localctx);
 		return _localctx;
 	}
 
@@ -166,8 +158,7 @@ public class ExprParser : Parser {
 			return getRuleContext!ExprContext(i);
 		}
 		public this(ParserRuleContext parent, int invokingState) {
-                    writefln("ExprContext: entry public this(ParserRuleContext parent, int invokingState) %s, %s", parent, invokingState);
-			super(parent, invokingState);                    writefln("ExprContext: exit public this(ParserRuleContext parent, int invokingState) %s, %s", parent, invokingState);
+			super(parent, invokingState);
 		}
 		override public int getRuleIndex() { return RULE_expr; }
 		import ExprListener;
@@ -186,37 +177,33 @@ public class ExprParser : Parser {
 		return expr(0);
 	}
 
-    private ExprContext expr(int _p) {
-        ParserRuleContext _parentctx = ctx_;
-        int _parentState = getState;
-        writefln("ExprContext: startRecursionRule; %s, _p = %s, _parentState =%s", ctx_, _p, _parentState);
+	private ExprContext expr(int _p) {
+		ParserRuleContext _parentctx = ctx_;
+		int _parentState = getState();
 		ExprContext _localctx = new ExprContext(ctx_, _parentState);
 		ExprContext _prevctx = _localctx;
 		int _startState = 2;
-                writefln("ExprContext: enterRecursionRule; ctx_ = %s _localctx = %s", ctx_, _localctx);
-		enterRecursionRule(_localctx, 2, RULE_expr, _p);writefln("ExprContext: exitRecursionRule; %s", ctx_);
+		enterRecursionRule(_localctx, 2, RULE_expr, _p);
 		int _la;
-                writefln("ExprContext start");
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(18);
-                        writefln("ExprContext setState(18);");
 			switch (_input.LA(1)) {
-			case INT:writefln("ExprContext: INT");
+			case INT:
 				{
-				setState(13);writefln("ExprContext setState(13);");
+				setState(13);
 				match(INT);
 				}
 				break;
-			case T__4:writefln("ExprContext: T__4");
+			case T__4:
 				{
-				setState(14);writefln("ExprContext setState(14);");
+				setState(14);
 				match(T__4);
-				setState(15);writefln("ExprContext setState(15);");
+				setState(15);
 				expr(0);
-				setState(16);writefln("ExprContext setState(16);");
+				setState(16);
 				match(T__5);
 				}
 				break;
@@ -225,16 +212,14 @@ public class ExprParser : Parser {
 			}
 			ctx_.stop = _input.LT(-1);
 			setState(28);
-                        writefln("ExprContext: setState(28); ctx_ = %s", ctx_);
-			_errHandler.sync(this);writefln("ExprContext setState(28); after sync ctx_ = %s from %s", ctx_, getInterpreter);
+			_errHandler.sync(this);
 			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
-                        writefln("ExprContext: while alt = before while _alt=%s", _alt);
-			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {writefln("ExprContext while alt = %s", _alt);
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(26);writefln("ExprContext setState(26);");
+					setState(26);
 					_errHandler.sync(this);
 					switch ( getInterpreter.adaptivePredict(_input,2, ctx_) ) {
 					case 1:
@@ -289,9 +274,6 @@ public class ExprParser : Parser {
 		finally {
 			unrollRecursionContexts(_parentctx);
 		}
-                writefln("ExprContext: unrollRecursionContexts;  _localctx = %s", _localctx.classinfo);
-                writefln("ExprContext: unrollRecursionContexts;  _localctx.start = %s", _localctx.start);
-                writefln("ExprContext: unrollRecursionContexts;  _localctx.stop = %s", _localctx.stop);
 		return _localctx;
 	}
 

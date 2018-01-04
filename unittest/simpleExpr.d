@@ -40,11 +40,12 @@ class Test {
         Assert.equal(progContext.children.length, 2);
         Assert.equal((cast(CommonToken)progContext.start).toString, "[@0,0:2='100',<8>,1:0]");
         Assert.equal((cast(CommonToken)progContext.stop).toString, "[@1,3:3='\\n',<7>,1:3]");
-        import std.stdio;
         writefln("progContext.classinfo = %s", progContext.classinfo);
-        writefln("progContext.children[0] = %s", progContext.children[0].classinfo);
-        writefln("progContext.children[1] = %s", progContext.children[1].classinfo);
         import antlr.v4.runtime.RuleContext;
+        import antlr.v4.runtime.tree.RuleNode;
+        Assert.equal(progContext.children[0].classinfo == RuleNode.classinfo, true);
+        import antlr.v4.runtime.tree.TerminalNode;
+        Assert.equal(progContext.children[1].classinfo == TerminalNode.classinfo, true);
         Assert.equal((cast(RuleContext)progContext.getChild(0)).getText, "100");
     }
 

@@ -383,7 +383,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         _input = input;
         _startIndex = input.index();
         _outerContext = outerContext;
-        DFA dfa = decisionToDFA[decision];writefln("................. dfa = %s, decisionToDFA = %s ", dfa, decisionToDFA[decision]);
+        DFA dfa = decisionToDFA[decision];
         _dfa = dfa;
 
         int m = input.mark();
@@ -414,12 +414,11 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                              outerContext.children);
                 }
 
-                bool fullCtx = false; writefln("before computeStartState %s", dfa.atnStartState);
+                bool fullCtx = false;
                 ATNConfigSet s0_closure =
                     computeStartState(dfa.atnStartState,
                                       ParserRuleContext.EMPTY,
                                       fullCtx);
- writefln("after computeStartState s0_closure = %s", s0_closure.configs);
                 if (dfa.isPrecedenceDfa()) {
                     /* If this is a precedence DFA, we use applyPrecedenceFilter
                      * to convert the computed start state to a precedence start
@@ -429,21 +428,18 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                      */
                     dfa.s0.configs = s0_closure; // not used for prediction but useful to know start configs anyway
                     s0_closure = applyPrecedenceFilter(s0_closure);
-                    writefln("DFA s0 = addDFAState(dfa, new DFAState(s0_closure)); start1");
                     s0 = addDFAState(dfa, new DFAState(s0_closure));
-writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     dfa.setPrecedenceStartState(parser.getPrecedence(), s0);
                 }
                 else {
-                    writefln("DFA s0 = addDFAState(dfa, new DFAState(s0_closure)); start2 %s", dfa);
                     s0 = addDFAState(dfa, new DFAState(s0_closure));
-                    writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end %s", dfa);
                     dfa.s0 = s0;
                 }
             }
 
             int alt = execATN(dfa, s0, input, index, outerContext);
-            debug writefln("DFA after predictATN: %1$s", dfa.toString(parser.getVocabulary()));
+            debug
+                writefln("DFA after predictATN: %1$s", dfa.toString(parser.getVocabulary()));
             return alt;
         }
         finally {
@@ -456,7 +452,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
     }
 
     /**
-     * @uml
      * There are some key conditions we're looking for after computing a new
      * set of ATN configs (proposed DFA state):
      *       * if the set is empty, there is no viable alternative for current symbol
@@ -496,15 +491,14 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
 
         DFAState previousD = s0;
 
-        debug writefln("s0 = %1$s", s0);
+        debug
+            writefln("s0 = %1$s", s0);
 
         int t = input.LA(1);
-        writefln("input.LA(1) = %1$s, input = %2$s", t, input);
 
         while (true) { // while more work
             DFAState D = getExistingTargetState(previousD, t);
             if (D is null) {
-                writefln("-------- D is null computeTargetState dfa.states = %1$s, previousD = %2$s, t = %3$s", dfa.states, previousD, t);
                 D = computeTargetState(dfa, previousD, t);
             }
 
@@ -531,7 +525,8 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                 // IF PREDS, MIGHT RESOLVE TO SINGLE ALT => SLL (or syntax error)
                 BitSet conflictingAlts = D.configs.conflictingAlts;
                 if (D.predicates != null) {
-                    debug writeln("DFA state has preds in DFA sim LL failover");
+                    debug
+                        writeln("DFA state has preds in DFA sim LL failover");
                     int conflictIndex = input.index();
                     if (conflictIndex != startIndex) {
                         input.seek(startIndex);
@@ -539,7 +534,8 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
 
                     conflictingAlts = evalSemanticContext(D.predicates, outerContext, true);
                     if ( conflictingAlts.cardinality()==1 ) {
-                        debug writeln("Full LL avoided");
+                        debug
+                            writeln("Full LL avoided");
                         return conflictingAlts.nextSetBit(0);
                     }
 
@@ -550,8 +546,9 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     }
                 }
 
-                debug(dfa_debug) writefln("ctx sensitive state %1$ in %2$s",
-                                          outerContext, D);
+                debug(dfa_debug)
+                    writefln("ctx sensitive state %1$ in %2$s",
+                             outerContext, D);
                 bool fullCtx = true;
                 ATNConfigSet s0_closure =
                     computeStartState(dfa.atnStartState, outerContext,
@@ -610,8 +607,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
     public DFAState getExistingTargetState(DFAState previousD, int t)
     {
         DFAState[] edges = previousD.edges;
-        import std.stdio;
-        writefln("xxxxxxxxxxx edges = %s, previousD=%s, t = %s", edges, previousD, t);
         if (edges == null || t + 1 < 0 || t + 1 >= edges.length) {
             return null;
         }
@@ -633,7 +628,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
     public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
     {
         ATNConfigSet reach = computeReachSet(previousD.configs, t, false);
-        writefln("-*********** computeTargetState: previousD = %s, t = %s, dfa = %s, reach = %4$s", previousD, t, dfa, reach);
         if (reach is null) {
             addDFAEdge(dfa, previousD, t, ERROR);
             return ERROR;
@@ -643,7 +637,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
         DFAState D = new DFAState(reach);
 
         int predictedAlt = getUniqueAlt(reach);
-        writefln("-******** predictedAlt = %s", predictedAlt);
         debug {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
             writefln("SLL altSubSets=%1$s"~
@@ -995,7 +988,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
             ATNState target = p.transition(i).target;
             ATNConfig c = new ATNConfig(target, i+1, initialContext);
             ATNConfig[] closureBusy;
-            writefln("........... computeStartState ........ %s", fullCtx);
             closureATN(c, configs, closureBusy, true, fullCtx, false);
         }
 
@@ -1183,15 +1175,11 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                                                                           ParserRuleContext outerContext)
     {
 	IntervalSet alts = new IntervalSet();
-        import std.stdio;
-        writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule configs.configs = %s", configs.configs);
         foreach (ATNConfig c; configs.configs) {
-            writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule c.getOuterContextDepth = %s", c.getOuterContextDepth);
             if (c.getOuterContextDepth > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
                 alts.add(c.alt);
             }
         }
-        writefln("getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule end %s", alts);
         if (alts.size == 0)
             return ATN.INVALID_ALT_NUMBER;
         return alts.getMinElement();
@@ -1269,7 +1257,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                            bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
-        writefln("---------- closureATN ---------- %s", fullCtx);
         closureCheckingStopState(config, configs, closureBusy, collectPredicates,
                                  fullCtx,
                                  initialDepth, treatEofAsEpsilon);
@@ -1280,17 +1267,12 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	debug {
-            writefln("closureCheckingStopState1: closure(%s)", config.toString(parser, true));
-            writefln("closureCheckingStopState2: config.state.ci(%s)", config.state.classinfo);
-            writefln("closureCheckingStopState3: config.context(%s)", config.context);
-            writefln("closureCheckingStopState4: config.classinfo(%s)", config.classinfo);
-            writefln("closureCheckingStopState5: fullCtx(%s)\n", fullCtx);
+            writefln("closureCheckingStopState: closure(%s)", config.toString(parser, true));
         }
 
         if (cast(RuleStopState)config.state) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
-            writefln("closureCheckingStopState6: config.context.isEmpty %s", config.context.isEmpty);
             if (!config.context.isEmpty) {
                 writefln("closureCheckingStopState:+++ not empty! %s", config.context.size);
                 for (int i = 0; i < config.context.size; i++) {
@@ -1330,7 +1312,6 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                 return;
             }
             else if (fullCtx) {
-                writefln("closureCheckingStopState:---------- fullCtx");
                 // reached end of start rule
                 configs.add(config, mergeCache);
                 return;
@@ -1353,15 +1334,13 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
         bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	ATNState p = config.state;
-        writefln("closure_: 111 p.onlyHasEpsilonTransitions = %s %s %s", p.onlyHasEpsilonTransitions, config, mergeCache);
         // optimization
-        if (!p.onlyHasEpsilonTransitions) {writefln("closure_: lll333");
-            configs.add(config, mergeCache);writefln("closure_: lll555");
+        if (!p.onlyHasEpsilonTransitions) {
+            configs.add(config, mergeCache);
             // make sure to not return here, because EOF transitions can act as
             // both epsilon transitions and non-epsilon transitions.
             //            if ( debug ) System.out.println("added config "+configs);
         }
-        writefln("closure_: 222 configs =  %s, p.transitions = %s", configs, p.transitions);
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
             Transition t = p.transition(i);
             bool continueCollecting =
@@ -1378,7 +1357,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                         closureBusy ~= c;
                     }
 
-                int newDepth = depth;writefln("closure_: lll666 config.state = %s", config.state.classinfo);
+                int newDepth = depth;
                 if (config.state.classinfo ==  RuleStopState.classinfo) {
                     assert (!fullCtx);
                     // target fell off end of rule; mark resulting c as having dipped into outer context
@@ -1386,8 +1365,7 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    writefln("closure_: lll777 count(closureBusy, c) = %s, c= %s,  %s", count(closureBusy, c), c, closureBusy);
-                    if (count(closureBusy, c) > 0) {writefln("closure_: lll888");
+                    if (count(closureBusy, c) > 0) {
                         // avoid infinite recursion for right-recursive rules
                         continue;
                     }
@@ -1774,7 +1752,8 @@ writefln("DFA  s0 = addDFAState(dfa, new DFAState(s0_closure)); end1");
 	if (D == ERROR) {
             return D;
         }
-        debug writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D);
+        debug
+            writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D);
         if (D in dfa.states)
             return D;
 

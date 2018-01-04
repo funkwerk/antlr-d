@@ -766,8 +766,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
                                    int precedence)
     {
-        import std.stdio;
-        writefln("Parser: public void enterRecursionRule: locctx = %s, state = %s", localctx, state);
         setState(state);
         _precedenceStack.push(precedence);
         ctx_ = localctx;

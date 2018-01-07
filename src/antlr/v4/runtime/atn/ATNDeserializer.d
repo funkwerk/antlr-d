@@ -235,7 +235,9 @@ class ATNDeserializer
             if (atn.ruleToStartState[state.ruleIndex].isLeftRecursiveRule) {
                 ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
                 if (cast(LoopEndState)maybeLoopEndState) {
-                    if (maybeLoopEndState.epsilonOnlyTransitions && cast(RuleStopState)(maybeLoopEndState.transition(0))) {
+                    if (maybeLoopEndState.epsilonOnlyTransitions &&
+                        maybeLoopEndState.transitions[0].target.classinfo ==
+                        RuleStopState.classinfo) {
                         (cast(StarLoopEntryState)state).isPrecedenceDecision = true;
                     }
                 }

@@ -10,7 +10,7 @@ import unit_threaded;
 
 class Test {
 
-    @Tags("simple")
+    @Tags("simpleHello")
     @("simpleHelloTestUnknownToken")
     unittest {
         auto input = "hello Egbert";
@@ -22,12 +22,12 @@ class Test {
         lexer.getRuleNames.should.equal(["T__0", "ID", "WS"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
-        try {
+        // try {
             cts.getNumberOfOnChannelTokens.should.equal(4);
-        }
-        catch (LexerNoViableAltException e) {
-            Assert.equal("LexerNoViableAltException('E')", e.toString);
-        }
+        // }
+        // catch (LexerNoViableAltException e) {
+        //     Assert.equal("LexerNoViableAltException('E')", e.toString);
+        // }
     }
 
     @Tags("simple")

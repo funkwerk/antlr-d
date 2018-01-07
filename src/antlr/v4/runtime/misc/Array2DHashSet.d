@@ -141,14 +141,14 @@ class Array2DHashSet(T)
                 bucket[i] = o;
                 n++;
                 debug {
-                    writefln("\ngetOrAddImpl:bucket does not exists -> %1$s", o);
+                    writefln("getOrAddImpl:bucket does not exists -> %1$s", o);
                     writefln("getOrAddImpl:buckets -> %1$s index -> %2$s", buckets, b);
                 }
                 return o;
             }
             if (opEqualsFp(existing, o)) {
                 debug {
-                    writefln("\ngetOrAddImpl:bucket is found -> %1$s", o);
+                    writefln("getOrAddImpl:bucket is found -> %1$s", o);
                 }
                 return existing; // found existing, quit
             }

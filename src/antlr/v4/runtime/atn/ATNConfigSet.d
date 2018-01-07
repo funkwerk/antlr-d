@@ -249,13 +249,15 @@ class ATNConfigSet
             dipsIntoOuterContext = true;
         }
         ATNConfig existing = configLookup.getOrAdd(config);
-        if (existing == config) { // we added this new one
+
+        if (existing is config) { // we added this new one
             cachedHashCode = -1;
             configs ~= config;  // track order here
             return true;
         }
         // a previous (s,i,pi,_), merge with it and save result
         bool rootIsWildcard = !fullCtx;
+
         PredictionContext merged =
             PredictionContext.merge(existing.context, config.context, rootIsWildcard, mergeCache);
         // no need to check for existing.context, config.context in cache
@@ -268,7 +270,6 @@ class ATNConfigSet
         if (config.isPrecedenceFilterSuppressed()) {
             existing.setPrecedenceFilterSuppressed(true);
         }
-
         existing.context = merged; // replace context; no need to alt mapping
         return true;
     }
@@ -326,8 +327,8 @@ class ATNConfigSet
     public void optimizeConfigs(InterfaceATNSimulator interpreter)
     {
 	if (readonly_) throw new IllegalStateException("This set is readonly");
-        if ( configLookup.isEmpty() ) return;
-        foreach (ATNConfig config; configs) {
+        if (configLookup.isEmpty) return;
+        foreach (ref ATNConfig config; configs) {
             //			int before = PredictionContext.getAllContextNodes(config.context).size();
             config.context = interpreter.getCachedContext(config.context);
             //			int after = PredictionContext.getAllContextNodes(config.context).size();
@@ -347,25 +348,28 @@ class ATNConfigSet
      */
     public override bool opEquals(Object o)
     {
+
 	if (o is this) {
             return true;
         }
-        else if (o.classinfo != ATNConfigSet.classinfo) {
-            return false;
+        else {
+            if (o.classinfo != ATNConfigSet.classinfo) {
+                return false;
+            }
+        }
+        ATNConfigSet other = cast(ATNConfigSet)o;
+        if (other.size != this.size)
+                    return false;
+        foreach(int i, config; this.configs) {  // includes stack context
+            if (config != other.configs[i])
+                return false;
         }
 
-        // System.out.print("equals " + this + ", " + o+" = ");
-        ATNConfigSet other = cast(ATNConfigSet)o;
-        bool same = configs !is null &&
-            this.opEquals(other) &&  // includes stack context
-            this.fullCtx == other.fullCtx &&
-            this.uniqueAlt == other.uniqueAlt &&
-            this.conflictingAlts == other.conflictingAlts &&
-            this.hasSemanticContext == other.hasSemanticContext &&
-            this.dipsIntoOuterContext == other.dipsIntoOuterContext;
-
-        //		System.out.println(same);
-        return same;
+        return fullCtx == other.fullCtx &&
+            uniqueAlt == other.uniqueAlt &&
+            conflictingAlts == other.conflictingAlts &&
+            hasSemanticContext == other.hasSemanticContext &&
+            dipsIntoOuterContext == other.dipsIntoOuterContext;
     }
 
     /**
@@ -454,7 +458,7 @@ class ATNConfigSet
 version(unittest) {
     import fluent.asserts;
     import unit_threaded;
-    import std.stdio;  
+    import std.stdio;
     @Tags("atnConfigSet")
 	@("atnConfigSetTest")
 	unittest {

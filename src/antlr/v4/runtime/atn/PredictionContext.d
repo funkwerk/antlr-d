@@ -203,12 +203,12 @@ abstract class PredictionContext
     }
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
-                                          DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
+                                          ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         assert(a !is null && b !is null); // must be empty context, never null
 
         // share same graph if both same
-        if (a == b || a.opEquals(b) ) return a;
+        if (a is b || a.opEquals(b)) return a;
 
         if (typeid(typeof(a)) == typeid(SingletonPredictionContext*) &&
             typeid(typeof(b)) == typeid(SingletonPredictionContext*)) {
@@ -220,8 +220,8 @@ abstract class PredictionContext
         // At least one of a or b is array
         // If one is $ and rootIsWildcard, return $ as * wildcard
         if ( rootIsWildcard ) {
-            if (typeid(typeof(a)) == typeid(EmptyPredictionContext*)) return a;
-            if (typeid(typeof(b)) == typeid(EmptyPredictionContext*)) return b;
+            if (typeid(a) == typeid(EmptyPredictionContext)) return a;
+            if (typeid(b) == typeid(EmptyPredictionContext)) return b;
         }
 
         // convert singleton so both are arrays to normalize
@@ -264,7 +264,7 @@ abstract class PredictionContext
      *  @param mergeCache
      */
     public static PredictionContext mergeSingletons(SingletonPredictionContext a, SingletonPredictionContext b,
-                                                    bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
+                                                    bool rootIsWildcard, ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         if (mergeCache !is null ) {
             PredictionContext previous = mergeCache.get(a, b);
@@ -415,7 +415,7 @@ abstract class PredictionContext
      * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
      */
     public static PredictionContext mergeArrays(ArrayPredictionContext a, ArrayPredictionContext b,
-                                                bool rootIsWildcard, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
+                                                bool rootIsWildcard, ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         if (mergeCache !is null) {
             PredictionContext previous = mergeCache.get(a,b);

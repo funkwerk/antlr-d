@@ -221,10 +221,10 @@ class ATNConfig
         return this.state.stateNumber == other.state.stateNumber
             && this.alt == other.alt
             && (this.context is other.context ||
-                (this.context !is null && this.context.opEquals(other.context)))
+                (this.context !is null && other.context !is null &&
+                 this.context.opEquals(other.context)))
             && scEqual
-            && this.isPrecedenceFilterSuppressed() == other.isPrecedenceFilterSuppressed();
-
+            && this.isPrecedenceFilterSuppressed == other.isPrecedenceFilterSuppressed;
     }
 
     /**
@@ -273,10 +273,11 @@ class ATNConfig
         }
         if (semanticContext !is null && semanticContext != SemanticContext.NONE ) {
             buf.put(",");
-            //            buf.put(semanticContext);
+            buf.put(semanticContext.toString);
         }
-        if ( getOuterContextDepth()>0 ) {
-            //            buf.put(",up=").put(getOuterContextDepth());
+        if (getOuterContextDepth > 0) {
+            buf.put(",up=");
+            buf.put(to!string(getOuterContextDepth));
         }
         buf.put(')');
         return buf.data;

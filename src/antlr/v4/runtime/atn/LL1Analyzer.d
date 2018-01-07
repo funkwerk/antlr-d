@@ -182,10 +182,11 @@ class LL1Analyzer
      *  outermost context is reached. This parameter has no effect if {@code ctx}
      *  is {@code null}.
      */
-    protected void _LOOK(ATNState s, ATNState stopState, PredictionContext ctx, IntervalSet look,
+    protected void _LOOK(ATNState s, ATNState stopState, PredictionContext ctx, ref IntervalSet look,
                          Array!ATNConfig* lookBusy, Array!bool* calledRuleStack, bool seeThruPreds, bool addEOF)
     {
-        //		System.out.println("_LOOK("+s.stateNumber+", ctx="+ctx);
+        debug
+            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber, ctx, look.intervals);  
         ATNConfig c = new ATNConfig(s, 0, ctx);
         foreach(lb; *lookBusy)
             if (lb == c)
@@ -239,10 +240,8 @@ class LL1Analyzer
                     (*calledRuleStack)[(cast(RuleTransition)t).target.ruleIndex]) {
                     continue;
                 }
-
                 PredictionContext newContext =
                     SingletonPredictionContext.create(ctx, (cast(RuleTransition)t).followState.stateNumber);
-
                 try {
                     if (calledRuleStack.length <= (cast(RuleTransition)t).target.ruleIndex)
                         calledRuleStack.length = (cast(RuleTransition)t).target.ruleIndex +1;
@@ -253,7 +252,7 @@ class LL1Analyzer
                     calledRuleStack.opIndexAssign(false, (cast(RuleTransition)t).target.ruleIndex);
                 }
             }
-            else if ( t.classinfo == AbstractPredicateTransition.classinfo ) {
+            else if (cast(AbstractPredicateTransition)t) {
                 if ( seeThruPreds ) {
                     _LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                 }
@@ -268,10 +267,11 @@ class LL1Analyzer
                 look.addAll( IntervalSet.of(TokenConstantDefinition.MIN_USER_TOKEN_TYPE, atn.maxTokenType) );
             }
             else {
-                debug writeln("adding " ~ to!string(t));
+                debug
+                    writeln("LL1Analyzer: adding " ~ to!string(t));
                 IntervalSet set = t.label();
                 if (set !is null) {
-                    if (t.classinfo == NotSetTransition.classinfo) {
+                    if (cast(NotSetTransition)t) {
                         set = set.complement(IntervalSet.of(TokenConstantDefinition.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
                     }
                     look.addAll(set);

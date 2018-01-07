@@ -325,7 +325,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * the merge if we ever see a and b again.  Note that (b,a)&rarr;c should
      * also be examined during cache lookup.
      */
-    public DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
+    public auto mergeCache = new DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext);
 
     protected DFA _dfa;
 
@@ -1030,8 +1030,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                  * filter the prediction context for alternatives predicting alt>1
                  * (basically a graph subtraction algorithm).
                  */
-                PredictionContext context = statesFromAlt1[config.state.stateNumber];
-                if (context !is null && context.opEquals(config.context)) {
+                if (config.state.stateNumber in statesFromAlt1 &&
+                    statesFromAlt1[config.state.stateNumber].opEquals(config.context)) {
                     // eliminated
                     continue;
                 }
@@ -1267,16 +1267,14 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	debug {
-            writefln("closureCheckingStopState: closure(%s)", config.toString(parser, true));
+            writefln("\nclosureCheckingStopState: closure(%s)", config.toString(parser, true));
         }
 
         if (cast(RuleStopState)config.state) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
             if (!config.context.isEmpty) {
-                writefln("closureCheckingStopState:+++ not empty! %s", config.context.size);
                 for (int i = 0; i < config.context.size; i++) {
-                    writefln("closureCheckingStopState:+++ not empty!!");
                     if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
                             configs.add(new ATNConfig(config, config.state,
@@ -1385,7 +1383,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     debug
                         writefln("dips into outer ctx: %s", c);
                 }
-                else if (t.classinfo == RuleTransition.classinfo) {
+                else if (cast(RuleTransition)t) {
                     // latch when newDepth goes negative - once we step out of the entry context we can't return
                     if (newDepth >= 0) {
                         newDepth++;
@@ -1755,8 +1753,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         debug
             writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D);
         if (D in dfa.states)
-            return D;
-
+            return dfa.states[D];
         D.stateNumber = to!int(dfa.states.length);
         if (!D.configs.readonly) {
             D.configs.optimizeConfigs(this);

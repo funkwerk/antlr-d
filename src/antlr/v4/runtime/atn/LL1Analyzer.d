@@ -186,7 +186,7 @@ class LL1Analyzer
                          Array!ATNConfig* lookBusy, Array!bool* calledRuleStack, bool seeThruPreds, bool addEOF)
     {
         debug
-            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber, ctx, look.intervals);  
+            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber, ctx, look.intervals);
         ATNConfig c = new ATNConfig(s, 0, ctx);
         foreach(lb; *lookBusy)
             if (lb == c)

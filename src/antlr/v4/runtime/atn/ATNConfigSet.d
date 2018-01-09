@@ -360,7 +360,7 @@ class ATNConfigSet
         ATNConfigSet other = cast(ATNConfigSet)o;
         if (other.size != this.size)
                     return false;
-        foreach(int i, config; this.configs) {  // includes stack context
+        foreach(int i, config; this.configs) {  // check stack context
             if (config != other.configs[i])
                 return false;
         }

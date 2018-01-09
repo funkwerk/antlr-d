@@ -240,6 +240,8 @@ import antlr.v4.runtime.misc.MurmurHash;
         public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
         {
             if (parser.precpred(parserCallStack, precedence)) {
+                if (!SemanticContext.NONE)
+                    SemanticContext.NONE = new Predicate;
                 return SemanticContext.NONE;
             }
             else {

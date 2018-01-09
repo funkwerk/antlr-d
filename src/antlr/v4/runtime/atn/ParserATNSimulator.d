@@ -393,7 +393,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         // But, do we still need an initial state?
         try {
             DFAState s0;
-            if (dfa.isPrecedenceDfa()) {
+            if (dfa.isPrecedenceDfa) {
                 // the start state for a precedence DFA depends on the current
                 // parser precedence, and is provided by a DFA method.
                 s0 = dfa.getPrecedenceStartState(parser.getPrecedence());
@@ -419,7 +419,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     computeStartState(dfa.atnStartState,
                                       ParserRuleContext.EMPTY,
                                       fullCtx);
-                if (dfa.isPrecedenceDfa()) {
+
+                if (dfa.isPrecedenceDfa) {
                     /* If this is a precedence DFA, we use applyPrecedenceFilter
                      * to convert the computed start state to a precedence start
                      * state. We then use DFA.setPrecedenceStartState to set the
@@ -515,7 +516,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 NoViableAltException e = noViableAlt(input, outerContext, previousD.configs, startIndex);
                 input.seek(startIndex);
                 int alt = getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previousD.configs, outerContext);
-                if ( alt!=ATN.INVALID_ALT_NUMBER ) {
+                if (alt != ATN.INVALID_ALT_NUMBER) {
                     return alt;
                 }
                 throw e;
@@ -533,7 +534,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     }
 
                     conflictingAlts = evalSemanticContext(D.predicates, outerContext, true);
-                    if ( conflictingAlts.cardinality()==1 ) {
+                    if (conflictingAlts.cardinality ==1) {
                         debug
                             writeln("Full LL avoided");
                         return conflictingAlts.nextSetBit(0);
@@ -568,7 +569,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 int stopIndex = input.index();
                 input.seek(startIndex);
                 BitSet alts = evalSemanticContext(D.predicates, outerContext, true);
-                switch (alts.cardinality()) {
+                switch (alts.cardinality) {
                 case 0:
                     throw noViableAlt(input, outerContext, D.configs, startIndex);
 
@@ -827,7 +828,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public ATNConfigSet computeReachSet(ATNConfigSet closure, int t, bool fullCtx)
     {
-        debug writefln("in computeReachSet, starting closure: %s", closure);
+        debug
+            writefln("in computeReachSet, starting closure: %s", closure);
 
         if (mergeCache is null) {
             mergeCache = new DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext);
@@ -1092,6 +1094,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     {
 	PredPrediction[] pairs;
         bool containsPredicate = false;
+
         for (int i = 1; i < altToPred.length; i++) {
             SemanticContext pred = altToPred[i];
 
@@ -1101,7 +1104,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             if (ambigAlts.length > 0 && ambigAlts.get(i)) {
                 pairs ~= new PredPrediction(pred, i);
             }
-            if (pred != SemanticContext.NONE ) containsPredicate = true;
+            if (pred != SemanticContext.NONE)
+                containsPredicate = true;
         }
 
         if (!containsPredicate) {
@@ -1488,7 +1492,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             c = new ATNConfig(config, pt.target);
         }
 
-        debug writefln("config from pred transition=%s", c);
+        debug
+            writefln("config from pred transition=%s", c);
         return c;
 
     }
@@ -1761,7 +1766,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
         dfa.states[D] =  D;
         debug
-            writefln("adding new DFA state: %1$s, dfa.states = %2$s", D, dfa.states);
+            writefln("adding new DFA state end: %1$s, dfa.states = %2$s", D, dfa.states);
         return D;
     }
 

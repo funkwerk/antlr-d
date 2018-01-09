@@ -13,7 +13,7 @@ class Test {
     import antlr.v4.runtime.RuleContext;
     import antlr.v4.runtime.tree.RuleNode;
 
-    @Tags("simpleExpr")
+    @Tags("simpleExpr", "reg")
     @("simpleExprSimpleInput2Lines")
     unittest {
         auto input = "100\n122\n";
@@ -47,6 +47,8 @@ class Test {
         Assert.equal(progContext.children[0].classinfo == RuleNode.classinfo, true);
         import antlr.v4.runtime.tree.TerminalNode;
         Assert.equal(progContext.children[1].classinfo == TerminalNode.classinfo, true);
+        Assert.equal(progContext.children[2].classinfo == RuleNode.classinfo, true);
+        Assert.equal(progContext.children[3].classinfo == TerminalNode.classinfo, true);
         Assert.equal((cast(RuleContext)progContext.getChild(0)).getText, "100");
         //Assert.equal((cast(RuleContext)progContext.getChild(1)).getText, "100");
     }
@@ -86,9 +88,9 @@ class Test {
         Assert.equal(progContext.children[0].classinfo == RuleNode.classinfo, true);
         import antlr.v4.runtime.tree.TerminalNode;
         Assert.equal(progContext.children[1].classinfo == TerminalNode.classinfo, true);
-        Assert.equal((cast(RuleContext)progContext.getChild(0)).getText, "(100)");
-        Assert.equal((cast(RuleContext)progContext.getChild(0)).getChild(0).getText, "(");
-        Assert.equal((cast(RuleContext)progContext.getChild(0)).getChild(1).getText, "100");
+        Assert.equal((cast(RuleContext)progContext).toStringTree(parser),
+                     "([] ([4] [@0,0:0='(',<5>,1:0] ([15 4] [@1,1:3='100',<8>,1:1]) " ~
+                     "[@2,4:4=')',<6>,1:4]) [@3,5:5='\\n',<7>,1:5])[\"prog\", \"expr\"]");
     }
 
     @Tags("simpleExpr2", "reg")
@@ -114,12 +116,11 @@ class Test {
         ExprParser parser = new ExprParser(cts);
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
-        Assert.equal(progContext.children.length, 4);
+        Assert.equal(progContext.children.length, 2);
         Assert.equal((cast(RuleContext)progContext).toStringTree(parser),
-                     "([] ([4] [@0,0:2='100',<8>,1:0]) [@1,3:3='*',<1>,1:3] " ~
-                     "([4] [@2,4:5='13',<8>,1:4]) [@3,6:6='\\n',<7>,1:6])[\"prog\", \"expr\"]");
-        Assert.equal((cast(RuleContext)progContext).getChild(0).toStringTree(parser),
-                     "([4] [@0,0:2='100',<8>,1:0])[\"prog\", \"expr\"]");
+                     "([] ([4] ([2 4] [@0,0:2='100',<8>,1:0]) " ~
+                     "[@1,3:3='*',<1>,1:3] ([22 4] [@2,4:5='13',<8>,1:4])) " ~
+                     "[@3,6:6='\\n',<7>,1:6])[\"prog\", \"expr\"]");
     }
 
     @Tags("simpleExpr3")
@@ -148,5 +149,10 @@ class Test {
         ExprParser parser = new ExprParser(cts);
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
+        Assert.equal((cast(RuleContext)progContext).toStringTree(parser),
+                     "([] ([4] [@0,0:0='(',<5>,1:0] ([15 4] [@1,1:3='100',<8>,1:1]) " ~
+                     "[@2,4:4='+',<3>,1:4]) [@3,5:5='2',<8>,1:5] [@4,6:6=')',<6>,1:6] " ~
+                     "[@5,7:7='*',<1>,1:7] ([4] [@6,8:8='3',<8>,1:8]) " ~
+                     "[@7,9:9='\\n',<7>,1:9])[\"prog\", \"expr\"]");
     }
 }

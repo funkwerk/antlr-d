@@ -15,8 +15,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse\
-               -debug=ErrorHandling -debug
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse
 
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 
@@ -54,7 +53,7 @@ $(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 
 .PHONY : unittest
 unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)
-	-$(BUILD_DIR)/TestRunner
+	-$(BUILD_DIR)/TestRunner @reg
 	@mv ./*.lst $(BUILD_DIR)
 
 .PHONY : prepare_generator

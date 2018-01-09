@@ -10,7 +10,7 @@ import unit_threaded;
 
 class Test {
 
-    @Tags("simpleHello")
+    @Tags("simpleHello", "reg")
     @("simpleHelloTestUnknownToken")
     unittest {
         auto input = "hello Egbert";
@@ -18,19 +18,19 @@ class Test {
         antlrInput.should.not.beNull;
         auto lexer = new HelloLexer(antlrInput);
         lexer.should.not.beNull;
-        lexer.getGrammarFileName.should.equal("Hello.g4");
+        lexer.getGrammarFileName.should.equal("Hello.g4").because("xx");
         lexer.getRuleNames.should.equal(["T__0", "ID", "WS"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
-        // try {
-            cts.getNumberOfOnChannelTokens.should.equal(4);
-        // }
-        // catch (LexerNoViableAltException e) {
-        //     Assert.equal("LexerNoViableAltException('E')", e.toString);
-        // }
+        try {
+            cts.getNumberOfOnChannelTokens.should.equal(4).because("xx");
+        }
+        catch (LexerNoViableAltException e) {
+            Assert.equal("LexerNoViableAltException('E')", e.toString);
+        }
     }
 
-    @Tags("simple")
+    @Tags("simple", "reg")
     @("simpleHelloTestWithString")
     unittest {
         auto input = "hello egbert";
@@ -50,7 +50,7 @@ class Test {
                      "[@2,6:11='egbert',<2>,1:6]");
     }
 
-    @Tags("simple")
+    @Tags("simple", "reg")
     @("simpleHelloTestWithFile")
     unittest {
         File file = File("unittest/simple/hello.txt", "r");

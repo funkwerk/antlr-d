@@ -5,6 +5,7 @@ import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
 import ExprLexer;
 import ExprParser;
+import ExprBaseListener;
 import fluent.asserts;
 import unit_threaded;
 
@@ -16,6 +17,18 @@ class Test {
     @Tags("simpleExpr", "reg")
     @("simpleExprSimpleInput2Lines")
     unittest {
+        auto s = "";
+        class ExprListener : ExprBaseListener {
+            override public void enterProg(ExprParser.ExprParser.ProgContext ctx) {
+                import std.format;
+                s ~= format("ich bin da %s", ctx.getText);
+            }
+            override public void exitProg(ExprParser.ExprParser.ProgContext ctx) {
+                import std.format;
+                s ~= format(" ich bin nicht mehr da!");
+            }
+        }
+        
         auto input = "100\n122\n";
         auto antlrInput = new ANTLRInputStream(input);
         antlrInput.should.not.beNull;
@@ -50,7 +63,11 @@ class Test {
         Assert.equal(progContext.children[2].classinfo == RuleNode.classinfo, true);
         Assert.equal(progContext.children[3].classinfo == TerminalNode.classinfo, true);
         Assert.equal((cast(RuleContext)progContext.getChild(0)).getText, "100");
-        //Assert.equal((cast(RuleContext)progContext.getChild(1)).getText, "100");
+        import antlr.v4.runtime.tree.ParseTreeWalker;
+        auto baseLis = new ExprListener;
+        auto walker = new ParseTreeWalker;
+        walker.walk(baseLis, progContext);
+        s.should.equal("ich bin da 100\n122\n ich bin nicht mehr da!");
     }
 
     @Tags("simpleExpr1", "reg")
@@ -102,7 +119,8 @@ class Test {
         auto lexer = new ExprLexer(antlrInput);
         lexer.should.not.beNull;
         lexer.getGrammarFileName.should.equal("Expr.g4");
-        lexer.getRuleNames.should.equal(["T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "NEWLINE", "INT"]);
+        lexer.getRuleNames.should.equal(["T__0", "T__1", "T__2", "T__3",
+                                         "T__4", "T__5", "NEWLINE", "INT"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
         cts.getNumberOfOnChannelTokens.should.equal(5);
@@ -123,7 +141,7 @@ class Test {
                      "[@3,6:6='\\n',<7>,1:6])[\"prog\", \"expr\"]");
     }
 
-    @Tags("simpleExpr3")
+    @Tags("simpleExpr3", "reg")
     @("simpleExpr3")
     unittest {
         auto input = "(100+2)*3\n";
@@ -150,9 +168,10 @@ class Test {
         // Specify our entry point
         ExprParser.ExprParser.ProgContext progContext = parser.prog;
         Assert.equal((cast(RuleContext)progContext).toStringTree(parser),
-                     "([] ([4] [@0,0:0='(',<5>,1:0] ([15 4] [@1,1:3='100',<8>,1:1]) " ~
-                     "[@2,4:4='+',<3>,1:4]) [@3,5:5='2',<8>,1:5] [@4,6:6=')',<6>,1:6] " ~
-                     "[@5,7:7='*',<1>,1:7] ([4] [@6,8:8='3',<8>,1:8]) " ~
+                     "([] ([4] ([2 4] [@0,0:0='(',<5>,1:0] ([15 2 4] "~
+                     "([2 15 2 4] [@1,1:3='100',<8>,1:1]) [@2,4:4='+',<3>,1:4] "~
+                     "([25 15 2 4] [@3,5:5='2',<8>,1:5])) [@4,6:6=')',<6>,1:6]) "~
+                     "[@5,7:7='*',<1>,1:7] ([22 4] [@6,8:8='3',<8>,1:8])) "~
                      "[@7,9:9='\\n',<7>,1:9])[\"prog\", \"expr\"]");
     }
 }

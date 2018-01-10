@@ -1,12 +1,19 @@
+/*
+ * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.RuleContext;
 
 import std.array;
 import std.conv;
-import antlr.v4.runtime.tree.RuleNode;
+import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.misc.Interval;
@@ -220,8 +227,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public string toString(InterfaceRecognizer recog)
     {
-        //return toString(recog, ParserRuleContext.EMPTY);
-        return "";
+        return toString(recog, ParserRuleContext.EMPTY);
     }
 
     public string toString(string[] ruleNames)
@@ -253,7 +259,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
                 }
             }
             else {
-                int ruleIndex = p.getRuleIndex();
+                int ruleIndex = p.getRuleIndex;
                 string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames[ruleIndex] : to!string(ruleIndex);
                 buf.put(ruleName);
             }
@@ -278,7 +284,7 @@ version(unittest) {
     import unit_threaded;
 
     class Test {
-        @Tags("ruleCont")
+        @Tags("ruleCont", "reg")
         @("simpleRuleContext")
         unittest {
             auto rcp = new RuleContext(null, -1);
@@ -294,13 +300,29 @@ version(unittest) {
             rc.getAltNumber.should.equal(0);
         }
 
-        @Tags("ruleContVoc")
+        @Tags("ruleContVoc", "reg")
         @("ruleContextWithVocabulary")
         unittest {
-            auto rcp = new RuleContext(null, -1);
-            auto rc = new RuleContext(rcp, -1);
+            class RuleContextT : RuleContext {
+                public this(RuleContext parent, int invokingState)
+                {
+                    super(parent, invokingState);
+                }
+
+                override public int getRuleIndex()
+                {
+                    return invokingState;
+                }
+            }
+            auto rcp = new RuleContext(null, 1);
+            auto rc = new RuleContext(rcp, 0);
             rc.should.not.beNull;
-            rc.toString(["A1", "B1"]).should.equal("[]");
+            rc.toString(["A1", "B1"]).should.equal("[-1 -1]");
+
+            rcp = new RuleContextT(null, 1);
+            rc = new RuleContextT(rcp, 0);
+            rc.should.not.beNull;
+            rc.toString(["A1", "B1"]).should.equal("[A1 B1]");
         }
     }
 }

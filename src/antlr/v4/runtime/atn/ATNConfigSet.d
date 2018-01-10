@@ -35,7 +35,8 @@ import std.bitmanip;
 import std.array;
 import std.conv;
 import std.format;
-import std.algorithm;
+import std.algorithm.iteration : map, sum;
+import std.algorithm.comparison : equal, max;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATNConfig;
@@ -50,7 +51,6 @@ import antlr.v4.runtime.misc.BitSet;
 
 // Class ATNConfigSet
 /**
- * @uml
  * Specialized {@link Set}{@code <}{@link ATNConfig}{@code >} that can track
  * info about the set, with support for combining similar configurations using a
  * graph-structured stack.
@@ -360,8 +360,7 @@ class ATNConfigSet
         ATNConfigSet other = cast(ATNConfigSet)o;
         if (other.size != this.size)
                     return false;
-        foreach(int i, config; this.configs) {  // check stack context
-            if (config != other.configs[i])
+        if (equal(this.configs, other.configs) != 0) {  // check stack context
                 return false;
         }
 

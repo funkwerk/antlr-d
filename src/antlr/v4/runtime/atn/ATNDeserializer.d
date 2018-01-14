@@ -111,7 +111,7 @@ class ATNDeserializer
 
     private int p;
 
-    private UUID uuid;
+    public UUID uuid;
 
     public static this()
     {
@@ -206,31 +206,6 @@ class ATNDeserializer
         return atn;
     }
 
-    protected void markPrecedenceDecisions(ATN atn)
-    {
-        foreach (ATNState state; atn.states) {
-            if (!cast(StarLoopEntryState)state) {
-                continue;
-            }
-
-            /* We analyze the ATN to determine if this ATN decision state is the
-             * decision for the closure block that determines whether a
-             * precedence rule should continue or complete.
-             */
-            if (atn.ruleToStartState[state.ruleIndex].isLeftRecursiveRule) {
-                ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
-                if (cast(LoopEndState)maybeLoopEndState) {
-                    if (maybeLoopEndState.epsilonOnlyTransitions &&
-                        maybeLoopEndState.transitions[0].target.classinfo ==
-                        RuleStopState.classinfo) {
-                        (cast(StarLoopEntryState)state).isPrecedenceDecision = true;
-                    }
-                }
-            }
-        }
-
-    }
-
     /**
      * @uml
      * verify assumptions
@@ -294,6 +269,49 @@ class ATNDeserializer
             }
             else {
                 checkCondition(state.getNumberOfTransitions() <= 1 || state.classinfo == RuleStopState.classinfo);
+            }
+        }
+
+    }
+
+    private void readSets(ref IntervalSet[] sets, ATN aTN, int delegate() readUnicode)
+    {
+        // SETS
+        int nsets = readInt;
+        for (int i=0; i<nsets; i++) {
+            IntervalSet set = new IntervalSet();
+            sets ~= set;
+            int nintervals = readInt;
+            bool containsEof = readInt != 0;
+            if (containsEof) {
+                set.add(-1);
+            }
+            for (int j=0; j<nintervals; j++) {
+                set.add(readUnicode(), readUnicode());
+            }
+        }
+    }
+
+    protected void markPrecedenceDecisions(ATN atn)
+    {
+        foreach (ATNState state; atn.states) {
+            if (!cast(StarLoopEntryState)state) {
+                continue;
+            }
+
+            /* We analyze the ATN to determine if this ATN decision state is the
+             * decision for the closure block that determines whether a
+             * precedence rule should continue or complete.
+             */
+            if (atn.ruleToStartState[state.ruleIndex].isLeftRecursiveRule) {
+                ATNState maybeLoopEndState = state.transition(state.getNumberOfTransitions() - 1).target;
+                if (cast(LoopEndState)maybeLoopEndState) {
+                    if (maybeLoopEndState.epsilonOnlyTransitions &&
+                        maybeLoopEndState.transitions[0].target.classinfo ==
+                        RuleStopState.classinfo) {
+                        (cast(StarLoopEntryState)state).isPrecedenceDecision = true;
+                    }
+                }
             }
         }
 
@@ -572,24 +590,6 @@ class ATNDeserializer
         for (int i=0; i<nmodes; i++) {
             int s = readInt;
             atn.modeToStartState ~= cast(TokensStartState)atn.states[s];
-        }
-    }
-
-    private void readSets(ref IntervalSet[] sets, ATN atn, int delegate() readUnicode)
-    {
-        // SETS
-        int nsets = readInt;
-        for (int i=0; i<nsets; i++) {
-            IntervalSet set = new IntervalSet();
-            sets ~= set;
-            int nintervals = readInt;
-            bool containsEof = readInt != 0;
-            if (containsEof) {
-                set.add(-1);
-            }
-            for (int j=0; j<nintervals; j++) {
-                set.add(readUnicode(), readUnicode());
-            }
         }
     }
 

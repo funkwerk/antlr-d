@@ -1,4 +1,4 @@
-// Generated from src/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.5.3
+// Generated from src/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.7.1
 module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
@@ -18,14 +18,17 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class XPathLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
-    public static const int
+    public static immutable int
 		TOKEN_REF=1, RULE_REF=2, ANYWHERE=3, ROOT=4, WILDCARD=5, BANG=6, ID=7, 
 		STRING=8;
+    public static string[] channelNames = [
+        "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
+    ];
 	public static string[] modeNames = [
 		"DEFAULT_MODE"
 	];
@@ -43,11 +46,6 @@ public class XPathLexer : Lexer {
 		"ID", "STRING"
 	];
 	public static Vocabulary VOCABULARY;
-
-	public override void recover(LexerNoViableAltException e)
-	    {
-	        throw e;
-	    }
 
 	/**
 	 * @deprecated Use {@link #VOCABULARY} instead.
@@ -92,6 +90,9 @@ public class XPathLexer : Lexer {
 	override
 	public wstring getSerializedATN() { return _serializedATN; }
 
+        override
+	public string[] getChannelNames() { return channelNames; }
+
 	override
 	public string[] getModeNames() { return modeNames; }
 
@@ -104,7 +105,7 @@ public class XPathLexer : Lexer {
 		case 4:
 			ID_action(cast(InterfaceRuleContext)_localctx, actionIndex);
 			break;
-	        default: break;
+	        default: assert(0);
 		}
 	}
 	private void ID_action(InterfaceRuleContext _localctx, int actionIndex) {
@@ -117,12 +118,12 @@ public class XPathLexer : Lexer {
 				       else setType(RULE_REF);
 				       
 			break;
-	        default: break;
+	        default: assert(0);
 		}
 	}
 
 	public static immutable wstring _serializedATN =
-		"\u0003\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\u0002\n4\b\u0001"~
+		"\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\u0002\n4\b\u0001"~
 		"\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t\u0004\u0004\u0005"~
 		"\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007\u0004\b\t\b\u0004\t\t"~
 		"\t\u0003\u0002\u0003\u0002\u0003\u0002\u0003\u0003\u0003\u0003\u0003\u0004"~
@@ -134,28 +135,28 @@ public class XPathLexer : Lexer {
 		"\u0011\n\u0003\u0002\u0004\u0007\u00022;aa\u00b9\u00b9\u0302\u0371\u2041"~
 		"\u2042\u000f\u0002C\\c|\u00c2\u00d8\u00da\u00f8\u00fa\u0301\u0372\u037f"~
 		"\u0381\u2001\u200e\u200f\u2072\u2191\u2c02\u2ff1\u3003[154001]\uf902\ufdd1"~
-		"\ufdf2\uffff4\u0002\u0003\u0003\u0002\u0002\u0002\u0002\u0005\u0003\u0002"~
-		"\u0002\u0002\u0002\u0007\u0003\u0002\u0002\u0002\u0002\t\u0003\u0002\u0002"~
-		"\u0002\u0002\u000b\u0003\u0002\u0002\u0002\u0002\u0011\u0003\u0002\u0002"~
-		"\u0002\u0003\u0013\u0003\u0002\u0002\u0002\u0005\u0016\u0003\u0002\u0002"~
-		"\u0002\u0007\u0018\u0003\u0002\u0002\u0002\t\u001a\u0003\u0002\u0002\u0002"~
-		"\u000b\u001c\u0003\u0002\u0002\u0002\r\'\u0003\u0002\u0002\u0002\u000f"~
-		")\u0003\u0002\u0002\u0002\u0011+\u0003\u0002\u0002\u0002\u0013\u0014\u0007"~
-		"1\u0002\u0002\u0014\u0015\u00071\u0002\u0002\u0015\u0004\u0003\u0002\u0002"~
-		"\u0002\u0016\u0017\u00071\u0002\u0002\u0017\u0006\u0003\u0002\u0002\u0002"~
-		"\u0018\u0019\u0007,\u0002\u0002\u0019\b\u0003\u0002\u0002\u0002\u001a"~
-		"\u001b\u0007#\u0002\u0002\u001b\n\u0003\u0002\u0002\u0002\u001c \u0005"~
-		"\u000f\b\u0002\u001d\u001f\u0005\r\u0007\u0002\u001e\u001d\u0003\u0002"~
-		"\u0002\u0002\u001f\"\u0003\u0002\u0002\u0002 \u001e\u0003\u0002\u0002"~
-		"\u0002 !\u0003\u0002\u0002\u0002!#\u0003\u0002\u0002\u0002\" \u0003\u0002"~
-		"\u0002\u0002#$\b\u0006\u0002\u0002$\f\u0003\u0002\u0002\u0002%(\u0005"~
-		"\u000f\b\u0002&(\t\u0002\u0002\u0002\'%\u0003\u0002\u0002\u0002\'&\u0003"~
-		"\u0002\u0002\u0002(\u000e\u0003\u0002\u0002\u0002)*\t\u0003\u0002\u0002"~
-		"*\u0010\u0003\u0002\u0002\u0002+/\u0007)\u0002\u0002,.\u000b\u0002\u0002"~
-		"\u0002-,\u0003\u0002\u0002\u0002.1\u0003\u0002\u0002\u0002/0\u0003\u0002"~
-		"\u0002\u0002/-\u0003\u0002\u0002\u000202\u0003\u0002\u0002\u00021/\u0003"~
-		"\u0002\u0002\u000223\u0007)\u0002\u00023\u0012\u0003\u0002\u0002\u0002"~
-		"\u0006\u0002 \'/\u0003\u0003\u0006\u0002";
+		"\ufdf2\uffff\u00024\u0002\u0003\u0003\u0002\u0002\u0002\u0002\u0005\u0003"~
+		"\u0002\u0002\u0002\u0002\u0007\u0003\u0002\u0002\u0002\u0002\t\u0003\u0002"~
+		"\u0002\u0002\u0002\u000b\u0003\u0002\u0002\u0002\u0002\u0011\u0003\u0002"~
+		"\u0002\u0002\u0003\u0013\u0003\u0002\u0002\u0002\u0005\u0016\u0003\u0002"~
+		"\u0002\u0002\u0007\u0018\u0003\u0002\u0002\u0002\t\u001a\u0003\u0002\u0002"~
+		"\u0002\u000b\u001c\u0003\u0002\u0002\u0002\r\'\u0003\u0002\u0002\u0002"~
+		"\u000f)\u0003\u0002\u0002\u0002\u0011+\u0003\u0002\u0002\u0002\u0013\u0014"~
+		"\u00071\u0002\u0002\u0014\u0015\u00071\u0002\u0002\u0015\u0004\u0003\u0002"~
+		"\u0002\u0002\u0016\u0017\u00071\u0002\u0002\u0017\u0006\u0003\u0002\u0002"~
+		"\u0002\u0018\u0019\u0007,\u0002\u0002\u0019\b\u0003\u0002\u0002\u0002"~
+		"\u001a\u001b\u0007#\u0002\u0002\u001b\n\u0003\u0002\u0002\u0002\u001c"~
+		" \u0005\u000f\b\u0002\u001d\u001f\u0005\r\u0007\u0002\u001e\u001d\u0003"~
+		"\u0002\u0002\u0002\u001f\"\u0003\u0002\u0002\u0002 \u001e\u0003\u0002"~
+		"\u0002\u0002 !\u0003\u0002\u0002\u0002!#\u0003\u0002\u0002\u0002\" \u0003"~
+		"\u0002\u0002\u0002#$\b\u0006\u0002\u0002$\f\u0003\u0002\u0002\u0002%("~
+		"\u0005\u000f\b\u0002&(\t\u0002\u0002\u0002\'%\u0003\u0002\u0002\u0002"~
+		"\'&\u0003\u0002\u0002\u0002(\u000e\u0003\u0002\u0002\u0002)*\t\u0003\u0002"~
+		"\u0002*\u0010\u0003\u0002\u0002\u0002+/\u0007)\u0002\u0002,.\u000b\u0002"~
+		"\u0002\u0002-,\u0003\u0002\u0002\u0002.1\u0003\u0002\u0002\u0002/0\u0003"~
+		"\u0002\u0002\u0002/-\u0003\u0002\u0002\u000202\u0003\u0002\u0002\u0002"~
+		"1/\u0003\u0002\u0002\u000223\u0007)\u0002\u00023\u0012\u0003\u0002\u0002"~
+		"\u0002\u0006\u0002 \'/\u0003\u0003\u0006\u0002";
 	public static ATN _ATN;
 
 	static this() {

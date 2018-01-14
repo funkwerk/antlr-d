@@ -1,13 +1,17 @@
+/*
+ * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.RuntimeMetaData;
 
-import std.algorithm;
-import std.stdio;
-import std.string;
+import std.algorithm : min;
+import std.stdio : stderr;
+import std.string : indexOf;
 
 // Class RuntimeMetaData
 /**
- * TODO add class description
- * @uml
  * This class provides access to the current version of the ANTLR 4 runtime
  * library as compile-time and runtime constants, along with methods for
  * checking for matching version numbers and notifying listeners in the case
@@ -38,7 +42,6 @@ class RuntimeMetaData
 {
 
     /**
-     * @uml
      * A compile-time constant containing the current version of the ANTLR 4
      * runtime library.
      *
@@ -70,10 +73,9 @@ class RuntimeMetaData
      * </ul>
      * @read
      */
-    public static immutable string VERSION_ = "4.5.3";
+    public static immutable string VERSION = "4.7.1";
 
     /**
-     * @uml
      * This method provides the ability to detect mismatches between the version
      * of ANTLR 4 used to generate a parser, the version of the ANTLR runtime a
      * parser was compiled against, and the version of the ANTLR runtime which
@@ -133,11 +135,11 @@ class RuntimeMetaData
      */
     public static void checkVersion(string generatingToolVersion, string compileTimeVersion)
     {
-        string runtimeVersion = VERSION_;
+        string runtimeVersion = VERSION;
         bool runtimeConflictsWithGeneratingTool = false;
         bool runtimeConflictsWithCompileTimeTool = false;
 
-        if (generatingToolVersion != null) {
+        if (generatingToolVersion) {
             runtimeConflictsWithGeneratingTool =
                 (runtimeVersion != generatingToolVersion) &&
                 (getMajorMinorVersion(runtimeVersion) != getMajorMinorVersion(generatingToolVersion));
@@ -159,7 +161,6 @@ class RuntimeMetaData
     }
 
     /**
-     * @uml
      * Gets the major and minor version numbers from a version string. For
      * details about the syntax of the input {@code version}.
      * E.g., from x.y.z return x.y.
@@ -185,14 +186,20 @@ class RuntimeMetaData
         return antlr_version[0..referenceLength];
     }
 
-    public static string VERSION()
-    {
-        return VERSION_;
-    }
-
 }
 
-unittest
-{
-    assert("4.5" == RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
+version(unittest) {
+
+    import fluent.asserts;
+    import unit_threaded;
+ 
+    class Test {
+        
+        @Tags("mt", "reg")
+        @("compareMetaDataVersion")
+        unittest {
+            Assert.equal("4.7",  RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
+            RuntimeMetaData.checkVersion("4.7", "4.7.1");
+        }
+    }
 }

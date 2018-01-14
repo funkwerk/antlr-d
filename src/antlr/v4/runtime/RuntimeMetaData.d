@@ -192,9 +192,9 @@ version(unittest) {
 
     import fluent.asserts;
     import unit_threaded;
- 
+
     class Test {
-        
+
         @Tags("mt", "reg")
         @("compareMetaDataVersion")
         unittest {

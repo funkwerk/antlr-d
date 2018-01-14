@@ -416,6 +416,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     {
         return _channel;
     }
+
     public string[] getChannelNames()
     {
         return null;

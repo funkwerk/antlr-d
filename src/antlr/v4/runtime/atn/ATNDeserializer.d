@@ -111,7 +111,7 @@ class ATNDeserializer
 
     private int p;
 
-    UUID uuid;
+    private UUID uuid;
 
     public static this()
     {

@@ -73,9 +73,7 @@ import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
-import antlr.v4.runtime.misc.BitSet;
-import antlr.v4.runtime.misc.DoubleKeyMap;
-import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.misc;
 
 alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b");
 

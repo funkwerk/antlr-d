@@ -25,9 +25,10 @@ define NEWLINE
 endef
 UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
             $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
-UNITTEST_MODULES := $(subst unittest.,,$(subst src.,,$(subst /,.,\
+
+UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst src.,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),\
-		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))
+		$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))))
 
 TEST_FLAGS = -cov -Isrc -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
@@ -36,8 +37,8 @@ GENERATOR_FLAGS = -b
 RDMD = rdmd
 DMD = dmd
 GENERATOR = axmi2d
-ANTLR = antlr4-antlr4-master-4.5.3
-ANTLR_TAR = $(ANTLR).tgz
+ANTLR = antlr4-4.7.1
+ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
 all : generate unittest
@@ -67,12 +68,12 @@ prepare_generator : | $(BUILD_DIR)
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
 
 .PHONY : build_xpathlexer
 build_xpathlexer : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.5.3.jar	\
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar	\
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY : clean

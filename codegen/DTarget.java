@@ -68,8 +68,11 @@ public class DTarget extends Target {
             return "["+ octs + "]";
         }
 
-        String hex = Integer.toHexString(v|0x10000).substring(1,5);
-        return "\\u"+hex;
+        if (v > 0xff) {
+            return "\\u"+Integer.toHexString(v|0x10000).substring(1,5);
+        }
+        else
+            return "\\x"+Integer.toHexString(v|0x10000).substring(3,5);
     }
 
     public Set<String> getBadWords() {

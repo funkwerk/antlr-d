@@ -68,7 +68,7 @@ public class DTarget extends Target {
             return "["+ octs + "]";
         }
 
-        if (v > 0xff) {
+        if (v > 0x7f) {
             return "\\u"+Integer.toHexString(v|0x10000).substring(1,5);
         }
         else

@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.atn.AbstractConfigHashSet;
 
 import antlr.v4.runtime.atn.ATNConfig;
-import antlr.v4.runtime.misc.Array2DHashSet;
-import antlr.v4.runtime.misc.AbstractEqualityComparator;
+import antlr.v4.runtime.misc;
 
 // Class AbstractConfigHashSet
 /**
- * TODO add class description
+ * A special, abstract container for the graph-structured stack
  */
 abstract class AbstractConfigHashSet : Array2DHashSet!ATNConfig
 {

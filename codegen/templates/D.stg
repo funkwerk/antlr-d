@@ -370,7 +370,7 @@ public this(TokenStream input) {
  * overriding implementation impossible to maintain.
  */
 RuleActionFunction(r, actions) ::= <<
-private void <r.name>_action(<r.ctxType> _localctx, int actionIndex) {
+private void <r.name>_action(Interface<r.ctxType> _localctx, int actionIndex) {
 	switch (actionIndex) {
 	<actions:{index|
 case <index>:
@@ -385,7 +385,7 @@ case <index>:
  * overriding implementation impossible to maintain.
  */
 RuleSempredFunction(r, actions) ::= <<
-private bool <r.name>_sempred(<r.ctxType> _localctx, int predIndex) {
+private bool <r.name>_sempred(Interface<r.ctxType> _localctx, int predIndex) {
 	switch (predIndex) {
 	<actions:{index|
 case <index>:

@@ -6,3 +6,4 @@ public import antlr.v4.runtime.misc.IntervalSet;
 public import antlr.v4.runtime.misc.AbstractEqualityComparator;
 public import antlr.v4.runtime.misc.Array2DHashSet;
 public import antlr.v4.runtime.misc.Interval;
+public import antlr.v4.runtime.misc.MurmurHash;

@@ -54,7 +54,7 @@ $(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 
 .PHONY : unittest
 unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)
-	-$(BUILD_DIR)/TestRunner @reg
+	-$(BUILD_DIR)/TestRunner
 	@mv ./*.lst $(BUILD_DIR)
 
 .PHONY : prepare_generator

@@ -84,9 +84,9 @@ struct BitSet
 
     /**
      * @uml
-     * @const
+     * @trusted
      */
-    public size_t toHash() const
+    public size_t toHash() @trusted
     {
         size_t hash;
         foreach (el; bitSet)

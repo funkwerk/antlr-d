@@ -8,6 +8,7 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.LexerNoViableAltException;
@@ -190,6 +191,7 @@ public class ExprParser : Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(18);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT:
 				{
@@ -232,8 +234,12 @@ public class ExprParser : Parser {
 						_la = _input.LA(1);
 						if ( !(_la==T__0 || _la==T__1) ) {
 						_errHandler.recoverInline(this);
-						} else {
-							consume();
+						}
+						else {
+						    if (_input.LA(1) == TokenConstantDefinition.EOF)
+						        matchedEOF = true;
+						    _errHandler.reportMatch(this);
+						    consume();
 						}
 						setState(22);
 						expr(5);
@@ -249,8 +255,12 @@ public class ExprParser : Parser {
 						_la = _input.LA(1);
 						if ( !(_la==T__2 || _la==T__3) ) {
 						_errHandler.recoverInline(this);
-						} else {
-							consume();
+						}
+						else {
+						    if (_input.LA(1) == TokenConstantDefinition.EOF)
+						        matchedEOF = true;
+						    _errHandler.reportMatch(this);
+						    consume();
 						}
 						setState(25);
 						expr(4);
@@ -282,46 +292,39 @@ public class ExprParser : Parser {
 		switch (ruleIndex) {
 		case 1:
 			return expr_sempred(cast(ExprContext)_localctx, predIndex);
-    default: assert(0);
-		}
-		return true;
-	}
+    default: {}
+    }
+    return true;
+}
 	private bool expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
 			return precpred(ctx_, 4);
 		case 1:
 			return precpred(ctx_, 3);
-	        default: assert(0);
+	        default: {}
 		}
 		return true;
 	}
 
 	public static immutable wstring _serializedATN =
-		"\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\u0003\n\"\u0004"~
-		"\u0002\t\u0002\u0004\u0003\t\u0003\u0003\u0002\u0003\u0002\u0003\u0002"~
-		"\u0007\u0002\n\n\u0002\f\u0002\u000e\u0002\r\u000b\u0002\u0003\u0003\u0003"~
-		"\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0005\u0003\u0015"~
-		"\n\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003"~
-		"\u0003\u0007\u0003\u001d\n\u0003\f\u0003\u000e\u0003 \u000b\u0003\u0003"~
-		"\u0003\u0002\u0003\u0004\u0004\u0002\u0004\u0002\u0004\u0003\u0002\u0003"~
-		"\u0004\u0003\u0002\u0005\u0006\u0002#\u0002\u000b\u0003\u0002\u0002\u0002"~
-		"\u0004\u0014\u0003\u0002\u0002\u0002\u0006\u0007\u0005\u0004\u0003\u0002"~
-		"\u0007\b\u0007\t\u0002\u0002\b\n\u0003\u0002\u0002\u0002\t\u0006\u0003"~
-		"\u0002\u0002\u0002\n\r\u0003\u0002\u0002\u0002\u000b\t\u0003\u0002\u0002"~
-		"\u0002\u000b\f\u0003\u0002\u0002\u0002\f\u0003\u0003\u0002\u0002\u0002"~
-		"\r\u000b\u0003\u0002\u0002\u0002\u000e\u000f\b\u0003\u0001\u0002\u000f"~
-		"\u0015\u0007\n\u0002\u0002\u0010\u0011\u0007\u0007\u0002\u0002\u0011\u0012"~
-		"\u0005\u0004\u0003\u0002\u0012\u0013\u0007\b\u0002\u0002\u0013\u0015\u0003"~
-		"\u0002\u0002\u0002\u0014\u000e\u0003\u0002\u0002\u0002\u0014\u0010\u0003"~
-		"\u0002\u0002\u0002\u0015\u001e\u0003\u0002\u0002\u0002\u0016\u0017\f\u0006"~
-		"\u0002\u0002\u0017\u0018\t\u0002\u0002\u0002\u0018\u001d\u0005\u0004\u0003"~
-		"\u0007\u0019\u001a\f\u0005\u0002\u0002\u001a\u001b\t\u0003\u0002\u0002"~
-		"\u001b\u001d\u0005\u0004\u0003\u0006\u001c\u0016\u0003\u0002\u0002\u0002"~
-		"\u001c\u0019\u0003\u0002\u0002\u0002\u001d \u0003\u0002\u0002\u0002\u001e"~
-		"\u001c\u0003\u0002\u0002\u0002\u001e\u001f\u0003\u0002\u0002\u0002\u001f"~
-		"\u0005\u0003\u0002\u0002\u0002 \u001e\u0003\u0002\u0002\u0002\u0006\u000b"~
-		"\u0014\u001c\u001e";
+		"\x03\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\x03\n\"\x04\x02\t"~
+		"\x02\x04\x03\t\x03\x03\x02\x03\x02\x03\x02\x07\x02\n\n\x02\f\x02\x0e\x02"~
+		"\r\x0b\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03\x15"~
+		"\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03\x1d\n\x03"~
+		"\f\x03\x0e\x03 \x0b\x03\x03\x03\x02\x03\x04\x04\x02\x04\x02\x04\x03\x02"~
+		"\x03\x04\x03\x02\x05\x06\x02#\x02\x0b\x03\x02\x02\x02\x04\x14\x03\x02"~
+		"\x02\x02\x06\x07\x05\x04\x03\x02\x07\b\x07\t\x02\x02\b\n\x03\x02\x02\x02"~
+		"\t\x06\x03\x02\x02\x02\n\r\x03\x02\x02\x02\x0b\t\x03\x02\x02\x02\x0b\f"~
+		"\x03\x02\x02\x02\f\x03\x03\x02\x02\x02\r\x0b\x03\x02\x02\x02\x0e\x0f\b"~
+		"\x03\x01\x02\x0f\x15\x07\n\x02\x02\x10\x11\x07\x07\x02\x02\x11\x12\x05"~
+		"\x04\x03\x02\x12\x13\x07\b\x02\x02\x13\x15\x03\x02\x02\x02\x14\x0e\x03"~
+		"\x02\x02\x02\x14\x10\x03\x02\x02\x02\x15\x1e\x03\x02\x02\x02\x16\x17\f"~
+		"\x06\x02\x02\x17\x18\t\x02\x02\x02\x18\x1d\x05\x04\x03\x07\x19\x1a\f\x05"~
+		"\x02\x02\x1a\x1b\t\x03\x02\x02\x1b\x1d\x05\x04\x03\x06\x1c\x16\x03\x02"~
+		"\x02\x02\x1c\x19\x03\x02\x02\x02\x1d \x03\x02\x02\x02\x1e\x1c\x03\x02"~
+		"\x02\x02\x1e\x1f\x03\x02\x02\x02\x1f\x05\x03\x02\x02\x02 \x1e\x03\x02"~
+		"\x02\x02\x06\x0b\x14\x1c\x1e";
 	public static ATN _ATN;
 
 	static this() {

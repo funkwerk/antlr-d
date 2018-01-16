@@ -447,7 +447,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             input.seek(index);
             input.release(m);
         }
-        return -1; // compiler dummy, will never been executed
     }
 
     /**
@@ -1348,7 +1347,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             ATNConfig c = getEpsilonTarget(config, t, continueCollecting,
                                            depth == 0, fullCtx, treatEofAsEpsilon);
             if (c !is null) {
-                if (!t.isEpsilon)
+                if (!t.isEpsilon) {
                     if (count(closureBusy, c) > 0) {
                         // avoid infinite recursion for EOF* and EOF+
                         continue;
@@ -1356,6 +1355,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     else {
                         closureBusy ~= c;
                     }
+                }
 
                 int newDepth = depth;
                 if (config.state.classinfo ==  RuleStopState.classinfo) {

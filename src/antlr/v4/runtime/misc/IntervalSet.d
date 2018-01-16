@@ -277,11 +277,11 @@ class IntervalSet : IntSet
         if (!a) {
             return new IntervalSet(this);
         }
-        if (typeid(typeof(a)) == typeid(IntervalSet*)) {        assert(false);
+        if (cast(IntervalSet)a) {
             return subtract(this, cast(IntervalSet)a);
         }
 
-        IntervalSet other = new IntervalSet();
+        IntervalSet other = new IntervalSet;
         other.addAll(a);
         return subtract(this, other);
     }

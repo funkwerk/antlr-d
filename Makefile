@@ -35,7 +35,7 @@ GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
 RDMD = rdmd
-DMD = dmd
+DMD = dmd -w
 GENERATOR = axmi2d
 ANTLR = antlr4-4.7.1
 ANTLR_TAR = $(ANTLR).tar.gz

@@ -58,6 +58,7 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.LexerNoViableAltException;
@@ -281,10 +282,10 @@ public class <parser.name> : <superClass; null="Parser"> {
 case <f.ruleIndex>:
 	return <f.name>_sempred(cast(<f.ctxType>)_localctx, predIndex);};
     separator="\n">
-    default: assert(0);
-		}
-		return true;
-	}
+    default: {}
+    }
+    return true;
+}
 	<sempredFuncs.values; separator="\n">
 <endif>
 
@@ -351,7 +352,7 @@ public bool sempred(InterfaceRuleContext _localctx, int ruleIndex, int predIndex
 	<recog.sempredFuncs.values:{f|
 case <f.ruleIndex>:
 	return <f.name>_sempred(cast(<f.ctxType>)_localctx, predIndex);}; separator="\n">
-	default: assert(0);
+	default: {}
 	}
 	return true;
 }
@@ -385,12 +386,12 @@ case <index>:
  * overriding implementation impossible to maintain.
  */
 RuleSempredFunction(r, actions) ::= <<
-private bool <r.name>_sempred(Interface<r.ctxType> _localctx, int predIndex) {
+private bool <r.name>_sempred(<r.ctxType> _localctx, int predIndex) {
 	switch (predIndex) {
 	<actions:{index|
 case <index>:
 	return <actions.(index)>;}; separator="\n">
-        default: assert(0);
+        default: {}
 	}
 	return true;
 }
@@ -666,7 +667,8 @@ if ( <if(invert)><m.varName> \<= 0 || <else>!<endif>(<expr>) ) {
 	<if(m.labels)><m.labels:{l | <labelref(l)> = (Token)}><endif>_errHandler.recoverInline(this);
 }
 else {
-    if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+    if (_input.LA(1) == TokenConstantDefinition.EOF)
+        matchedEOF = true;
     _errHandler.reportMatch(this);
     consume();
 }

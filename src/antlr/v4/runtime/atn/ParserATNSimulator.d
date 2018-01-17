@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  Copyright (c) 2017 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.atn.ParserATNSimulator;
@@ -588,7 +563,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 t = input.LA(1);
             }
         }
-	
+
     }
 
     /**
@@ -863,11 +838,9 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 continue;
             }
 
-            int n = c.state.getNumberOfTransitions();
-            for (int ti=0; ti<n; ti++) {               // for each transition
-                Transition trans = c.state.transition(ti);
+            foreach (trans; c.state.transitions) {
                 ATNState target = getReachableTarget(trans, t);
-                if (target !is null ) {
+                if (target) {
                     intermediate.add(new ATNConfig(c, target), mergeCache);
                 }
             }
@@ -1347,16 +1320,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             ATNConfig c = getEpsilonTarget(config, t, continueCollecting,
                                            depth == 0, fullCtx, treatEofAsEpsilon);
             if (c !is null) {
-                if (!t.isEpsilon) {
-                    if (count(closureBusy, c) > 0) {
-                        // avoid infinite recursion for EOF* and EOF+
-                        continue;
-                    }
-                    else {
-                        closureBusy ~= c;
-                    }
-                }
-
                 int newDepth = depth;
                 if (config.state.classinfo ==  RuleStopState.classinfo) {
                     assert (!fullCtx);
@@ -1365,33 +1328,43 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    if (count(closureBusy, c) > 0) {
-                        // avoid infinite recursion for right-recursive rules
-                        continue;
-                    }
-                    closureBusy ~= c;
-
                     if (_dfa !is null && _dfa.isPrecedenceDfa) {
-                        int outermostPrecedenceReturn = (cast(EpsilonTransition)t).outermostPrecedenceReturn();
+                        int outermostPrecedenceReturn = (cast(EpsilonTransition)t).outermostPrecedenceReturn;
                         if (outermostPrecedenceReturn == _dfa.atnStartState.ruleIndex) {
                             c.setPrecedenceFilterSuppressed(true);
                         }
                     }
 
                     c.reachesIntoOuterContext++;
+
+                    if (count(closureBusy, c) > 0) {
+                        // avoid infinite recursion for right-recursive rules
+                        continue;
+                    }
+                    closureBusy ~= c;
+
                     configs.dipsIntoOuterContext = true; // TODO: can remove? only care when we add to set per middle of this method
                     assert (newDepth > int.min);
                     newDepth--;
                     debug
                         writefln("dips into outer ctx: %s", c);
                 }
-                else if (cast(RuleTransition)t) {
-                    // latch when newDepth goes negative - once we step out of the entry context we can't return
-                    if (newDepth >= 0) {
-                        newDepth++;
+                else {
+                    if (!t.isEpsilon) {
+                        if (count(closureBusy, c) > 0) {
+                            // avoid infinite recursion for right-recursive rules
+                            continue;
+                        }
+                        closureBusy ~= c;
+                    }
+
+                    if (cast(RuleTransition)t) {
+                        // latch when newDepth goes negative - once we step out of the entry context we can't return
+                        if (newDepth >= 0) {
+                            newDepth++;
+                        }
                     }
                 }
-
                 closureCheckingStopState(c, configs, closureBusy, continueCollecting,
                                          fullCtx, newDepth, treatEofAsEpsilon);
             }

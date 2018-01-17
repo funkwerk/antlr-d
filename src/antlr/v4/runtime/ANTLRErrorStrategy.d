@@ -1,31 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.ANTLRErrorStrategy;
@@ -36,7 +12,6 @@ import antlr.v4.runtime.Token;
 
 // Interface ANTLRErrorStrategy
 /**
- * @uml
  * The interface for defining strategies to deal with syntax errors encountered
  * during a parse by ANTLR-generated parsers. We distinguish between three
  * different kinds of errors:
@@ -57,14 +32,12 @@ interface ANTLRErrorStrategy
 {
 
     /**
-     * @uml
      * Reset the error handler state for the specified {@code recognizer}.
      *  @param recognizer the parser instance
      */
     public void reset(Parser recognizer);
 
     /**
-     * @uml
      * This method is called when an unexpected symbol is encountered during an
      * inline match operation, such as {@link Parser#match}. If the error
      * strategy successfully recovers from the match failure, this method
@@ -85,7 +58,6 @@ interface ANTLRErrorStrategy
     public Token recoverInline(Parser recognizer);
 
     /**
-     * @uml
      * This method is called to recover from exception {@code e}. This method is
      * called after {@link #reportError} by the default exception handler
      * generated for a rule method.
@@ -100,7 +72,6 @@ interface ANTLRErrorStrategy
     public void recover(Parser recognizer, RecognitionException e);
 
     /**
-     * @uml
      * This method provides the error handler with an opportunity to handle
      * syntactic or semantic errors in the input stream before they result in a
      * {@link RecognitionException}.
@@ -122,7 +93,6 @@ interface ANTLRErrorStrategy
     public void sync(Parser recognizer);
 
     /**
-     * @uml
      * Tests whether or not {@code recognizer} is in the process of recovering
      * from an error. In error recovery mode, {@link Parser#consume} adds
      * symbols to the parse tree by calling
@@ -136,7 +106,6 @@ interface ANTLRErrorStrategy
     public bool inErrorRecoveryMode(Parser recognizer);
 
     /**
-     * @uml
      * This method is called by when the parser successfully matches an input
      * symbol.
      *
@@ -145,7 +114,6 @@ interface ANTLRErrorStrategy
     public void reportMatch(Parser recognizer);
 
     /**
-     * @uml
      * Report any kind of {@link RecognitionException}. This method is called by
      * the default exception handler generated for a rule method.
      *

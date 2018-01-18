@@ -1,6 +1,7 @@
 # Make for Antlr4DTarget
 
 SHELL = bash
+MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
 MKDIR_P = mkdir -p
 
 BUILD_DIR = build
@@ -64,7 +65,7 @@ prepare_generator : | $(BUILD_DIR)
 	mkdir -p $(TARGET)
 	cp -r codegen/templates/*.stg \
 		$(TARGET)
-	cd $(BUILD_DIR)/$(ANTLR) && mvn -DskipTests install
+	cd $(BUILD_DIR)/$(ANTLR) && $(MVN) -DskipTests install
 
 .PHONY : build_examples
 build_examples : prepare_generator

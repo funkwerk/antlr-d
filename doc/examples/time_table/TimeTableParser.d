@@ -1,4 +1,4 @@
-// Generated from doc/examples/TimeTable.g4 by ANTLR 4.7.1
+// Generated from doc/examples/time_table/TimeTable.g4 by ANTLR 4.7.1
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;

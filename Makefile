@@ -20,6 +20,10 @@ UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-ld
 
 MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
 
+EXAMPLE_MODULE_FILES := $(shell find $(SRC_DIR) -name "*.d")
+EXAMPLE_TIMETABLE_DIR = doc/examples/time_table
+EXAMPLE_TIMETABLE_FILES := $(shell find $(EXAMPLE_TIMETABLE_DIR) -name "*.d")
+
 define NEWLINE
 
 
@@ -48,6 +52,10 @@ all : generate unittest
 
 .PHONY : generate
 generate : $(MODELS_R)
+
+$(BUILD_DIR)/TimeTable : $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES)
+	@echo $(EXAMPLE_TIMETABLE_FILES)
+	$(DMD) -cov -debug=Lexer $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/TimeTable
 
 $(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 	$(file > $(BUILD_DIR)/modules, $(UNITTEST_MODULES))

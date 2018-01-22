@@ -23,7 +23,7 @@ class Test {
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
         try {
-            cts.getNumberOfOnChannelTokens.should.equal(4).because("xx");
+            cts.getNumberOfOnChannelTokens.should.equal(3).because("xx");
         }
         catch (LexerNoViableAltException e) {
             Assert.equal("LexerNoViableAltException('E')", e.toString);
@@ -42,12 +42,12 @@ class Test {
         lexer.getRuleNames.should.equal(["T__0", "ID", "WS"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
-        cts.getNumberOfOnChannelTokens.should.equal(4);
+        cts.getNumberOfOnChannelTokens.should.equal(3);
         lexer.getModeNames.should.equal(["DEFAULT_MODE"]);
         Assert.equal((cast(CommonToken)cts.LT(1)).toString,
                      "[@0,0:4='hello',<1>,1:0]");
-        Assert.equal((cast(CommonToken)cts.LT(3)).toString,
-                     "[@2,6:11='egbert',<2>,1:6]");
+        Assert.equal((cast(CommonToken)cts.LT(2)).toString,
+                     "[@1,6:11='egbert',<2>,1:6]");
     }
 
     @Tags("simple", "reg")
@@ -62,7 +62,7 @@ class Test {
         lexer.getRuleNames.should.equal(["T__0", "ID", "WS"]);
         auto cts = new CommonTokenStream(lexer);
         cts.should.not.beNull;
-        cts.getNumberOfOnChannelTokens.should.equal(5);
+        cts.getNumberOfOnChannelTokens.should.equal(3);
         file.close();
     }
 

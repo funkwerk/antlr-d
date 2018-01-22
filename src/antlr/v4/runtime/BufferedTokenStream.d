@@ -348,7 +348,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Given a starting index, return the index of the next token on channel.
      * Return {@code i} if {@code tokens[i]} is on channel. Return the index of
      * the EOF token if there are no tokens on channel between {@code i} and

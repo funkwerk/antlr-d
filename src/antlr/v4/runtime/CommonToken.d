@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.CommonToken;
 
 import std.conv;
@@ -21,36 +27,34 @@ class CommonToken : WritableToken
 {
 
     /**
-     * @uml
      * An empty {@link Pair} which is used as the default value of
      * {@link #source} for tokens that do not have a source.
      */
     protected static TokenFactorySourcePair EMPTY_SOURCE;
 
     /**
-     * @uml
      * This is the backing field for {@link #getType} and {@link #setType}.
      */
     protected int type;
 
+    /**
+     * This is the backing field for {@link #getLine} and {@link #setLine}.
+     */
     protected int line;
 
     /**
-     * @uml
      * This is the backing field for {@link #getCharPositionInLine} and
      * {@link #setCharPositionInLine}.
      */
     protected int charPositionInLine = -1;
 
     /**
-     * @uml
      * This is the backing field for {@link #getChannel} and
      * {@link #setChannel}.
      */
     protected int channel = TokenConstantDefinition.DEFAULT_CHANNEL;
 
     /**
-     * @uml
      * This is the backing field for {@link #getTokenSource} and
      * {@link #getInputStream}.
      *
@@ -63,7 +67,6 @@ class CommonToken : WritableToken
     protected TokenFactorySourcePair source;
 
     /**
-     * @uml
      * This is the backing field for {@link #getText} when the token text is
      * explicitly set in the constructor or via {@link #setText}.
      *
@@ -72,28 +75,24 @@ class CommonToken : WritableToken
     protected string text;
 
     /**
-     * @uml
      * This is the backing field for {@link #getTokenIndex} and
      * {@link #setTokenIndex}.
      */
     protected int index = -1;
 
     /**
-     * @uml
      * This is the backing field for {@link #getStartIndex} and
      * {@link #setStartIndex}.
      */
     protected int start;
 
     /**
-     * @uml
      * This is the backing field for {@link #getStopIndex} and
      * {@link #setStopIndex}.
      */
     protected int stop;
 
     /**
-     * @uml
      * Constructs a new {@link CommonToken} with the specified token type.
      *
      *  @param type The token type.

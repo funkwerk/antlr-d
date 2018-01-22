@@ -1,10 +1,10 @@
-// Generated from doc/examples/TimeTable.g4 by ANTLR 4.7.1
+// Generated from doc/examples/time_table/TimeTable.g4 by ANTLR 4.7.1
 
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-import ExprListener;
-import ExprParser: ExprParser;
+import TimeTableListener;
+import TimeTableParser: TimeTableParser;
 
 /**
  * This class provides an empty implementation of {@link TimeTableListener},

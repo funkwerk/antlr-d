@@ -1,31 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.atn.LL1Analyzer;
@@ -186,7 +162,8 @@ class LL1Analyzer
                          Array!ATNConfig* lookBusy, Array!bool* calledRuleStack, bool seeThruPreds, bool addEOF)
     {
         debug
-            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber, ctx, look.intervals);
+            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber,
+                     ctx, look.intervals);
         ATNConfig c = new ATNConfig(s, 0, ctx);
         foreach(lb; *lookBusy)
             if (lb == c)
@@ -196,7 +173,8 @@ class LL1Analyzer
             if (ctx is null) {
                 look.add(TokenConstantDefinition.EPSILON);
                 return;
-            } else if (ctx.isEmpty && addEOF) {
+            }
+            else if (ctx.isEmpty && addEOF) {
                 look.add(TokenConstantDefinition.EOF);
                 return;
             }
@@ -205,26 +183,31 @@ class LL1Analyzer
             if (ctx is null ) {
                 look.add(TokenConstantDefinition.EPSILON);
                 return;
-            } else if (ctx.isEmpty() && addEOF) {
+            }
+            else if (ctx.isEmpty() && addEOF) {
                 look.add(TokenConstantDefinition.EOF);
                 return;
             }
 
             if (ctx != PredictionContext.EMPTY) {
                 // run thru all possible stack tops in ctx
-                for (int i = 0; i < ctx.size(); i++) {
-                    ATNState returnState = atn.states[ctx.getReturnState(i)];
-                    //					System.out.println("popping back to "+retState);
-
-                    bool removed = calledRuleStack.opSlice[returnState.ruleIndex];
-                    try {
-                        calledRuleStack.opIndexAssign(false, returnState.ruleIndex);
+                bool removed = (*calledRuleStack).length && (*calledRuleStack)[s.ruleIndex];
+                try {
+                    if ((*calledRuleStack).length <= s.ruleIndex)
+                        (*calledRuleStack).length = s.ruleIndex+1;
+                    calledRuleStack.opIndexAssign(false, s.ruleIndex);
+                    for (int i = 0; i < ctx.size(); i++) {
+                        ATNState returnState = atn.states[ctx.getReturnState(i)];
+                        debug {
+                            import std.stdio;
+                            writefln("popping back to %s", returnState);
+                        }
                         _LOOK(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                     }
-                    finally {
-                        if (removed) {
-                            calledRuleStack.opIndexAssign(true, returnState.ruleIndex);
-                        }
+                }
+                finally {
+                    if (removed) {
+                        calledRuleStack.opIndexAssign(true, s.ruleIndex);
                     }
                 }
                 return;

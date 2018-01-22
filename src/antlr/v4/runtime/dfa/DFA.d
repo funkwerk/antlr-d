@@ -33,8 +33,6 @@ module antlr.v4.runtime.dfa.DFA;
 
 import std.conv;
 import std.algorithm.sorting;
-import fluent.asserts;
-import unit_threaded;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;

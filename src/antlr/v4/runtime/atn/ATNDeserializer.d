@@ -61,9 +61,7 @@ import antlr.v4.runtime.atn.WildcardTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.RangeTransition;
 import antlr.v4.runtime.atn.TransitionStates;
-import antlr.v4.runtime.misc.BitSet;
-import antlr.v4.runtime.misc.Interval;
-import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.misc;
 
 // Class ATNDeserializer
 /**
@@ -396,7 +394,7 @@ class ATNDeserializer
 
     protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
     {
-	switch (type) {
+      	switch (type) {
         case LexerActionType.CHANNEL:
             return new LexerChannelAction(data1);
 
@@ -690,18 +688,10 @@ class ATNDeserializer
     {
         // LEXER ACTIONS
 
-        auto lexerActionTypes = EnumMembers!LexerActionType;
-
         if (atn.grammarType == ATNType.LEXER) {
             atn.lexerActions = new LexerAction[readInt];
             for (int i = 0; i < atn.lexerActions.length; i++) {
                 LexerActionType actionType = cast(LexerActionType)readInt;
-                foreach (int index, member; lexerActionTypes) {
-                    if (index == data[p]) {
-                        actionType = member;
-                        break;
-                    }
-                }
                 int data1 = readInt;
                 if (data1 == 0xFFFF) {
                     data1 = -1;
@@ -711,7 +701,6 @@ class ATNDeserializer
                 if (data2 == 0xFFFF) {
                     data2 = -1;
                 }
-
                 LexerAction lexerAction = lexerActionFactory(actionType, data1, data2);
                 atn.lexerActions[i] = lexerAction;
             }

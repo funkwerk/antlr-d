@@ -33,8 +33,6 @@ module antlr.v4.runtime.misc.MurmurHash;
 
 import std.conv;
 import std.stdio;
-import fluent.asserts;
-import unit_threaded;
 
 // Class MurmurHash
 /**

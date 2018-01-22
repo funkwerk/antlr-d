@@ -1,15 +1,28 @@
+/*
+ * Copyright (c) 2012-201 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.atn.LexerSkipAction;
 
 import antlr.v4.runtime.InterfaceLexer;
+import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
 
 // Singleton LexerSkipAction
 /**
- * TODO add class description
+ * Implements the {@code skip} lexer action by calling {@link Lexer#skip}.
+ *
+ * <p>The {@code skip} command does not have any parameters, so this action is
+ * implemented as a singleton instance exposed by {@link #INSTANCE}.</p>
+ *
+ * @author Sam Harwell
+ * @since 4.2
  */
-class LexerSkipAction
+class LexerSkipAction : LexerAction
 {
 
     /**

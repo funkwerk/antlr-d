@@ -209,10 +209,12 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                     if (_type == SKIP) {
                         continue outer;
                     }
-                } while (_type == MORE );
+                }
+                while (_type == MORE);
 
-                if (_token is null)
+                if (_token is null) {
                     emit();
+                }
                 return _token;
             }
         }

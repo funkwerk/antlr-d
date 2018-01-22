@@ -23,7 +23,6 @@ import antlr.v4.runtime.misc.Interval;
 
 // Class BufferedTokenStream
 /**
- * @uml
  * This implementation of {@link TokenStream} loads tokens from a
  * {@link TokenSource} on-demand, and places the tokens in a buffer to provide
  * access to any previous token by index.
@@ -39,7 +38,6 @@ class BufferedTokenStream : TokenStream
 {
 
     /**
-     * @uml
      * The {@link TokenSource} from which tokens for this stream are fetched.
      */
     protected TokenSource tokenSource;
@@ -53,6 +51,7 @@ class BufferedTokenStream : TokenStream
     protected Token[] tokens;
 
     /**
+     * @uml
      * The index into {@link #tokens} of the current token (next token to
      * {@link #consume}). {@link #tokens}{@code [}{@link #p}{@code ]} should be
      * {@link #LT LT(1)}.
@@ -62,10 +61,9 @@ class BufferedTokenStream : TokenStream
      * not yet been fetched from the token source. For additional information,
      * see the documentation of {@link IntStream} for a description of
      * Initializing Methods.</p>
-     * @uml
      * @read
      */
-    public int index_ = -1;
+    private int index_ = -1;
 
     /**
      * @uml

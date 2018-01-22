@@ -80,11 +80,20 @@ class CommonTokenStream : BufferedTokenStream
      * @uml
      * @override
      */
+    protected override int adjustSeekIndex(int i)
+    {
+        return nextTokenOnChannel(i, channel);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
     protected override Token LB(int k)
     {
-        if (k == 0 || (p - k) < 0 ) return null;
+        if (k == 0 || (index - k) < 0 ) return null;
 
-        int i = p;
+        int i = index;
         int n = 1;
         // find k good tokens looking backwards
         while (n <= k && i > 0) {
@@ -103,11 +112,11 @@ class CommonTokenStream : BufferedTokenStream
     public override Token LT(int k)
     {
         debug
-            writefln("enter LT(%s)", k);
+            writefln("enter LT(%s) on channel = %s, k = %s, p = %s", k, channel, k, index);
         lazyInit();
         if (k == 0 ) return null;
         if (k < 0) return LB(-k);
-        int i = p;
+        int i = index;
         int n = 1; // we know tokens[p] is a good one
         // find k good tokens
         while (n < k) {
@@ -117,7 +126,9 @@ class CommonTokenStream : BufferedTokenStream
             }
             n++;
         }
-        //		if ( i>range ) range = i;
+        //   if ( i>range ) range = i;
+        debug
+            writefln("enter end LT(%s): %s", k, tokens[i]);
         return tokens[i];
     }
 

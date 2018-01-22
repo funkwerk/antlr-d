@@ -53,7 +53,6 @@ class BufferedTokenStream : TokenStream
     protected Token[] tokens;
 
     /**
-     * @uml
      * The index into {@link #tokens} of the current token (next token to
      * {@link #consume}). {@link #tokens}{@code [}{@link #p}{@code ]} should be
      * {@link #LT LT(1)}.
@@ -63,8 +62,10 @@ class BufferedTokenStream : TokenStream
      * not yet been fetched from the token source. For additional information,
      * see the documentation of {@link IntStream} for a description of
      * Initializing Methods.</p>
+     * @uml
+     * @read
      */
-    protected int p = -1;
+    public int index_ = -1;
 
     /**
      * @uml
@@ -101,11 +102,6 @@ class BufferedTokenStream : TokenStream
         return tokenSource;
     }
 
-    public int index()
-    {
-        return p;
-    }
-
     public int mark()
     {
         return 0;
@@ -124,7 +120,7 @@ class BufferedTokenStream : TokenStream
     public void seek(int index)
     {
         lazyInit();
-        p = adjustSeekIndex(index);
+        index_ = adjustSeekIndex(index);
     }
 
     public int size()
@@ -135,15 +131,15 @@ class BufferedTokenStream : TokenStream
     public void consume()
     {
         bool skipEofCheck;
-        if (p >= 0) {
+        if (index_ >= 0) {
             if (fetchedEOF) {
                 // the last token in tokens is EOF. skip check if p indexes any
                 // fetched token except the last.
-                skipEofCheck = p < tokens.length - 1;
+                skipEofCheck = index_ < tokens.length - 1;
             }
             else {
                 // no EOF token in tokens. skip check if p indexes a fetched token.
-                skipEofCheck = p < tokens.length;
+                skipEofCheck = index_ < tokens.length;
             }
         }
         else {
@@ -155,8 +151,8 @@ class BufferedTokenStream : TokenStream
             throw new IllegalStateException("cannot consume EOF");
         }
 
-        if (sync(p + 1)) {
-            p = adjustSeekIndex(p + 1);
+        if (sync(index_ + 1)) {
+            index_ = adjustSeekIndex(index_ + 1);
         }
     }
 
@@ -232,8 +228,9 @@ class BufferedTokenStream : TokenStream
 
     public Token LB(int k)
     {
-        if ( (p-k)<0 ) return null;
-        return tokens[p - k];
+        if ((index_ - k) < 0)
+            return null;
+        return tokens[index_ - k];
     }
 
     /**
@@ -245,7 +242,7 @@ class BufferedTokenStream : TokenStream
         lazyInit();
         if (k == 0) return null;
         if (k < 0) return LB(-k);
-        int i = p + k - 1;
+        int i = index_ + k - 1;
         sync(i);
         if ( i >= tokens.length ) { // return EOF token
             // EOF must be last token
@@ -276,7 +273,7 @@ class BufferedTokenStream : TokenStream
 
     protected void lazyInit()
     {
-        if (p == -1) {
+        if (index_ == -1) {
             setup();
         }
     }
@@ -284,7 +281,7 @@ class BufferedTokenStream : TokenStream
     protected void setup()
     {
         sync(0);
-        p = adjustSeekIndex(0);
+        index_ = adjustSeekIndex(0);
     }
 
     /**
@@ -295,7 +292,7 @@ class BufferedTokenStream : TokenStream
     {
         this.tokenSource = tokenSource;
         tokens.length = 0;
-        p = -1;
+        index_ = -1;
     }
 
     public Token[] getTokens()
@@ -355,6 +352,8 @@ class BufferedTokenStream : TokenStream
      */
     protected int nextTokenOnChannel(int i, int channel)
     {
+        import std.stdio;
+        writefln("vvvvvvvvv %s", channel);
 	sync(i);
         if (i >= size()) {
             return size() - 1;
@@ -566,6 +565,11 @@ class BufferedTokenStream : TokenStream
                 return;
             }
         }
+    }
+
+    public final int index()
+    {
+        return this.index_;
     }
 
 }

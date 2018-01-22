@@ -271,20 +271,27 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public Token match(int ttype)
     {
-	Token t = getCurrentToken();
-        if (t.getType() > 0) {
+	Token t = getCurrentToken;
+        debug(Parser) {
+            import std.stdio;
+            writefln("Parser: match  %s, currentToken = %s", ttype, t);
+        }
+        if (t.getType > 0) {
             _errHandler.reportMatch(this);
             consume();
         }
         else {
             t = _errHandler.recoverInline(this);
-            if (_buildParseTrees && t.getTokenIndex() == -1) {
+            if (_buildParseTrees && t.getTokenIndex == -1) {
                 // we must have conjured up a new token during single token insertion
                 // if it's not the current symbol
                 ctx_.addErrorNode(t);
             }
         }
-
+        debug(Parser) {
+            import std.stdio;
+            writefln("---------- match end %s", t);
+        }
         return t;
     }
 

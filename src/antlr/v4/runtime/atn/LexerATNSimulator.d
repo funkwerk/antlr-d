@@ -462,14 +462,17 @@ class LexerATNSimulator : ATNSimulator
     }
 
     /**
-     * @uml
      * side-effect: can alter configs.hasSemanticContext
      */
     protected LexerATNConfig getEpsilonTarget(CharStream input, LexerATNConfig config, Transition t,
         ref ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
     {
+        debug(LexerATNSimulator) {
+            import std.stdio;
+            writefln("LexerATNSimulator getEpsilonTarget t = %s, serType = %s", t, t.getSerializationType);
+        }
 	LexerATNConfig c = null;
-        switch (t.getSerializationType()) {
+        switch (t.getSerializationType) {
         case TransitionStates.RULE:
             RuleTransition ruleTransition = cast(RuleTransition)t;
             PredictionContext newContext =
@@ -546,7 +549,7 @@ class LexerATNSimulator : ATNSimulator
             }
 
             break;
-        default: assert(0, "TransitionState unknown!");
+        default: {}
         }
 
         return c;

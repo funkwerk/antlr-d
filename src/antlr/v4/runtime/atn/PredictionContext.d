@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  Copyright (c) 2017 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.atn.PredictionContext;
@@ -35,6 +10,7 @@ import std.array;
 import std.conv;
 import std.algorithm.sorting;
 import core.atomic;
+import std.typecons;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
@@ -45,8 +21,7 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.PredictionContextCache;
-import antlr.v4.runtime.misc.DoubleKeyMap;
-import antlr.v4.runtime.misc.MurmurHash;
+import antlr.v4.runtime.misc;
 
 // Class PredictionContext
 /**
@@ -103,13 +78,13 @@ abstract class PredictionContext
 
     public this()
     {
+        id = globalNodeCount;
         atomicOp!"+="(globalNodeCount, 1);
     }
 
     public this(size_t cachedHashCode)
     {
         this.cachedHashCode = cachedHashCode;
-        //atomicOp!"+="(globalNodeCount, 1);
     }
 
     public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
@@ -125,9 +100,7 @@ abstract class PredictionContext
         }
 
         // If we have a parent, convert it to a PredictionContext graph
-        PredictionContext parent = cast(PredictionContext)EMPTY;
-        parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
-
+        PredictionContext parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
         ATNState state = atn.states[outerContext.invokingState];
         RuleTransition transition = cast(RuleTransition)state.transition(0);
         return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
@@ -329,7 +302,6 @@ abstract class PredictionContext
     }
 
     /**
-     * @uml
      * Handle case where at least one of {@code a} or {@code b} is
      * {@link #EMPTY}. In the following diagrams, the symbol {@code $} is used
      * to represent {@link #EMPTY}.
@@ -395,7 +367,6 @@ abstract class PredictionContext
     }
 
     /**
-     * @uml
      * Merge two {@link ArrayPredictionContext} instances.
      *          *
      * <p>Different tops, different parents.<br>
@@ -417,11 +388,13 @@ abstract class PredictionContext
     public static PredictionContext mergeArrays(ArrayPredictionContext a, ArrayPredictionContext b,
                                                 bool rootIsWildcard, ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-        if (mergeCache !is null) {
-            PredictionContext previous = mergeCache.get(a,b);
-            if ( previous !is null ) return previous;
-            previous = mergeCache.get(b,a);
-            if ( previous !is null ) return previous;
+        if (mergeCache) {
+            Nullable!PredictionContext previous = mergeCache.get(a, b);
+            if (!previous.isNull)
+                return previous.get;
+            previous = mergeCache.get(b, a);
+            if (!previous.isNull)
+                return previous.get;
         }
 
         // merge sorted payloads a + b => M
@@ -434,6 +407,7 @@ abstract class PredictionContext
         PredictionContext[] mergedParents =
             new PredictionContext[a.returnStates.length + b.returnStates.length];
         // walk and merge to yield mergedParents, mergedReturnStates
+
         while ( i<a.returnStates.length && j<b.returnStates.length ) {
             PredictionContext a_parent = a.parents[i];
             PredictionContext b_parent = b.parents[j];

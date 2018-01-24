@@ -128,7 +128,7 @@ class CommonTokenStream : BufferedTokenStream
         }
         //   if ( i>range ) range = i;
         debug
-            writefln("enter end LT(%s): %s", k, tokens[i]);
+            writefln("enter end LT(%s): %s", i, tokens[i]);
         return tokens[i];
     }
 

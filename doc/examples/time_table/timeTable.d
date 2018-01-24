@@ -22,7 +22,9 @@ int main(string[] argv) {
         TimeTableParser parser = new TimeTableParser(cts);
     
         // Specify our entry point
+        writefln("------------------ start parser.linie");
         TimeTableParser.TimeTableParser.LinieContext progContext = parser.linie;
+        writefln("------------------ new TimeTableBaseListener");
         auto baseLis = new TimeTableBaseListener;
         auto walker = new ParseTreeWalker;
         walker.walk(baseLis, progContext);

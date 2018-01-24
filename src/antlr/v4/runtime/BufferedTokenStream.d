@@ -43,7 +43,6 @@ class BufferedTokenStream : TokenStream
     protected TokenSource tokenSource;
 
     /**
-     * @uml
      * A collection of all tokens fetched from the token source. The list is
      * considered a complete view of the input once {@link #fetchedEOF} is set
      * to {@code true}.
@@ -66,7 +65,6 @@ class BufferedTokenStream : TokenStream
     private int index_ = -1;
 
     /**
-     * @uml
      * Indicates whether the {@link Token#EOF} token has been fetched from
      * {@link #tokenSource} and added to {@link #tokens}. This field improves
      * performance for the following cases:
@@ -238,8 +236,10 @@ class BufferedTokenStream : TokenStream
     public override Token LT(int k)
     {
         lazyInit();
-        if (k == 0) return null;
-        if (k < 0) return LB(-k);
+        if (k == 0)
+            return null;
+        if (k < 0)
+            return LB(-k);
         int i = index_ + k - 1;
         sync(i);
         if ( i >= tokens.length ) { // return EOF token
@@ -251,7 +251,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Allowed derived classes to modify the behavior of operations which change
      * the current stream position by adjusting the target token index of a seek
      * operation. The default implementation simply returns {@code i}. If an
@@ -283,7 +282,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Reset this token stream by setting its token source.
      */
     public void setTokenSource(TokenSource tokenSource)
@@ -350,16 +348,14 @@ class BufferedTokenStream : TokenStream
      */
     protected int nextTokenOnChannel(int i, int channel)
     {
-        import std.stdio;
-        writefln("vvvvvvvvv %s", channel);
 	sync(i);
-        if (i >= size()) {
-            return size() - 1;
+        if (i >= size) {
+            return size - 1;
         }
 
         Token token = tokens[i];
-        while (token.getChannel() != channel) {
-            if (token.getType() == TokenConstantDefinition.EOF) {
+        while (token.getChannel != channel) {
+            if (token.getType == TokenConstantDefinition.EOF) {
                 return i;
             }
 
@@ -372,7 +368,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Given a starting index, return the index of the previous token on
      * channel. Return {@code i} if {@code tokens[i]} is on channel. Return -1
      * if there are no tokens on channel between {@code i} and 0.
@@ -391,7 +386,7 @@ class BufferedTokenStream : TokenStream
         }
         while (i >= 0) {
             Token token = tokens[i];
-            if (token.getType() == TokenConstantDefinition.EOF || token.getChannel() == channel) {
+            if (token.getType() == TokenConstantDefinition.EOF || token.getChannel == channel) {
                 return i;
             }
             i--;
@@ -471,7 +466,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Collect all hidden tokens (any off-default channel) to the left of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      */
@@ -481,10 +475,11 @@ class BufferedTokenStream : TokenStream
         for (int i=from; i<=to; i++) {
             Token t = tokens[i];
             if (channel == -1) {
-                if (t.getChannel() != Lexer.DEFAULT_TOKEN_CHANNEL) hidden ~= t;
+                if (t.getChannel != Lexer.DEFAULT_TOKEN_CHANNEL) hidden ~= t;
             }
             else {
-                if (t.getChannel() == channel) hidden ~= t;
+                if (t.getChannel == channel)
+                    hidden ~= t;
             }
         }
         if (hidden.length == 0) return null;
@@ -550,7 +545,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Get all tokens from lexer until EOF
      */
     public void fill()

@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  Copyright (c) 2017 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.DefaultErrorStrategy;
@@ -36,9 +11,9 @@ import std.format;
 import std.typecons;
 import std.array;
 import antlr.v4.runtime.ANTLRErrorStrategy;
-import antlr.v4.runtime.misc.IntervalSet;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Parser;
+import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
@@ -52,6 +27,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.misc.IntervalSet;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -84,6 +60,21 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     public IntervalSet lastErrorStates;
 
     /**
+     * This field is used to propagate information about the lookahead following
+     * the previous match. Since prediction prefers completing the current rule
+     * to error recovery efforts, error reporting may occur later than the
+     * original point where it was discoverable. The original context is used to
+     * compute the true expected sets as though the reporting occurred as early
+     * as possible.
+     */
+    protected ParserRuleContext nextTokensContext;
+
+    /**
+     * @see #nextTokensContext
+     */
+    protected int nextTokensState;
+    
+    /**
      * <p>The default implementation simply calls {@link #endErrorCondition} to
      * ensure that the handler is not in error recovery mode.</p>
      */
@@ -92,6 +83,12 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         endErrorCondition(recognizer);
     }
 
+    /**
+     * This method is called to enter error recovery mode when a recognition
+     * exception is reported.
+     *
+     * @param recognizer the parser instance
+     */
     protected void beginErrorCondition(Parser recognizer)
     {
         errorRecoveryMode = true;
@@ -149,30 +146,69 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 	// if we've already reported an error and have not matched a token
         // yet successfully, don't report any errors.
         if (inErrorRecoveryMode(recognizer)) {
-            //			System.err.print("[SPURIOUS] ");
+            debug(DefaultErrorStrategy)
+            {
+                writefln("DefaultErrorStrategy:[SPURIOUS]");
+            }
             return; // don't report spurious errors
         }
         beginErrorCondition(recognizer);
-        if (e.classinfo == NoViableAltException.classinfo) {
-            reportNoViableAlternative(recognizer, cast(NoViableAltException) e);
+        if (cast(NoViableAltException)e) {
+            reportNoViableAlternative(recognizer, cast(NoViableAltException)e);
         }
-        else if (e.classinfo == InputMismatchException.classinfo) {
+        else if (cast(InputMismatchException)e) {
             reportInputMismatch(recognizer, cast(InputMismatchException)e);
         }
-        else if (e.classinfo == FailedPredicateException.classinfo) {
+        else if (cast(FailedPredicateException)e) {
             reportFailedPredicate(recognizer, cast(FailedPredicateException)e);
         }
         else {
             stderr.writefln("unknown recognition error type: %s", e.stringof);
             recognizer.notifyErrorListeners(e.getOffendingToken(), e.msg, e);
         }
-
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation resynchronizes the parser by consuming tokens
+     * until we find one in the resynchronization set--loosely the set of tokens
+     * that can follow the current rule.</p>
+     */
     public void recover(Parser recognizer, RecognitionException e)
     {
+        debug(DefaultErrorStrategy)
+        {
+            writefln("recover in %s index=%s, lastErrorIndex=%s, states=%s",
+                     recognizer.getRuleInvocationStack,
+                     lastErrorIndex,
+                     lastErrorStates);
+        }
+        if (lastErrorIndex == recognizer.getInputStream.index() &&
+            lastErrorStates !is null &&
+            lastErrorStates.contains(recognizer.getState))
+            {
+                // uh oh, another error at same token index and previously-visited
+                // state in ATN; must be a case where LT(1) is in the recovery
+                // token set so nothing got consumed. Consume a single token
+                // at least to prevent an infinite loop; this is a failsafe.
+                debug(DefaultErrorStrategy)
+                {
+                    stderr.writefln("seen error condition before index= %s, states=%s",
+                                    lastErrorIndex, lastErrorStates);
+                    stderr.writefln("FAILSAFE consumes %s",
+                                    recognizer.getTokenNames()[recognizer.getInputStream().LA(1)]);
+                }
+                recognizer.consume;
+            }
+        lastErrorIndex = recognizer.getInputStream.index;
+        if (lastErrorStates is null)
+            lastErrorStates = new IntervalSet;
+        lastErrorStates.add(recognizer.getState);
+        IntervalSet followSet = getErrorRecoverySet(recognizer);
+        consumeUntil(recognizer, followSet);
     }
-
+    
     /**
      * The default implementation of {@link ANTLRErrorStrategy#sync} makes sure
      * that the current lookahead symbol is consistent with what were expecting
@@ -222,26 +258,37 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     public void sync(Parser recognizer)
     {
 	ATNState s = recognizer.getInterpreter.atn.states[recognizer.getState];
-        debug(ErrorHandling) {
-            import std.stdio;
-            writefln("sync @ %s=%s", s.stateNumber, s.classinfo);
-        }
+        debug(ErrorHandling)
+            {
+                writefln("sync @ %s=%s", s.stateNumber, s.classinfo);
+            }
         // If already recovering, don't try to sync
         if (inErrorRecoveryMode(recognizer)) {
             return;
         }
-
         TokenStream tokens = recognizer.getInputStream;
         int la = tokens.LA(1);
-        // try cheaper subset first; might get lucky. seems to shave a wee bit off
-        if ( recognizer.getATN.nextTokens(s).contains(la) || la == TokenConstantDefinition.EOF) return;
 
-        // Return but don't end recovery. only do that upon valid token match
-        if (recognizer.isExpectedToken(la)) {
+        // try cheaper subset first; might get lucky. seems to shave a wee bit off
+        IntervalSet nextTokens = recognizer.getATN.nextTokens(s);
+        if (nextTokens.contains(la)) {
+            // We are sure the token matches
+            nextTokensContext = null;
+            nextTokensState = ATNState.INVALID_STATE_NUMBER;
             return;
         }
 
-        switch (s.getStateType()) {
+	if (nextTokens.contains(TokenConstantDefinition.EPSILON)) {
+            if (nextTokensContext is null) {
+                // It's possible the next token won't match; information tracked
+                // by sync is restricted for performance.
+                nextTokensContext = recognizer.ctx;
+                nextTokensState = recognizer.getState;
+            }
+            return;
+        }
+
+        switch (s.getStateType) {
         case StateNames.BLOCK_START:
         case StateNames.STAR_BLOCK_START:
         case StateNames.PLUS_BLOCK_START:
@@ -255,9 +302,12 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
         case StateNames.PLUS_LOOP_BACK:
         case StateNames.STAR_LOOP_BACK:
-            //			System.err.println("at loop back: "+s.getClass().getSimpleName());
+            debug(ErrorHandling)
+            {
+                stderr.writefln("at loop back: %s", s);
+            }
             reportUnwantedToken(recognizer);
-            IntervalSet expecting = recognizer.getExpectedTokens();
+            IntervalSet expecting = recognizer.getExpectedTokens;
             IntervalSet whatFollowsLoopIterationOrRule =
                 expecting.or(getErrorRecoverySet(recognizer));
             consumeUntil(recognizer, whatFollowsLoopIterationOrRule);
@@ -267,7 +317,6 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             // do nothing if we can't identify the exact kind of ATN state
             break;
         }
-
     }
 
     /**
@@ -284,14 +333,16 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 	TokenStream tokens = recognizer.getInputStream();
         string input;
         if (tokens !is null) {
-            if (e.getStartToken().getType == TokenConstantDefinition.EOF) input = "<EOF>";
-            else input = tokens.getText(e.getStartToken(), e.getOffendingToken());
+            if (e.getStartToken.getType == TokenConstantDefinition.EOF)
+                input = "<EOF>";
+            else
+                input = tokens.getText(e.getStartToken, e.getOffendingToken);
         }
         else {
             input = "<unknown input>";
         }
         string msg = format("no viable alternative at input %s", escapeWSAndQuote(input));
-        recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
+        recognizer.notifyErrorListeners(e.getOffendingToken, msg, e);
     }
 
     /**
@@ -324,7 +375,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     {
 	string ruleName = recognizer.getRuleNames[recognizer.ctx.getRuleIndex()];
         string msg = "rule " ~ ruleName ~ " " ~ e.msg;
-        recognizer.notifyErrorListeners(e.getOffendingToken(), msg, e);
+        recognizer.notifyErrorListeners(e.getOffendingToken, msg, e);
     }
 
     /**
@@ -461,7 +512,13 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         }
 
         // even that didn't work; must throw the exception
-        throw new InputMismatchException(recognizer);
+        InputMismatchException e;
+        if (nextTokensContext is null) {
+            e = new InputMismatchException(recognizer);
+        } else {
+            e = new InputMismatchException(recognizer, nextTokensState, nextTokensContext);
+        }
+        throw e;
     }
 
     /**
@@ -491,7 +548,10 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         ATNState next = currentState.transition(0).target;
         ATN atn = recognizer.getInterpreter().atn;
         IntervalSet expectingAtLL2 = atn.nextTokens(next, recognizer.ctx);
-        //		System.out.println("LT(2) set="+expectingAtLL2.toString(recognizer.getTokenNames()));
+        debug(ErrorHandling)
+            {
+                //writefln("LT(2) set=%s", expectingAtLL2.toString(recognizer.getTokenNames));
+            }
         if ( expectingAtLL2.contains(currentSymbolType) ) {
             reportMissingToken(recognizer);
             return true;
@@ -540,6 +600,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     }
 
     /**
+     * Conjure up a missing token during error recovery.
      *
      *  The recognizer attempts to recover from single missing
      *  symbols. But, actions might refer to that missing symbol.
@@ -562,10 +623,15 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     {
 	Token currentSymbol = recognizer.getCurrentToken();
         IntervalSet expecting = getExpectedTokens(recognizer);
-        int expectedTokenType = expecting.getMinElement(); // get any element
+        int expectedTokenType = TokenConstantDefinition.INVALID_TYPE;
+        if (!expecting.isNil) {
+            expectedTokenType = expecting.getMinElement(); // get any element
+        }
         string tokenText;
-        if (expectedTokenType == TokenConstantDefinition.EOF) tokenText = "<missing EOF>";
-        else tokenText = format("<missing %s>", recognizer.getVocabulary().getDisplayName(expectedTokenType));
+        if (expectedTokenType == TokenConstantDefinition.EOF)
+            tokenText = "<missing EOF>";
+        else
+            tokenText = format("<missing %s>", recognizer.getVocabulary.getDisplayName(expectedTokenType));
         Token current = currentSymbol;
         Token lookback = recognizer.getInputStream().LT(-1);
         if ( current.getType() == TokenConstantDefinition.EOF && lookback !is null) {
@@ -582,16 +648,17 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected IntervalSet getExpectedTokens(Parser recognizer)
     {
-	return recognizer.getExpectedTokens();
+	return recognizer.getExpectedTokens;
     }
 
     /**
-     *  is to display just the text, but during development you might
-     *  want to have a lot of information spit out.  Override in that case
-     *  to use t.toString() (which, for CommonToken, dumps everything about
-     *  the token). This is better than forcing you to override a method in
-     *  your token objects because you don't have to go modify your lexer
-     *  so that it creates a new Java type.
+     * How should a token be displayed in an error message? The default
+     * is to display just the text, but during development you might
+     * want to have a lot of information spit out.  Override in that case
+     * to use t.toString() (which, for CommonToken, dumps everything about
+     * the token). This is better than forcing you to override a method in
+     * your token objects because you don't have to go modify your lexer
+     * so that it creates a new Java type.
      */
     protected string getTokenErrorDisplay(Token t)
     {
@@ -628,6 +695,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     }
 
     /**
+     * Compute the error recovery set for the current rule.  During
      *  rule invocation, the parser pushes the set of tokens that can
      *  follow that rule reference on the stack; this amounts to
      *  computing FIRST of what follows the rule reference in the
@@ -745,8 +813,11 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 	//stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
         int ttype = recognizer.getInputStream().LA(1);
         while (ttype != TokenConstantDefinition.EOF && !set.contains(ttype) ) {
-            //System.out.println("consume during recover LA(1)="+getTokenNames()[input.LA(1)]);
-            //			recognizer.getInputStream().consume();
+            debug(ErrorHandling)
+            {
+                //writefln("consume during recover LA(1)=%s", getTokenNames[input.LA(1)]);
+            }
+            // recognizer.getInputStream().consume();
             recognizer.consume();
             ttype = recognizer.getInputStream().LA(1);
         }

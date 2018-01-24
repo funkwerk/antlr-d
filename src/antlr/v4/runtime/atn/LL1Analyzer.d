@@ -253,11 +253,13 @@ class LL1Analyzer
                 debug
                     writeln("LL1Analyzer: adding " ~ to!string(t));
                 IntervalSet set = t.label();
-                if (set !is null) {
+                if (set) {
                     if (cast(NotSetTransition)t) {
                         set = set.complement(IntervalSet.of(TokenConstantDefinition.MIN_USER_TOKEN_TYPE, atn.maxTokenType));
                     }
                     look.addAll(set);
+                    debug
+                        writefln("LL1Analyzer: look %s", look);
                 }
             }
         }

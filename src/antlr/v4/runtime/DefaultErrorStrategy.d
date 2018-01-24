@@ -73,7 +73,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      * @see #nextTokensContext
      */
     protected int nextTokensState;
-    
+
     /**
      * <p>The default implementation simply calls {@link #endErrorCondition} to
      * ensure that the handler is not in error recovery mode.</p>
@@ -208,7 +208,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
         IntervalSet followSet = getErrorRecoverySet(recognizer);
         consumeUntil(recognizer, followSet);
     }
-    
+
     /**
      * The default implementation of {@link ANTLRErrorStrategy#sync} makes sure
      * that the current lookahead symbol is consistent with what were expecting

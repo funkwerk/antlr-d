@@ -19,7 +19,8 @@ class InputMismatchException : RecognitionException
         this.setOffendingToken(recognizer.getCurrentToken);
     }
 
-    public this(Parser recognizer, int state, ParserRuleContext ctx) {
+    public this(Parser recognizer, int state, ParserRuleContext ctx)
+    {
         super(recognizer, recognizer.getInputStream, ctx);
         this.setOffendingState(state);
         this.setOffendingToken(recognizer.getCurrentToken());

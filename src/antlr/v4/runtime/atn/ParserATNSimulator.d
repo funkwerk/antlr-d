@@ -1377,14 +1377,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     }
 
-    protected bool canDropLoopEntryEdgeInLeftRecursiveRule(ATNConfig config)
-    {
-        auto TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT = true;
-        if ( TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT )
-            return false;
-        return false;
-    }
-
     public string getRuleName(int index)
     {
         if (parser !is null && index>=0 ) return parser.getRuleNames()[index];
@@ -1813,6 +1805,14 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     public Parser getParser()
     {
 	return parser;
+    }
+
+    protected bool canDropLoopEntryEdgeInLeftRecursiveRule(ATNConfig config)
+    {
+        auto TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT = true;
+        if ( TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT )
+            return false;
+        return false;
     }
 
 }

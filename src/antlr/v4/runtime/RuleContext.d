@@ -72,9 +72,9 @@ import antlr.v4.runtime.misc.Interval;
  */
 class RuleContext : RuleNode, InterfaceRuleContext
 {
-    
+
     public static const ParserRuleContext EMPTY = new ParserRuleContext();
-    
+
     public RuleContext parent;
 
     public int invokingState = -1;

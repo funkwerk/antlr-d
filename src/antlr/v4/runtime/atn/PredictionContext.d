@@ -12,7 +12,6 @@ import std.algorithm.sorting;
 import core.atomic;
 import std.typecons;
 import antlr.v4.runtime.InterfaceRecognizer;
-//import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
@@ -102,7 +101,7 @@ abstract class PredictionContext
         // If we have a parent, convert it to a PredictionContext graph
         PredictionContext parent = cast(PredictionContext)EMPTY;
         parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
-        
+
         ATNState state = atn.states[outerContext.invokingState];
         RuleTransition transition = cast(RuleTransition)state.transition(0);
         return SingletonPredictionContext.create(parent, transition.followState.stateNumber);

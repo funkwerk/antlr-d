@@ -12,7 +12,7 @@ import std.algorithm.sorting;
 import core.atomic;
 import std.typecons;
 import antlr.v4.runtime.InterfaceRecognizer;
-import antlr.v4.runtime.ParserRuleContext;
+//import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
@@ -90,17 +90,19 @@ abstract class PredictionContext
     public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext)
     {
         if (outerContext is null)
-            outerContext = new ParserRuleContext().EMPTY;
-
+            outerContext = cast(RuleContext)RuleContext.EMPTY;
         // if we are in RuleContext of start rule, s, then PredictionContext
         // is EMPTY. Nobody called us. (if we are empty, return empty)
-        if ( outerContext.parent is null ||
-             outerContext == new ParserRuleContext().EMPTY ) {
-            return cast(PredictionContext)PredictionContext.EMPTY;
-        }
+        if (outerContext.parent is null ||
+             outerContext == cast(RuleContext)RuleContext.EMPTY)
+            {
+                return cast(PredictionContext)PredictionContext.EMPTY;
+            }
 
         // If we have a parent, convert it to a PredictionContext graph
-        PredictionContext parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
+        PredictionContext parent = cast(PredictionContext)EMPTY;
+        parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
+        
         ATNState state = atn.states[outerContext.invokingState];
         RuleTransition transition = cast(RuleTransition)state.transition(0);
         return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
@@ -181,30 +183,29 @@ abstract class PredictionContext
         assert(a !is null && b !is null); // must be empty context, never null
 
         // share same graph if both same
-        if (a is b || a.opEquals(b)) return a;
-
-        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*) &&
-            typeid(typeof(b)) == typeid(SingletonPredictionContext*)) {
+        if (a is b || a.opEquals(b))
+            return a;
+        if (cast(SingletonPredictionContext)a &&
+            cast(SingletonPredictionContext)b) {
             return mergeSingletons(cast(SingletonPredictionContext)a,
                                    cast(SingletonPredictionContext)b,
                                    rootIsWildcard, mergeCache);
         }
-
         // At least one of a or b is array
         // If one is $ and rootIsWildcard, return $ as * wildcard
-        if ( rootIsWildcard ) {
-            if (typeid(a) == typeid(EmptyPredictionContext)) return a;
-            if (typeid(b) == typeid(EmptyPredictionContext)) return b;
+        if (rootIsWildcard) {
+            if (cast(EmptyPredictionContext)a) return a;
+            if (cast(EmptyPredictionContext)b) return b;
         }
 
         // convert singleton so both are arrays to normalize
-        if (typeid(typeof(a)) == typeid(SingletonPredictionContext*)) {
+        if (cast(SingletonPredictionContext)a) {
             a = new ArrayPredictionContext(cast(SingletonPredictionContext)a);
         }
-        if (typeid(typeof(b)) == typeid(SingletonPredictionContext*)) {
+        if (cast(SingletonPredictionContext)b) {
             b = new ArrayPredictionContext(cast(SingletonPredictionContext)b);
         }
-        return mergeArrays(cast(ArrayPredictionContext) a, cast(ArrayPredictionContext) b,
+        return mergeArrays(cast(ArrayPredictionContext)a, cast(ArrayPredictionContext)b,
                            rootIsWildcard, mergeCache);
     }
 
@@ -240,29 +241,32 @@ abstract class PredictionContext
                                                     bool rootIsWildcard, ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
         if (mergeCache !is null ) {
-            PredictionContext previous = mergeCache.get(a, b);
-            if (previous) return previous;
+            Nullable!PredictionContext previous = mergeCache.get(a, b);
+            if (!previous.isNull) return previous.get;
             previous = mergeCache.get(b, a);
-            if (previous) return previous;
+            if (!previous.isNull) return previous.get;
         }
 
         PredictionContext rootMerge = mergeRoot(a, b, rootIsWildcard);
-        if ( rootMerge !is null ) {
-            if (mergeCache !is null ) mergeCache.put(a, b, rootMerge);
+        if (rootMerge !is null) {
+            if (mergeCache !is null) mergeCache.put(a, b, rootMerge);
             return rootMerge;
         }
 
         if (a.returnState == b.returnState) { // a == b
             PredictionContext parent = merge(a.parent, b.parent, rootIsWildcard, mergeCache);
             // if parent is same as existing a or b parent or reduced to a parent, return it
-            if ( parent == a.parent ) return a; // ax + bx = ax, if a=b
-            if ( parent == b.parent ) return b; // ax + bx = bx, if a=b
+            if ( parent == a.parent )
+                return a; // ax + bx = ax, if a=b
+            if ( parent == b.parent )
+                return b; // ax + bx = bx, if a=b
             // else: ax + ay = a'[x,y]
             // merge parents x and y, giving array node with x,y then remainders
             // of those graphs.  dup a, a' points at merged array
             // new joined parent so create new singleton pointing to it, a'
             PredictionContext a_ = SingletonPredictionContext.create(parent, a.returnState);
-            if (mergeCache !is null) mergeCache.put(a, b, a_);
+            if (mergeCache !is null)
+                mergeCache.put(a, b, a_);
             return a_;
         }
         else { // a != b payloads differ

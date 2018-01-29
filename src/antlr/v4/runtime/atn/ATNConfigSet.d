@@ -255,6 +255,7 @@ class ATNConfigSet
             configs ~= config;  // track order here
             return true;
         }
+
         // a previous (s,i,pi,_), merge with it and save result
         bool rootIsWildcard = !fullCtx;
 
@@ -421,7 +422,7 @@ class ATNConfigSet
         if (readonly_) throw new IllegalStateException("This set is readonly");
         configs.length = 0;
         cachedHashCode = -1;
-        configLookup.clear();
+        configLookup.clear;
     }
 
     public void readonly(bool readonly)

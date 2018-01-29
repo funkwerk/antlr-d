@@ -15,8 +15,8 @@ int main(string[] argv) {
         auto lexer = new TimeTableLexer(antlrInput);
         auto cts = new CommonTokenStream(lexer);
 
-        writefln("------------------Token getNumberOfOnChannelTokens %s", cts.getNumberOfOnChannelTokens);
-        writefln("------------------Token 0 %s", cts.getTokens);
+        //writefln("------------------Token getNumberOfOnChannelTokens %s", cts.getNumberOfOnChannelTokens);
+        //writefln("------------------Token 0 %s", cts.getTokens);
 
         // Pass the tokens to the parser
         TimeTableParser parser = new TimeTableParser(cts);

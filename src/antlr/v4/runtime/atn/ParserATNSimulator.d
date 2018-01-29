@@ -823,7 +823,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         // First figure out where we can reach on input t
         foreach (c; closure.configs) {
-            debug writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
+            debug
+                writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
 
             if (typeid(c.state) == typeid(RuleStopState)) {
                 assert (!c.context.isEmpty);
@@ -1056,7 +1057,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
         }
         if (nPredAlts == 0) altToPred = null;
-        debug writefln("getPredsForAmbigAlts result %s", to!string(altToPred));
+        debug
+            writefln("getPredsForAmbigAlts result %s", to!string(altToPred));
         return altToPred;
     }
 
@@ -1210,7 +1212,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
 
             if ( predicateEvaluationResult ) {
-                debug(dfa_debug) writefln("PREDICT ", pair.alt);
+                debug(dfa_debug)
+                    writefln("PREDICT ", pair.alt);
                 predictions.set(pair.alt, true);
                 if (!complete) {
                     break;
@@ -1243,11 +1246,10 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 	debug {
             writefln("\nclosureCheckingStopState: closure(%s)", config.toString(parser, true));
         }
-
         if (cast(RuleStopState)config.state) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
-            if (!config.context.isEmpty) {
+            if (config.context) {
                 for (int i = 0; i < config.context.size; i++) {
                     if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
@@ -1306,6 +1308,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	ATNState p = config.state;
+
         // optimization
         if (!p.onlyHasEpsilonTransitions) {
             configs.add(config, mergeCache);
@@ -1314,6 +1317,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             //            if ( debug ) System.out.println("added config "+configs);
         }
         for (int i=0; i<p.getNumberOfTransitions(); i++) {
+            if ( i==0 && canDropLoopEntryEdgeInLeftRecursiveRule(config))
+                continue;
             Transition t = p.transition(i);
             bool continueCollecting =
                 !(t.classinfo == ActionTransition.classinfo ) && collectPredicates;
@@ -1370,6 +1375,14 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
         }
 
+    }
+
+    protected bool canDropLoopEntryEdgeInLeftRecursiveRule(ATNConfig config)
+    {
+        auto TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT = true;
+        if ( TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT )
+            return false;
+        return false;
     }
 
     public string getRuleName(int index)
@@ -1615,7 +1628,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     public void dumpDeadEndConfigs(NoViableAltException nvae)
     {
-	writefln("dead end configs: ");
+        debug
+            writefln("dead end configs: ");
         foreach (ATNConfig c; nvae.getDeadEndConfigs().configs) {
             string trans = "no edges";
             if (c.state.getNumberOfTransitions > 0) {
@@ -1630,7 +1644,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     trans = (not?"~":"") ~ "Set "~ st.set.toString();
                 }
             }
-            writefln("%1$s:%2$s", c.toString(parser, true), trans);
+            debug
+                writefln("%1$s:%2$s", c.toString(parser, true), trans);
         }
     }
 

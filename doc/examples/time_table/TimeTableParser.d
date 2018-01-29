@@ -581,12 +581,12 @@ public class TimeTableParser : Parser {
 						abfahrtszeit();
 						}
 						break;
-					        default: assert(0);
+                                        default: {}
 					}
 					}
 					}
 					break;
-				        default: assert(0);
+                                default: {}
 				}
 				}
 				setState(123); 
@@ -1034,6 +1034,8 @@ public class TimeTableParser : Parser {
 			{
 			setState(161);
 			gleis();
+                        import std.stdio;
+                        writefln("default_gleis() gleis state 161");
 			}
 		}
 		catch (RecognitionException re) {
@@ -1766,6 +1768,7 @@ public class TimeTableParser : Parser {
 	public GleisContext gleis() {
 		GleisContext _localctx = new GleisContext(ctx_, getState());
 		enterRule(_localctx, 56, RULE_gleis);
+
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -1775,20 +1778,26 @@ public class TimeTableParser : Parser {
 			match(DELI);
 			setState(228);
 			_errHandler.sync(this);
+                        import std.stdio;
+                        writefln("gleis()  2---------getInterpreter %s", getInterpreter);
+                        //writefln("gleis()  2---------getInterpreter %s .... %s", getInterpreter,  getInterpreter.adaptivePredict(_input,20, ctx_) );
 			switch ( getInterpreter.adaptivePredict(_input,20, ctx_) ) {
 			case 1:
 				{
+                                    import std.stdio;
+                                writefln("gleis() 226");
 				setState(226);
+
 				match(NUMBER);
 				}
 				break;
 			case 2:
-				{
+				{writefln("gleis() 227");
 				setState(227);
 				date_key();
 				}
 				break;
-			        default: assert(0);
+                        default: {writefln("gleis()  3---------");}
 			}
 			}
 		}
@@ -1797,7 +1806,7 @@ public class TimeTableParser : Parser {
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
 		}
-		finally {
+		finally { import std.stdio;writefln("gleis() exit rule");
 			exitRule();
 		}
 		return _localctx;

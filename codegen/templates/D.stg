@@ -340,7 +340,7 @@ public void action(InterfaceRuleContext _localctx, int ruleIndex, int actionInde
 case <f.ruleIndex>:
 	<f.name>_action(cast(Interface<f.ctxType>)_localctx, actionIndex);
 	break;}; separator="\n">
-        default: assert(0);
+        default: {}
 	}
 }
 <actionFuncs.values; separator="\n">
@@ -377,7 +377,7 @@ private void <r.name>_action(Interface<r.ctxType> _localctx, int actionIndex) {
 case <index>:
 	<actions.(index)>
 	break;}; separator="\n">
-        default: assert(0);
+        default: {}
 	}
 }
 >>
@@ -559,7 +559,7 @@ switch ( getInterpreter.adaptivePredict(_input,<choice.decision>, ctx_) ) {
 case <i>:
 	<alt>
 	break;}; separator="\n">
-        default: assert(0);
+        default: {}
 }
 >>
 
@@ -571,7 +571,7 @@ switch ( getInterpreter.adaptivePredict(_input,<choice.decision>, ctx_) ) {
 case <i><if(!choice.ast.greedy)>+1<endif>:
 	<alt>
 	break;}; separator="\n">
-        default: assert(0);
+        default: {}
 }
 >>
 

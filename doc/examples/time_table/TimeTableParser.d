@@ -581,12 +581,12 @@ public class TimeTableParser : Parser {
 						abfahrtszeit();
 						}
 						break;
-                                        default: {}
+					        default: {}
 					}
 					}
 					}
 					break;
-                                default: {}
+				        default: {}
 				}
 				}
 				setState(123); 
@@ -1111,7 +1111,7 @@ public class TimeTableParser : Parser {
 					date_expression();
 					}
 					break;
-				        default: assert(0);
+				        default: {}
 				}
 				}
 				setState(169); 

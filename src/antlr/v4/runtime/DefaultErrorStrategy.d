@@ -152,7 +152,6 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             }
             return; // don't report spurious errors
         }
-        writefln("reportError recognizer = %s, e.getOffendingToken = %s", recognizer.classinfo, e.getOffendingToken);
         beginErrorCondition(recognizer);
         if (cast(NoViableAltException)e) {
             reportNoViableAlternative(recognizer, cast(NoViableAltException)e);

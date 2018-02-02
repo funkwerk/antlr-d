@@ -1372,7 +1372,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                         }
                         closureBusy ~= c;
                     }
-                    writefln("else t.isEpsilon = %s, cast(RuleTransition)t = %s", t.isEpsilon, cast(RuleTransition)t); 
+                    writefln("else t.isEpsilon = %s, cast(RuleTransition)t = %s", t.isEpsilon, cast(RuleTransition)t);
                     if (cast(RuleTransition)t) {
                         // latch when newDepth goes negative - once we step out of the entry context we can't return
                         if (newDepth >= 0) {

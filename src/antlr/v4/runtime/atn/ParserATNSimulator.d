@@ -392,7 +392,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     computeStartState(dfa.atnStartState,
                                       ParserRuleContext.EMPTY,
                                       fullCtx);
-                writefln("---------- predictATN s0_closure = %s", s0_closure);
                 if (dfa.isPrecedenceDfa) {
                     /* If this is a precedence DFA, we use applyPrecedenceFilter
                      * to convert the computed start state to a precedence start
@@ -608,7 +607,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         // create new target state; we'll add to DFA after it's complete
         DFAState D = new DFAState(reach);
-        writefln("SLL reach = %s getConflictingAlts(reach) = %s", reach, getConflictingAlts(reach));
         int predictedAlt = getUniqueAlt(reach);
         debug {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
@@ -631,7 +629,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
         else if ( PredictionMode.hasSLLConflictTerminatingPrediction(mode, reach)) {
             // MORE THAN ONE VIABLE ALTERNATIVE
-            writefln("// MORE THAN ONE VIABLE ALTERNATIVE");
             D.configs.conflictingAlts = getConflictingAlts(reach);
             D.requiresFullContext = true;
             // in SLL-only mode, we will stop at this state and return the minimum alt
@@ -647,7 +644,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
         // all adds to dfa are done after we've created full D state
         D = addDFAEdge(dfa, previousD, t, D);
-        writefln("\n ----------------// all adds to dfa are done after we've created full D state D = %s", D);
         return D;
     }
 
@@ -883,10 +879,10 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             reach = new ATNConfigSet(fullCtx);
             ATNConfig[] closureBusy;
             bool treatEofAsEpsilon = t == TokenConstantDefinition.EOF;
-            foreach (c; intermediate.configs) {
-                writefln("foreach (c; intermediate.configs) c = %s, reach %s, closureBusy %s, fullCtx %s, treatEofAsEpsilon %s", c, reach,closureBusy, fullCtx, treatEofAsEpsilon );
-                closureATN(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
-            }
+            foreach (c; intermediate.configs)
+                {
+                    closureATN(c, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
+                }
         }
 
         if (t == IntStreamConstant.EOF) {
@@ -1236,7 +1232,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                            bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
-        writefln("closureATN: call 2");
         closureCheckingStopState(config, configs, closureBusy, collectPredicates,
                                  fullCtx,
                                  initialDepth, treatEofAsEpsilon);
@@ -1250,13 +1245,11 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             writefln("\nclosureCheckingStopState: closure(%s)", config.toString(parser, true));
         }
         if (cast(RuleStopState)config.state) {
-            writefln("We hit rule end, config.context = %s", config.context.isEmpty);
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
             if (!config.context.isEmpty) {
                 for (int i = 0; i < config.context.size; i++) {
-                    writefln("+++++++++++++ start config.getReturnState(i) = %s, EMPTY = %s", config.context.getReturnState(i), PredictionContext.EMPTY_RETURN_STATE);
-                    if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {                    writefln("+++++++++++++ %s", config.context);
+                    if (config.context.getReturnState(i) == PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
                             configs.add(new ATNConfig(config, config.state,
                                                       cast(PredictionContext)PredictionContext.EMPTY), mergeCache);
@@ -1285,7 +1278,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     // configuration.
                     c.reachesIntoOuterContext = config.reachesIntoOuterContext;
                     assert(depth > int.min);
-                    writefln("closureCheckingStopState call 1");
                     closureCheckingStopState(c, configs, closureBusy, collectPredicates,
                                              fullCtx, depth - 1, treatEofAsEpsilon);
                 }
@@ -1303,7 +1295,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                              getRuleName(config.state.ruleIndex));
             }
         }
-        writefln("state before closure_:");
         closure_(config, configs, closureBusy, collectPredicates,
                  fullCtx, depth, treatEofAsEpsilon);
     }
@@ -1315,7 +1306,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	ATNState p = config.state;
-        writefln("closure_ config.state = %s", p);
+
         // optimization
         if (!p.onlyHasEpsilonTransitions) {
             configs.add(config, mergeCache);
@@ -1331,13 +1322,11 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 collectPredicates && !(cast(ActionTransition)t);
             ATNConfig c = getEpsilonTarget(config, t, continueCollecting,
                                            depth == 0, fullCtx, treatEofAsEpsilon);
-            writefln("getEpsilonTarget index = %s, t = %s, c = %s, continueCollecting = %s",i, t, c, continueCollecting);
-            //writefln("getEpsilonTarget c = %s, c.context = %s", c, c.context);
             if (c !is null) {
                 int newDepth = depth;
                 if (cast(RuleStopState)config.state) {
                     assert (!fullCtx);
-                    writefln("getEpsilonTarget ................. c = %s, c.context = %s", c, c.context);
+
                     // target fell off end of rule; mark resulting c as having dipped into outer context
                     // We can't get here if incoming config was rule stop and we had context
                     // track how far we dip into outer context.  Might
@@ -1372,7 +1361,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                         }
                         closureBusy ~= c;
                     }
-                    writefln("else t.isEpsilon = %s, cast(RuleTransition)t = %s", t.isEpsilon, cast(RuleTransition)t);
                     if (cast(RuleTransition)t) {
                         // latch when newDepth goes negative - once we step out of the entry context we can't return
                         if (newDepth >= 0) {
@@ -1380,7 +1368,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                         }
                     }
                 }
-                writefln("closureATN: call 3");
                 closureCheckingStopState(c, configs, closureBusy, continueCollecting,
                                          fullCtx, newDepth, treatEofAsEpsilon);
             }
@@ -1552,8 +1539,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     public BitSet getConflictingAlts(ATNConfigSet configs)
     {
         BitSet[] altsets = PredictionMode.getConflictingAltSubsets(configs);
-        import std.stdio;
-        writefln("altsets = %s", altsets.length);
         return PredictionMode.getAlts(altsets);
     }
 

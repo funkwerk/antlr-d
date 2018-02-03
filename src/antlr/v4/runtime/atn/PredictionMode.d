@@ -435,7 +435,7 @@ class PredictionMode
     {
 	BitSet all;
         foreach (BitSet alts; altsets) {
-            all.or(alts);
+            all = all.or(alts);
         }
         return all;
     }
@@ -462,25 +462,23 @@ class PredictionMode
     public static BitSet[] getConflictingAltSubsets(ATNConfigSet configs)
     {
 	AltAndContextMap configToAlts;
+        BitSet *alts;
+
         foreach (ATNConfig c; configs.configs) {
-            import std.stdio;
-            writefln("PM : getConflictingAltSubsets c = %s, c.alt = %s", c, c.alt);
-            BitSet alts;
+            // c.hashOfFp = &ContextMapObjectEqualityComparator.toHash;
+            // c.opEqualsFp = &ContextMapObjectEqualityComparator.opEquals;
             if (!configToAlts.hasKey(c))
                 {
-                    writefln("PM : false");
-                    alts.clear;
-                    configToAlts.put(c, alts);
+                    alts = new BitSet();
+                    alts.set(0, false);
+                    configToAlts.put(c, *alts);
                 }
-            else
-                {
-                    writefln("PM : true");
-                    alts = configToAlts.get(c);
-                }
+            else {
+                *alts = configToAlts.get(c);
+            }
             alts.set(c.alt, true);
-            writefln("PM : alts %s", alts);
         }
-        return configToAlts.values();
+        return configToAlts.altAndContextMap.values;
     }
 
     /**

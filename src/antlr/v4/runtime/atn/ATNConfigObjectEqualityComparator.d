@@ -15,10 +15,6 @@ class ATNConfigObjectEqualityComparator
      */
     private static __gshared ATNConfigObjectEqualityComparator instance_;
 
-    /**
-     * @uml
-     * @override
-     */
     public static bool opEquals(Object a, Object b)
     {
         if (a is b) {
@@ -48,7 +44,6 @@ class ATNConfigObjectEqualityComparator
      * @uml
      * @trusted
      * @nothrow
-     * @override
      */
     public static size_t toHash(Object o) @trusted nothrow
     {

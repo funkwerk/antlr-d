@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.misc.BitSet;
 
 import std.bitmanip;
@@ -44,7 +50,7 @@ struct BitSet
     public int nextSetBit(int fromIndex)
     {
         foreach (i, el; bitSet) {
-            if (i >= fromIndex && el == true)
+            if (i > fromIndex && el == true)
                 return to!int(i);
         }
         return -1;
@@ -53,7 +59,7 @@ struct BitSet
     public void set(int bitIndex, bool value)
     {
         if (bitSet.length <= bitIndex)
-            bitSet.length = bitIndex + 3; // dynamic array need more space
+            bitSet.length = bitIndex + 16; // dynamic array need more space
         bitSet[bitIndex] = value;
     }
 
@@ -110,14 +116,41 @@ struct BitSet
         bitSet.length(0);
     }
 
-    public BitSet or(BitSet bitSet)
+    public BitSet or(BitSet bits)
     {
         BitSet result;
-        auto maxLenght = max(this.bitSet.length, bitSet.bitSet.length);
-        this.bitSet.length = maxLenght;
-        bitSet.bitSet.length = maxLenght;
-        result.bitSet = this.bitSet | bitSet.bitSet;
+        auto maxLenght = max(this.bitSet.length, bits.bitSet.length);
+        if (this.bitSet.length < maxLenght)
+            this.bitSet.length = maxLenght;
+        else
+            if (bits.values.length < maxLenght)
+                bits.values.length = maxLenght;
+        result.bitSet = this.bitSet | bits.bitSet;
         return result;
+    }
+
+    public string toIndexString()
+    {
+        import std.conv;
+        import std.array : join;
+        string[] res;
+        int index;
+        foreach(i, el; bitSet)
+        {
+            if(el)
+                res ~= to!string(i);
+        }
+        return "{" ~ join(res, ",") ~ "}";
+    }
+
+    public BitArray values()
+    {
+        return bitSet;
+    }
+
+    public void dup(BitSet old)
+    {
+        this.bitSet = old.bitSet.dup;
     }
 
 }

@@ -15,10 +15,6 @@ class ContextMapObjectEqualityComparator
      */
     private static __gshared ContextMapObjectEqualityComparator instance_;
 
-    /**
-     * @uml
-     * @override
-     */
     public static bool opEquals(Object a, Object b)
     {
         if (a is b) {
@@ -39,7 +35,6 @@ class ContextMapObjectEqualityComparator
      * @uml
      * @trusted
      * @nothrow
-     * @override
      */
     public static size_t toHash(Object o) @trusted nothrow
     {

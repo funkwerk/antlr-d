@@ -13,6 +13,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.misc.MurmurHash;
 
 // Class ATNConfig
@@ -85,6 +86,10 @@ class ATNConfig
 
     public SemanticContext semanticContext;
 
+    public size_t function(Object o) @trusted nothrow hashOfFp;
+
+    public bool function(Object a, Object b) opEqualsFp;
+
     /**
      * Duplication
      */
@@ -95,6 +100,8 @@ class ATNConfig
         this.context = old.context;
         this.semanticContext = old.semanticContext;
         this.reachesIntoOuterContext = old.reachesIntoOuterContext;
+        this.hashOfFp = old.hashOfFp;
+        this.opEqualsFp = old.opEqualsFp;
     }
 
     public this(ATNState state, int alt, PredictionContext context)
@@ -108,6 +115,8 @@ class ATNConfig
         this.alt = alt;
         this.context = context;
         this.semanticContext = cast(SemanticContext)semanticContext;
+        this.hashOfFp = &ATNConfigObjectEqualityComparator.toHash;
+        this.opEqualsFp = &ATNConfigObjectEqualityComparator.opEquals;
     }
 
     public this(ATNConfig c, ATNState state)
@@ -138,6 +147,8 @@ class ATNConfig
         this.context = context;
         this.semanticContext = cast(SemanticContext) semanticContext;
         this.reachesIntoOuterContext = c.reachesIntoOuterContext;
+        this.hashOfFp = &ATNConfigObjectEqualityComparator.toHash;
+        this.opEqualsFp = &ATNConfigObjectEqualityComparator.opEquals;
     }
 
     /**
@@ -182,24 +193,7 @@ class ATNConfig
 
     public bool opEquals(ATNConfig other)
     {
-        if (this is other) {
-            return true;
-        } else if (other is null) {
-            return false;
-        }
-        bool scEqual = false;
-        if (this.semanticContext is other.semanticContext)
-            scEqual = true;
-        else
-            if (this.semanticContext is null || other.semanticContext is null)
-                return false;
-        return this.state.stateNumber == other.state.stateNumber
-            && this.alt == other.alt
-            && (this.context is other.context ||
-                (this.context !is null && other.context !is null &&
-                 this.context.opEquals(other.context)))
-            && scEqual
-            && this.isPrecedenceFilterSuppressed == other.isPrecedenceFilterSuppressed;
+        return opEqualsFp(this, other);
     }
 
     /**
@@ -210,13 +204,7 @@ class ATNConfig
      */
     public override size_t toHash() @trusted nothrow
     {
-        size_t hashCode = MurmurHash.initialize(7);
-        hashCode = MurmurHash.update(hashCode, state.stateNumber);
-        hashCode = MurmurHash.update(hashCode, alt);
-        hashCode = MurmurHash.update(hashCode, context);
-        hashCode = MurmurHash.update(hashCode, semanticContext);
-        hashCode = MurmurHash.finish(hashCode, 4);
-        return hashCode;
+        return hashOfFp(this);
     }
 
     /**

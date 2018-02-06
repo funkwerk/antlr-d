@@ -247,11 +247,17 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     public Token match(int ttype)
     {
 	Token t = getCurrentToken;
+
         debug(Parser) {
             import std.stdio;
             writefln("Parser: match  %s, currentToken = %s", ttype, t);
         }
-        if (t.getType > 0) {
+
+        if (t.getType == ttype) {
+            if (ttype == TokenConstantDefinition.EOF)
+                {
+                    matchedEOF = true;
+                }
             _errHandler.reportMatch(this);
             consume();
         }
@@ -582,7 +588,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      * Set the token stream and reset the parser.
      */
     public void setTokenStream(TokenStream input)
-    { 
+    {
         this._input = null;
         reset();
         this._input = input;
@@ -646,6 +652,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         if (o.getType() != EOF) {
             getInputStream().consume();
         }
+
         bool hasListener = _parseListeners !is null && _parseListeners.length;
         if (_buildParseTrees || hasListener) {
             if (_errHandler.inErrorRecoveryMode(this)) {
@@ -869,7 +876,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
             ctx = cast(ParserRuleContext)ctx.parent;
         }
-        if ( following.contains(TokenConstantDefinition.EPSILON) && symbol == TokenConstantDefinition.EOF ) {
+        if (following.contains(TokenConstantDefinition.EPSILON) && symbol == TokenConstantDefinition.EOF) {
             return true;
         }
 

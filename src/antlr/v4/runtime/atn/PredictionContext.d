@@ -568,8 +568,11 @@ abstract class PredictionContext
         return buf.data;
     }
 
+    /**
+     * ref visited ?
+     */
     public static PredictionContext getCachedContext(PredictionContext context, PredictionContextCache contextCache,
-                                                     PredictionContext[PredictionContext] visited)
+                                                    PredictionContext[PredictionContext] visited)
     {
         if (context.isEmpty) {
             return context;
@@ -580,8 +583,9 @@ abstract class PredictionContext
         }
 
         if (contextCache.hasKey(context)) {
-            visited[context] = contextCache.get(context);
-            return contextCache.get(context);
+            auto existing = contextCache.get(context);
+            visited[context] = existing;
+            return existing;
         }
 
         bool changed = false;
@@ -590,8 +594,8 @@ abstract class PredictionContext
             PredictionContext parent = getCachedContext(context.getParent(i), contextCache, visited);
             if (changed || parent != context.getParent(i)) {
                 if (!changed) {
-                    parents = new PredictionContext[context.size()];
-                    for (int j = 0; j < context.size(); j++) {
+                    parents = new PredictionContext[context.size];
+                    for (int j = 0; j < context.size; j++) {
                         parents[j] = context.getParent(j);
                     }
                     changed = true;
@@ -599,6 +603,13 @@ abstract class PredictionContext
                 parents[i] = parent;
             }
         }
+
+        if (!changed) {
+            contextCache.add(context);
+            visited[context] = context;
+            return context;
+        }
+        
         PredictionContext updated;
         if (parents.length == 0) {
             updated = cast(PredictionContext)EMPTY;

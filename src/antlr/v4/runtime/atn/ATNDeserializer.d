@@ -7,11 +7,10 @@
 module antlr.v4.runtime.atn.ATNDeserializer;
 
 import std.array;
-import std.uuid;
 import std.conv;
 import std.format;
 import std.stdio;
-import std.traits;
+import std.uuid;
 import std.algorithm: map;
 import std.algorithm: canFind;
 import std.algorithm: reverse;
@@ -184,9 +183,10 @@ class ATNDeserializer
         readModes(atn);
         IntervalSet[] sets;
         readSets(sets, atn, &readInt);
-        if (isFeatureSupported(ADDED_UNICODE_SMP, uuid)) {
-            readSets(sets, atn, &readInt32);
-        }
+        if (isFeatureSupported(ADDED_UNICODE_SMP, uuid))
+            {
+                readSets(sets, atn, &readInt32);
+            }
         readEdges(atn, sets);
         readDecisions(atn);
 	readLexerActions(atn);

@@ -361,7 +361,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         int m = input.mark();
         int index = _startIndex;
-
         // Now we are certain to have a specific decision's DFA
         // But, do we still need an initial state?
         try {
@@ -409,10 +408,9 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                     dfa.s0 = s0;
                 }
             }
-
             int alt = execATN(dfa, s0, input, index, outerContext);
             debug(ParserATNSimulator)
-                writefln("DFA after predictATN: %1$s, alt = %s", dfa.toString(parser.getVocabulary), alt);
+                writefln("DFA after predictATN: %1$s, alt = %s, dfa.states = %s", dfa.toString(parser.getVocabulary), alt, dfa);
             return alt;
         }
         finally {
@@ -597,14 +595,13 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * {@code t}. If {@code t} does not lead to a valid DFA state, this method
      * returns {@link #ERROR}.
      */
-    public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    public DFAState computeTargetState(ref DFA dfa, DFAState previousD, int t)
     {
         ATNConfigSet reach = computeReachSet(previousD.configs, t, false);
         if (reach is null) {
             addDFAEdge(dfa, previousD, t, ERROR);
             return ERROR;
         }
-
         // create new target state; we'll add to DFA after it's complete
         DFAState D = new DFAState(reach);
         int predictedAlt = getUniqueAlt(reach);
@@ -865,7 +862,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 // among the configurations.
                 reach = intermediate;
             }
-            else if ( getUniqueAlt(intermediate)!=ATN.INVALID_ALT_NUMBER ) {
+            else if (getUniqueAlt(intermediate)!=ATN.INVALID_ALT_NUMBER ) {
                 // Also don't pursue the closure if there is unique alternative
                 // among the configurations.
                 reach = intermediate;
@@ -903,7 +900,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
              * already guaranteed to meet this condition whether or not it's
              * required.
              */
-            reach = removeAllConfigsNotInRuleStopState(reach, reach == intermediate);
+            reach = removeAllConfigsNotInRuleStopState(reach, reach.configs == intermediate.configs);
         }
 
         /* If skippedStopStates is not null, then it contains at least one
@@ -921,7 +918,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
         }
 
-        if ( reach.isEmpty() ) return null;
+        if ( reach.isEmpty)
+            return null;
         return reach;
     }
 
@@ -1228,7 +1226,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         return pred.eval(parser, parserCallStack);
     }
 
-    protected void closureATN(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
+    protected void closureATN(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
                            bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
@@ -1238,7 +1236,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         assert (!fullCtx || !configs.dipsIntoOuterContext);
     }
 
-    protected void closureCheckingStopState(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
+    protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	debug {
@@ -1302,7 +1300,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     /**
      * Do the actual work of walking epsilon edges
      */
-    protected void closure_(ATNConfig config, ref ATNConfigSet configs, ref ATNConfig[] closureBusy,
+    protected void closure_(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
         bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	ATNState p = config.state;
@@ -1682,30 +1680,27 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * otherwise this method returns the result of calling {@link #addDFAState}
      * on {@code to}
      */
-    protected DFAState addDFAEdge(ref DFA dfa, ref DFAState from, int t, DFAState to)
+    protected DFAState addDFAEdge(ref DFA dfa, DFAState from, int t, DFAState to)
     {
         debug {
-            writefln("EDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(t));
+            writefln("\nEDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(t));
         }
         if (to is null) {
             return null;
         }
-
         to = addDFAState(dfa, to); // used existing if possible not incoming
         if (from is null || t < -1 || t > atn.maxTokenType) {
             return to;
         }
-
         synchronized (from) {
-            if ( from.edges==null ) {
+            if (from.edges == null) {
                 from.edges = new DFAState[atn.maxTokenType+1+1];
             }
-
             from.edges[t+1] = to; // connect
         }
 
         debug {
-            //writeln("DFA=\n" ~ dfa.toString(parser !is null ? parser.getVocabulary():VocabularyImpl.EMPTY_VOCABULARY));
+            writefln("end dfa.decision = %s, dfa.states = %s", dfa.decision, dfa.states);
         }
 
         return to;
@@ -1732,7 +1727,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             return D;
         }
         debug
-            writefln("adding new dfa: dfa.states = %s + %s", dfa.states, D);
+            writefln("adding new dfa: D = %s, dfa.states = %s", D, dfa.states);
         if (D in dfa.states)
             return dfa.states[D];
         D.stateNumber = to!int(dfa.states.length);
@@ -1742,7 +1737,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
         dfa.states[D] =  D;
         debug
-            writefln("adding new DFA state end: %1$s, dfa.states = %2$s", D, dfa.states);
+            writefln("adding new DFA state end: D = %1$s, dfa.states = %2$s", D, dfa.states);
         return D;
     }
 

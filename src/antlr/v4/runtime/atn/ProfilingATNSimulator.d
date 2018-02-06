@@ -164,7 +164,7 @@ class ProfilingATNSimulator : ParserATNSimulator
      * @uml
      * @override
      */
-    protected override DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
+    protected override DFAState computeTargetState(ref DFA dfa, DFAState previousD, int t)
     {
 	DFAState state = super.computeTargetState(dfa, previousD, t);
         currentState = state;

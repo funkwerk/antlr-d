@@ -116,16 +116,9 @@ class Array2DHashSet(T)
             if (!existing) { // empty slot; not there, add.
                 bucket[i] = o;
                 n++;
-                debug {
-                    writefln("getOrAddImpl:bucket does not exists -> %1$s", o);
-                    writefln("getOrAddImpl:buckets -> %1$s index -> %2$s", buckets, b);
-                }
                 return o;
             }
             if (opEqualsFp(existing, o)) {
-                debug {
-                    writefln("getOrAddImpl:bucket is found -> %1$s", o);
-                }
                 return existing; // found existing, quit
             }
         }
@@ -343,14 +336,7 @@ class Array2DHashSet(T)
             return false;
         }
         size_t b = getBucket(obj);
-        debug {
-            writefln("buckets -> %1$s", buckets);
-            writefln("size_t b = getBucket(obj); -> %1$s", b);
-        }
         auto bucket = buckets[b];
-        debug {
-            writefln("auto bucket = buckets[b]; -> %1$s", bucket);
-        }
         if (bucket is null) {
             // no bucket
             return false;

@@ -112,7 +112,7 @@ class CommonTokenStream : BufferedTokenStream
     public override Token LT(int k)
     {
         debug
-            writefln("enter LT(%s) on channel = %s, k = %s, p = %s", k, channel, k, index);
+            writefln("enter LT(%s) on channel = %s, p = %s", k, channel, index);
         lazyInit();
         if (k == 0 ) return null;
         if (k < 0) return LB(-k);

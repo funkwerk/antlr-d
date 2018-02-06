@@ -609,7 +609,7 @@ abstract class PredictionContext
             visited[context] = context;
             return context;
         }
-
+        
         PredictionContext updated;
         if (parents.length == 0) {
             updated = cast(PredictionContext)EMPTY;

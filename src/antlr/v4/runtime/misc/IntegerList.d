@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -6,12 +7,10 @@
 
 module antlr.v4.runtime.misc.IntegerList;
 
-import std.algorithm.mutation;
 import std.typecons;
 import std.range;
 import std.conv;
 import std.format;
-import std.algorithm;
 import antlr.v4.runtime.IllegalArgumentException;
 
 // Class IntegerList
@@ -21,11 +20,11 @@ import antlr.v4.runtime.IllegalArgumentException;
 class IntegerList
 {
 
-    private static int[] EMPTY_DATA;
+    //private static int[] EMPTY_DATA;
 
-    private static immutable int INITIAL_SIZE = 4;
+    //private static immutable int INITIAL_SIZE = 4;
 
-    private static immutable int MAX_ARRAY_SIZE  = int.max - 8;
+    //private static immutable int MAX_ARRAY_SIZE  = int.max - 8;
 
     /**
      * @uml
@@ -37,11 +36,10 @@ class IntegerList
      * @uml
      * @read
      */
-    public int size_;
+    //public int size_;
 
     public this()
     {
-        data_ = EMPTY_DATA;
     }
 
     public this(int capacity)
@@ -49,17 +47,16 @@ class IntegerList
         if (capacity < 0) {
             throw new IllegalArgumentException("Capacity can't be a negativ value!");
         }
-        if (capacity == 0) {
-            data_ = EMPTY_DATA;
-        } else {
-            data_.length = capacity;
-        }
+        if (capacity)
+            {
+                data_.reserve(capacity);
+            }
     }
 
     public this(IntegerList list)
     {
         data_ = list.data;
-        size_ = list.size;
+        //size_ = list.size;
     }
 
     public this(int[] list)
@@ -103,7 +100,7 @@ class IntegerList
     public final int get(int index)
     in
     {
-        assert(index >= 0 || index < size_);
+        assert(index >= 0 || index < data_.length);
     }
     body
     {
@@ -116,12 +113,8 @@ class IntegerList
      */
     public final bool contains(int value)
     {
-        for (int i = 0; i < size_; i++) {
-            if (data_[i] == value) {
-                return true;
-            }
-        }
-        return false;
+        import std.algorithm.searching : canFind;
+        return data_.canFind(value);
     }
 
     /**
@@ -131,7 +124,7 @@ class IntegerList
     public final int set(int index, int value)
     in
     {
-        assert(index >= 0 || index < size_);
+        assert(index >= 0 || index < data_.length);
     }
     body
     {
@@ -147,8 +140,8 @@ class IntegerList
     public final int removeAt(int index)
     {
         int value = get(index);
+        import std.algorithm.mutation : remove;
         data_ = remove(data_, index);
-        size_--;
         return value;
     }
 
@@ -159,13 +152,13 @@ class IntegerList
     public final void removeRange(int fromIndex, int toIndex)
     in
     {
-        assert(fromIndex >= 0 || toIndex >= 0 || fromIndex <= size_ || toIndex <= size_, "IndexOutOfBoundsException");
+        assert(fromIndex >= 0 || toIndex >= 0 || fromIndex <= data_.length || toIndex <= data_.length, "IndexOutOfBoundsException");
         assert(fromIndex <= toIndex, "IllegalArgumentException");
     }
     body
     {
+        import std.algorithm.mutation : remove;
         data_ = remove(data_, tuple(fromIndex, toIndex+1));
-        size_ -= (toIndex - fromIndex);
     }
 
     /**
@@ -174,17 +167,17 @@ class IntegerList
      */
     public final bool isEmpty()
     {
-        return size_ == 0;
+        return data_.length == 0;
     }
 
     /**
      * @uml
      * @final
      */
-    public final void trimToSize()
-    {
-        size_ = to!int(data_.length);
-    }
+    // public final void trimToSize()
+    // {
+    //     size_ = to!int(data_.length);
+    // }
 
     /**
      * @uml
@@ -208,7 +201,8 @@ class IntegerList
 
     public void sort()
     {
-        data_.sort();
+        import std.algorithm.sorting: sort;
+        data_.sort;
     }
 
     /**
@@ -234,15 +228,16 @@ class IntegerList
 	if (o == this) {
             return true;
         }
-        if (o.classinfo != IntegerList.classinfo) {
+        if (!cast(IntegerList)o) {
             return false;
         }
         IntegerList other = cast(IntegerList)o;
-        if (size_ != other.size) {
+        if (data_.length != other.size) {
             return false;
         }
         auto a = data_.assumeSorted;
         auto b = other.data.assumeSorted;
+        import std.algorithm.comparison : equal;
         return a.equal(b);
     }
 
@@ -258,7 +253,7 @@ class IntegerList
     public int hashCode()
     {
         int hashCode = 1;
-        for (int i = 0; i < size_; i++) {
+        for (int i = 0; i < data_.length; i++) {
             hashCode = 31*hashCode + data_[i];
         }
         return hashCode;
@@ -281,6 +276,7 @@ class IntegerList
     public final int binarySearch(int key)
     {
         auto r = data_.assumeSorted;
+        import std.algorithm.searching : find;
         auto f = r.find(key);
         if (!f.empty)
             return to!int(data_.length - f.length);
@@ -295,15 +291,16 @@ class IntegerList
     public final int binarySearch(int fromIndex, int toIndex, int key)
     in
     {
-        assert(fromIndex >= 0 && toIndex >= 0 && fromIndex <= size_ && toIndex <= size_, "IndexOutOfBoundsException");
+        assert(fromIndex >= 0 && toIndex >= 0 && fromIndex <= data_.length && toIndex <= data_.length, "IndexOutOfBoundsException");
         assert(fromIndex <= toIndex, "IllegalArgumentException");
     }
     body
     {
         auto r = data_.assumeSorted;
+        import std.algorithm.searching : find;
         auto f = r[fromIndex..toIndex].find(key);
         if (!f.empty)
-            return to!int(toIndex - f.length);
+            return toIndex - to!int(f.length);
         else
             return to!int(data_.length - 1);
     }
@@ -315,7 +312,7 @@ class IntegerList
 
     public final int size()
     {
-        return this.size_;
+        return to!int(data_.length);
     }
 
 }
@@ -326,18 +323,33 @@ version(unittest) {
 
     class Test {
 
-        @Tags("integerList")
-        @("testEmpty")
+        @Tags("IntegerList")
+        @("TestEmpty")
         unittest {
             auto il = new IntegerList;
             il.should.not.beNull;
+            il.isEmpty.should.equal(true);
         }
 
-        @Tags("integerList")
-        @("testCapacity")
+        @Tags("IntegerList")
+        @("Capacity")
         unittest {
             auto il = new IntegerList(20);
             il.should.not.beNull;
+            il.addAll([3, 17, 55, 12, 1, 7]);
+            il.toString.should.equal("[3, 17, 55, 12, 1, 7]");
+        }
+
+        @Tags("IntegerList")
+        @("SetGetCompare")
+        unittest {
+            auto il = new IntegerList([7, 2, 5, 15, 40]);
+            il.should.not.beNull;
+            il.contains(3).should.equal(false);
+            il.contains(5).should.equal(true);
+            il.get(2).should.equal(5);
+            il.sort;
+            il.toString.should.equal("[2, 5, 7, 15, 40]");
         }
     }
 }

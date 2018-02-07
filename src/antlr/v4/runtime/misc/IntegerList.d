@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -20,23 +19,11 @@ import antlr.v4.runtime.IllegalArgumentException;
 class IntegerList
 {
 
-    //private static int[] EMPTY_DATA;
-
-    //private static immutable int INITIAL_SIZE = 4;
-
-    //private static immutable int MAX_ARRAY_SIZE  = int.max - 8;
-
     /**
      * @uml
      * @read
      */
     public int[] data_;
-
-    /**
-     * @uml
-     * @read
-     */
-    //public int size_;
 
     public this()
     {
@@ -174,10 +161,10 @@ class IntegerList
      * @uml
      * @final
      */
-    // public final void trimToSize()
-    // {
-    //     size_ = to!int(data_.length);
-    // }
+    public final int size()
+    {
+        return to!int(data_.length);
+    }
 
     /**
      * @uml
@@ -222,8 +209,10 @@ class IntegerList
      *
      *  @param o the object to be compared for equality with this list
      *  @return {@code true} if the specified object is equal to this list
+     * @uml
+     * @override
      */
-    public bool equals(Object o)
+    public override bool opEquals(Object o)
     {
 	if (o == this) {
             return true;
@@ -249,8 +238,12 @@ class IntegerList
      * method.</p>
      *
      *  @return the hash code value for this list
+     * @uml
+     * @override
+     * @safe
+     * @nothrow
      */
-    public int hashCode()
+    public override size_t toHash() @safe nothrow
     {
         int hashCode = 1;
         for (int i = 0; i < data_.length; i++) {
@@ -308,11 +301,6 @@ class IntegerList
     public final int[] data()
     {
         return this.data_.dup;
-    }
-
-    public final int size()
-    {
-        return to!int(data_.length);
     }
 
 }

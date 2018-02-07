@@ -214,16 +214,19 @@ class IntegerList
      */
     public override bool opEquals(Object o)
     {
-	if (o == this) {
+	if (o is this) {
             return true;
         }
+
         if (!cast(IntegerList)o) {
             return false;
         }
+
         IntegerList other = cast(IntegerList)o;
         if (data_.length != other.size) {
             return false;
         }
+
         auto a = data_.assumeSorted;
         auto b = other.data.assumeSorted;
         import std.algorithm.comparison : equal;
@@ -329,15 +332,64 @@ version(unittest) {
         }
 
         @Tags("IntegerList")
-        @("SetGetCompare")
+        @("SetGet")
         unittest {
             auto il = new IntegerList([7, 2, 5, 15, 40]);
-            il.should.not.beNull;
             il.contains(3).should.equal(false);
             il.contains(5).should.equal(true);
             il.get(2).should.equal(5);
             il.sort;
             il.toString.should.equal("[2, 5, 7, 15, 40]");
+        }
+
+        @Tags("IntegerList")
+        @("Hash")
+        unittest {
+            auto il = new IntegerList([7, 5, 15, 40]);
+            auto il1 = new IntegerList;
+            il1.addAll(il);
+            il.toHash.should.equal(1137368);
+            il1.toHash.should.equal(1137368);
+        }
+
+        @Tags("IntegerList")
+        @("Remove")
+        unittest {
+            auto il = new IntegerList([7, 5, 15, 40]);
+            il.toString.should.equal("[7, 5, 15, 40]");
+            il.removeAt(2);
+            il.toString.should.equal("[7, 5, 40]");
+            il.removeAt(2);
+            il.toString.should.equal("[7, 5]");
+            il.removeRange(0, 1);
+            il.isEmpty.should.equal(true);
+            il.addAll([4, 2, 1, 33, 22, 11, 13]);
+            il.removeRange(2, 4);
+            il.toString.should.equal("[4, 2, 11, 13]");
+        }
+
+        @Tags("IntegerList")
+        @("Compare")
+        unittest {
+            auto il = new IntegerList([7, 2, 5, 15, 40]);
+            il.contains(3).should.equal(false);
+            il.contains(5).should.equal(true);
+            il.get(2).should.equal(5);
+            auto il1 = new IntegerList(il);
+            il1.should.not.beNull;
+            il.toString.should.equal("[7, 2, 5, 15, 40]");
+            il1.toString.should.equal("[7, 2, 5, 15, 40]");
+            Assert.equal(il == il1, true);
+            il.sort;
+            il.toString.should.equal("[2, 5, 7, 15, 40]");
+            Assert.equal(il == il1, false);
+            il.clear;
+            il.toString.should.equal("[]");
+            Assert.equal(il == il1, false);
+            class A {
+            }
+            auto a = new A;
+            Assert.equal(il == a, false);
         }
     }
 }

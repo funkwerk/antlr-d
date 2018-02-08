@@ -5,7 +5,7 @@ import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.tree.ParseTreeWalker;
 import TimeTableLexer;
-import TimeTableParser;
+import TimeTableParser: TimeTableParser;
 import TimeTableBaseListener;
 
 int main(string[] argv) {
@@ -15,16 +15,12 @@ int main(string[] argv) {
         auto lexer = new TimeTableLexer(antlrInput);
         auto cts = new CommonTokenStream(lexer);
 
-        //writefln("------------------Token getNumberOfOnChannelTokens %s", cts.getNumberOfOnChannelTokens);
-        //writefln("------------------Token 0 %s", cts.getTokens);
-
         // Pass the tokens to the parser
         TimeTableParser parser = new TimeTableParser(cts);
     
         // Specify our entry point
-        writefln("------------------ start parser.linie");
-        TimeTableParser.TimeTableParser.LinieContext progContext = parser.linie;
-        writefln("------------------ new TimeTableBaseListener");
+        TimeTableParser.LinieContext progContext = parser.linie;
+
         auto baseLis = new TimeTableBaseListener;
         auto walker = new ParseTreeWalker;
         walker.walk(baseLis, progContext);

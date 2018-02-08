@@ -265,42 +265,6 @@ class IntegerList
         return format("%s", data_);
     }
 
-    /**
-     * @uml
-     * @final
-     */
-    public final int binarySearch(int key)
-    {
-        auto r = data_.assumeSorted;
-        import std.algorithm.searching : find;
-        auto f = r.find(key);
-        if (!f.empty)
-            return to!int(data_.length - f.length);
-        else
-            return to!int(data_.length - 1);
-    }
-
-    /**
-     * @uml
-     * @final
-     */
-    public final int binarySearch(int fromIndex, int toIndex, int key)
-    in
-    {
-        assert(fromIndex >= 0 && toIndex >= 0 && fromIndex <= data_.length && toIndex <= data_.length, "IndexOutOfBoundsException");
-        assert(fromIndex <= toIndex, "IllegalArgumentException");
-    }
-    body
-    {
-        auto r = data_.assumeSorted;
-        import std.algorithm.searching : find;
-        auto f = r[fromIndex..toIndex].find(key);
-        if (!f.empty)
-            return toIndex - to!int(f.length);
-        else
-            return to!int(data_.length - 1);
-    }
-
     public final int[] data()
     {
         return this.data_.dup;

@@ -284,6 +284,7 @@ version(unittest) {
             auto il = new IntegerList;
             il.should.not.beNull;
             il.isEmpty.should.equal(true);
+            Assert.equal(il.toArray == [], true);
         }
 
         @Tags("IntegerList")
@@ -292,7 +293,11 @@ version(unittest) {
             auto il = new IntegerList(20);
             il.should.not.beNull;
             il.addAll([3, 17, 55, 12, 1, 7]);
+            Assert.equal(il.toArray == [3, 17, 55, 12, 1, 7], true);
             il.toString.should.equal("[3, 17, 55, 12, 1, 7]");
+            ({
+                auto ilx = new IntegerList(-3);
+            }).should.throwException!IllegalArgumentException("Capacity can't be a negativ value!");
         }
 
         @Tags("IntegerList")
@@ -304,6 +309,8 @@ version(unittest) {
             il.get(2).should.equal(5);
             il.sort;
             il.toString.should.equal("[2, 5, 7, 15, 40]");
+            il.set(3, 2);
+            il.toString.should.equal("[2, 5, 7, 2, 40]");
         }
 
         @Tags("IntegerList")
@@ -338,6 +345,7 @@ version(unittest) {
             auto il = new IntegerList([7, 2, 5, 15, 40]);
             il.contains(3).should.equal(false);
             il.contains(5).should.equal(true);
+            Assert.equal(il.opEquals(il), true);
             il.get(2).should.equal(5);
             auto il1 = new IntegerList(il);
             il1.should.not.beNull;

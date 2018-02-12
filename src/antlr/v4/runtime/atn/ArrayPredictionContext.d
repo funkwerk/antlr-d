@@ -15,13 +15,12 @@ import antlr.v4.runtime.atn.SingletonPredictionContext;
 
 // Class ArrayPredictionContext
 /**
- * TODO add class description
+ * Array of prediction contexts
  */
 class ArrayPredictionContext : PredictionContext
 {
 
     /**
-     * @uml
      * Parent can be null only if full ctx mode and we make an array
      * from {@link #EMPTY} and non-empty. We merge {@link #EMPTY} by using null parent and
      * returnState == {@link #EMPTY_RETURN_STATE}.
@@ -29,9 +28,10 @@ class ArrayPredictionContext : PredictionContext
     public PredictionContext[] parents;
 
     /**
-     * @uml
      * Sorted for merge, no duplicates; if present,
      * {@link #EMPTY_RETURN_STATE} is always last.
+     * @uml
+     * @final
      */
     public int[] returnStates;
 
@@ -49,6 +49,10 @@ class ArrayPredictionContext : PredictionContext
         super.calculateHashCode(parents, returnStates);
         assert(parents && parents.length>0);
         assert(returnStates && returnStates.length>0);
+        debug {
+            import std.stdio;
+            writefln("CREATE ARRAY: %s, %s", parents, returnStates);
+        }
         this.parents = parents;
         this.returnStates = returnStates;
     }
@@ -100,22 +104,17 @@ class ArrayPredictionContext : PredictionContext
         if (this is o) {
             return true;
         }
-        else if (typeid(typeof(o)) != typeid(ArrayPredictionContext*) ) {
+        else if (!cast(ArrayPredictionContext)o) {
             return false;
         }
 
         if (this.toHash != o.toHash) {
             return false; // can't be same if hash is different
         }
-
-        ArrayPredictionContext a = cast(ArrayPredictionContext)o;
-        if (parents.length != a.parents.length) return false;
-        Array!int rs = returnStates;
-        Array!int ars = a.returnStates;
-        if (!rs.opEquals(ars)) return false;
-        for (int i = 0; i < parents.length; i++)
-            if (parents[i].opEquals(a.parents[i])) return false;
-        return true;
+        auto aObject = cast(ArrayPredictionContext)o;
+        import std.algorithm.comparison : equal;
+        return equal(parents, aObject.parents) &&
+            equal(returnStates, aObject.returnStates);
     }
 
     /**
@@ -124,26 +123,66 @@ class ArrayPredictionContext : PredictionContext
      */
     public override string toString()
     {
-        if (isEmpty() ) return "[]";
-        auto buf = appender!string;
-        buf.put("[");
-        for (int i=0; i<returnStates.length; i++) {
-            if ( i>0 ) buf.put(", ");
-            if ( returnStates[i]==EMPTY_RETURN_STATE ) {
-                buf.put("$");
+        if (isEmpty)
+            return "[]";
+        string[] buf;
+        foreach (int i, el; returnStates) {
+            if (el == EMPTY_RETURN_STATE) {
+                buf ~= "$";
                 continue;
             }
-            buf.put(to!string(returnStates[i]));
+            buf ~= to!string(el);
             if (parents[i]) {
-                buf.put(' ');
-                buf.put(parents[i].toString());
+                buf ~= " " ~ parents[i].toString;
             }
             else {
-                buf.put("null");
+                buf ~= "null";
             }
         }
-        buf.put("]");
-        return buf.data;
+        return "[" ~ join(buf, ", ") ~ "]";
     }
 
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    class Test {
+
+        @Tags("ArrayPredictionContext")
+        @("Empty")
+        unittest {
+            import antlr.v4.runtime.atn.EmptyPredictionContext;
+            auto spc = new EmptyPredictionContext;
+            auto apc = new ArrayPredictionContext(spc);
+            apc.toString.should.equal("[]");
+            apc.size.should.equal(1);
+            apc.isEmpty.should.equal(true);
+            apc.getParent(0).should.beNull;
+            apc.getReturnState(0).should.equal(PredictionContext.EMPTY_RETURN_STATE);
+            auto apc1 = new ArrayPredictionContext(spc);
+            Assert.equal(apc == apc, true);
+            class A {}
+            auto apc2 = new A;
+            Assert.equal(apc == apc2, false);
+            Assert.equal(apc == apc1, true);
+        }
+
+        @Tags("ArrayPredictionContext")
+        @("Flat")
+        unittest {
+            import antlr.v4.runtime.atn.EmptyPredictionContext;
+            auto spc = new EmptyPredictionContext;
+            auto apc = new ArrayPredictionContext(spc);
+            apc.returnStates = 12 ~ apc.returnStates;
+            apc.toString.should.equal("[12, null, $]");
+            apc.size.should.equal(2);
+            apc.isEmpty.should.equal(false);
+            apc.getParent(0).should.beNull;
+            apc.getReturnState(0).should.equal(12);
+            auto apc1 = new ArrayPredictionContext(spc);
+            Assert.equal(apc != apc1, true);
+        }
+    }
 }

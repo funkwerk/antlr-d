@@ -46,7 +46,7 @@ class ArrayPredictionContext : PredictionContext
 
     public this(PredictionContext[] parents, int[] returnStates)
     {
-        super.calculateHashCode(parents, returnStates);
+        super(calculateHashCode(parents, returnStates)); // caching the hash code
         assert(parents && parents.length>0);
         assert(returnStates && returnStates.length>0);
         debug {
@@ -101,10 +101,7 @@ class ArrayPredictionContext : PredictionContext
      */
     public override bool opEquals(Object o)
     {
-        if (this is o) {
-            return true;
-        }
-        else if (!cast(ArrayPredictionContext)o) {
+        if (!cast(ArrayPredictionContext)o) {
             return false;
         }
 
@@ -156,13 +153,16 @@ version(unittest) {
             import antlr.v4.runtime.atn.EmptyPredictionContext;
             auto spc = new EmptyPredictionContext;
             auto apc = new ArrayPredictionContext(spc);
+            ArrayPredictionContext apcp;
             apc.toString.should.equal("[]");
             apc.size.should.equal(1);
             apc.isEmpty.should.equal(true);
+            apc.toHash.should.equal(17630556086227563681UL);
             apc.getParent(0).should.beNull;
             apc.getReturnState(0).should.equal(PredictionContext.EMPTY_RETURN_STATE);
             auto apc1 = new ArrayPredictionContext(spc);
-            Assert.equal(apc == apc, true);
+            apcp = apc;
+            Assert.equal(apc == apcp, true);
             class A {}
             auto apc2 = new A;
             Assert.equal(apc == apc2, false);
@@ -180,9 +180,35 @@ version(unittest) {
             apc.size.should.equal(2);
             apc.isEmpty.should.equal(false);
             apc.getParent(0).should.beNull;
+            apc.toHash.should.equal(17630556086227563681UL);
+            apc.calculateHashCode(apc.getParent(0), apc.getReturnState(0))
+                .should.equal(3682757822530461416UL);
             apc.getReturnState(0).should.equal(12);
             auto apc1 = new ArrayPredictionContext(spc);
             Assert.equal(apc != apc1, true);
+        }
+
+        @Tags("ArrayPredictionContext")
+        @("Deep")
+        unittest {
+            import antlr.v4.runtime.atn.EmptyPredictionContext;
+            auto spc = new EmptyPredictionContext;
+            auto apc = new ArrayPredictionContext(spc);
+            auto apc1 = new ArrayPredictionContext(spc);
+            apc.returnStates = 12 ~ apc.returnStates;
+            apc.toString.should.equal("[12, null, $]");
+            apc.size.should.equal(2);
+            apc.isEmpty.should.equal(false);
+            apc.getParent(0).should.beNull;
+            apc.getReturnState(0).should.equal(12);
+            apc.parents[0] = apc1;
+            auto apc2 = new ArrayPredictionContext(apc.parents, apc.returnStates);
+            apc2.toString.should.equal("[12,  [], $]");
+            apc.toString.should.equal("[12,  [], $]");
+            Assert.equal(apc == apc2, false);
+            apc2.parents = apc1 ~ apc2.parents;
+            apc2.returnStates = 13 ~ apc2.returnStates;
+            apc2.toString.should.equal("[13,  [], 12,  [], $]");
         }
     }
 }

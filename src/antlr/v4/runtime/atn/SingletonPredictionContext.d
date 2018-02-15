@@ -7,9 +7,7 @@
 module antlr.v4.runtime.atn.SingletonPredictionContext;
 
 import std.conv;
-import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.PredictionContext;
-import antlr.v4.runtime.atn.ContextID;
+import antlr.v4.runtime.atn;
 
 // Class SingletonPredictionContext
 /**
@@ -109,4 +107,20 @@ class SingletonPredictionContext : PredictionContext
         return to!string(returnState) ~ " " ~ up;
     }
 
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    class Test {
+
+        @Tags("SingletonPredictionContext")
+        @("Empty")
+        unittest {
+            auto spc = SingletonPredictionContext.create(null, 12);
+            spc.should.not.beNull;
+            spc.toString.should.equal("12 $");
+        }
+    }
 }

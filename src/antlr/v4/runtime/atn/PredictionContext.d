@@ -73,7 +73,7 @@ abstract class PredictionContext
      *   }
      * </pre>
      */
-    public size_t cachedHashCode;
+    private size_t cachedHashCode;
 
     public this()
     {
@@ -178,9 +178,12 @@ abstract class PredictionContext
 
     public static PredictionContext merge(PredictionContext a, PredictionContext b, bool rootIsWildcard,
                                           ref DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
+    in
     {
         assert(a !is null && b !is null); // must be empty context, never null
-
+    }
+    body
+    {
         // share same graph if both same
         if (a is b || a.opEquals(b))
             return a;

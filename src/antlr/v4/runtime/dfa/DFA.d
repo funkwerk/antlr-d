@@ -207,7 +207,7 @@ version(unittest) {
     import unit_threaded;
 
     @Tags("DFA")
-    @("simpleDFATest")
+    @("Construction")
     unittest
         {
             import std.stdio;
@@ -215,7 +215,5 @@ version(unittest) {
             DecisionState startState = new TokensStartState;
             DFA dfa = new DFA(startState);
             dfa.should.not.beNull;
-            //dfa.toString.should.equal("");
-            writefln("dfa.toString = %s", dfa.toString);
         }
 }

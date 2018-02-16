@@ -75,10 +75,7 @@ class SingletonPredictionContext : PredictionContext
      */
     public override bool opEquals(Object o)
     {
-        if (this is o) {
-            return true;
-        }
-        else if (o.classinfo != SingletonPredictionContext.classinfo) {
+        if (!cast(SingletonPredictionContext)o) {
             return false;
         }
 
@@ -116,11 +113,34 @@ version(unittest) {
     class Test {
 
         @Tags("SingletonPredictionContext")
-        @("Empty")
+        @("Construction")
         unittest {
-            auto spc = SingletonPredictionContext.create(null, 12);
+            PredictionContext spc = SingletonPredictionContext.create(null, 12);
             spc.should.not.beNull;
             spc.toString.should.equal("12 $");
+            spc.getReturnState(0).should.equal(12);
+            spc.getParent(0).should.be.instanceOf!PredictionContext;
+            auto emptyPC = SingletonPredictionContext.create(null,
+                                                             PredictionContext.EMPTY_RETURN_STATE);
+            emptyPC.should.be.instanceOf!SingletonPredictionContext;
+            spc = SingletonPredictionContext.create(emptyPC, 11);
+            spc.toString.should.equal("11 $");
+            auto spc1 = SingletonPredictionContext.create(spc, 10);
+            spc1.toString.should.equal("10 11 $");
+        }
+
+        @Tags("SingletonPredictionContext")
+        @("Compare")
+        unittest {
+            auto spc11 = SingletonPredictionContext.create(null, 11);
+            auto spc12 = SingletonPredictionContext.create(null, 12);
+            auto spc = SingletonPredictionContext.create(null, 12);
+            Assert.equal(spc == spc12, true);
+            Assert.equal(spc11 == spc12, false);
+            Assert.equal(spc12 == spc12, true);
+            class A {}
+            auto a = new A;
+            Assert.equal(spc11 == a, false);
         }
     }
 }

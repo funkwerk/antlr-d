@@ -39,12 +39,6 @@ import antlr.v4.runtime.misc.IntegerList;
 class IntegerStack : IntegerList
 {
 
-    /**
-     * @uml
-     * @read
-     */
-    private int[] stack_;
-
     public this()
     {
     }
@@ -55,7 +49,7 @@ class IntegerStack : IntegerList
 
     public this(IntegerStack list)
     {
-        stack_ = list.stack;
+        data_ = list.data;
     }
 
     /**
@@ -64,7 +58,7 @@ class IntegerStack : IntegerList
      */
     public final void push(int value)
     {
-        stack_ ~= value;
+        data_ ~= value;
     }
 
     /**
@@ -73,8 +67,8 @@ class IntegerStack : IntegerList
      */
     public final int pop()
     {
-        int i = stack_[$-1];
-        stack_.length --;
+        int i = data_[$-1];
+        data_.length --;
         return i;
     }
 
@@ -84,12 +78,7 @@ class IntegerStack : IntegerList
      */
     public final int peek()
     {
-        return stack_[$-1];
-    }
-
-    public final int[] stack()
-    {
-        return this.stack_.dup;
+        return data_[$-1];
     }
 
 }

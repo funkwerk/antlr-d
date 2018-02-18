@@ -26,8 +26,7 @@ import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.LexerNoViableAltException;
-import antlr.v4.runtime.misc.IntegerStack;
-import antlr.v4.runtime.misc.Interval;
+import antlr.v4.runtime.misc;
 import antlr.v4.runtime.InterfaceRuleContext;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
@@ -71,7 +70,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public TokenFactory!CommonToken tokenFactory_;
 
     /**
-     * @uml
      * The goal of all lexer rules/methods is to create a token object.
      * This is an instance variable as multiple rules may collaborate to
      * create a single token.  nextToken will return this object after
@@ -82,7 +80,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token _token;
 
-    public IntegerStack _modeStack;
+    public IntegerStack _modeStack = new IntegerStack();
 
     /**
      * @uml
@@ -251,7 +249,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void pushMode(int m)
     {
-        debug writefln("pushMode %s", m);
+        debug(LexerATNSimulator)
+            writefln("pushMode %s %s", m, _modeStack);
         _modeStack.push(_mode);
         mode(m);
     }
@@ -259,8 +258,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public int popMode()
     {
         assert (!_modeStack.isEmpty, "Empty stack");
-        debug writefln("popMode back to %s", _modeStack.peek());
-        mode( _modeStack.pop() );
+        debug(LexerATNSimulator)
+            writefln("popMode back to %s", _modeStack.peek);
+        mode(_modeStack.pop);
         return _mode;
     }
 

@@ -1,21 +1,24 @@
+/*
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.atn.LexerPopModeAction;
 
 import antlr.v4.runtime.InterfaceLexer;
+import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
-import antlr.v4.runtime.misc.MurmurHash;
-import antlr.v4.runtime.misc.Utils;
+import antlr.v4.runtime.misc;
 
 // Singleton LexerPopModeAction
 /**
- * @uml
  * Implements the {@code popMode} lexer action by calling {@link Lexer#popMode}.
  *
  * <p>The {@code popMode} command does not have any parameters, so this action is
  * implemented as a singleton instance exposed by {@link #INSTANCE}.</p>
- * @safe
- * @nothrow
  */
-class LexerPopModeAction
+class LexerPopModeAction : LexerAction
 {
 
     /**

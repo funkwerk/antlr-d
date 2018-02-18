@@ -8,4 +8,6 @@ public import antlr.v4.runtime.misc.Array2DHashSet;
 public import antlr.v4.runtime.misc.Interval;
 public import antlr.v4.runtime.misc.IntSet;
 public import antlr.v4.runtime.misc.IntegerList;
+public import antlr.v4.runtime.misc.IntegerStack;
 public import antlr.v4.runtime.misc.MurmurHash;
+public import antlr.v4.runtime.misc.Utils;

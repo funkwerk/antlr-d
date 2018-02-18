@@ -24,6 +24,9 @@ EXAMPLE_MODULE_FILES := $(shell find $(SRC_DIR) -name "*.d")
 EXAMPLE_TIMETABLE_DIR = doc/examples/time_table
 EXAMPLE_TIMETABLE_FILES := $(shell find $(EXAMPLE_TIMETABLE_DIR) -name "*.d")
 
+EXAMPLE_XML_DIR = doc/examples/xml
+EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
+
 define NEWLINE
 
 
@@ -46,16 +49,19 @@ ANTLR = antlr4-4.7.1
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
-all : generate unittest
 .PHONY : all
+all : generate unittest
 
-
-.PHONY : generate
-generate : $(MODELS_R)
+.PHONY: generate
+generate: $(MODELS_R)
 
 $(BUILD_DIR)/TimeTable : $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES)
 	@echo $(EXAMPLE_TIMETABLE_FILES)
-	$(DMD) -cov $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/TimeTable
+	$(DMD) -cov -g $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/TimeTable
+
+$(BUILD_DIR)/XMI : $(EXAMPLE_XML_FILES) $(EXAMPLE_MODULE_FILES)
+	@echo $(EXAMPLE_XML_FILES)
+	$(DMD) -cov $(EXAMPLE_XML_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/XMI
 
 $(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 	$(file > $(BUILD_DIR)/modules, $(UNITTEST_MODULES))
@@ -100,6 +106,6 @@ clobber :
 $(BUILD_DIR):
 	$(MKDIR_P) $(BUILD_DIR)/model
 
-$(BUILD_DIR)/%.receipt : %.zargo $(BUILD_DIR)
+$(BUILD_DIR)/%.receipt : %.zargo
 	time $(GENERATOR) $(GENERATOR_FLAGS) -s src -m $<
 	@touch $@

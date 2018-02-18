@@ -736,7 +736,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public final int getPrecedence()
     {
-        if (_precedenceStack.stack.length) {
+        if (_precedenceStack.isEmpty) {
             return -1;
         }
         return _precedenceStack.peek();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -16,7 +16,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
-import antlr.v4.runtime.misc.Interval;
+import antlr.v4.runtime.misc;
 
 // Class RuleContext
 /**
@@ -101,7 +101,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * A context is empty if there is no invoking state; meaning nobody called
      * current context.
      */
@@ -111,12 +110,10 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * satisfy the ParseTree / SyntaxTree interface
      */
     public Interval getSourceInterval()
     {
-        // satisfy the ParseTree / SyntaxTree interface
         return new Interval(-1, -2); // INVALID;
     }
 
@@ -131,7 +128,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * Return the combined text of all child nodes. This method only considers
      * tokens which have been added to the parse tree.
      * <p>
@@ -157,7 +153,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * For rule associated with this parse tree internal node, return
      * the outer alternative number used to match the input. Default
      * implementation does not compute nor store this alt num. Create
@@ -171,7 +166,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * Set the outer alternative number for this context node. Default
      * implementation does nothing to avoid backing field overhead for
      * trees that don't need it.  Create
@@ -198,7 +192,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * Print out a whole tree, not just a node, in LISP format
      * (root child1 .. childN). Print just a node if this is a leaf.
      * We have to know the recognizer so we can get rule names.
@@ -238,7 +231,6 @@ class RuleContext : RuleNode, InterfaceRuleContext
     }
 
     /**
-     * @uml
      * recog null unless ParserRuleContext, in which case we use subclass toString(...)
      */
     public string toString(InterfaceRecognizer recog, RuleContext stop)

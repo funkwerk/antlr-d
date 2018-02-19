@@ -45,7 +45,7 @@ import antlr.v4.runtime.tree.ErrorNodeImpl;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.misc.Interval;
+import antlr.v4.runtime.misc;
 
 // Class ParserRuleContext
 /**

@@ -37,7 +37,11 @@ public class XMLParserBaseListener : XMLParserListener {
 	 */
 	override public void exitProlog(XMLParser.PrologContext ctx) {
             import std.stdio;
-            writefln("text at exitProlog: %s", ctx.getText);}
+            writefln("text at exitProlog: %s", ctx.getChildCount);
+            for (int i = 0; i < ctx.getChildCount; i++) {
+                writefln("index %s: %s",i ,ctx.getChild(i).getText);
+            }
+        }
 	/**
 	 * {@inheritDoc}
 	 *

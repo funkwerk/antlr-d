@@ -1,0 +1,312 @@
+/*
+ * Linie RB27
+ * Bespiel fuer einen strukturierten Textfahrplan
+ * Leerzeilen und Kommentare sind so wie gezeigt moeglich
+ */
+
+Linie: RB27
+      gueltig vom 13.12.2015
+      gueltig bis 10.12.2016
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+        Via:   BBSK
+        Ziel:  BBAS  // Basdorf
+        Verkehrstagesschluessel: Sa/So
+        Ziel:  BKLF  // Klosterfelde
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61041
+            Abfahrtszeit: 0.27
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: Mo-Fr
+        Via:   BBAS, // Basdorf
+               BKLF  // Klosterfelde
+        Ziel:  BGSK // Gross Schoenebeck
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61001
+            Abfahrtszeit: 4.27
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+          Via:   BBAS  // Basdorf
+          Ziel:  BKLF  // Klosterfelde
+        Verkehrstagesschluessel: Mo-Fr
+          Ziel:  BGSK // Gross Schoenebeck
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61003
+            Abfahrtszeit: 5.27
+        Fahrt: 61027
+            Abfahrtszeit: 17.27
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+          Via:   BBAS  // Basdorf
+          Ziel:  BWSD  // Wensickendorf
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61045
+            Abfahrtszeit: 5.57
+        Fahrt: 61065
+            Abfahrtszeit: 15.57
+        Fahrt: 61069
+            Abfahrtszeit: 17.57
+        Fahrt: 61071
+            Abfahrtszeit: 18.57
+        Fahrt: 61073
+            Abfahrtszeit: 19.57
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+          Via:   BBAS, // Basdorf
+                 BKLF  // Klosterfelde
+          Ziel:  BGSK // Gross Schoenebeck
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61005
+            Abfahrtszeit: 6.27
+        Fahrt: 61009
+            Abfahrtszeit: 8.27
+        Fahrt: 61013
+            Abfahrtszeit: 10.27
+        Fahrt: 61017
+            Abfahrtszeit: 12.27
+        Fahrt: 61021
+            Abfahrtszeit: 14.27
+        Fahrt: 61025
+            Abfahrtszeit: 16.27
+        Fahrt: 61029
+            Abfahrtszeit: 18.27
+        Fahrt: 61033
+            Abfahrtszeit: 20.27
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: Sa/So
+          Via:   BBAS  // Basdorf
+          Ziel:  BWSD  // Wensickendorf
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61077
+            Abfahrtszeit: 6.57
+        Fahrt: 61079
+            Abfahrtszeit: 16.57
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: Mo-Fr
+          Via:   BBAS  // Basdorf
+          Ziel:  BWSD  // Wensickendorf
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61043
+            Abfahrtszeit: 4.57
+        Fahrt: 61047
+            Abfahrtszeit: 7.12
+        Fahrt: 61067
+            Abfahrtszeit: 17.12
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+        Via:   BBSK,
+               BBAS  // Basdorf
+        Ziel:  BKLF  // Klosterfelde
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61007
+            Abfahrtszeit: 7.27
+        Fahrt: 61011
+            Abfahrtszeit: 9.27
+        Fahrt: 61015
+            Abfahrtszeit: 11.27
+        Fahrt: 61019
+            Abfahrtszeit: 13.27
+        Fahrt: 61023
+            Abfahrtszeit: 15.27
+        Fahrt: 61031
+            Abfahrtszeit: 19.27
+        Fahrt: 61035
+            Abfahrtszeit: 21.27
+        Fahrt: 61037
+            Abfahrtszeit: 22.27
+
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+          Verkehrstagesschluessel: taeglich
+            Ziel:   BBAS  // Basdorf
+
+          Verkehrstagesschluessel: Mo-Fr
+            Ziel:  BWSD  // Wensickendorf
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61049
+            Abfahrtszeit: 7.57
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: Mo-Fr
+            Ziel:   BBAS  // Basdorf
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61083
+            Abfahrtszeit: 8.01
+        Fahrt: 61087
+            Abfahrtszeit: 16.01
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+          Via:   BBAS  // Basdorf
+          Ziel:  BWSD  // Wensickendorf
+        Verkehrstagesschluessel: 70
+          Ziel:  BSHN  // Schmachtenhagen
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61051
+            Abfahrtszeit: 8.57
+        Fahrt: 61055
+            Abfahrtszeit: 10.57
+        Fahrt: 61059
+            Abfahrtszeit: 12.57
+        Fahrt: 61061
+            Abfahrtszeit: 13.57
+        Fahrt: 61063
+            Abfahrtszeit: 14.57
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+          Ziel:   BBAS  // Basdorf
+        Verkehrstagesschluessel: Sa/So
+          Ziel:  BWSD  // Wensickendorf
+        Verkehrstagesschluessel: 70
+          Ziel:  BSHN  // Schmachtenhagen
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61053
+            Abfahrtszeit: 9.57
+        Fahrt: 61057
+            Abfahrtszeit: 11.57
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: Fr(vF)
+            Ziel:   BBAS  // Basdorf
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61085
+            Abfahrtszeit: 15.01
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: Mo-Fr
+            Ziel:   BWAS // Wandlitzsee
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61081
+            Abfahrtszeit: 6.45
+
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: 66
+            Ziel:   BWAS // Wandlitzsee
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61089
+            Abfahrtszeit: 16.52
+
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: Fr(vF)
+            Ziel: BKLF  // Klosterfelde
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61093
+            Abfahrtszeit: 17.35
+
+    Linienverlauf:
+        Start: BGSV  // Berlin Gesundbrunnen Vorortbahn
+          Verkehrstagesschluessel: 66
+            Ziel: BKLF  // Klosterfelde
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61091
+            Abfahrtszeit: 18.35
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: Mo-Fr
+        Ziel:   BBAS  // Basdorf
+
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61075
+            Abfahrtszeit: 20.57
+
+    Linienverlauf:
+        Start: BKRW  // Berlin Karow
+        Verkehrstagesschluessel: taeglich
+        Ziel:  BBAS  // Basdorf
+        Verkehrstagesschluessel: 65
+        Ziel:  BKLF  // Klosterfelde
+        Zuglaenge: 2
+        Gleis: 1
+
+        Fahrt: 61039
+            Abfahrtszeit: 23.27
+
+Legende:
+
+    taeglich: Montag bis Sonntag
+    Mo-Fr : Montag bis Freitag, nicht am Wochenfeiertag
+    Mo-Fr*: Montag bis Freitag, auch am 25.12.2015, 26.12.2015, 1.1.2016
+    Mo-Do: Montag bis Donnerstag
+    Sa/So: Samstag bis Sonntag, auch am Wochenfeiertag
+    70:    Samstag bis Sonntag, auch am Wochenfeiertag, nicht am 25.12.2015, 1.1.2016
+    66:    Montag bis Donnerstag, nicht am Wochenfeiertag
+    65:    Freitag bis Samstag, auch am 24.3.2016, 4.5.2016
+    W/N : faehrt am 25.12.2015, 26.12.2015, 1.1.2016
+    Fr(vF) : faehrt am Freitag, vor dem Wochenfeiertag

@@ -18,7 +18,8 @@ ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse
 
-MODULE_FILES := $(shell find $(UNITTEST_DIR) $(SRC_DIR) -name "*.d")
+SOURCE_FILES := $(shell find $(SRC_DIR) -name "*.d")
+MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)
 
 EXAMPLE_MODULE_FILES := $(shell find $(SRC_DIR) -name "*.d")
 EXAMPLE_TIMETABLE_DIR = doc/examples/time_table
@@ -86,10 +87,14 @@ build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
 
-.PHONY : build_xpathlexer
+.PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar	\
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
+
+.PHONY: build_library
+build_library: $(MODULE_FILES)
+	$(DMD) -shared -fPIC $(SOURCE_FILES) -of$(BUILD_DIR)/libantlr-d.so.4.7
 
 .PHONY : clean
 clean :

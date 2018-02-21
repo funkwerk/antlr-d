@@ -47,8 +47,7 @@ public class XMLParserBaseListener : XMLParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterContent(XMLParser.ContentContext ctx) {
-        }
+	override public void enterContent(XMLParser.ContentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -84,13 +83,13 @@ public class XMLParserBaseListener : XMLParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterAttribute(XMLParser.AttributeContext ctx) { }
+	override public void enterAttr(XMLParser.AttrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitAttribute(XMLParser.AttributeContext ctx) { }
+	override public void exitAttr(XMLParser.AttrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

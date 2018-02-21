@@ -123,7 +123,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import <file.grammarName>Listener;
-import <file.grammarName>Parser: <file.grammarName>Parser;
+import <file.grammarName>: <file.grammarName>;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Listener},
@@ -806,7 +806,8 @@ public static class <struct.name> : <if(contextSuperClass)><contextSuperClass><e
 	}
 	override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
-	public <struct.name>() { }
+	public this() { }
+        alias copyFrom = ParserRuleContext.copyFrom;
 	public void copyFrom(<struct.name> ctx) {
 		super.copyFrom(ctx);
 		<struct.attrs:{a | this.<a.name> = ctx.<a.name>;}; separator="\n">
@@ -821,7 +822,8 @@ AltLabelStructDecl(struct,attrs,getters,dispatchMethods) ::= <<
 public static class <struct.name> : <currentRule.name; format="cap">Context {
 	<attrs:{a | public <a>;}; separator="\n">
 	<getters:{g | <g>}; separator="\n">
-	public <struct.name>(<currentRule.name; format="cap">Context ctx) { copyFrom(ctx); }
+        alias copyFrom = <currentRule.name; format="cap">Context.copyFrom;
+	public this(<currentRule.name; format="cap">Context ctx) { copyFrom(ctx); }
 	<dispatchMethods; separator="\n">
 }
 >>

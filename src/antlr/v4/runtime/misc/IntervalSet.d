@@ -677,10 +677,8 @@ class IntervalSet : IntSet
     /**
      * @uml
      * @override
-     * @pure
-     * @safe
      */
-    public override bool opEquals(Object obj) @safe pure
+    public override bool opEquals(Object obj)
     {
         IntervalSet other = cast(IntervalSet)obj;
         return intervals_ == other.intervals_;

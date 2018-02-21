@@ -160,7 +160,7 @@ version(unittest) {
             static if (size_t.sizeof == 4)
                 apc.toHash.should.equal(3647507199U);
             else
-                apc.toHash.should.equal(17630556086227563681UL);
+                apc.toHash.should.equal(6723470047294944096UL);
             apc.getParent(0).should.beNull;
             apc.getReturnState(0).should.equal(PredictionContext.EMPTY_RETURN_STATE);
             auto apc1 = new ArrayPredictionContext(spc);
@@ -186,13 +186,13 @@ version(unittest) {
             static if (size_t.sizeof == 4)
                 apc.toHash.should.equal(3647507199U);
             else
-                apc.toHash.should.equal(17630556086227563681UL);
+                apc.toHash.should.equal(6723470047294944096UL);
             static if (size_t.sizeof == 4)
                 apc.calculateHashCode(apc.getParent(0), apc.getReturnState(0))
                     .should.equal(1639880943U);
             else
                 apc.calculateHashCode(apc.getParent(0), apc.getReturnState(0))
-                    .should.equal(3682757822530461416UL);
+                    .should.equal(4292457832056041856UL);
             apc.getReturnState(0).should.equal(12);
             auto apc1 = new ArrayPredictionContext(spc);
             Assert.equal(apc != apc1, true);

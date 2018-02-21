@@ -20,10 +20,10 @@ class MurmurHash
     public static immutable size_t DEFAULT_SEED = 0;
 
     /**
-     * @uml
      * Initialize the hash using the default seed value.
      *
      *  @return the intermediate hash value
+     * @uml
      * @safe
      * @nothrow
      */
@@ -34,11 +34,11 @@ class MurmurHash
     }
 
     /**
-     * @uml
      * Initialize the hash using the specified {@code seed}.
      *
      *  @param seed the seed
      *  @return the intermediate hash value
+     * @uml
      * @safe
      * @nothrow
      */
@@ -48,12 +48,13 @@ class MurmurHash
     }
 
     /**
-     * @uml
      * Update the intermediate hash value for the next input {@code value}.
      *
-     *  @param hash the intermediate hash value
-     *  @param value the value to add to the current hash
-     *  @return the updated intermediate hash value
+     * @param hash the intermediate hash value
+     * @param value the value to add to the current hash
+     * @return the updated intermediate hash value
+     *
+     * @uml
      * @safe
      * @nothrow
      */
@@ -80,27 +81,28 @@ class MurmurHash
     }
 
     /**
-     * @uml
      * Update the intermediate hash value for the next input {@code value}.
      *
-     *  @param hash the intermediate hash value
-     *  @param value the value to add to the current hash
-     *  @return the updated intermediate hash value
+     * @param hash the intermediate hash value
+     * @param value the value to add to the current hash
+     * @return the updated intermediate hash value
+     *
+     * @uml
      * @nothrow
      */
     public static size_t update(U)(size_t hash, U value) nothrow
     {
-        return value.hashOf(hash);
+        return update(hash, value !is null ? value.toHash : 0);
     }
 
     /**
-     * @uml
      * Apply the final computation steps to the intermediate value {@code hash}
      * to form the final result of the MurmurHash 3 hash function.
      *
      *  @param hash the intermediate hash value
      *  @param numberOfWords the number of integer values added to the hash
      *  @return the final hash result
+     * @uml
      * @safe
      * @nothrow
      */
@@ -116,14 +118,13 @@ class MurmurHash
     }
 
     /**
-     * @uml
      * Utility function to compute the hash code of an array using the
      * MurmurHash algorithm.
      *
-     *  @param <T> the array element type
-     *  @param data the array data
-     *  @param seed the seed for the MurmurHash algorithm
-     *  @return the hash code of the data
+     * @param T the array element type
+     * @param data the array data
+     * @param seed the seed for the MurmurHash algorithm
+     * @return the hash code of the data
      */
     public static size_t hashCode(T)(T[] data, size_t seed)
     {
@@ -135,4 +136,29 @@ class MurmurHash
         return hash;
     }
 
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+    @Tags("MurmurHash")
+    @("Calculation")
+    unittest {
+        auto hash = MurmurHash.initialize;
+        hash.should.equal(0UL);
+        hash = MurmurHash.update(hash, 33);
+        static if (size_t.sizeof == 4) {
+            hash.should.equal(87951042183U);
+        }
+        else {
+            hash.should.equal(6137767987951124103UL);
+        }
+        hash = MurmurHash.finish(hash, 1);
+        static if (size_t.sizeof == 4) {
+            hash.should.equal(87951042183U);
+        }
+        else {
+            hash.should.equal(4470425249505779227UL);
+        }
+    }
 }

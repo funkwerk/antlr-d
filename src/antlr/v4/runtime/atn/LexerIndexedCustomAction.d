@@ -137,7 +137,7 @@ class LexerIndexedCustomAction : LexerAction
     {
         size_t hash = MurmurHash.initialize();
         hash = MurmurHash.update(hash, offset);
-        hash = MurmurHash.update(hash, action);
+        hash = MurmurHash.update!LexerAction(hash, action);
         return MurmurHash.finish(hash, 2);
     }
 

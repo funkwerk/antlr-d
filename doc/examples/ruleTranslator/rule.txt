@@ -1,0 +1,38 @@
+# Text definition AURIS
+# for automatic announcements
+# Version 2014-09-17
+
+rule Delay as DELAY en
+
+base en.Phrases
+
+if product != "hahnenkammShuttle":
+    "Attention please!"
+    trainTypeNumber(trainNumber, product, metaCategory)
+    if  passengerEnd or boarding == "GET_OFF_ONLY":
+        "from" stationName(origin)
+        ", scheduled arrival time" timeOfDay(arrivalTime)
+    else:
+        "to" stationName(destination)
+        ", scheduled departure time" timeOfDay(departureTime)
+    if indefiniteDelay or isIndefiniteDelay(delay):
+        if not reason.empty:
+            ". This train is delayed indefinitely because of" reasonText(reason)
+            "."
+        else:
+            ". This train is delayed indefinitely. The reason is still unknown."
+        "Further information will be given as soon as possible."
+        "We apologize for any inconvenience."
+    else:
+        if passengerBegin:
+            ", will depart approximately"
+        else:
+            ", will be approximately"
+        if delay >= minutes(140):
+            "more than 140 minutes late."
+        else:
+             announceDurationPeriod(roundDelay(delay), roundDelayPeriodEnd(delay)) "late."
+        if delay > minutes(9) and not reason.empty:
+                "This is because of" reasonText(reason)
+                "."
+

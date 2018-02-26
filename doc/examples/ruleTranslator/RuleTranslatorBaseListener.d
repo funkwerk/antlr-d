@@ -1,4 +1,4 @@
-// Generated from RuleTranslator.g4 by ANTLR 4.7.1
+// Generated from doc/examples/ruleTranslator/RuleTranslator.g4 by ANTLR 4.7.1
 
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
@@ -17,18 +17,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterSingle_input(RuleTranslatorParser.Single_inputContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitSingle_input(RuleTranslatorParser.Single_inputContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -41,61 +29,73 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterEval_input(RuleTranslatorParser.Eval_inputContext ctx) { }
+	override public void enterRule_spec(RuleTranslatorParser.Rule_specContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitEval_input(RuleTranslatorParser.Eval_inputContext ctx) { }
+	override public void exitRule_spec(RuleTranslatorParser.Rule_specContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterDecorator(RuleTranslatorParser.DecoratorContext ctx) { }
+	override public void enterRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitDecorator(RuleTranslatorParser.DecoratorContext ctx) { }
+	override public void exitRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterDecorators(RuleTranslatorParser.DecoratorsContext ctx) { }
+	override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitDecorators(RuleTranslatorParser.DecoratorsContext ctx) { }
+	override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterDecorated(RuleTranslatorParser.DecoratedContext ctx) { }
+	override public void enterLang(RuleTranslatorParser.LangContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitDecorated(RuleTranslatorParser.DecoratedContext ctx) { }
+	override public void exitLang(RuleTranslatorParser.LangContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterAsync_funcdef(RuleTranslatorParser.Async_funcdefContext ctx) { }
+	override public void enterBase(RuleTranslatorParser.BaseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitAsync_funcdef(RuleTranslatorParser.Async_funcdefContext ctx) { }
+	override public void exitBase(RuleTranslatorParser.BaseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -492,18 +492,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitCompound_stmt(RuleTranslatorParser.Compound_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterAsync_stmt(RuleTranslatorParser.Async_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitAsync_stmt(RuleTranslatorParser.Async_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

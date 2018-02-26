@@ -123,7 +123,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import <file.grammarName>Listener;
-import <file.grammarName>: <file.grammarName>;
+import <file.grammarName>Parser: <file.grammarName>Parser;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Listener},

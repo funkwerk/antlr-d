@@ -86,6 +86,8 @@ prepare_generator : | $(BUILD_DIR)
 build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
+		-Dlanguage=D -o $(BUILD_DIR) doc/examples/ruleTranslator/RuleTranslator.g4
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator

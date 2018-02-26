@@ -1,40 +1,11 @@
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2014 by Bart Kiers
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * Project      : python3-parser; an ANTLR4 grammar for Python 3
- *                https://github.com/bkiers/python3-parser
- * Developed by : Bart Kiers, bart@big-o.nl
- */
-grammar RuleTranslator;
+ grammar RuleTranslator;
 
-// All comments that start with "///" are copy-pasted from
-// The Python Language Reference
+// mainly a modified python syntax
 
-tokens { INDENT, DEDENT }
-
+tokens {
+INDENT, DEDENT
+}
+ 
 @lexer::members {
   import antlr.v4.runtime.CommonToken;
   import antlr.v4.runtime.RuleContext;
@@ -84,7 +55,7 @@ tokens { INDENT, DEDENT }
       // Keep track of the last token on the default channel.
       this.lastToken = next;
     }
-    
+
     if(tokens.empty)
         return next;
     else {
@@ -139,15 +110,17 @@ tokens { INDENT, DEDENT }
  * parser rules
  */
 
-single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE;
-file_input: (NEWLINE | stmt)* EOF;
-eval_input: testlist NEWLINE* EOF;
+file_input: rule_spec base (NEWLINE | stmt)+ EOF;
 
-decorator: '@' dotted_name ( '(' (arglist)? ')' )? NEWLINE;
-decorators: decorator+;
-decorated: decorators (classdef | funcdef | async_funcdef);
+rule_spec: NEWLINE* RULE rule_name AS rule_ID lang;
 
-async_funcdef: ASYNC funcdef;
+rule_name : NAME;
+rule_ID : NAME;
+lang : NAME;
+
+base: NEWLINE* BASE lang '.' base_rules;
+base_rules : NAME;
+
 funcdef: 'def' NAME parameters ('->' test)? ':' suite;
 
 parameters: '(' (typedargslist)? ')';
@@ -167,8 +140,7 @@ vfpdef: NAME;
 
 stmt: simple_stmt | compound_stmt;
 simple_stmt: small_stmt (';' small_stmt)* (';')? NEWLINE;
-small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
-             import_stmt | global_stmt | nonlocal_stmt | assert_stmt);
+small_stmt: (expr_stmt | flow_stmt );
 expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
                      ('=' (yield_expr|testlist_star_expr))*);
 annassign: ':' test ('=' test)?;
@@ -176,30 +148,18 @@ testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
 augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
             '<<=' | '>>=' | '**=' | '//=');
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
-del_stmt: 'del' exprlist;
-pass_stmt: 'pass';
-flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt;
+flow_stmt: break_stmt | continue_stmt | return_stmt ;
 break_stmt: 'break';
 continue_stmt: 'continue';
 return_stmt: 'return' (testlist)?;
-yield_stmt: yield_expr;
-raise_stmt: 'raise' (test ('from' test)?)?;
-import_stmt: import_name | import_from;
-import_name: 'import' dotted_as_names;
+
 // note below: the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
-import_from: ('from' (('.' | '...')* dotted_name | ('.' | '...')+)
-              'import' ('*' | '(' import_as_names ')' | import_as_names));
-import_as_name: NAME ('as' NAME)?;
+
 dotted_as_name: dotted_name ('as' NAME)?;
-import_as_names: import_as_name (',' import_as_name)* (',')?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
-global_stmt: 'global' NAME (',' NAME)*;
-nonlocal_stmt: 'nonlocal' NAME (',' NAME)*;
-assert_stmt: 'assert' test (',' test)?;
 
-compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated | async_stmt;
-async_stmt: ASYNC (funcdef | with_stmt | for_stmt);
+compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef;
 if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ('else' ':' suite)?;
 while_stmt: 'while' test ':' suite ('else' ':' suite)?;
 for_stmt: 'for' exprlist 'in' testlist ':' suite ('else' ':' suite)?;
@@ -301,15 +261,15 @@ INTEGER
  | BIN_INTEGER
  ;
 
+RULE : 'rule';
+BASE : 'base';
 DEF : 'def';
 RETURN : 'return';
 RAISE : 'raise';
 FROM : 'from';
 IMPORT : 'import';
 AS : 'as';
-GLOBAL : 'global';
-NONLOCAL : 'nonlocal';
-ASSERT : 'assert';
+
 IF : 'if';
 ELIF : 'elif';
 ELSE : 'else';
@@ -347,7 +307,7 @@ NEWLINE
      string spaces = getText().replaceAll(regex(r"[\r\n\f]+"), "");
      int next = _input.LA(1);
      if (opened > 0 || next == '\r' || next == '\n' || next == '\f' || next == '#') {
-       // If we're inside a list or on a blank line, ignore all indents, 
+       // If we're inside a list or on a blank line, ignore all indents,
        // dedents and line breaks.
        skip();
      }
@@ -480,8 +440,8 @@ UNKNOWN_CHAR
  : .
  ;
 
-/* 
- * fragments 
+/*
+ * fragments
  */
 
 /// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
@@ -571,7 +531,7 @@ fragment SHORT_BYTES
  : '\'' ( SHORT_BYTES_CHAR_NO_SINGLE_QUOTE | BYTES_ESCAPE_SEQ )* '\''
  | '"' ( SHORT_BYTES_CHAR_NO_DOUBLE_QUOTE | BYTES_ESCAPE_SEQ )* '"'
  ;
-    
+
 /// longbytes      ::=  "'''" longbytesitem* "'''" | '"""' longbytesitem* '"""'
 fragment LONG_BYTES
  : '\'\'\'' LONG_BYTES_ITEM*? '\'\'\''
@@ -591,7 +551,7 @@ fragment SHORT_BYTES_CHAR_NO_SINGLE_QUOTE
  | [\u000E-\u0026]
  | [\u0028-\u005B]
  | [\u005D-\u007F]
- ; 
+ ;
 
 fragment SHORT_BYTES_CHAR_NO_DOUBLE_QUOTE
  : [\u0000-\u0009]
@@ -599,7 +559,7 @@ fragment SHORT_BYTES_CHAR_NO_DOUBLE_QUOTE
  | [\u000E-\u0021]
  | [\u0023-\u005B]
  | [\u005D-\u007F]
- ; 
+ ;
 
 /// longbyteschar  ::=  <any ASCII character except "\">
 fragment LONG_BYTES_CHAR

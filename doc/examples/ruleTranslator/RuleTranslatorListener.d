@@ -1,4 +1,4 @@
-// Generated from doc/examples/ruleTranslator/RuleTranslator.g4 by ANTLR 4.7.1
+// Generated from RuleTranslator.g4 by ANTLR 4.7.1
 import antlr.v4.runtime.tree.ParseTreeListener;
 import RuleTranslatorParser : RuleTranslatorParser;
 
@@ -168,6 +168,26 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitSmall_stmt(RuleTranslatorParser.Small_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#string_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterString_stmt(RuleTranslatorParser.String_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#string_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitString_stmt(RuleTranslatorParser.String_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#funct_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#funct_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#expr_stmt}.
 	 * @param ctx the parse tree
 	 */
@@ -207,26 +227,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAugassign(RuleTranslatorParser.AugassignContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#del_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterDel_stmt(RuleTranslatorParser.Del_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#del_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitDel_stmt(RuleTranslatorParser.Del_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#pass_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterPass_stmt(RuleTranslatorParser.Pass_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#pass_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitPass_stmt(RuleTranslatorParser.Pass_stmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#flow_stmt}.
 	 * @param ctx the parse tree
@@ -268,66 +268,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitReturn_stmt(RuleTranslatorParser.Return_stmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#yield_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterYield_stmt(RuleTranslatorParser.Yield_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#yield_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitYield_stmt(RuleTranslatorParser.Yield_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#raise_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterRaise_stmt(RuleTranslatorParser.Raise_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#raise_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitRaise_stmt(RuleTranslatorParser.Raise_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitImport_stmt(RuleTranslatorParser.Import_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_name}.
-	 * @param ctx the parse tree
-	 */
-	void enterImport_name(RuleTranslatorParser.Import_nameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_name}.
-	 * @param ctx the parse tree
-	 */
-	void exitImport_name(RuleTranslatorParser.Import_nameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_from}.
-	 * @param ctx the parse tree
-	 */
-	void enterImport_from(RuleTranslatorParser.Import_fromContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_from}.
-	 * @param ctx the parse tree
-	 */
-	void exitImport_from(RuleTranslatorParser.Import_fromContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_as_name}.
-	 * @param ctx the parse tree
-	 */
-	void enterImport_as_name(RuleTranslatorParser.Import_as_nameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_as_name}.
-	 * @param ctx the parse tree
-	 */
-	void exitImport_as_name(RuleTranslatorParser.Import_as_nameContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#dotted_as_name}.
 	 * @param ctx the parse tree
 	 */
@@ -337,16 +277,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDotted_as_name(RuleTranslatorParser.Dotted_as_nameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_as_names}.
-	 * @param ctx the parse tree
-	 */
-	void enterImport_as_names(RuleTranslatorParser.Import_as_namesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_as_names}.
-	 * @param ctx the parse tree
-	 */
-	void exitImport_as_names(RuleTranslatorParser.Import_as_namesContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#dotted_as_names}.
 	 * @param ctx the parse tree
@@ -367,36 +297,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDotted_name(RuleTranslatorParser.Dotted_nameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#global_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobal_stmt(RuleTranslatorParser.Global_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#global_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobal_stmt(RuleTranslatorParser.Global_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#nonlocal_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterNonlocal_stmt(RuleTranslatorParser.Nonlocal_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#nonlocal_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitNonlocal_stmt(RuleTranslatorParser.Nonlocal_stmtContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#assert_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterAssert_stmt(RuleTranslatorParser.Assert_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#assert_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitAssert_stmt(RuleTranslatorParser.Assert_stmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#compound_stmt}.
 	 * @param ctx the parse tree
@@ -438,16 +338,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitFor_stmt(RuleTranslatorParser.For_stmtContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#try_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterTry_stmt(RuleTranslatorParser.Try_stmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#try_stmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitTry_stmt(RuleTranslatorParser.Try_stmtContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#with_stmt}.
 	 * @param ctx the parse tree
 	 */
@@ -467,16 +357,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWith_item(RuleTranslatorParser.With_itemContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#except_clause}.
-	 * @param ctx the parse tree
-	 */
-	void enterExcept_clause(RuleTranslatorParser.Except_clauseContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#except_clause}.
-	 * @param ctx the parse tree
-	 */
-	void exitExcept_clause(RuleTranslatorParser.Except_clauseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#suite}.
 	 * @param ctx the parse tree
@@ -507,26 +387,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTest_nocond(RuleTranslatorParser.Test_nocondContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#lambdef}.
-	 * @param ctx the parse tree
-	 */
-	void enterLambdef(RuleTranslatorParser.LambdefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#lambdef}.
-	 * @param ctx the parse tree
-	 */
-	void exitLambdef(RuleTranslatorParser.LambdefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#lambdef_nocond}.
-	 * @param ctx the parse tree
-	 */
-	void enterLambdef_nocond(RuleTranslatorParser.Lambdef_nocondContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#lambdef_nocond}.
-	 * @param ctx the parse tree
-	 */
-	void exitLambdef_nocond(RuleTranslatorParser.Lambdef_nocondContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#or_test}.
 	 * @param ctx the parse tree
@@ -577,16 +437,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComp_op(RuleTranslatorParser.Comp_opContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#star_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterStar_expr(RuleTranslatorParser.Star_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#star_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitStar_expr(RuleTranslatorParser.Star_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#expr}.
 	 * @param ctx the parse tree
@@ -768,16 +618,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitDictorsetmaker(RuleTranslatorParser.DictorsetmakerContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#classdef}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassdef(RuleTranslatorParser.ClassdefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#classdef}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassdef(RuleTranslatorParser.ClassdefContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#arglist}.
 	 * @param ctx the parse tree
 	 */
@@ -827,34 +667,4 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComp_if(RuleTranslatorParser.Comp_ifContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#encoding_decl}.
-	 * @param ctx the parse tree
-	 */
-	void enterEncoding_decl(RuleTranslatorParser.Encoding_declContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#encoding_decl}.
-	 * @param ctx the parse tree
-	 */
-	void exitEncoding_decl(RuleTranslatorParser.Encoding_declContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#yield_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterYield_expr(RuleTranslatorParser.Yield_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#yield_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitYield_expr(RuleTranslatorParser.Yield_exprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#yield_arg}.
-	 * @param ctx the parse tree
-	 */
-	void enterYield_arg(RuleTranslatorParser.Yield_argContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#yield_arg}.
-	 * @param ctx the parse tree
-	 */
-	void exitYield_arg(RuleTranslatorParser.Yield_argContext ctx);
 }

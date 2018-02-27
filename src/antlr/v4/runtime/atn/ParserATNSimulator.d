@@ -820,16 +820,11 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             debug
                 writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
 
-            if (typeid(c.state) == typeid(RuleStopState)) {
-                assert (!c.context.isEmpty);
+            if (cast(RuleStopState)c.state) {
+                assert(c.context.isEmpty);
                 if (fullCtx || t == IntStreamConstant.EOF) {
-                    if (skippedStopStates is null) {
-                        skippedStopStates.length = 0;
-                    }
-
                     skippedStopStates ~= c;
                 }
-
                 continue;
             }
 

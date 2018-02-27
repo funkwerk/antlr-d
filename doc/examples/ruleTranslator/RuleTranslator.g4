@@ -3,7 +3,8 @@
 // mainly a modified python syntax
 
 tokens {
-INDENT, DEDENT
+INDENT,
+DEDENT
 }
  
 @lexer::members {
@@ -40,7 +41,7 @@ INDENT, DEDENT
       this.emit(commonToken(RuleTranslatorParser.NEWLINE, "\n"));
 
       // Now emit as much DEDENT tokens as needed.
-      while (!indents.empty()) {
+      while (!indents.empty) {
         this.emit(createDedent());
         indents.removeBack;
       }
@@ -49,7 +50,7 @@ INDENT, DEDENT
       this.emit(commonToken(RuleTranslatorParser.EOF, "<EOF>"));
     }
 
-    Token next = super.nextToken();
+    Token next = super.nextToken;
 
     if (next.getChannel() == TokenConstantDefinition.DEFAULT_CHANNEL) {
       // Keep track of the last token on the default channel.
@@ -139,12 +140,22 @@ varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
 vfpdef: NAME;
 
 stmt: simple_stmt | compound_stmt;
-simple_stmt: small_stmt (';' small_stmt)* (';')? NEWLINE;
-small_stmt: (expr_stmt | flow_stmt );
-expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
-                     ('=' (yield_expr|testlist_star_expr))*);
+simple_stmt: small_stmt+ NEWLINE;
+small_stmt: (
+    expr_stmt
+    |string_stmt
+    |funct_stmt
+    |flow_stmt
+);
+
+string_stmt: STRING;
+
+funct_stmt: NAME parameters;
+
+expr_stmt: testlist_star_expr (annassign | augassign (testlist) |
+                     ('=' (testlist_star_expr))*);
 annassign: ':' test ('=' test)?;
-testlist_star_expr: (test|star_expr) (',' (test|star_expr))* (',')?;
+testlist_star_expr: (test) (',' (test))* (',')?;
 augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
             '<<=' | '>>=' | '**=' | '//=');
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
@@ -159,25 +170,18 @@ dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
-compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef;
+compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef;
 if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ('else' ':' suite)?;
 while_stmt: 'while' test ':' suite ('else' ':' suite)?;
 for_stmt: 'for' exprlist 'in' testlist ':' suite ('else' ':' suite)?;
-try_stmt: ('try' ':' suite
-           ((except_clause ':' suite)+
-            ('else' ':' suite)?
-            ('finally' ':' suite)? |
-           'finally' ':' suite));
+
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;
-// NB compile.c makes sure that the default except clause is last
-except_clause: 'except' (test ('as' NAME)?)?;
+
 suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT;
 
-test: or_test ('if' or_test 'else' test)? | lambdef;
-test_nocond: or_test | lambdef_nocond;
-lambdef: 'lambda' (varargslist)? ':' test;
-lambdef_nocond: 'lambda' (varargslist)? ':' test_nocond;
+test: or_test ('if' or_test 'else' test)?;
+test_nocond: or_test;
 or_test: and_test ('or' and_test)*;
 and_test: not_test ('and' not_test)*;
 not_test: 'not' not_test | comparison;
@@ -185,7 +189,7 @@ comparison: expr (comp_op expr)*;
 // <> isn't actually a valid comparison operator in Python. It's here for the
 // sake of a __future__ import described in PEP 401 (which really works :-)
 comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not';
-star_expr: '*' expr;
+
 expr: xor_expr ('|' xor_expr)*;
 xor_expr: and_expr ('^' and_expr)*;
 and_expr: shift_expr ('&' shift_expr)*;
@@ -194,24 +198,22 @@ arith_expr: term (('+'|'-') term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | power;
 power: atom_expr ('**' factor)?;
-atom_expr: (AWAIT)? atom trailer*;
-atom: ('(' (yield_expr|testlist_comp)? ')' |
+atom_expr: atom trailer*;
+atom: ('(' (testlist_comp)? ')' |
        '[' (testlist_comp)? ']' |
        '{' (dictorsetmaker)? '}' |
        NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False');
-testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );
+testlist_comp: (test) ( comp_for | (',' (test))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript (',' subscript)* (',')?;
 subscript: test | (test)? ':' (test)? (sliceop)?;
 sliceop: ':' (test)?;
-exprlist: (expr|star_expr) (',' (expr|star_expr))* (',')?;
+exprlist: (expr) (',' (expr))* (',')?;
 testlist: test (',' test)* (',')?;
 dictorsetmaker: ( ((test ':' test | '**' expr)
                    (comp_for | (',' (test ':' test | '**' expr))* (',')?)) |
-                  ((test | star_expr)
-                   (comp_for | (',' (test | star_expr))* (',')?)) );
-
-classdef: 'class' NAME ('(' (arglist)? ')')? ':' suite;
+                  ((test)
+                   (comp_for | (',' (test))* (',')?)) );
 
 arglist: argument (',' argument)*  (',')?;
 
@@ -230,14 +232,9 @@ argument: ( test (comp_for)? |
             '*' test );
 
 comp_iter: comp_for | comp_if;
-comp_for: (ASYNC)? 'for' exprlist 'in' or_test (comp_iter)?;
+comp_for: 'for' exprlist 'in' or_test (comp_iter)?;
 comp_if: 'if' test_nocond (comp_iter)?;
 
-// not used in grammar, but may appear in "node" passed from Parser to Compiler
-encoding_decl: NAME;
-
-yield_expr: 'yield' (yield_arg)?;
-yield_arg: 'from' test | testlist;
 
 /*
  * lexer rules
@@ -249,10 +246,7 @@ STRING
  ;
 
 NUMBER
- : INTEGER
- | FLOAT_NUMBER
- | IMAG_NUMBER
- ;
+ : INTEGER;
 
 INTEGER
  : DECIMAL_INTEGER
@@ -265,9 +259,6 @@ RULE : 'rule';
 BASE : 'base';
 DEF : 'def';
 RETURN : 'return';
-RAISE : 'raise';
-FROM : 'from';
-IMPORT : 'import';
 AS : 'as';
 
 IF : 'if';
@@ -275,27 +266,13 @@ ELIF : 'elif';
 ELSE : 'else';
 WHILE : 'while';
 FOR : 'for';
-IN : 'in';
-TRY : 'try';
-FINALLY : 'finally';
-WITH : 'with';
-EXCEPT : 'except';
-LAMBDA : 'lambda';
 OR : 'or';
 AND : 'and';
 NOT : 'not';
-IS : 'is';
-NONE : 'None';
 TRUE : 'True';
 FALSE : 'False';
-CLASS : 'class';
-YIELD : 'yield';
-DEL : 'del';
-PASS : 'pass';
 CONTINUE : 'continue';
 BREAK : 'break';
-ASYNC : 'async';
-AWAIT : 'await';
 
 NEWLINE
  : ( {atStartOfInput()}?   SPACES
@@ -303,8 +280,8 @@ NEWLINE
    )
    {
      import std.regex;
-     string newLine = getText().replaceAll(regex(r"[^\r\n\f]+"), "");
-     string spaces = getText().replaceAll(regex(r"[\r\n\f]+"), "");
+     string newLine = getText.replaceAll(regex(r"[^\r\n\f]+"), "");
+     string spaces = getText.replaceAll(regex(r"[\r\n\f]+"), "");
      int next = _input.LA(1);
      if (opened > 0 || next == '\r' || next == '\n' || next == '\f' || next == '#') {
        // If we're inside a list or on a blank line, ignore all indents,
@@ -371,17 +348,6 @@ HEX_INTEGER
 /// bininteger     ::=  "0" ("b" | "B") bindigit+
 BIN_INTEGER
  : '0' [bB] BIN_DIGIT+
- ;
-
-/// floatnumber   ::=  pointfloat | exponentfloat
-FLOAT_NUMBER
- : POINT_FLOAT
- | EXPONENT_FLOAT
- ;
-
-/// imagnumber ::=  (floatnumber | intpart) ("j" | "J")
-IMAG_NUMBER
- : ( FLOAT_NUMBER | INT_PART ) [jJ]
  ;
 
 DOT : '.';
@@ -505,11 +471,6 @@ fragment POINT_FLOAT
  | INT_PART '.'
  ;
 
-/// exponentfloat ::=  (intpart | pointfloat) exponent
-fragment EXPONENT_FLOAT
- : ( INT_PART | POINT_FLOAT ) EXPONENT
- ;
-
 /// intpart       ::=  digit+
 fragment INT_PART
  : DIGIT+
@@ -518,11 +479,6 @@ fragment INT_PART
 /// fraction      ::=  "." digit+
 fragment FRACTION
  : '.' DIGIT+
- ;
-
-/// exponent      ::=  ("e" | "E") ["+" | "-"] digit+
-fragment EXPONENT
- : [eE] [+-]? DIGIT+
  ;
 
 /// shortbytes     ::=  "'" shortbytesitem* "'" | '"' shortbytesitem* '"'

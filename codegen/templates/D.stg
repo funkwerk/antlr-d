@@ -606,7 +606,7 @@ case <i><if(!choice.ast.greedy)>+1<endif>:
 	setState(<choice.loopBackStateNumber>); <! loopback/exit decision !>
 	_errHandler.sync(this);
 	_alt = getInterpreter.adaptivePredict(_input,<choice.decision>, ctx_);
-} while ( _alt!=<choice.exitAlt> && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+} while ( _alt!=<choice.exitAlt> && _alt!=ATN.INVALID_ALT_NUMBER );
 >>
 
 Sync(s) ::= "sync(<s.expecting.name>);"

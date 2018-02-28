@@ -269,18 +269,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterAugassign(RuleTranslatorParser.AugassignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitAugassign(RuleTranslatorParser.AugassignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	override public void enterFlow_stmt(RuleTranslatorParser.Flow_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}

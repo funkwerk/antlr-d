@@ -218,16 +218,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitTestlist_star_expr(RuleTranslatorParser.Testlist_star_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#augassign}.
-	 * @param ctx the parse tree
-	 */
-	void enterAugassign(RuleTranslatorParser.AugassignContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#augassign}.
-	 * @param ctx the parse tree
-	 */
-	void exitAugassign(RuleTranslatorParser.AugassignContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#flow_stmt}.
 	 * @param ctx the parse tree
 	 */

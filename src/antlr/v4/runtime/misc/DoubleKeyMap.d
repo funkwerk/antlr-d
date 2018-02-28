@@ -1,31 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2016 Terence Parr
- *  Copyright (c) 2016 Sam Harwell
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.misc.DoubleKeyMap;
@@ -34,7 +10,6 @@ import std.typecons;
 
 // Class Template DoubleKeyMap
 /**
- * @uml
  * Sometimes we need to map a key to a value but key is two pieces of data.
  * This nested hash table saves creating a single key each time we access
  * map; avoids mem creation.
@@ -70,7 +45,6 @@ class DoubleKeyMap(K1, K2, V)
     }
 
     /**
-     * @uml
      * Get all values associated with a primary key.
      */
     public V[] values(K1 k1)
@@ -84,7 +58,6 @@ class DoubleKeyMap(K1, K2, V)
     }
 
     /**
-     * @uml
      * get all primary keys
      */
     public K1[] keySet()
@@ -93,7 +66,6 @@ class DoubleKeyMap(K1, K2, V)
     }
 
     /**
-     * @uml
      * Get all secondary keys associated with a primary key.
      */
     public K2[] keySet(K1 k1)
@@ -104,6 +76,59 @@ class DoubleKeyMap(K1, K2, V)
         }
         V[K2] data2 = data[k1];
         return data2.keys;
+    }
+
+}
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+
+    class Test {
+
+        @Tags("DoubleKeyMap")
+        @("construction DoubleKeyMap")
+        unittest {
+            auto t1 = new DoubleKeyMap!(int, int, int);
+            t1.put(7,1,12);
+            t1.put(7,1,13);
+            auto x = t1.get(7,1);
+            Assert.equal(x.get, 13);
+            x = t1.get(7,2);
+            Assert.equal(x.isNull, true);
+        }
+        
+        @Tags("DoubleKeyMap")
+        @("comparing DoubleKeyMaps")
+        unittest {
+            auto t1 = new DoubleKeyMap!(int, int, int);
+            t1.put(7,1,13);
+            auto y = t1.get(7);
+            int[int] c;
+            c[1] = 13;
+            c.should.equal(y);
+            y = t1.get(6);
+            y.length.should.equal(0);
+            t1.put(7,4,71);
+            c[4] = 71;
+            y = t1.get(7);
+            c.should.equal(y);
+
+            auto v1 = t1.values(7);
+            v1.should.equal([71, 13]);
+            v1 = t1.values(0);
+            v1.should.equal([]);
+
+            auto kx = t1.keySet;
+            auto kk = [7];
+            kk.should.equal(kx);
+
+            auto tx = t1.keySet(8);
+            tx.should.equal([]);
+            tx = t1.keySet(7);
+            tx.should.equal([4, 1]);
+        }
+
     }
 
 }

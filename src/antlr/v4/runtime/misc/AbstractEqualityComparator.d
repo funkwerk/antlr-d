@@ -7,7 +7,6 @@
 module antlr.v4.runtime.misc.AbstractEqualityComparator;
 
 import antlr.v4.runtime.misc.EqualityComparator;
-import std.algorithm.iteration;
 
 // Class Template AbstractEqualityComparator
 /**

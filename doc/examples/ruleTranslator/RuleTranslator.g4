@@ -152,12 +152,11 @@ string_stmt: STRING;
 
 funct_stmt: NAME parameters;
 
-expr_stmt: testlist_star_expr (annassign | augassign (testlist) |
+expr_stmt: testlist_star_expr (annassign (testlist) |
                      ('=' (testlist_star_expr))*);
 annassign: ':' test ('=' test)?;
 testlist_star_expr: (test) (',' (test))* (',')?;
-augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
-            '<<=' | '>>=' | '**=' | '//=');
+
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
 flow_stmt: break_stmt | continue_stmt | return_stmt ;
 break_stmt: 'break';

@@ -6,7 +6,7 @@ tokens {
 INDENT,
 DEDENT
 }
- 
+
 @lexer::members {
   import antlr.v4.runtime.CommonToken;
   import antlr.v4.runtime.RuleContext;
@@ -249,9 +249,7 @@ NUMBER
 
 INTEGER
  : DECIMAL_INTEGER
- | OCT_INTEGER
  | HEX_INTEGER
- | BIN_INTEGER
  ;
 
 RULE : 'rule';
@@ -334,19 +332,9 @@ DECIMAL_INTEGER
  | '0'+
  ;
 
-/// octinteger     ::=  "0" ("o" | "O") octdigit+
-OCT_INTEGER
- : '0' [oO] OCT_DIGIT+
- ;
-
 /// hexinteger     ::=  "0" ("x" | "X") hexdigit+
 HEX_INTEGER
  : '0' [xX] HEX_DIGIT+
- ;
-
-/// bininteger     ::=  "0" ("b" | "B") bindigit+
-BIN_INTEGER
- : '0' [bB] BIN_DIGIT+
  ;
 
 DOT : '.';

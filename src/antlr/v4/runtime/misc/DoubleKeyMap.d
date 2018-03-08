@@ -97,7 +97,7 @@ version(unittest) {
             x = t1.get(7,2);
             Assert.equal(x.isNull, true);
         }
-        
+
         @Tags("DoubleKeyMap")
         @("comparing DoubleKeyMaps")
         unittest {

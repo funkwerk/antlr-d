@@ -720,3 +720,21 @@ abstract class PredictionContext
     }
 
 }
+
+version(unittest) {
+    import fluent.asserts;
+    import unit_threaded;
+    import antlr.v4.runtime.atn.ArrayPredictionContext;
+    import antlr.v4.runtime.atn.ArrayPredictionContext;
+
+    class Test {
+
+        @Tags("ArrayPredictionContext")
+        @("Empty")
+        unittest {
+            auto spc = new EmptyPredictionContext;
+            auto apc = new ArrayPredictionContext(spc);
+            apc.should.not.beNull;
+        }
+    }
+}

@@ -21,8 +21,7 @@ import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.InterfaceATNSimulator;
-import antlr.v4.runtime.misc.DoubleKeyMap;
-import antlr.v4.runtime.misc.BitSet;
+import antlr.v4.runtime.misc;
 
 // Class ATNConfigSet
 /**

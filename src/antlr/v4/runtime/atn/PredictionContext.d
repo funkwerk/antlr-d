@@ -501,11 +501,10 @@ abstract class PredictionContext
     }
 
     /**
-     * @uml
      * Make pass over all <em>M</em> {@code parents}; merge any {@code equals()}
      * ones.
      */
-    public static void combineCommonParents(PredictionContext[] parents)
+    public static void combineCommonParents(ref PredictionContext[] parents)
     {
         PredictionContext[PredictionContext] uniqueParents;
         for (int p = 0; p < parents.length; p++) {
@@ -724,17 +723,36 @@ abstract class PredictionContext
 version(unittest) {
     import fluent.asserts;
     import unit_threaded;
-    import antlr.v4.runtime.atn.ArrayPredictionContext;
-    import antlr.v4.runtime.atn.ArrayPredictionContext;
 
     class Test {
 
-        @Tags("ArrayPredictionContext")
-        @("Empty")
+        @Tags("ArrayPredictionContext", "a")
+        @("mergeArrayContext")
         unittest {
-            auto spc = new EmptyPredictionContext;
-            auto apc = new ArrayPredictionContext(spc);
-            apc.should.not.beNull;
+            DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
+            auto spcA = new EmptyPredictionContext;
+            auto apcA = new ArrayPredictionContext(spcA);
+            apcA.should.not.beNull;
+            auto spcB = new EmptyPredictionContext;
+            auto apcB = new ArrayPredictionContext(spcB);
+            apcB.should.not.beNull;
+            auto spcC = new EmptyPredictionContext;
+
+            PredictionContext[] predA = [apcA, apcB, spcC, apcA]; // not unique
+            predA.length.should.equal(4);
+            PredictionContext.combineCommonParents(predA);
+            predA.length.should.equal(4);
+        }
+
+        @Tags("ArrayPredictionContext", "e")
+        @("mergeEmptyContext")
+        unittest {
+            auto spcC = new EmptyPredictionContext;
+            spcC.should.not.beNull;
+            auto spcD = new EmptyPredictionContext;
+
+            PredictionContext[] predB = [spcC, spcD];
+            PredictionContext.combineCommonParents(predB);
         }
     }
 }

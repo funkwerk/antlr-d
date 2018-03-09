@@ -5,6 +5,10 @@ MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
 MKDIR_P = mkdir -p
 
 BUILD_DIR = build
+EXPORT = /usr/local
+EXPORT_LIB = $(EXPORT)/lib
+EXPORT_INCLUDE = $(EXPORT)/include/dmd
+
 MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
@@ -95,8 +99,19 @@ build_xpathlexer : prepare_generator
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY: build_library
-build_library: $(MODULE_FILES)
-	$(DMD) -shared -fPIC $(SOURCE_FILES) -of$(BUILD_DIR)/libantlr-d.so.4.7
+build_library: $(BUILD_DIR)/libantlr-d.so.4.7
+
+$(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
+	$(DMD) -shared -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+
+.PHONY: install_library
+install_library: $(BUILD_DIR)/libantlr-d.so.4.7
+	cp $(BUILD_DIR)/libantlr-d.so.4.7 $(EXPORT_LIB)
+	rm -rf $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
+	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
+	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
+	ldconfig
+	cp -R src/antlr $(EXPORT_INCLUDE)
 
 .PHONY : clean
 clean :

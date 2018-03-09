@@ -124,6 +124,7 @@ abstract class PredictionContext
 
     public bool hasEmptyPath()
     {
+        // since EMPTY_RETURN_STATE can only appear in the last position, we check last one
         return getReturnState(to!int(size() - 1)) == EMPTY_RETURN_STATE;
     }
 
@@ -631,7 +632,6 @@ abstract class PredictionContext
     }
 
     /**
-     * @uml
      * recursive version of Sam's getAllNodes()
      */
     public static PredictionContext[] getAllContextNodes(PredictionContext context)
@@ -726,7 +726,20 @@ version(unittest) {
 
     class Test {
 
-        @Tags("ArrayPredictionContext", "a")
+        @Tags("ArrayPredictionContext")
+        @("empty")
+        unittest {
+            auto spcA = new EmptyPredictionContext;
+            spcA.should.not.beNull;
+            auto spcB = new SingletonPredictionContext(new EmptyPredictionContext, 0);
+            spcA.should.not.equal(spcB);
+            spcA.hasEmptyPath.should.equal(true);
+            spcA.isEmpty.should.equal(true);
+            spcB.hasEmptyPath.should.equal(false);
+            spcB.isEmpty.should.equal(false);
+        }
+
+        @Tags("ArrayPredictionContext")
         @("mergeArrayContext")
         unittest {
             DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
@@ -744,7 +757,7 @@ version(unittest) {
             predA.length.should.equal(4);
         }
 
-        @Tags("ArrayPredictionContext", "e")
+        @Tags("ArrayPredictionContext")
         @("mergeEmptyContext")
         unittest {
             auto spcC = new EmptyPredictionContext;

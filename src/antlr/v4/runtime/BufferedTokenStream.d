@@ -10,15 +10,14 @@ import std.array;
 import std.format;
 import std.conv;
 import std.algorithm: canFind;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.WritableToken;
-import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.Lexer;
-import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.IntStreamConstant;
+import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
 
 // Class BufferedTokenStream
@@ -50,7 +49,6 @@ class BufferedTokenStream : TokenStream
     protected Token[] tokens;
 
     /**
-     * @uml
      * The index into {@link #tokens} of the current token (next token to
      * {@link #consume}). {@link #tokens}{@code [}{@link #p}{@code ]} should be
      * {@link #LT LT(1)}.
@@ -60,6 +58,7 @@ class BufferedTokenStream : TokenStream
      * not yet been fetched from the token source. For additional information,
      * see the documentation of {@link IntStream} for a description of
      * Initializing Methods.</p>
+     * @uml
      * @read
      */
     private int index_ = -1;
@@ -115,7 +114,7 @@ class BufferedTokenStream : TokenStream
 
     public void seek(int index)
     {
-        lazyInit();
+        lazyInit;
         index_ = adjustSeekIndex(index);
     }
 
@@ -143,7 +142,7 @@ class BufferedTokenStream : TokenStream
             skipEofCheck = false;
         }
 
-        if (!skipEofCheck && LA(1) == IntStreamConstant.EOF) {
+        if (!skipEofCheck && LA(1) == TokenConstantDefinition.EOF) {
             throw new IllegalStateException("cannot consume EOF");
         }
 
@@ -152,6 +151,13 @@ class BufferedTokenStream : TokenStream
         }
     }
 
+    /**
+     * Make sure index {@code i} in tokens has a token.
+     *
+     * @return {@code true} if a token is located at index {@code i}, otherwise
+     *    {@code false}.
+     * @see #get(int i)
+     */
     protected bool sync(int i)
     in
     {
@@ -167,6 +173,11 @@ class BufferedTokenStream : TokenStream
             return true;
     }
 
+    /**
+     * Add {@code n} elements to buffer.
+     * 
+     *  @return The actual number of elements added to the buffer.
+     */
     protected int fetch(int n)
     {
         if (fetchedEOF) {
@@ -205,13 +216,14 @@ class BufferedTokenStream : TokenStream
      */
     public Token[] get(int start, int stop)
     {
-	if ( start<0 || stop<0 ) return null;
-        lazyInit();
+	if (start < 0 || stop < 0 ) return null;
+        lazyInit;
         Token[] subset;
         if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
         for (int i = start; i <= stop; i++) {
             Token t = tokens[i];
-            if (t.getType() == TokenConstantDefinition.EOF) break;
+            if (t.getType == TokenConstantDefinition.EOF)
+                break;
             subset ~= t;
         }
         return subset;
@@ -246,7 +258,6 @@ class BufferedTokenStream : TokenStream
             // EOF must be last token
             return tokens[$-1];
         }
-        //		if ( i>range ) range = i;
         return tokens[i];
     }
 
@@ -271,7 +282,7 @@ class BufferedTokenStream : TokenStream
     protected void lazyInit()
     {
         if (index_ == -1) {
-            setup();
+            setup;
         }
     }
 
@@ -302,7 +313,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Given a start and stop index, return a List of all tokens in
      * the token type BitSet.  Return null if no tokens were found.  This
      * method looks at both on and off channel tokens.
@@ -317,7 +327,8 @@ class BufferedTokenStream : TokenStream
     }
     body
     {
-            if ( start>stop ) return null;
+            if (start > stop)
+                return null;
 
             // list = tokens[start:stop]:{T t, t.getType() in types}
             Token[] filteredTokens;
@@ -380,7 +391,7 @@ class BufferedTokenStream : TokenStream
     protected int previousTokenOnChannel(int i, int channel)
     {
 	sync(i);
-        if (i >= size()) {
+        if (i >= size) {
             // the EOF token is on every channel
             return size() - 1;
         }
@@ -395,7 +406,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Collect all tokens on specified channel to the right of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
@@ -429,7 +439,6 @@ class BufferedTokenStream : TokenStream
     }
 
     /**
-     * @uml
      * Collect all tokens on specified channel to the left of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
@@ -517,7 +526,7 @@ class BufferedTokenStream : TokenStream
         auto buf = appender!(string);
         for (int i = start; i <= stop; i++) {
             Token t = tokens[i];
-            if (t.getType() == TokenConstantDefinition.EOF) break;
+            if (t.getType == TokenConstantDefinition.EOF) break;
             buf.put(t.getText());
         }
         return buf.data;

@@ -29,25 +29,25 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterRule_spec(RuleTranslatorParser.Rule_specContext ctx) { }
+	override public void enterRule_setting(RuleTranslatorParser.Rule_settingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitRule_spec(RuleTranslatorParser.Rule_specContext ctx) { }
+	override public void exitRule_setting(RuleTranslatorParser.Rule_settingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
+	override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
+	override public void exitClass_name(RuleTranslatorParser.Class_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -77,13 +77,13 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterBase(RuleTranslatorParser.BaseContext ctx) { }
+	override public void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitBase(RuleTranslatorParser.BaseContext ctx) { }
+	override public void exitImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -111,15 +111,15 @@ DEDENT
  * parser rules
  */
 
-file_input: rule_spec base (NEWLINE | stmt)+ EOF;
+file_input: rule_setting import_stmt? (NEWLINE | stmt)+ EOF;
 
-rule_spec: NEWLINE* RULE rule_name AS rule_ID lang;
+rule_setting: NEWLINE* RULE (class_name AS)? rule_ID lang;
 
-rule_name : NAME;
+class_name : NAME;
 rule_ID : NAME;
 lang : NAME;
 
-base: NEWLINE* BASE lang '.' base_rules;
+import_stmt: NEWLINE* BASE lang '.' base_rules;
 base_rules : NAME;
 
 funcdef: 'def' NAME parameters ('->' test)? ':' suite;

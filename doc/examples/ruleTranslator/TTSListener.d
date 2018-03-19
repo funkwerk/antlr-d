@@ -2,10 +2,11 @@ module TTSListener;
 
 import RuleTranslatorBaseListener;
 import RuleTranslatorParser: RuleTranslatorParser;
+import RuleWriter: RuleWriter;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-import std.array;
+
 import std.stdio;
 
 /**
@@ -15,16 +16,7 @@ import std.stdio;
  */
 public class TTSListener : RuleTranslatorBaseListener {
 
-    private string pathName;
-
-    private int indendLevel;
-
-    private auto result = appender!(string[]);
-
-    public void setOutputFilename(string pathName)
-    {
-        this.pathName = pathName;
-    }
+    public RuleWriter writer;
 
     /**
      * {@inheritDoc}
@@ -32,7 +24,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-        writefln("enterFile_input %s", pathName);
+        writer.put("module ");
     }
     
     /**
@@ -41,7 +33,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
-        writefln("result %s", result.data.join("\n"));
+        writer.print;
+        writer.clear;
     }
     
     /**
@@ -57,12 +50,14 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitRule_setting(RuleTranslatorParser.Rule_settingContext ctx) {
-        result.put(";\n");
-        result.put("import std.array;");
-        result.put("import std.conv;");
-        result.put("import std.datetime;");
-        result.put("import rule.Repository;");
-        result.put("import rule.GeneratedRule;");
+        writer.putnl(";\n");
+        //writer.indendLevel = 2;
+        writer.putnl("import std.array;");
+        writer.putnl("import std.array;");
+        writer.putnl("import std.conv;");
+        writer.putnl("import std.datetime;");
+        writer.putnl("import rule.Repository;");
+        writer.putnl("import rule.GeneratedRule;");
     }
     
     /**

@@ -158,7 +158,7 @@ version(unittest) {
             apc.size.should.equal(1);
             apc.isEmpty.should.equal(true);
             static if (size_t.sizeof == 4)
-                apc.toHash.should.equal(3647507199U);
+                apc.toHash.should.equal(786443632U);
             else
                 apc.toHash.should.equal(6723470047294944096UL);
             apc.getParent(0).should.beNull;
@@ -184,12 +184,12 @@ version(unittest) {
             apc.isEmpty.should.equal(false);
             apc.getParent(0).should.beNull;
             static if (size_t.sizeof == 4)
-                apc.toHash.should.equal(3647507199U);
+                apc.toHash.should.equal(786443632U);
             else
                 apc.toHash.should.equal(6723470047294944096UL);
             static if (size_t.sizeof == 4)
                 apc.calculateHashCode(apc.getParent(0), apc.getReturnState(0))
-                    .should.equal(1639880943U);
+                    .should.equal(182986417U);
             else
                 apc.calculateHashCode(apc.getParent(0), apc.getReturnState(0))
                     .should.equal(4292457832056041856UL);

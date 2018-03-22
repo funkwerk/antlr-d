@@ -7,7 +7,9 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 
+import std.array;
 import std.stdio;
+import std.format;
 
 /**
  * This class provides an empty implementation of {@link RuleTranslatorListener},
@@ -15,6 +17,12 @@ import std.stdio;
  * of the available methods.
  */
 public class TTSListener : RuleTranslatorBaseListener {
+	
+	private string language;
+	
+	private string rule_ID;
+	
+	private string class_name;
 
     public RuleWriter writer;
 
@@ -50,7 +58,10 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitRule_setting(RuleTranslatorParser.Rule_settingContext ctx) {
-        writer.putnl(";\n");
+        if (language)
+			writer.putnl(format("%s.%s;\n", language, class_name ? class_name : rule_ID));
+		else
+			writer.putnl(format("%s;\n", class_name ? class_name : rule_ID));
         //writer.indendLevel = 2;
         writer.putnl("import std.array;");
         writer.putnl("import std.array;");
@@ -65,43 +76,65 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) { }
+    override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) {
+		class_name = ""; 
+	}
+
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitClass_name(RuleTranslatorParser.Class_nameContext ctx) { }
+    override public void exitClass_name(RuleTranslatorParser.Class_nameContext ctx) {
+		class_name =  ctx.getText;
+	}
+    
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
+    override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
+		rule_ID = "";
+	}
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
+    override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
+		rule_ID = ctx.getText;
+	}
+    
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterLang(RuleTranslatorParser.LangContext ctx) { }
+    override public void enterLang(RuleTranslatorParser.LangContext ctx) {
+		language = "";
+	}
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitLang(RuleTranslatorParser.LangContext ctx) { }
+    override public void exitLang(RuleTranslatorParser.LangContext ctx) {
+		language = ctx.getText;
+	}
+
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) { }
+    override public void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) {
+		string app;
+		foreach(el; ctx.children[2..$])
+			app ~= el.getText;
+		writer.putnl(format("import %s;", app));
+	}
+
     /**
      * {@inheritDoc}
      *

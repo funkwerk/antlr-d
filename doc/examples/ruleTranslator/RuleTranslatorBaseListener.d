@@ -221,6 +221,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterBlock_stmt(RuleTranslatorParser.Block_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitBlock_stmt(RuleTranslatorParser.Block_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}

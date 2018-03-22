@@ -111,7 +111,7 @@ DEDENT
  * parser rules
  */
 
-file_input: rule_setting import_stmt? (NEWLINE | stmt)+ EOF;
+file_input: rule_setting import_stmt* (NEWLINE | stmt)+ EOF;
 
 rule_setting: NEWLINE* RULE (class_name AS)? rule_ID lang;
 
@@ -146,9 +146,12 @@ small_stmt: (
     |string_stmt
     |funct_stmt
     |flow_stmt
+    |block_stmt
 );
 
 string_stmt: STRING;
+
+block_stmt: BLOCK COLON stmt;
 
 funct_stmt: NAME parameters;
 
@@ -338,10 +341,10 @@ HEX_INTEGER
  ;
 
 DOT : '.';
-ELLIPSIS : '...';
 STAR : '*';
 OPEN_PAREN : '(' {opened++;};
 CLOSE_PAREN : ')' {opened--;};
+BLOCK : 'block';
 COMMA : ',';
 COLON : ':';
 SEMI_COLON : ';';

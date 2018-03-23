@@ -111,18 +111,23 @@ DEDENT
  * parser rules
  */
 
-file_input: rule_setting import_stmt* (NEWLINE | stmt)+ EOF;
+file_input: rule_setting import_stmts (NEWLINE | stmt)+ EOF;
 
-rule_setting: NEWLINE* RULE (class_name AS)? rule_ID lang;
+import_stmts: import_stmt*;
+
+rule_setting: NEWLINE* RULE (class_name AS)? rule_ID language;
 
 class_name : NAME;
 rule_ID : NAME;
-lang : NAME;
+language : NAME;
 
-import_stmt: NEWLINE* BASE lang '.' base_rules;
+import_stmt: NEWLINE* BASE language '.' base_rules;
 base_rules : NAME;
 
-funcdef: 'def' NAME parameters ('->' test)? ':' suite;
+funcdef: 'def' functionName
+          parameters ':' suite;
+          
+functionName: NAME;
 
 parameters: '(' (typedargslist)? ')';
 typedargslist: (tfpdef ('=' test)? (',' tfpdef ('=' test)?)* (',' (
@@ -139,7 +144,7 @@ varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
 );
 vfpdef: NAME;
 
-stmt: simple_stmt | compound_stmt;
+stmt: (simple_stmt | compound_stmt) (low | high |);
 simple_stmt: small_stmt+ NEWLINE;
 small_stmt: (
     expr_stmt
@@ -236,6 +241,9 @@ argument: ( test (comp_for)? |
 comp_iter: comp_for | comp_if;
 comp_for: 'for' exprlist 'in' or_test (comp_iter)?;
 comp_if: 'if' test_nocond (comp_iter)?;
+
+low: LOW;
+high: HIGH;
 
 
 /*
@@ -361,7 +369,8 @@ ADD : '+';
 MINUS : '-';
 DIV : '/';
 MOD : '%';
-IDIV : '//';
+LOW : 'low';
+HIGH : 'high';
 NOT_OP : '~';
 OPEN_BRACE : '{' {opened++;};
 CLOSE_BRACE : '}' {opened--;};

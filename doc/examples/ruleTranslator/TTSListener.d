@@ -23,6 +23,14 @@ public class TTSListener : RuleTranslatorBaseListener {
 	private string rule_ID;
 	
 	private string class_name;
+	
+	private string baseName;
+	
+	private string functionName;
+	
+	private string bodyText;
+	
+	private ushort indentLevel;
 
     public RuleWriter writer;
 
@@ -41,6 +49,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
+		writer.indentLevel = -- indentLevel;
+		writer.put("}\n");
         writer.print;
         writer.clear;
     }
@@ -62,7 +72,7 @@ public class TTSListener : RuleTranslatorBaseListener {
 			writer.putnl(format("%s.%s;\n", language, class_name ? class_name : rule_ID));
 		else
 			writer.putnl(format("%s;\n", class_name ? class_name : rule_ID));
-        //writer.indendLevel = 2;
+        //writer.indentLevel = 2;
         writer.putnl("import std.array;");
         writer.putnl("import std.array;");
         writer.putnl("import std.conv;");
@@ -111,7 +121,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterLang(RuleTranslatorParser.LangContext ctx) {
+    override public void enterLanguage(RuleTranslatorParser.LanguageContext ctx) {
 		language = "";
 	}
     /**
@@ -119,7 +129,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitLang(RuleTranslatorParser.LangContext ctx) {
+    override public void exitLanguage(RuleTranslatorParser.LanguageContext ctx) {
 		language = ctx.getText;
 	}
 
@@ -146,13 +156,56 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
+    override public void enterBase_rules(RuleTranslatorParser.Base_rulesContext ctx) {
+		baseName = ctx.getText;
+	}
+	
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
     override public void exitBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
+    
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) {
+		if(class_name)
+			writer.putnl(format("class %s : %s\n{\n", class_name, baseName)); 
+		else
+			writer.putnl(format("class %s : GeneratedRule\n{\n", rule_ID));
+		writer.indentLevel = ++ indentLevel;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
+		functionName = ctx.getText;
+		bodyText = "";
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
+		writer.putnl(format("void %s", functionName));
+		writer.putnl(bodyText);
+    }
+	
     /**
      * {@inheritDoc}
      *

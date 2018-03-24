@@ -8,9 +8,9 @@ class RuleWriter{
     private string pathName;
     private string fileName;
 
-    public ushort indendLevel;
+    public ushort indentLevel;
 
-    struct Result { ushort indend; string s;}
+    struct Result { ushort indent; string s;}
     
     private Result[] result;
 
@@ -48,7 +48,7 @@ class RuleWriter{
 
     public Result set(string s) {
         Result r;
-        r.indend = indendLevel;
+        r.indent = indentLevel;
         r.s = s;
         return r;  
     }
@@ -58,7 +58,7 @@ class RuleWriter{
         bool lastEndWithNL = true;
         foreach (e; result) {
             if (lastEndWithNL)
-                while (e.indend-- > 0) {
+                while (e.indent-- > 0) {
                     r.put("    "); //indent 4 spaces per level
                 }
             r.put(e.s);

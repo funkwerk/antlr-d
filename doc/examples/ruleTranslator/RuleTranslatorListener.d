@@ -18,6 +18,16 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitFile_input(RuleTranslatorParser.File_inputContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_stmts}.
+	 * @param ctx the parse tree
+	 */
+	void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#import_stmts}.
+	 * @param ctx the parse tree
+	 */
+	void exitImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#rule_setting}.
 	 * @param ctx the parse tree
 	 */
@@ -48,15 +58,15 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#lang}.
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#language}.
 	 * @param ctx the parse tree
 	 */
-	void enterLang(RuleTranslatorParser.LangContext ctx);
+	void enterLanguage(RuleTranslatorParser.LanguageContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#lang}.
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#language}.
 	 * @param ctx the parse tree
 	 */
-	void exitLang(RuleTranslatorParser.LangContext ctx);
+	void exitLanguage(RuleTranslatorParser.LanguageContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#import_stmt}.
 	 * @param ctx the parse tree
@@ -87,6 +97,16 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#functionName}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionName(RuleTranslatorParser.FunctionNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#functionName}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#parameters}.
 	 * @param ctx the parse tree
@@ -667,4 +687,24 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComp_if(RuleTranslatorParser.Comp_ifContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#low}.
+	 * @param ctx the parse tree
+	 */
+	void enterLow(RuleTranslatorParser.LowContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#low}.
+	 * @param ctx the parse tree
+	 */
+	void exitLow(RuleTranslatorParser.LowContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#high}.
+	 * @param ctx the parse tree
+	 */
+	void enterHigh(RuleTranslatorParser.HighContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#high}.
+	 * @param ctx the parse tree
+	 */
+	void exitHigh(RuleTranslatorParser.HighContext ctx);
 }

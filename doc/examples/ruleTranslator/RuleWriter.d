@@ -62,7 +62,7 @@ class RuleWriter{
                     r.put("    "); //indent 4 spaces per level
                 }
             r.put(e.s);
-        if (e.s[$-1] == '\n')
+        if (e.s.length != 0 && e.s[$-1] == '\n')
             lastEndWithNL = true;
         else
             lastEndWithNL = false;

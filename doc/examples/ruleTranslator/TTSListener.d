@@ -202,8 +202,8 @@ public class TTSListener : RuleTranslatorBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
-		writer.putnl(format("void %s", functionName));
-		writer.putnl(bodyText);
+		writer.put(functionName);
+		writer.put(bodyText);
     }
 	
     /**
@@ -211,25 +211,37 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterFuncdef(RuleTranslatorParser.FuncdefContext ctx) { }
+    override public void enterFuncdef(RuleTranslatorParser.FuncdefContext ctx) {
+        writer.putnl("");
+        writer.put("void ");
+    }
+    
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx) { }
+    override public void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx) {
+        writer.putnl("}");
+    }
+    
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) { }
+    override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) {
+        writer.putnl(ctx.getText);
+    }
+    
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitParameters(RuleTranslatorParser.ParametersContext ctx) { }
+    override public void exitParameters(RuleTranslatorParser.ParametersContext ctx) {
+        writer.putnl("{");
+    }
     /**
      * {@inheritDoc}
      *

@@ -1,4 +1,4 @@
- grammar RuleTranslator;
+grammar RuleTranslator;
 
 // mainly a modified python syntax
 
@@ -124,9 +124,9 @@ language : NAME;
 import_stmt: NEWLINE* BASE language '.' base_rules;
 base_rules : NAME;
 
-funcdef: 'def' functionName
+funcdef: DEF functionName
           parameters ':' suite;
-          
+
 functionName: NAME;
 
 parameters: '(' (typedargslist)? ')';
@@ -144,19 +144,16 @@ varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
 );
 vfpdef: NAME;
 
-stmt: (simple_stmt | compound_stmt) (low | high |);
+stmt: (simple_stmt | compound_stmt);
 simple_stmt: small_stmt+ NEWLINE;
 small_stmt: (
     expr_stmt
     |string_stmt
     |funct_stmt
     |flow_stmt
-    |block_stmt
 );
 
-string_stmt: STRING;
-
-block_stmt: BLOCK COLON stmt;
+string_stmt: STRING (low | high |);
 
 funct_stmt: NAME parameters;
 
@@ -177,10 +174,14 @@ dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
-compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef;
+compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef | block_stmt;
 if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ('else' ':' suite)?;
 while_stmt: 'while' test ':' suite ('else' ':' suite)?;
-for_stmt: 'for' exprlist 'in' testlist ':' suite ('else' ':' suite)?;
+for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
+block_stmt: BLOCK COLON block_suite;
+
+block_suite: NEWLINE INDENT simple_block_stmt+ (low | high |) DEDENT;
+simple_block_stmt: (string_stmt | funct_stmt) NEWLINE;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;
@@ -270,6 +271,7 @@ RETURN : 'return';
 AS : 'as';
 
 IF : 'if';
+IN : 'in';
 ELIF : 'elif';
 ELSE : 'else';
 WHILE : 'while';
@@ -281,6 +283,9 @@ TRUE : 'True';
 FALSE : 'False';
 CONTINUE : 'continue';
 BREAK : 'break';
+BLOCK : 'block';
+LOW : 'low';
+HIGH : 'high';
 
 NEWLINE
  : ( {atStartOfInput()}?   SPACES
@@ -352,7 +357,6 @@ DOT : '.';
 STAR : '*';
 OPEN_PAREN : '(' {opened++;};
 CLOSE_PAREN : ')' {opened--;};
-BLOCK : 'block';
 COMMA : ',';
 COLON : ':';
 SEMI_COLON : ';';
@@ -369,8 +373,6 @@ ADD : '+';
 MINUS : '-';
 DIV : '/';
 MOD : '%';
-LOW : 'low';
-HIGH : 'high';
 NOT_OP : '~';
 OPEN_BRACE : '{' {opened++;};
 CLOSE_BRACE : '}' {opened--;};

@@ -7,7 +7,8 @@ rule Delay as DELAY en
 base en.Phrases
 
 if product != "hahnenkammShuttle":
-    "Attention please!"
+    block:
+        "Attention please!" high
     trainTypeNumber(trainNumber, product, metaCategory)
     if  passengerEnd or boarding == "GET_OFF_ONLY":
         "from" stationName(origin)

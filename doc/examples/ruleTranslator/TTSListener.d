@@ -18,19 +18,21 @@ import std.format;
  */
 public class TTSListener : RuleTranslatorBaseListener {
 	
-	private string language;
+    private string language;
 	
-	private string rule_ID;
+    private string rule_ID;
 	
-	private string class_name;
+    private string class_name;
 	
-	private string baseName;
+    private string baseName;
 	
-	private string functionName;
+    private string functionName;
 	
-	private string bodyText;
+    private string bodyText;
+
+    private string parameters;
 	
-	private ushort indentLevel;
+    private ushort indentLevel;
 
     public RuleWriter writer;
 
@@ -231,7 +233,11 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) {
-        writer.putnl(ctx.getText);
+        parameters = ctx.getText;
+        import std.algorithm.iteration;
+        auto spl = splitter(ctx.getText[1..($-1)], ',');
+        writer.putnl('(' ~ spl.map!(a => "T_" ~ a).join(", ") ~ ')');
+        writer.putnl("    (" ~ spl.map!(a => "T_" ~ a ~ ' ' ~ a).join(", ") ~ ')');
     }
     
     /**

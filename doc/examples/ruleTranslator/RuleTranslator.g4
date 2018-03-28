@@ -135,15 +135,8 @@ typedargslist: (tfpdef ('=' test)? (',' tfpdef ('=' test)?)* (',' (
       | '**' tfpdef (',')?)?)?
   | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
   | '**' tfpdef (',')?);
-tfpdef: NAME (':' test)?;
-varargslist: (vfpdef ('=' test)? (',' vfpdef ('=' test)?)* (',' (
-        '*' (vfpdef)? (',' vfpdef ('=' test)?)* (',' ('**' vfpdef (',')?)?)?
-      | '**' vfpdef (',')?)?)?
-  | '*' (vfpdef)? (',' vfpdef ('=' test)?)* (',' ('**' vfpdef (',')?)?)?
-  | '**' vfpdef (',')?
-);
-vfpdef: NAME;
-
+tfpdef: NAME | NUMBER | STRING | funct_stmt;
+ 
 stmt: (simple_stmt | compound_stmt);
 simple_stmt: small_stmt+ NEWLINE;
 small_stmt: (
@@ -155,7 +148,8 @@ small_stmt: (
 
 string_stmt: STRING (low | high |);
 
-funct_stmt: NAME parameters;
+funct_stmt: dotted_name funct_parameters (DOT funct_stmt)*;
+funct_parameters: parameters;
 
 expr_stmt: testlist_star_expr (annassign (testlist) |
                      ('=' (testlist_star_expr))*);
@@ -175,13 +169,13 @@ dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
 compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef | block_stmt;
-if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ('else' ':' suite)?;
+if_stmt: IF test COLON suite (ELIF test COLON suite)* (ELSE COLON suite)?;
 while_stmt: 'while' test ':' suite ('else' ':' suite)?;
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
 block_stmt: BLOCK COLON block_suite;
 
 block_suite: NEWLINE INDENT simple_block_stmt+ (low | high |) DEDENT;
-simple_block_stmt: (string_stmt | funct_stmt) NEWLINE;
+simple_block_stmt: (string_stmt | funct_stmt)+ NEWLINE;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;
@@ -192,25 +186,22 @@ test: or_test ('if' or_test 'else' test)?;
 test_nocond: or_test;
 or_test: and_test ('or' and_test)*;
 and_test: not_test ('and' not_test)*;
-not_test: 'not' not_test | comparison;
+not_test: not not_test | comparison;
+not: NOT;
 comparison: expr (comp_op expr)*;
-// <> isn't actually a valid comparison operator in Python. It's here for the
-// sake of a __future__ import described in PEP 401 (which really works :-)
+
 comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not';
 
-expr: xor_expr ('|' xor_expr)*;
+expr: xor_expr ('|' xor_expr)* | dotted_name;
 xor_expr: and_expr ('^' and_expr)*;
 and_expr: shift_expr ('&' shift_expr)*;
 shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
 arith_expr: term (('+'|'-') term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
-factor: ('+'|'-'|'~') factor | power;
-power: atom_expr ('**' factor)?;
-atom_expr: atom trailer*;
-atom: ('(' (testlist_comp)? ')' |
-       '[' (testlist_comp)? ']' |
-       '{' (dictorsetmaker)? '}' |
-       NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False');
+factor: ('+'|'-'|'~') factor | atom;
+
+atom: (dotted_name | funct_stmt |
+       NUMBER | STRING+ | 'True' | 'False');
 testlist_comp: (test) ( comp_for | (',' (test))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript (',' subscript)* (',')?;

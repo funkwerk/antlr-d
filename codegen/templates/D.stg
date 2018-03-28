@@ -184,10 +184,10 @@ import antlr.v4.runtime.tree.ParseTreeVisitor;
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link <file.parserName>}.
  *
- * @param \<T> The return type of the visit operation. Use {@link Void} for
+ * @param T The return type of the visit operation. Use {@link void} for
  * operations with no return type.
  */
-public interface <file.grammarName>Visitor\<T> : ParseTreeVisitor\<T> {
+public interface <file.grammarName>Visitor(T) : ParseTreeVisitor!T {
 	<file.visitorNames:{lname |
 /**
 <if(file.visitorLabelRuleNames.(lname))>
@@ -216,10 +216,10 @@ import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * which can be extended to create a visitor which only needs to handle a subset
  * of the available methods.
  *
- * @param \<T> The return type of the visit operation. Use {@link Void} for
+ * @param T The return type of the visit operation. Use {@link void} for
  * operations with no return type.
  */
-public class <file.grammarName>BaseVisitor\<T> : AbstractParseTreeVisitor\<T>, <file.grammarName>Visitor\<T> {
+public class <file.grammarName>BaseVisitor(T) : AbstractParseTreeVisitor!T, <file.grammarName>Visitor!T {
 	<file.visitorNames:{lname |
 /**
  * {@inheritDoc\}
@@ -838,8 +838,8 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
 
 VisitorDispatchMethod(method) ::= <<
 override
-public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
-	if (visitor.classinfo == <parser.grammarName>Visitor.classinfo) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
+public T accept(T)(ParseTreeVisitor visitor) {
+	if (visitor.classinfo == <parser.grammarName>Visitor.classinfo) return (cast(<parser.grammarName>Visitor!T)visitor).visit<struct.derivedFromName; format="cap">(this);
 	else return visitor.visitChildren(this);
 }
 >>

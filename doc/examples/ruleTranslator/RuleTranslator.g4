@@ -153,7 +153,7 @@ funct_parameters: parameters;
 
 expr_stmt: testlist_star_expr (annassign (testlist) |
                      ('=' (testlist_star_expr))*);
-annassign: ':' test ('=' test)?;
+annassign: ':' test;
 testlist_star_expr: (test) (',' (test))* (',')?;
 
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
@@ -169,7 +169,8 @@ dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
 compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef | block_stmt;
-if_stmt: IF test COLON suite (ELIF test COLON suite)* (ELSE COLON suite)?;
+if_stmt: IF condition COLON suite (ELIF condition COLON suite)* (ELSE COLON suite)?;
+condition: test;
 while_stmt: 'while' test ':' suite ('else' ':' suite)?;
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
 block_stmt: BLOCK COLON block_suite;

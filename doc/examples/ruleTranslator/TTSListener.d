@@ -6,10 +6,11 @@ import RuleWriter: RuleWriter;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-
+import std.algorithm.iteration;
 import std.array;
-import std.stdio;
 import std.format;
+import std.stdio;
+import std.string;
 
 /**
  * This class provides an empty implementation of {@link RuleTranslatorListener},
@@ -25,8 +26,6 @@ public class TTSListener : RuleTranslatorBaseListener {
     private string class_name;
 	
     private string baseName;
-	
-    private string functionName;
 
     private string parameters;
 	
@@ -52,7 +51,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.put("}\n");
+        writer.putnl("\n}3");
         writer.print;
         writer.clear;
     }
@@ -74,7 +73,6 @@ public class TTSListener : RuleTranslatorBaseListener {
 			writer.putnl(format("%s.%s;\n", language, class_name ? class_name : rule_ID));
 		else
 			writer.putnl(format("%s;\n", class_name ? class_name : rule_ID));
-        //writer.indentLevel = 2;
         writer.putnl("import std.array;");
         writer.putnl("import std.array;");
         writer.putnl("import std.conv;");
@@ -182,9 +180,9 @@ public class TTSListener : RuleTranslatorBaseListener {
 	 */
 	override public void exitImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) {
 		if(class_name)
-			writer.putnl(format("class %s : %s\n{\n", class_name, baseName)); 
+			writer.putnl(format("\nclass %s : %s\n{\n", class_name, baseName)); 
 		else
-			writer.putnl(format("class %s : GeneratedRule\n{\n", rule_ID));
+			writer.putnl(format("\nclass %s : GeneratedRule\n{\n", rule_ID));
 		writer.indentLevel = ++ indentLevel;
 	}
 
@@ -194,7 +192,6 @@ public class TTSListener : RuleTranslatorBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void enterFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
-		functionName = ctx.getText;
 	}
 	
 	/**
@@ -202,8 +199,8 @@ public class TTSListener : RuleTranslatorBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
-		writer.put(functionName);
+    override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
+        writer.put(ctx.getText);
     }
 	
     /**
@@ -224,7 +221,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("}");
+        writer.putnl("}2");
     }
     
     /**
@@ -234,17 +231,14 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) {
         parameters = ctx.getText;
-        import std.algorithm.iteration;
         if (funcdefFlag)
             {
                 auto spl = splitter(ctx.getText[1..($-1)], ',');
                 writer.putnl('(' ~ spl.map!(a => "T_" ~ a).join(", ") ~ ')');
                 writer.putnl("    (" ~ spl.map!(a => "T_" ~ a ~ ' ' ~ a).join(", ") ~ ')');
+                writer.putnl("{");
+                writer.indentLevel = ++ indentLevel;
                 funcdefFlag = false;
-            }
-        else
-            {
-                writer.putnl('(' ~ splitter(ctx.getText[1..($-1)], ',').join(", ") ~ ");");
             }
     }
     
@@ -254,8 +248,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitParameters(RuleTranslatorParser.ParametersContext ctx) {
-        writer.putnl("{");
-        writer.indentLevel = ++ indentLevel;
+
     }
     /**
      * {@inheritDoc}
@@ -337,13 +330,17 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) { }
+    override public void enterFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) {
+        //writer.put("-- enter Funct_stmt --");
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) { }
+    override public void exitFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) {
+        //writer.put("-- exit Funct_stmt --");
+    }
     /**
      * {@inheritDoc}
      *
@@ -471,7 +468,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterIf_stmt(RuleTranslatorParser.If_stmtContext ctx) {
-        writer.put("if (");
+        writer.put("if ");
     }
     /**
      * {@inheritDoc}
@@ -480,7 +477,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitIf_stmt(RuleTranslatorParser.If_stmtContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("}");
+        writer.putnl("}1");
     }
     /**
      * {@inheritDoc}
@@ -542,23 +539,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitSuite(RuleTranslatorParser.SuiteContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterTest(RuleTranslatorParser.TestContext ctx) {
-    }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitTest(RuleTranslatorParser.TestContext ctx) {
-        writer.putnl(")");
-        writer.putnl("{");
-        writer.indentLevel = ++ indentLevel;
-    }
     
     /**
      * {@inheritDoc}
@@ -906,7 +886,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterNot(RuleTranslatorParser.NotContext ctx) {
-        writer.put("!");
     }
     /**
      * {@inheritDoc}
@@ -921,7 +900,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) {
-        writer.put(ctx.getText);
     }
     /**
      * {@inheritDoc}
@@ -929,4 +907,24 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterCondition(RuleTranslatorParser.ConditionContext ctx) {
+        writer.put(format("children = %s", ctx.children));
+        writer.putnl('(' ~ splitter(ctx.getText.replace("not", "!"), ',').join(", ") ~ ")");
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void exitCondition(RuleTranslatorParser.ConditionContext ctx) {
+        writer.putnl("{");
+        writer.indentLevel = ++ indentLevel;
+    }
 }

@@ -38,7 +38,10 @@ int main(string[] argv) {
 
         foreach(filename; argv[1..$])
             {
-                writefln("\nProcessing: %s as %s", filename, grammar_version);
+                if(verbose)
+                    {
+                        writefln("\nProcessing: %s as %s", filename, grammar_version);
+                    }
                 auto antlrInput = new ANTLRInputStream(File(filename, "r"));
                 auto lexer = new RuleTranslatorLexer(antlrInput);
                 auto cts = new CommonTokenStream(lexer);
@@ -46,7 +49,7 @@ int main(string[] argv) {
                 // Pass the tokens to the parser
                 auto parser = new RuleTranslatorParser(cts);
                 if(verbose)
-                    writefln("\tNumber of on channel tokens \t= %s.", cts.getNumberOfOnChannelTokens);
+                    writefln("\tNumber of on channel tokens \t= %s.\n", cts.getNumberOfOnChannelTokens);
 
                 // Specify our entry point
                 auto rootContext = parser.file_input;

@@ -130,15 +130,20 @@ funcdef: DEF functionName
 functionName: NAME;
 
 parameters: '(' (typedargslist)? ')';
-typedargslist: (tfpdef ('=' test)? (',' tfpdef ('=' test)?)* (',' (
+typedargslist: (tfpdef (',' tfpdef)* (',' (
         '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
       | '**' tfpdef (',')?)?)?
   | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
   | '**' tfpdef (',')?);
-tfpdef: NAME | NUMBER | STRING | funct_stmt;
+tfpdef: NAME        # tfpdef_name
+      | NUMBER      # tfpdef_number
+      | STRING      # tfpdef_string
+      | funct_stmt  # tfpdef_funct_stm
+      ;
  
 stmt: (simple_stmt | compound_stmt);
 simple_stmt: small_stmt+ NEWLINE;
+
 small_stmt: (
     expr_stmt
     |string_stmt
@@ -168,11 +173,12 @@ dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
-compound_stmt: if_stmt | while_stmt | for_stmt | with_stmt | funcdef | block_stmt;
+compound_stmt: if_stmt | for_stmt | with_stmt | funcdef | block_stmt;
 if_stmt: IF condition COLON suite (ELIF condition COLON suite)* (ELSE COLON suite)?;
 condition: test;
-while_stmt: 'while' test ':' suite ('else' ':' suite)?;
+
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
+
 block_stmt: BLOCK COLON block_suite;
 
 block_suite: NEWLINE INDENT simple_block_stmt+ (low | high |) DEDENT;
@@ -202,8 +208,8 @@ term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;
 
 atom: (dotted_name | funct_stmt |
-       NUMBER | STRING+ | 'True' | 'False');
-testlist_comp: (test) ( comp_for | (',' (test))* (',')? );
+       NUMBER | STRING | 'True' | 'False');
+testlist_comp: (test) ( (',' (test))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript (',' subscript)* (',')?;
 subscript: test | (test)? ':' (test)? (sliceop)?;
@@ -211,9 +217,9 @@ sliceop: ':' (test)?;
 exprlist: (expr) (',' (expr))* (',')?;
 testlist: test (',' test)* (',')?;
 dictorsetmaker: ( ((test ':' test | '**' expr)
-                   (comp_for | (',' (test ':' test | '**' expr))* (',')?)) |
+                   ((',' (test ':' test | '**' expr))* (',')?)) |
                   ((test)
-                   (comp_for | (',' (test))* (',')?)) );
+                   ((',' (test))* (',')?)) );
 
 arglist: argument (',' argument)*  (',')?;
 
@@ -226,14 +232,7 @@ arglist: argument (',' argument)*  (',')?;
 // Illegal combinations and orderings are blocked in ast.c:
 // multiple (test comp_for) arguments are blocked; keyword unpackings
 // that precede iterable unpackings are blocked; etc.
-argument: ( test (comp_for)? |
-            test '=' test |
-            '**' test |
-            '*' test );
-
-comp_iter: comp_for | comp_if;
-comp_for: 'for' exprlist 'in' or_test (comp_iter)?;
-comp_if: 'if' test_nocond (comp_iter)?;
+argument: test;
 
 low: LOW;
 high: HIGH;

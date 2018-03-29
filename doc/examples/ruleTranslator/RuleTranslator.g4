@@ -145,8 +145,7 @@ stmt: (simple_stmt | compound_stmt);
 simple_stmt: small_stmt+ NEWLINE;
 
 small_stmt: (
-    expr_stmt
-    |string_stmt
+    string_stmt
     |funct_stmt
     |flow_stmt
 );
@@ -156,16 +155,10 @@ string_stmt: STRING (low | high |);
 funct_stmt: dotted_name funct_parameters (DOT funct_stmt)*;
 funct_parameters: parameters;
 
-expr_stmt: testlist_star_expr (annassign (testlist) |
-                     ('=' (testlist_star_expr))*);
-annassign: ':' test;
-testlist_star_expr: (test) (',' (test))* (',')?;
-
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
-flow_stmt: break_stmt | continue_stmt | return_stmt ;
+flow_stmt: break_stmt | continue_stmt;
 break_stmt: 'break';
 continue_stmt: 'continue';
-return_stmt: 'return' (testlist)?;
 
 // note below: the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
 
@@ -174,8 +167,11 @@ dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
 compound_stmt: if_stmt | for_stmt | with_stmt | funcdef | block_stmt;
-if_stmt: IF condition COLON suite (ELIF condition COLON suite)* (ELSE COLON suite)?;
+if_stmt: IF condition COLON suite (elif_e condition COLON suite)*
+            (else_e COLON suite)?;
 condition: test;
+elif_e: ELIF;
+else_e: ELSE;
 
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
 
@@ -191,13 +187,22 @@ suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT;
 
 test: or_test ('if' or_test 'else' test)?;
 test_nocond: or_test;
-or_test: and_test ('or' and_test)*;
-and_test: not_test ('and' not_test)*;
+or_test: and_test (or_e and_test)*;
+or_e: OR;
+and_test: not_test (and_e not_test)*;
+and_e: AND;
 not_test: not not_test | comparison;
 not: NOT;
 comparison: expr (comp_op expr)*;
 
-comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not';
+comp_op: LESS_THAN      # less_than
+       |GREATER_THAN    # greater_than
+       |EQUALS          # equals
+       |GT_EQ           # greater_equal
+       |LT_EQ           # less_equal
+       |NOT_EQ_1        # not_equal
+       |NOT_EQ_2        # not_equal
+       ;
 
 expr: xor_expr ('|' xor_expr)* | dotted_name;
 xor_expr: and_expr ('^' and_expr)*;

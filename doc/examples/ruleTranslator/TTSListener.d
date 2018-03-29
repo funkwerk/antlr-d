@@ -56,7 +56,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("\n}3");
+        writer.putnl("\n}");
         writer.print;
         writer.clear;
     }
@@ -99,8 +99,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) {
-		ruleSetting.class_name = "";
-	}
+        ruleSetting.class_name = "";
+    }
 
     /**
      * {@inheritDoc}
@@ -108,8 +108,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitClass_name(RuleTranslatorParser.Class_nameContext ctx) {
-		ruleSetting.class_name =  ctx.getText;
-	}
+        ruleSetting.class_name =  ctx.getText;
+    }
 
     /**
      * {@inheritDoc}
@@ -117,16 +117,16 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
-		ruleSetting.rule_ID = "";
-	}
+        ruleSetting.rule_ID = "";
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
     override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
-		ruleSetting.rule_ID = ctx.getText;
-	}
+        ruleSetting.rule_ID = ctx.getText;
+    }
 
     /**
      * {@inheritDoc}
@@ -134,16 +134,16 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterLanguage(RuleTranslatorParser.LanguageContext ctx) {
-		ruleSetting.language = "";
-	}
+        ruleSetting.language = "";
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
     override public void exitLanguage(RuleTranslatorParser.LanguageContext ctx) {
-		ruleSetting.language = ctx.getText;
-	}
+        ruleSetting.language = ctx.getText;
+    }
 
     /**
      * {@inheritDoc}
@@ -151,11 +151,11 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) {
-		string app;
-		foreach(el; ctx.children[2..$])
-			app ~= el.getText;
-		writer.putnl(format("import %s;", app));
-	}
+        string app;
+        foreach(el; ctx.children[2..$])
+            app ~= el.getText;
+        writer.putnl(format("import %s;", app));
+    }
 
     /**
      * {@inheritDoc}
@@ -163,8 +163,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterBase_rules(RuleTranslatorParser.Base_rulesContext ctx) {
-		ruleSetting.baseName = ctx.getText;
-	}
+        ruleSetting.baseName = ctx.getText;
+    }
 
     /**
      * {@inheritDoc}
@@ -174,11 +174,11 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void exitBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) { }
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) { }
 
     /**
      * {@inheritDoc}
@@ -228,7 +228,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("}2");
+        writer.putnl("}");
     }
 
     /**
@@ -273,7 +273,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitIf_stmt(RuleTranslatorParser.If_stmtContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("}1");
+        writer.putnl("}");
     }
 
 
@@ -398,6 +398,105 @@ public class TTSListener : RuleTranslatorBaseListener {
             auto x = stack.front.join;
             stack.removeFront;
             stack.front ~= x;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterElse_e(RuleTranslatorParser.Else_eContext ctx) {
+        writer.indentLevel = -- indentLevel;
+        writer.putnl("}");
+        writer.putnl("else");
+        writer.putnl("{");
+        writer.indentLevel = ++ indentLevel;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterElif_e(RuleTranslatorParser.Elif_eContext ctx) {
+        writer.indentLevel = -- indentLevel;
+        writer.put("else if (");
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterOr_e(RuleTranslatorParser.Or_eContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " || ";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterAnd_e(RuleTranslatorParser.And_eContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " && ";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterLess_than(RuleTranslatorParser.Less_thanContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " < ";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterGreater_than(RuleTranslatorParser.Greater_thanContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " > ";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterGreater_equal(RuleTranslatorParser.Greater_equalContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " <= ";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterLess_equal(RuleTranslatorParser.Less_equalContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " >= ";
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterNot_equal(RuleTranslatorParser.Not_equalContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " != ";
         }
     }
 }

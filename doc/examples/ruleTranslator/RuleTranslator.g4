@@ -152,7 +152,8 @@ small_stmt: (
 
 string_stmt: STRING (low | high |);
 
-funct_stmt: dotted_name funct_parameters (DOT funct_stmt)*;
+funct_stmt: dotted_name funct_parameters (dot_e funct_stmt)*;
+dot_e : DOT;
 funct_parameters: parameters;
 
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
@@ -212,8 +213,15 @@ arith_expr: term (('+'|'-') term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;
 
-atom: (dotted_name | funct_stmt |
-       NUMBER | STRING | 'True' | 'False');
+atom:
+    dotted_name     # atom_dotted_name
+    | funct_stmt    # atom_funct_stmt
+    | NUMBER        # number_e
+    | STRING        # string_e
+    | TRUE          # true_e
+    | FALSE         # false_e
+    ;
+
 testlist_comp: (test) ( (',' (test))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript (',' subscript)* (',')?;

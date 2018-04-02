@@ -8,10 +8,10 @@ import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import std.algorithm.iteration;
 import std.array;
+import std.container : SList;
 import std.format;
 import std.stdio;
 import std.string;
-import std.container : SList;
 
 /**
  * This class provides an empty implementation of {@link RuleTranslatorListener},
@@ -58,7 +58,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
         writer.indentLevel = -- indentLevel;
-        writer.putnl("\n}");
+        writer.putnl("}");
         writer.print;
         writer.clear;
     }
@@ -254,6 +254,22 @@ public class TTSListener : RuleTranslatorBaseListener {
             stack.front ~= format("append(%s)", ctx.children[0].getText);
             debug {
                 writefln("%s enterString_stmt:", counter++);
+                foreach(el; stack.opSlice)
+                    writefln("\t%s", el);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterVar_stmt(RuleTranslatorParser.Var_stmtContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= format("append(%s)", ctx.children[0].getText);
+            debug {
+                writefln("%s enterVar_stmt:", counter++);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -609,7 +625,7 @@ public class TTSListener : RuleTranslatorBaseListener {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -674,6 +690,36 @@ public class TTSListener : RuleTranslatorBaseListener {
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterBlock_stmt(RuleTranslatorParser.Block_stmtContext ctx) {
+        string[] conditionBuf;
+        stack.insert(conditionBuf);
+        debug {
+            writefln("%s enterBlock_stmt:", counter++);
+            foreach(el; stack.opSlice)
+                writefln("\t%s", el);
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void exitBlock_stmt(RuleTranslatorParser.Block_stmtContext ctx) {
+        if (!stack.empty) {
+            writer.putnl(stack.front.join);
+            stack.removeFront;
+            debug {
+                writefln("%s exitBlock_stmt:", counter++);
+                foreach(el; stack.opSlice)
+                    writefln("\t%s", el);
+            }
+        }}
     /**
      * {@inheritDoc}
      *
@@ -695,22 +741,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx)
-    {       
-        if (!stack.empty)
-            //stack.front ~= ctx.getText;
-        debug {
-            writefln("%s enterAtom_dotted_name:", counter++);
-            foreach(el; stack.opSlice)
-                writefln("\t%s", el);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
     override public void enterString_e(RuleTranslatorParser.String_eContext ctx) {
         if (!stack.empty)
             stack.front ~= ctx.getText;
@@ -720,7 +750,7 @@ public class TTSListener : RuleTranslatorBaseListener {
                 writefln("\t%s", el);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -737,10 +767,10 @@ public class TTSListener : RuleTranslatorBaseListener {
             }
         }
     }    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
+          * {@inheritDoc}
+          *
+          * <p>The default implementation does nothing.</p>
+          */
     override public void exitAtom_funct_stmt(RuleTranslatorParser.Atom_funct_stmtContext ctx) {
         if (!stack.empty) {
             auto x = stack.front;

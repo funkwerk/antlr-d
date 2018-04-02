@@ -123,6 +123,7 @@ language : NAME;
 import_stmt: NEWLINE* BASE language '.' base_rules;
 base_rules : NAME;
 
+//
 funcdef: DEF functionName
           parameters ':' suite;
 
@@ -140,14 +141,14 @@ tfpdef: NAME        # tfpdef_name
       | funct_stmt  # tfpdef_funct_stm
       ;
  
-stmt: (simple_stmt | compound_stmt);
+//
+stmt: (simple_stmt | compound_stmt |flow_stmt);
 simple_stmt: small_stmt+ NEWLINE;
 
 small_stmt: (
     string_stmt
     |var_stmt
     |funct_stmt
-    |flow_stmt
 );
 
 string_stmt: STRING (low | high |);
@@ -163,29 +164,26 @@ flow_stmt: break_stmt | continue_stmt;
 break_stmt: 'break';
 continue_stmt: 'continue';
 
-// note below: the ('.' | '...') is necessary because '...' is tokenized as ELLIPSIS
-
 dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
 compound_stmt: if_stmt | for_stmt | with_stmt | funcdef | block_stmt;
+
+// IF
 if_stmt: IF condition COLON suite (elif_e condition COLON suite)*
             (else_e COLON suite)?;
 condition: test;
 elif_e: ELIF;
 else_e: ELSE;
 
+//
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
 
+// BLOCK
 block_stmt: BLOCK COLON block_suite;
 
-block_suite: NEWLINE INDENT simple_block_stmt+ (low | high |) DEDENT;
-simple_block_stmt: (
-                     string_stmt
-                   | funct_stmt
-                   | var_stmt
-                   )+ NEWLINE;
+block_suite: NEWLINE INDENT simple_stmt+ (low | high |) DEDENT;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;

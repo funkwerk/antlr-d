@@ -84,8 +84,7 @@ DEDENT
   // "Tabs are replaced (from left to right) by one to eight spaces
   //  such that the total number of characters up to and including
   //  the replacement is a multiple of eight [...]"
-  //
-  //  -- https://docs.python.org/3.1/reference/lexical_analysis.html#indentation
+
   static int getIndentationCount(string spaces) {
     int count = 0;
     foreach (char ch; spaces) {
@@ -146,6 +145,7 @@ simple_stmt: small_stmt+ NEWLINE;
 
 small_stmt: (
     string_stmt
+    |var_stmt
     |funct_stmt
     |flow_stmt
 );
@@ -155,6 +155,8 @@ string_stmt: STRING (low | high |);
 funct_stmt: dotted_name funct_parameters (dot_e funct_stmt)*;
 dot_e : DOT;
 funct_parameters: parameters;
+
+var_stmt: NAME;
 
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
 flow_stmt: break_stmt | continue_stmt;
@@ -179,7 +181,11 @@ for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
 block_stmt: BLOCK COLON block_suite;
 
 block_suite: NEWLINE INDENT simple_block_stmt+ (low | high |) DEDENT;
-simple_block_stmt: (string_stmt | funct_stmt)+ NEWLINE;
+simple_block_stmt: (
+                     string_stmt
+                   | funct_stmt
+                   | var_stmt
+                   )+ NEWLINE;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;

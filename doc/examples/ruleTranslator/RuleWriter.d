@@ -36,10 +36,15 @@ class RuleWriter{
     }
 
     public void put(string s) {
-        Result r =  set(s);
-        result ~= r;
+        result ~= set(s);
     }
-
+    
+    public void put(string[] s) {
+        foreach(el; s) {
+            result ~= set(el);
+        }
+    }
+    
     public void putnl(string s) {
         s ~= "\n";
         Result r =  set(s);

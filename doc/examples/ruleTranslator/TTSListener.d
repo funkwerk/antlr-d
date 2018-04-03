@@ -27,8 +27,8 @@ public class TTSListener : RuleTranslatorBaseListener {
     struct RuleSetting
     {
         string language;
-        string rule_ID;
-        string class_name;
+        string ruleName;
+        string className;
         string baseName;
     }
 
@@ -40,14 +40,18 @@ public class TTSListener : RuleTranslatorBaseListener {
 
     private bool ruleRequired = true;
 
-    private bool ruleExits;
+    private bool ruleExists;
 
     public RuleWriter writer;
+  
+    public string withPropertyName;
+    
+    public string arguments;
 
     string[] startText = [
-                          "override string[] rule",
-                          //        formatParaList(arguments) ~ "\n";
-
+                          "\n",
+                          "override string[] rule" ~
+                          "(${arguments})\n",
                           "{\n",
                           "    output.clear;\n\n",
                           "    with(${withPropertyName})\n",
@@ -55,13 +59,14 @@ public class TTSListener : RuleTranslatorBaseListener {
                           ];
 
     string[] closingText = [
-                            "static this()",
-                            "{",
-                            "    ${classId} inst = new ${classId}();",
-                            "    inst.type = \"${rule} \";",
-                            "    inst.language = \"${language} \";",
-                            "    Repository.register(inst);",
-                            "}"
+                            "\n",
+                            "static this()\n",
+                            "{\n",
+                            "    auto inst = new ${class}();\n",
+                            "    inst.type = \"${rule}\";\n",
+                            "    inst.language = \"${language}\";\n",
+                            "    Repository.register(inst);\n",
+                            "}\n"
                             ];
 
     /**
@@ -79,8 +84,26 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
+        debug {
+            writefln("%s exitFile_input:", counter++);
+            writefln("\truleRequired = %s", ruleRequired);
+            writefln("\truleExits = %s", ruleExists);
+        }
         writer.indentLevel = -- indentLevel;
         writer.putnl("}");
+        if(ruleExists) {
+            with(ruleSetting) {
+                closingText.each!((ref n) => n = n.replace("${class}",
+                                                           className ? className : ruleName));
+                closingText.each!((ref n) => n = n.replace("${rule}", ruleName));
+                closingText.each!((ref n) => n = n.replace("${language}", language));
+            }
+            writer.indentLevel = -- indentLevel;
+            writer.putnl("}");
+            writer.put(closingText);
+            writer.indentLevel = -- indentLevel;
+            writer.putnl("}");
+        }
         writer.print;
         writer.clear;
     }
@@ -98,17 +121,19 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitRule_setting(RuleTranslatorParser.Rule_settingContext ctx) {
-        if (ruleSetting.language)
-            writer.putnl(format("%s.%s;\n",
-                                ruleSetting.language,
-                                ruleSetting.class_name ? ruleSetting.class_name : ruleSetting.rule_ID
-                                )
-                         );
-        else
-            writer.putnl(format("%s;\n",
-                                ruleSetting.class_name ? ruleSetting.class_name : ruleSetting.rule_ID
-                                )
-                         );
+        with(ruleSetting) {
+            if (language)
+                writer.putnl(format("%s.%s;\n",
+                                    language,
+                                    className ? className : ruleName
+                                    )
+                             );
+            else
+                writer.putnl(format("%s;\n",
+                                    className ? className : ruleName
+                                    )
+                             );
+        }
         writer.putnl("import std.array;");
         writer.putnl("import std.array;");
         writer.putnl("import std.conv;");
@@ -123,7 +148,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) {
-        ruleSetting.class_name = "";
+        ruleSetting.className = ctx.getText;
     }
 
     /**
@@ -131,25 +156,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitClass_name(RuleTranslatorParser.Class_nameContext ctx) {
-        ruleSetting.class_name =  ctx.getText;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
-        ruleSetting.rule_ID = "";
-    }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) {
-        ruleSetting.rule_ID = ctx.getText;
+    override public void enterRule_name(RuleTranslatorParser.Rule_nameContext ctx) {
+        ruleSetting.ruleName = ctx.getText;
     }
 
     /**
@@ -195,13 +203,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitBase_rules(RuleTranslatorParser.Base_rulesContext ctx) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
     override public void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) { }
 
     /**
@@ -210,10 +211,10 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) {
-        if(ruleSetting.class_name)
-            writer.putnl(format("\nclass %s : %s\n{\n", ruleSetting.class_name, ruleSetting.baseName));
+        if(ruleSetting.className)
+            writer.putnl(format("\nclass %s : %s\n{", ruleSetting.className, ruleSetting.baseName));
         else
-            writer.putnl(format("\nclass %s : GeneratedRule\n{\n", ruleSetting.rule_ID));
+            writer.putnl(format("\nclass %s : GeneratedRule\n{", ruleSetting.ruleName));
         writer.indentLevel = ++ indentLevel;
     }
 
@@ -235,10 +236,17 @@ public class TTSListener : RuleTranslatorBaseListener {
         debug {
             writefln("%s enterStmt:", counter++);
             writefln("\truleRequired = %s", ruleRequired);
-            writefln("\truleExits = %s", ruleExits);
+            writefln("\truleExits = %s", ruleExists);
         }
-        ruleExits = true;
-        ruleRequired = false;
+        if (ruleRequired) {
+            startText.each!((ref n) => n = n.replace("${withPropertyName}", withPropertyName));
+            startText.each!((ref n) => n = n.replace("${arguments}", arguments));
+            writer.put(startText);
+            writer.indentLevel = ++ indentLevel;
+            writer.indentLevel = ++ indentLevel;
+            ruleExists = true;
+            ruleRequired = false;
+        }
     }
     /**
      * {@inheritDoc}
@@ -350,7 +358,7 @@ public class TTSListener : RuleTranslatorBaseListener {
         if (!stack.empty) {
             stack.front ~= ctx.getText;
             debug {
-                writefln("%s enterDotted_name:", counter++);
+                writefln("%s enterDottedName:", counter++);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -463,7 +471,7 @@ public class TTSListener : RuleTranslatorBaseListener {
         if (!stack.empty) {
             stack.front ~= ctx.getText;
             debug {
-                writefln("%s enterTfpdef_name:", counter++);
+                writefln("%s enterTfpdefName:", counter++);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }

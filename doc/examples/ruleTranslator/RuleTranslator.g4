@@ -120,10 +120,10 @@ ruledef: stmt+;
 
 import_stmts: import_stmt*;
 
-rule_setting: NEWLINE* RULE (class_name AS)? rule_ID language;
+rule_setting: NEWLINE* RULE (class_name AS)? rule_name language;
 
 class_name : NAME;
-rule_ID : NAME;
+rule_name : NAME;
 language : NAME;
 
 import_stmt: NEWLINE* BASE language '.' base_rules;

@@ -12,7 +12,8 @@ if product != "hahnenkammShuttle":
     trainTypeNumber(trainNumber, product, metaCategory)
     if  passengerEnd or boarding == "GET_OFF_ONLY":
         "from" stationName(origin)
-        ", scheduled arrival time" timeOfDay(arrivalTime)
+        block:
+            ", scheduled arrival time" timeOfDay(arrivalTime)
     else:
         "to" stationName(destination)
         ", scheduled departure time" timeOfDay(departureTime)

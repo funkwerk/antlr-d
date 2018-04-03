@@ -16,14 +16,18 @@ import std.string;
 
 string outputDir;
 bool verbose;
+string withPropertyName = "this";
+string arguments;
 enum Version {tts, iba};
 Version grammar_version;
 
 int main(string[] argv) {
     auto helpInformation = getopt(
                                   argv,
-                                  "od", "Output directory name, otherwise print to standard output", &outputDir,
                                   "dsl-type|d", "DSL source type: tts (default) or iba", &grammar_version,
+                                  "with|w", "the with (main) property", &withPropertyName,
+                                  "arguments|a", "string of rule arguments", &arguments,
+                                  "od", "Output directory name, otherwise print to standard output", &outputDir,
                                   "verbose|v", &verbose
                                   );
 
@@ -53,7 +57,7 @@ int main(string[] argv) {
 
                 // Specify our entry point
                 auto rootContext = parser.file_input;
-                
+
                 if(!parser.getNumberOfSyntaxErrors)
                     {
                         // No syntax errors
@@ -66,7 +70,9 @@ int main(string[] argv) {
                                 writer.setOutputPath(outputDir);
                             }
                         writer.setOutputFilename(outputName);
-                        baseListener.writer = writer;   
+                        baseListener.writer = writer;
+                        baseListener.withPropertyName = withPropertyName;
+                        baseListener.arguments = arguments;
                         auto walker = new ParseTreeWalker;
                         walker.walk(baseListener, rootContext);
                     }
@@ -80,6 +86,7 @@ int main(string[] argv) {
     }
     else {
         stderr.writeln("Error: missing DSL source");
+        defaultGetoptPrinter("\nCommand line options", helpInformation.options);
         return 1;
     }
 }

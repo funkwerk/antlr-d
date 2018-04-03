@@ -6,61 +6,61 @@
 
 module antlr.v4.runtime.atn.ATNDeserializer;
 
+import antlr.v4.runtime.IllegalArgumentException;
+import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
+import antlr.v4.runtime.UnsupportedOperationException;
+import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATNDeserializationOptions;
+import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.ATNType;
+import antlr.v4.runtime.atn.ActionTransition;
+import antlr.v4.runtime.atn.AtomTransition;
+import antlr.v4.runtime.atn.BasicBlockStartState;
+import antlr.v4.runtime.atn.BasicState;
+import antlr.v4.runtime.atn.BlockEndState;
+import antlr.v4.runtime.atn.BlockStartState;
+import antlr.v4.runtime.atn.DecisionState;
+import antlr.v4.runtime.atn.EpsilonTransition;
+import antlr.v4.runtime.atn.LexerAction;
+import antlr.v4.runtime.atn.LexerActionType;
+import antlr.v4.runtime.atn.LexerChannelAction;
+import antlr.v4.runtime.atn.LexerCustomAction;
+import antlr.v4.runtime.atn.LexerModeAction;
+import antlr.v4.runtime.atn.LexerMoreAction;
+import antlr.v4.runtime.atn.LexerPopModeAction;
+import antlr.v4.runtime.atn.LexerPushModeAction;
+import antlr.v4.runtime.atn.LexerSkipAction;
+import antlr.v4.runtime.atn.LexerTypeAction;
+import antlr.v4.runtime.atn.LoopEndState;
+import antlr.v4.runtime.atn.NotSetTransition;
+import antlr.v4.runtime.atn.PlusBlockStartState;
+import antlr.v4.runtime.atn.PlusLoopbackState;
+import antlr.v4.runtime.atn.PrecedencePredicateTransition;
+import antlr.v4.runtime.atn.PredicateTransition;
+import antlr.v4.runtime.atn.RangeTransition;
+import antlr.v4.runtime.atn.RuleStartState;
+import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.StarBlockStartState;
+import antlr.v4.runtime.atn.StarLoopEntryState;
+import antlr.v4.runtime.atn.StarLoopbackState;
+import antlr.v4.runtime.atn.StateNames;
+import antlr.v4.runtime.atn.TokensStartState;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.TransitionStates;
+import antlr.v4.runtime.atn.WildcardTransition;
+import antlr.v4.runtime.misc;
+import std.algorithm: canFind;
+import std.algorithm: map;
+import std.algorithm: reverse;
 import std.array;
 import std.conv;
 import std.format;
 import std.stdio;
 import std.uuid;
-import std.algorithm: map;
-import std.algorithm: canFind;
-import std.algorithm: reverse;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.IllegalStateException;
-import antlr.v4.runtime.UnsupportedOperationException;
-import antlr.v4.runtime.IllegalArgumentException;
-import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ATNType;
-import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.StateNames;
-import antlr.v4.runtime.atn.ATNDeserializationOptions;
-import antlr.v4.runtime.atn.AtomTransition;
-import antlr.v4.runtime.atn.BasicBlockStartState;
-import antlr.v4.runtime.atn.BlockStartState;
-import antlr.v4.runtime.atn.BlockEndState;
-import antlr.v4.runtime.atn.StarBlockStartState;
-import antlr.v4.runtime.atn.DecisionState;
-import antlr.v4.runtime.atn.LexerAction;
-import antlr.v4.runtime.atn.LexerChannelAction;
-import antlr.v4.runtime.atn.LexerCustomAction;
-import antlr.v4.runtime.atn.LexerModeAction;
-import antlr.v4.runtime.atn.LexerMoreAction;
-import antlr.v4.runtime.atn.LexerActionType;
-import antlr.v4.runtime.atn.LexerPopModeAction;
-import antlr.v4.runtime.atn.LexerPushModeAction;
-import antlr.v4.runtime.atn.LexerSkipAction;
-import antlr.v4.runtime.atn.LexerTypeAction;
-import antlr.v4.runtime.atn.BasicState;
-import antlr.v4.runtime.atn.LoopEndState;
-import antlr.v4.runtime.atn.PlusLoopbackState;
-import antlr.v4.runtime.atn.PlusBlockStartState;
-import antlr.v4.runtime.atn.RuleStartState;
-import antlr.v4.runtime.atn.RuleStopState;
-import antlr.v4.runtime.atn.StarLoopEntryState;
-import antlr.v4.runtime.atn.StarLoopbackState;
-import antlr.v4.runtime.atn.TokensStartState;
-import antlr.v4.runtime.atn.ActionTransition;
-import antlr.v4.runtime.atn.RuleTransition;
-import antlr.v4.runtime.atn.EpsilonTransition;
-import antlr.v4.runtime.atn.PredicateTransition;
-import antlr.v4.runtime.atn.PrecedencePredicateTransition;
-import antlr.v4.runtime.atn.SetTransition;
-import antlr.v4.runtime.atn.NotSetTransition;
-import antlr.v4.runtime.atn.WildcardTransition;
-import antlr.v4.runtime.atn.Transition;
-import antlr.v4.runtime.atn.RangeTransition;
-import antlr.v4.runtime.atn.TransitionStates;
-import antlr.v4.runtime.misc;
 
 // Class ATNDeserializer
 /**
@@ -331,63 +331,65 @@ class ATNDeserializer
                                      int arg3, IntervalSet[] sets)
     {
 	ATNState target = atn.states[trg];
-        switch (type) {
-        case TransitionStates.EPSILON : return new EpsilonTransition(target);
-        case TransitionStates.RANGE :
-            if (arg3 != 0) {
-                return new RangeTransition(target, TokenConstantDefinition.EOF, arg2);
+        with(TransitionStates) {
+            switch (type) {
+            case EPSILON : return new EpsilonTransition(target);
+            case RANGE :
+                if (arg3 != 0) {
+                    return new RangeTransition(target, TokenConstantDefinition.EOF, arg2);
+                }
+                else {
+                    return new RangeTransition(target, arg1, arg2);
+                }
+            case RULE :
+                RuleTransition rt = new RuleTransition(cast(RuleStartState)atn.states[arg1], arg2, arg3, target);
+                return rt;
+            case PREDICATE :
+                PredicateTransition pt = new PredicateTransition(target, arg1, arg2, arg3 != 0);
+                return pt;
+            case PRECEDENCE:
+                return new PrecedencePredicateTransition(target, arg1);
+            case ATOM :
+                if (arg3 != 0) {
+                    return new AtomTransition(target, TokenConstantDefinition.EOF);
+                }
+                else {
+                    return new AtomTransition(target, arg1);
+                }
+            case ACTION :
+                ActionTransition a = new ActionTransition(target, arg1, arg2, arg3 != 0);
+                return a;
+            case SET : return new SetTransition(target, sets[arg1]);
+            case NOT_SET : return new NotSetTransition(target, sets[arg1]);
+            case WILDCARD : return new WildcardTransition(target);
+            default: throw new IllegalArgumentException("The specified transition type is not valid.");
             }
-            else {
-                return new RangeTransition(target, arg1, arg2);
-            }
-        case TransitionStates.RULE :
-            RuleTransition rt = new RuleTransition(cast(RuleStartState)atn.states[arg1], arg2, arg3, target);
-            return rt;
-        case TransitionStates.PREDICATE :
-            PredicateTransition pt = new PredicateTransition(target, arg1, arg2, arg3 != 0);
-            return pt;
-        case TransitionStates.PRECEDENCE:
-            return new PrecedencePredicateTransition(target, arg1);
-        case TransitionStates.ATOM :
-            if (arg3 != 0) {
-                return new AtomTransition(target, TokenConstantDefinition.EOF);
-            }
-            else {
-                return new AtomTransition(target, arg1);
-            }
-        case TransitionStates.ACTION :
-            ActionTransition a = new ActionTransition(target, arg1, arg2, arg3 != 0);
-            return a;
-        case TransitionStates.SET : return new SetTransition(target, sets[arg1]);
-        case TransitionStates.NOT_SET : return new NotSetTransition(target, sets[arg1]);
-        case TransitionStates.WILDCARD : return new WildcardTransition(target);
-        default: throw new IllegalArgumentException("The specified transition type is not valid.");
         }
-
     }
 
     protected ATNState stateFactory(int type, int ruleIndex)
     {
         ATNState s;
-        switch (type) {
-        case StateNames.INVALID: return null;
-        case StateNames.BASIC : s = new BasicState(); break;
-        case StateNames.RULE_START : s = new RuleStartState(); break;
-        case StateNames.BLOCK_START : s = new BasicBlockStartState(); break;
-        case StateNames.PLUS_BLOCK_START : s = new PlusBlockStartState(); break;
-        case StateNames.STAR_BLOCK_START : s = new StarBlockStartState(); break;
-        case StateNames.TOKEN_START : s = new TokensStartState(); break;
-        case StateNames.RULE_STOP : s = new RuleStopState(); break;
-        case StateNames.BLOCK_END : s = new BlockEndState(); break;
-        case StateNames.STAR_LOOP_BACK : s = new StarLoopbackState(); break;
-        case StateNames.STAR_LOOP_ENTRY : s = new StarLoopEntryState(); break;
-        case StateNames.PLUS_LOOP_BACK : s = new PlusLoopbackState(); break;
-        case StateNames.LOOP_END : s = new LoopEndState(); break;
-        default :
-            string message = format("The specified state type %d is not valid.", type);
-            throw new IllegalArgumentException(message);
+        with(StateNames) {
+            switch (type) {
+            case INVALID: return null;
+            case BASIC : s = new BasicState(); break;
+            case RULE_START : s = new RuleStartState(); break;
+            case BLOCK_START : s = new BasicBlockStartState(); break;
+            case PLUS_BLOCK_START : s = new PlusBlockStartState(); break;
+            case STAR_BLOCK_START : s = new StarBlockStartState(); break;
+            case TOKEN_START : s = new TokensStartState(); break;
+            case RULE_STOP : s = new RuleStopState(); break;
+            case BLOCK_END : s = new BlockEndState(); break;
+            case STAR_LOOP_BACK : s = new StarLoopbackState(); break;
+            case STAR_LOOP_ENTRY : s = new StarLoopEntryState(); break;
+            case PLUS_LOOP_BACK : s = new PlusLoopbackState(); break;
+            case LOOP_END : s = new LoopEndState(); break;
+            default :
+                string message = format("The specified state type %d is not valid.", type);
+                throw new IllegalArgumentException(message);
+            }
         }
-
         s.ruleIndex = ruleIndex;
         return s;
     }
@@ -953,28 +955,30 @@ class ATNDeserializer
                     {
                         continue;
                     }
-                switch (matchTransition.getSerializationType)
-                    {
-                    case TransitionStates.ATOM:
-                    case TransitionStates.RANGE:
-                    case TransitionStates.SET:
+                with(TransitionStates) {
+                    switch (matchTransition.getSerializationType)
                         {
-                            ruleToInlineTransition[i] = matchTransition;
-                            break;
-                        }
+                        case ATOM:
+                        case RANGE:
+                        case SET:
+                            {
+                                ruleToInlineTransition[i] = matchTransition;
+                                break;
+                            }
 
-                    case TransitionStates.NOT_SET:
-                    case TransitionStates.WILDCARD:
-                        {
-                            // not implemented yet
-                            continue;
-                        }
+                        case NOT_SET:
+                        case WILDCARD:
+                            {
+                                // not implemented yet
+                                continue;
+                            }
 
-                    default:
-                        {
-                            continue;
+                        default:
+                            {
+                                continue;
+                            }
                         }
-                    }
+                }
             }
         for (int stateNumber = 0; stateNumber < atn.states.length; stateNumber++)
             {
@@ -1018,31 +1022,33 @@ class ATNDeserializer
                     intermediateState.setRuleIndex(target.ruleIndex);
                     atn.addState(intermediateState);
                     optimizedTransitions ~= new EpsilonTransition(intermediateState);
-                    switch (effective.getSerializationType)
-                        {
-                        case TransitionStates.ATOM:
+                    with(TransitionStates) {
+                        switch (effective.getSerializationType)
                             {
-                                intermediateState.addTransition(new AtomTransition(target, (cast(AtomTransition)effective)._label));
-                                break;
-                            }
+                            case ATOM:
+                                {
+                                    intermediateState.addTransition(new AtomTransition(target, (cast(AtomTransition)effective)._label));
+                                    break;
+                                }
 
-                        case TransitionStates.RANGE:
-                            {
-                                intermediateState.addTransition(new RangeTransition(target, (cast(RangeTransition)effective).from, (cast(RangeTransition)effective).to));
-                                break;
-                            }
+                            case RANGE:
+                                {
+                                    intermediateState.addTransition(new RangeTransition(target, (cast(RangeTransition)effective).from, (cast(RangeTransition)effective).to));
+                                    break;
+                                }
 
-                        case TransitionStates.SET:
-                            {
-                                intermediateState.addTransition(new SetTransition(target, effective.label));
-                                break;
-                            }
+                            case SET:
+                                {
+                                    intermediateState.addTransition(new SetTransition(target, effective.label));
+                                    break;
+                                }
 
-                        default:
-                            {
-                                assert(false, "NotSupportedException");
+                            default:
+                                {
+                                    assert(false, "NotSupportedException");
+                                }
                             }
-                        }
+                    }
                 }
                 if (optimizedTransitions != null)
                     {
@@ -1252,9 +1258,9 @@ version(unittest) {
     import std.stdio;
 
     @Tags("des11")
-    @("testEncodingATNDeserialize")
-    unittest {
-        auto des = new ATNDeserializer;
-        des.should.not.beNull;
-    }
+        @("testEncodingATNDeserialize")
+        unittest {
+            auto des = new ATNDeserializer;
+            des.should.not.beNull;
+        }
 }

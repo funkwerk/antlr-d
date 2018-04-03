@@ -34,13 +34,35 @@ public class TTSListener : RuleTranslatorBaseListener {
 
     private RuleSetting ruleSetting;
 
-    private string parameters;
-
     private ushort indentLevel;
 
     private bool funcdefFlag;
 
+    private bool ruleRequired = true;
+
+    private bool ruleExits;
+
     public RuleWriter writer;
+
+    string[] startText = [
+                          "override string[] rule",
+                          //        formatParaList(arguments) ~ "\n";
+
+                          "{\n",
+                          "    output.clear;\n\n",
+                          "    with(${withPropertyName})\n",
+                          "    {\n"
+                          ];
+
+    string[] closingText = [
+                            "static this()",
+                            "{",
+                            "    ${classId} inst = new ${classId}();",
+                            "    inst.type = \"${rule} \";",
+                            "    inst.language = \"${language} \";",
+                            "    Repository.register(inst);",
+                            "}"
+                            ];
 
     /**
      * {@inheritDoc}
@@ -204,7 +226,20 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
         writer.put(ctx.getText);
     }
-
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterStmt(RuleTranslatorParser.StmtContext ctx) {
+        debug {
+            writefln("%s enterStmt:", counter++);
+            writefln("\truleRequired = %s", ruleRequired);
+            writefln("\truleExits = %s", ruleExits);
+        }
+        ruleExits = true;
+        ruleRequired = false;
+    }
     /**
      * {@inheritDoc}
      *
@@ -214,6 +249,7 @@ public class TTSListener : RuleTranslatorBaseListener {
         writer.putnl("");
         writer.put("void ");
         funcdefFlag = true;
+        ruleRequired = false;
     }
 
     /**
@@ -224,6 +260,7 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void exitFuncdef(RuleTranslatorParser.FuncdefContext ctx) {
         writer.indentLevel = -- indentLevel;
         writer.putnl("}");
+        ruleRequired = true;
     }
 
     /**
@@ -232,7 +269,6 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) {
-        parameters = ctx.getText;
         if (funcdefFlag)
             {
                 auto spl = splitter(ctx.getText[1..($-1)], ',');

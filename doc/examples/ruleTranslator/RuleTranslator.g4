@@ -110,7 +110,13 @@ DEDENT
  * parser rules
  */
 
-file_input: rule_setting import_stmts (NEWLINE | stmt)+ EOF;
+file_input: rule_setting
+            import_stmts
+            (NEWLINE | funcdef)* 
+            (NEWLINE | ruledef?)
+            EOF;
+
+ruledef: stmt+;
 
 import_stmts: import_stmt*;
 
@@ -168,7 +174,7 @@ dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
 dotted_name: NAME ('.' NAME)*;
 
-compound_stmt: if_stmt | for_stmt | with_stmt | funcdef | block_stmt;
+compound_stmt: if_stmt | for_stmt | with_stmt | block_stmt;
 
 // IF
 if_stmt: IF condition COLON suite (elif_e condition COLON suite)*

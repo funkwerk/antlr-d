@@ -48,7 +48,7 @@ GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
 RDMD = rdmd
-DMD = ldmd2 -w -link-defaultlib-shared
+DMD = ldmd2 -w -link-defaultlib-shared -debug=DefaultErrorStrategy
 GENERATOR = axmi2d
 ANTLR = antlr4-4.7.1
 ANTLR_TAR = $(ANTLR).tar.gz

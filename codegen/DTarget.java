@@ -26,13 +26,13 @@ public class DTarget extends Target {
 	 */
 	private static final ThreadLocal<STGroup> targetTemplates = new ThreadLocal<STGroup>();
 
-	protected static final String[] javaKeywords = {
-		"abstract", "assert", "boolean", "break", "byte", "case", "catch",
+	protected static final String[] dKeywords = {
+		"abstract", "assert", "bool", "break", "byte", "case", "catch",
 		"char", "class", "const", "continue", "default", "do", "double", "else",
 		"enum", "extends", "false", "final", "finally", "float", "for", "goto",
 		"if", "implements", "import", "instanceof", "int", "interface",
 		"long", "native", "new", "null", "package", "private", "protected",
-		"public", "return", "short", "static", "strictfp", "super", "switch",
+		"public", "return", "short", "static", "super", "switch",
 		"synchronized", "this", "throw", "throws", "transient", "true", "try",
 		"void", "volatile", "while"
 	};
@@ -84,7 +84,7 @@ public class DTarget extends Target {
 	}
 
 	protected void addBadWords() {
-		badWords.addAll(Arrays.asList(javaKeywords));
+		badWords.addAll(Arrays.asList(dKeywords));
 		badWords.add("rule");
 		badWords.add("parserRule");
 	}

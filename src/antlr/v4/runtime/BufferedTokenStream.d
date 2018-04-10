@@ -175,7 +175,7 @@ class BufferedTokenStream : TokenStream
 
     /**
      * Add {@code n} elements to buffer.
-     * 
+     *
      *  @return The actual number of elements added to the buffer.
      */
     protected int fetch(int n)

@@ -230,6 +230,8 @@ atom:
     | STRING        # string_e
     | TRUE          # true_e
     | FALSE         # false_e
+    | LAST          # last_e
+    | FIRST         # first_e
     ;
 
 testlist_comp: (test) ( (',' (test))* (',')? );
@@ -278,6 +280,8 @@ INTEGER
  | HEX_INTEGER
  ;
 
+FIRST: 'first';
+LAST: 'last';
 RULE : 'rule';
 BASE : 'base';
 DEF : 'def';

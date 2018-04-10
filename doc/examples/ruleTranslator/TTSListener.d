@@ -34,6 +34,14 @@ public class TTSListener : RuleTranslatorBaseListener {
 
     private RuleSetting ruleSetting;
 
+    struct LoopStack
+    {
+        string foreachType;
+        ushort foreachIndex;  // index must not start at 0
+    }
+
+    private LoopStack loopStack;
+
     private ushort indentLevel;
 
     private bool funcdefFlag;
@@ -43,9 +51,9 @@ public class TTSListener : RuleTranslatorBaseListener {
     private bool ruleExists;
 
     public RuleWriter writer;
-  
+
     public string withPropertyName;
-    
+
     public string arguments;
 
     string[] startText = [

@@ -147,7 +147,6 @@ public class TTSListener : RuleTranslatorBaseListener {
                              );
         }
         writer.putnl("import std.array;");
-        writer.putnl("import std.array;");
         writer.putnl("import std.conv;");
         writer.putnl("import std.datetime;");
         writer.putnl("import rule.Repository;");

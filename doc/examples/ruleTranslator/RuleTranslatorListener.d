@@ -396,6 +396,16 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitFor_testlist(RuleTranslatorParser.For_testlistContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#for_exprlist}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_exprlist(RuleTranslatorParser.For_exprlistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#for_exprlist}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_exprlist(RuleTranslatorParser.For_exprlistContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#block_stmt}.
 	 * @param ctx the parse tree
 	 */

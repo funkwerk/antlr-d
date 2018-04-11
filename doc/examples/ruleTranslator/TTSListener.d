@@ -37,11 +37,13 @@ public class TTSListener : RuleTranslatorBaseListener {
     struct LoopElement
     {
         string foreachType;
+        string foreachElementType;
         ushort foreachIndex;  // index must not start at 0
     }
 
     private auto loopStack = SList!(LoopElement)();
-    
+    private string foreachElementName;
+
     private ushort indentLevel;
 
     private bool funcdefFlag;
@@ -867,51 +869,102 @@ public class TTSListener : RuleTranslatorBaseListener {
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
-            LoopElement l;
-            loopStack.insert(l);
-        }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
-            loopStack.removeFront;
-        }
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
+        LoopElement l;
+        loopStack.insert(l);
+        writer.put("foreach (");
+    }
+
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterFor_testlist(RuleTranslatorParser.For_testlistContext ctx) {
-            LoopElement l;
-            l.foreachType = ctx.getText;
-            l.foreachIndex = 0;
-            loopStack.front = l;
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void exitFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
+        writer.indentLevel = -- indentLevel;
+        writer.putnl("}");
+        debug {
+            writefln("%s exitFor_stm:", counter++);
+            foreach(el; loopStack.opSlice)
+                writefln("\t%s", el);
         }
+        loopStack.removeFront;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterFor_exprlist(RuleTranslatorParser.For_exprlistContext ctx) {
+        foreachElementName = ctx.getText;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterFor_testlist(RuleTranslatorParser.For_testlistContext ctx) {
+        LoopElement l;
+        l.foreachElementType = foreachElementName;
+        l.foreachType = ctx.getText;
+        l.foreachIndex = 0;
+        loopStack.front = l;
+        debug {
+            writefln("%s enterFor_testlist loop stack:", counter++);
+            foreach(el; loopStack.opSlice)
+                writefln("\t%s", el);
+        }
+    }
 
     /**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) {
-            if (!stack.empty)
-                stack.front ~= format("%s_index == 0", loopStack.front.foreachType);
+    override public void exitFor_testlist(RuleTranslatorParser.For_testlistContext ctx)
+    {
+        writer.putnl(format("int %s_index, %s; %s)",
+                     loopStack.front.foreachElementType,
+                     loopStack.front.foreachElementType,
+                     loopStack.front.foreachType,
+                            )
+                     );
+        writer.putnl("{");
+        writer.indentLevel = ++ indentLevel;
+        debug {
+            writefln("%s exitFor_testlist:", counter++);
+            foreach(el; loopStack.opSlice)
+                writefln("\t%s", el);
         }
+    }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) {
-            if (!stack.empty)
-                stack.front ~= format("%s_index == %s", ctx.getText, ctx.getText);
-        }
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) {
+        if (!stack.empty)
+            stack.front ~= format("%s_index == 0",
+                                  loopStack.front.foreachElementType,
+                                  );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) {
+        if (!stack.empty)
+            stack.front ~= format("%s_index == %s.length-1",
+                                  loopStack.front.foreachElementType,
+                                  loopStack.front.foreachType);
+    }
 }

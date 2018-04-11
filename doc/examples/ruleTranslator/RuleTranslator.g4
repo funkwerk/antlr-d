@@ -184,8 +184,9 @@ elif_e: ELIF;
 else_e: ELSE;
 
 //
-for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
+for_stmt: FOR for_exprlist IN for_testlist COLON suite (ELSE COLON suite)?;
 for_testlist: testlist;
+for_exprlist: exprlist;
 
 // BLOCK
 block_stmt: BLOCK COLON block_suite;

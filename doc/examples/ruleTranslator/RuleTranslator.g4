@@ -141,7 +141,8 @@ typedargslist: (tfpdef (',' tfpdef)* (',' (
       | '**' tfpdef (',')?)?)?
   | '*' (tfpdef)? (',' tfpdef ('=' test)?)* (',' ('**' tfpdef (',')?)?)?
   | '**' tfpdef (',')?);
-tfpdef: NAME        # tfpdef_name
+tfpdef:
+        dotted_name # tfpdef_name
       | NUMBER      # tfpdef_number
       | STRING      # tfpdef_string
       | funct_stmt  # tfpdef_funct_stm
@@ -163,7 +164,7 @@ funct_stmt: dotted_name funct_parameters (dot_e funct_stmt)*;
 dot_e : DOT;
 funct_parameters: parameters;
 
-var_stmt: NAME;
+var_stmt: dotted_name;
 
 // For normal and annotated assignments, additional restrictions enforced by the interpreter
 flow_stmt: break_stmt | continue_stmt;

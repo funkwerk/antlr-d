@@ -173,7 +173,7 @@ continue_stmt: 'continue';
 
 dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
-dotted_name: NAME ('.' NAME)*;
+dotted_name: NAME trailer* ('.' NAME trailer*)*;
 
 compound_stmt: if_stmt | for_stmt | with_stmt | block_stmt;
 
@@ -227,7 +227,7 @@ term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;
 
 atom:
-    dotted_name     # atom_dotted_name
+      dotted_name   # atom_dotted_name
     | funct_stmt    # atom_funct_stmt
     | NUMBER        # number_e
     | STRING        # string_e
@@ -238,7 +238,7 @@ atom:
     ;
 
 testlist_comp: (test) ( (',' (test))* (',')? );
-trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
+trailer: '[' subscriptlist ']' ;
 subscriptlist: subscript (',' subscript)* (',')?;
 subscript: test | (test)? ':' (test)? (sliceop)?;
 sliceop: ':' (test)?;

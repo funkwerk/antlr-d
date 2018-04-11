@@ -48,6 +48,8 @@ public class TTSListener : RuleTranslatorBaseListener {
 
     private bool funcdefFlag;
 
+    private bool trailerMode;
+
     private bool ruleRequired = true;
 
     private bool ruleExists;
@@ -465,7 +467,7 @@ public class TTSListener : RuleTranslatorBaseListener {
         if (!stack.empty) {
             stack.front ~= ctx.getText;
             debug {
-                writefln("%s enterTfpdef_number:", counter++);
+                writefln("%s enterTfpdef_number(%s):", counter++, trailerMode);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -780,10 +782,10 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterNumber_e(RuleTranslatorParser.Number_eContext ctx) {
-        if (!stack.empty) {
+        if (!stack.empty && !trailerMode) {
             stack.front ~= ctx.getText;
             debug {
-                writefln("%s enterNumber_e:", counter++);
+                writefln("%s enterNumber_e(%s):", counter++, trailerMode);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -967,4 +969,21 @@ public class TTSListener : RuleTranslatorBaseListener {
                                   loopStack.front.foreachElementType,
                                   loopStack.front.foreachType);
     }
+
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterTrailer(RuleTranslatorParser.TrailerContext ctx) {
+            trailerMode = true;
+        }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitTrailer(RuleTranslatorParser.TrailerContext ctx) {
+            trailerMode = false;
+        }
 }

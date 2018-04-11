@@ -29,6 +29,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterRuledef(RuleTranslatorParser.RuledefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitRuledef(RuleTranslatorParser.RuledefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterImport_stmts(RuleTranslatorParser.Import_stmtsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -65,13 +77,13 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
+	override public void enterRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitRule_ID(RuleTranslatorParser.Rule_IDContext ctx) { }
+	override public void exitRule_name(RuleTranslatorParser.Rule_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -161,13 +173,49 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterTfpdef(RuleTranslatorParser.TfpdefContext ctx) { }
+	override public void enterTfpdef_name(RuleTranslatorParser.Tfpdef_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitTfpdef(RuleTranslatorParser.TfpdefContext ctx) { }
+	override public void exitTfpdef_name(RuleTranslatorParser.Tfpdef_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterTfpdef_number(RuleTranslatorParser.Tfpdef_numberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitTfpdef_number(RuleTranslatorParser.Tfpdef_numberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterTfpdef_string(RuleTranslatorParser.Tfpdef_stringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitTfpdef_string(RuleTranslatorParser.Tfpdef_stringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterTfpdef_funct_stm(RuleTranslatorParser.Tfpdef_funct_stmContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitTfpdef_funct_stm(RuleTranslatorParser.Tfpdef_funct_stmContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -233,6 +281,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterDot_e(RuleTranslatorParser.Dot_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitDot_e(RuleTranslatorParser.Dot_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterFunct_parameters(RuleTranslatorParser.Funct_parametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -245,37 +305,13 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterExpr_stmt(RuleTranslatorParser.Expr_stmtContext ctx) { }
+	override public void enterVar_stmt(RuleTranslatorParser.Var_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitExpr_stmt(RuleTranslatorParser.Expr_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterAnnassign(RuleTranslatorParser.AnnassignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitAnnassign(RuleTranslatorParser.AnnassignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterTestlist_star_expr(RuleTranslatorParser.Testlist_star_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitTestlist_star_expr(RuleTranslatorParser.Testlist_star_exprContext ctx) { }
+	override public void exitVar_stmt(RuleTranslatorParser.Var_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -312,18 +348,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitContinue_stmt(RuleTranslatorParser.Continue_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterReturn_stmt(RuleTranslatorParser.Return_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitReturn_stmt(RuleTranslatorParser.Return_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -389,13 +413,37 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterWhile_stmt(RuleTranslatorParser.While_stmtContext ctx) { }
+	override public void enterCondition(RuleTranslatorParser.ConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitWhile_stmt(RuleTranslatorParser.While_stmtContext ctx) { }
+	override public void exitCondition(RuleTranslatorParser.ConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterElif_e(RuleTranslatorParser.Elif_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitElif_e(RuleTranslatorParser.Elif_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterElse_e(RuleTranslatorParser.Else_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitElse_e(RuleTranslatorParser.Else_eContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -408,6 +456,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitFor_stmt(RuleTranslatorParser.For_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFor_testlist(RuleTranslatorParser.For_testlistContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFor_testlist(RuleTranslatorParser.For_testlistContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -432,18 +492,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitBlock_suite(RuleTranslatorParser.Block_suiteContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterSimple_block_stmt(RuleTranslatorParser.Simple_block_stmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitSimple_block_stmt(RuleTranslatorParser.Simple_block_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -521,6 +569,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterOr_e(RuleTranslatorParser.Or_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitOr_e(RuleTranslatorParser.Or_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterAnd_test(RuleTranslatorParser.And_testContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -528,6 +588,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitAnd_test(RuleTranslatorParser.And_testContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterAnd_e(RuleTranslatorParser.And_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitAnd_e(RuleTranslatorParser.And_eContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -569,13 +641,73 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterComp_op(RuleTranslatorParser.Comp_opContext ctx) { }
+	override public void enterLess_than(RuleTranslatorParser.Less_thanContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitComp_op(RuleTranslatorParser.Comp_opContext ctx) { }
+	override public void exitLess_than(RuleTranslatorParser.Less_thanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterGreater_than(RuleTranslatorParser.Greater_thanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitGreater_than(RuleTranslatorParser.Greater_thanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterEquals(RuleTranslatorParser.EqualsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitEquals(RuleTranslatorParser.EqualsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterGreater_equal(RuleTranslatorParser.Greater_equalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitGreater_equal(RuleTranslatorParser.Greater_equalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterLess_equal(RuleTranslatorParser.Less_equalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitLess_equal(RuleTranslatorParser.Less_equalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterNot_equal(RuleTranslatorParser.Not_equalContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitNot_equal(RuleTranslatorParser.Not_equalContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -665,13 +797,97 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterAtom(RuleTranslatorParser.AtomContext ctx) { }
+	override public void enterAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitAtom(RuleTranslatorParser.AtomContext ctx) { }
+	override public void exitAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterAtom_funct_stmt(RuleTranslatorParser.Atom_funct_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitAtom_funct_stmt(RuleTranslatorParser.Atom_funct_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterNumber_e(RuleTranslatorParser.Number_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitNumber_e(RuleTranslatorParser.Number_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterString_e(RuleTranslatorParser.String_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitString_e(RuleTranslatorParser.String_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterTrue_e(RuleTranslatorParser.True_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitTrue_e(RuleTranslatorParser.True_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFalse_e(RuleTranslatorParser.False_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFalse_e(RuleTranslatorParser.False_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitLast_e(RuleTranslatorParser.Last_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFirst_e(RuleTranslatorParser.First_eContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -792,42 +1008,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitArgument(RuleTranslatorParser.ArgumentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterComp_iter(RuleTranslatorParser.Comp_iterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitComp_iter(RuleTranslatorParser.Comp_iterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterComp_for(RuleTranslatorParser.Comp_forContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitComp_for(RuleTranslatorParser.Comp_forContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterComp_if(RuleTranslatorParser.Comp_ifContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitComp_if(RuleTranslatorParser.Comp_ifContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

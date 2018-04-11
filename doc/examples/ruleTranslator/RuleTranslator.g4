@@ -185,6 +185,7 @@ else_e: ELSE;
 
 //
 for_stmt: FOR exprlist IN testlist COLON suite (ELSE COLON suite)?;
+for_testlist: testlist;
 
 // BLOCK
 block_stmt: BLOCK COLON block_suite;

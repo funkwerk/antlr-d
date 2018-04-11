@@ -34,14 +34,14 @@ public class TTSListener : RuleTranslatorBaseListener {
 
     private RuleSetting ruleSetting;
 
-    struct LoopStack
+    struct LoopElement
     {
         string foreachType;
         ushort foreachIndex;  // index must not start at 0
     }
 
-    private LoopStack loopStack;
-
+    private auto loopStack = SList!(LoopElement)();
+    
     private ushort indentLevel;
 
     private bool funcdefFlag;
@@ -865,4 +865,53 @@ public class TTSListener : RuleTranslatorBaseListener {
                 writefln("\t%s", el);
         }
     }
+
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
+            LoopElement l;
+            loopStack.insert(l);
+        }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFor_stmt(RuleTranslatorParser.For_stmtContext ctx) {
+            loopStack.removeFront;
+        }
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFor_testlist(RuleTranslatorParser.For_testlistContext ctx) {
+            LoopElement l;
+            l.foreachType = ctx.getText;
+            l.foreachIndex = 0;
+            loopStack.front = l;
+        }
+
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) {
+            if (!stack.empty)
+                stack.front ~= format("%s_index == 0", loopStack.front.foreachType);
+        }
+
+    /**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) {
+            if (!stack.empty)
+                stack.front ~= format("%s_index == %s", ctx.getText, ctx.getText);
+        }
 }

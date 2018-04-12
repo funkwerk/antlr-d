@@ -1,0 +1,45 @@
+# Text definition AURIS
+# for automatic announcements
+# Version 2014-08-27
+
+rule Connection as CONNECTION de
+
+base de.Phrases
+
+if not station.empty:
+   stationName(station) "-"
+"Bahnsteig" track "!"
+for connection in connections:
+    if index == first:
+        if index == last:
+            "Die nächste Reisemöglichkeit ist:"
+        else:
+            "Die nächsten Reisemöglichkeiten sind:"
+    productName(connection.product) "nach" stationName(connection.destination)
+    ", Planabfahrt"
+    timeOfDay(connection.departureTime)
+    # A cancelled train which has been selected as a connection *must* have SEV
+    if connection.track == "BUS" or connection.isCancelled:
+        ". Dieser Zug wird als Schienenersatzverkehr geführt"
+    else:
+        ", Bahnsteig" connection.track
+    if index == last:
+        "."
+    else:
+        ","
+    if not connection.journeyBreaks.empty:
+        if station != connection.journeyBreaks[0].firstServicedStop:
+            if not connection.busReplacement.empty and \
+                    connection.busReplacement[0] == connection.journeyBreaks[0].lastServicedStop:
+                "Dieser Zug wird zwischen" stationName(connection.journeyBreaks[0].lastServicedStop)
+                "und" stationName(connection.journeyBreaks[0].firstServicedStop)
+                "als Schienenersatzverkehr geführt"
+            else:
+                "Dieser Zug fällt zwischen" stationName(connection.journeyBreaks[0].lastServicedStop)
+                "und" stationName(connection.journeyBreaks[0].firstServicedStop) "aus"
+                if not connection.reason.empty:
+                    ". Grund dafür" reasonText(connection.reason)
+            if index == last:
+                "."
+            else:
+                ","

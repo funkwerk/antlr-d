@@ -236,6 +236,16 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#funct_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#funct_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunct_name(RuleTranslatorParser.Funct_nameContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#dot_e}.
 	 * @param ctx the parse tree
 	 */

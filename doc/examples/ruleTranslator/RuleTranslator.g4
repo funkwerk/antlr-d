@@ -160,7 +160,8 @@ small_stmt: (
 
 string_stmt: STRING (low | high |);
 
-funct_stmt: dotted_name funct_parameters (dot_e funct_stmt)*;
+funct_stmt: funct_name funct_parameters (dot_e funct_stmt)*;
+funct_name: dotted_name;
 dot_e : DOT;
 funct_parameters: parameters;
 

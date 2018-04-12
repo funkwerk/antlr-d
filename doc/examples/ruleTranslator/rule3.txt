@@ -1,0 +1,10 @@
+# Text definition CFL
+# for automatic announcements
+# Common Phrases
+# Version 2017-01-03
+
+rule Phrases de
+
+def productTrainNumber(trainNumber, product):
+    if al():
+        al(beta.x)

@@ -366,16 +366,31 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) {
-        if (!stack.empty) {
+        // if (!stack.empty) {
+        //     stack.front ~= ctx.getText;
+        //     debug {
+        //         writefln("%s enterDottedName:", counter++);
+        //         foreach(el; stack.opSlice)
+        //             writefln("\t%s", el);
+        //     }
+        // }
+    }
+    
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx) {
+            if (!stack.empty) {
             stack.front ~= ctx.getText;
             debug {
-                writefln("%s enterDottedName:", counter++);
+                writefln("%s enterFunct_name: %s", counter++, ctx.getText);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
         }
-    }
-
+        }
     /**
      * {@inheritDoc}
      *
@@ -433,7 +448,7 @@ public class TTSListener : RuleTranslatorBaseListener {
             string[] s;
             stack.insert(s);
             debug {
-                writefln("%s enterFunct_parameters:", counter++);
+                writefln("%s enterFunct_parameters: %s", counter++, ctx.getText);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }

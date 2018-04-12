@@ -281,6 +281,18 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitFunct_name(RuleTranslatorParser.Funct_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterDot_e(RuleTranslatorParser.Dot_eContext ctx) { }
 	/**
 	 * {@inheritDoc}

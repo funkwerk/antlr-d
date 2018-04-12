@@ -110,6 +110,7 @@ public class TTSListener : RuleTranslatorBaseListener {
                 closingText.each!((ref n) => n = n.replace("${rule}", ruleName));
                 closingText.each!((ref n) => n = n.replace("${language}", language));
             }
+            writer.putnl("return output.data;");
             writer.indentLevel = -- indentLevel;
             writer.putnl("}");
             writer.put(closingText);
@@ -365,24 +366,24 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) {
-        // if (!stack.empty) {
-        //     stack.front ~= ctx.getText;
-        //     debug {
-        //         writefln("%s enterDottedName:", counter++);
-        //         foreach(el; stack.opSlice)
-        //             writefln("\t%s", el);
-        //     }
-        // }
+    override public void enterAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= ctx.getText;
+            debug {
+                writefln("%s enterAtom_dotted_name:", counter++);
+                foreach(el; stack.opSlice)
+                    writefln("\t%s", el);
+            }
+        }
     }
     
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx) {
-            if (!stack.empty) {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx) {
+        if (!stack.empty) {
             stack.front ~= ctx.getText;
             debug {
                 writefln("%s enterFunct_name: %s", counter++, ctx.getText);
@@ -390,7 +391,7 @@ public class TTSListener : RuleTranslatorBaseListener {
                     writefln("\t%s", el);
             }
         }
-        }
+    }
     /**
      * {@inheritDoc}
      *
@@ -939,16 +940,16 @@ public class TTSListener : RuleTranslatorBaseListener {
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
     override public void exitFor_testlist(RuleTranslatorParser.For_testlistContext ctx)
     {
         writer.putnl(format("int %s_index, %s; %s)",
-                     loopStack.front.foreachElementType,
-                     loopStack.front.foreachElementType,
-                     loopStack.front.foreachType,
+                            loopStack.front.foreachType,
+                            loopStack.front.foreachElementType,
+                            loopStack.front.foreachType,
                             )
                      );
         writer.putnl("{");
@@ -968,7 +969,7 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) {
         if (!stack.empty)
             stack.front ~= format("%s_index == 0",
-                                  loopStack.front.foreachElementType,
+                                  loopStack.front.foreachType,
                                   );
     }
 
@@ -980,24 +981,24 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) {
         if (!stack.empty)
             stack.front ~= format("%s_index == %s.length-1",
-                                  loopStack.front.foreachElementType,
+                                  loopStack.front.foreachType,
                                   loopStack.front.foreachType);
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterTrailer(RuleTranslatorParser.TrailerContext ctx) {
-            trailerMode = true;
-        }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitTrailer(RuleTranslatorParser.TrailerContext ctx) {
-            trailerMode = false;
-        }
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterTrailer(RuleTranslatorParser.TrailerContext ctx) {
+        trailerMode = true;
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void exitTrailer(RuleTranslatorParser.TrailerContext ctx) {
+        trailerMode = false;
+    }
 }

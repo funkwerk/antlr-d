@@ -6,5 +6,5 @@
 rule Phrases de
 
 def productTrainNumber(trainNumber, product):
-    if al():
+    if station.empty:
         al(beta.x)

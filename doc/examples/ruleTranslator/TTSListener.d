@@ -376,7 +376,7 @@ public class TTSListener : RuleTranslatorBaseListener {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      *

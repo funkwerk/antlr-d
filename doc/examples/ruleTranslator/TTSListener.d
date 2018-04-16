@@ -837,7 +837,9 @@ public class TTSListener : RuleTranslatorBaseListener {
                     writefln("\t%s", el);
             }
         }
-    }    /**
+    }
+
+    /**
           * {@inheritDoc}
           *
           * <p>The default implementation does nothing.</p>

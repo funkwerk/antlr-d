@@ -23,7 +23,7 @@ indents:int = []
 opened:int = 0
 # The most recently produced token.
 lastToken:Token
-def emit(self, t:Token):
+def emitToken(self, t:Token):
     super().emitToken(t)
     self.tokens.append(t)
 
@@ -32,39 +32,39 @@ def nextToken(self):
     if self._input.LA(1) == Token.EOF and not self.indents.empty():
         # Remove any trailing EOF tokens from our buffer
         while true:
-            if tokens.back.getType == EOF:
-                tokens.removeBack()
-            if not this.indents.empty:
+            if self.tokens[len(self.tokens)-1].getType == Token.EOF:
+                self.tokens.pop()
+            if self.indents:
                 break
 
     # First emit an extra line break that serves as the end of the statement.
-    self.emit(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
+    self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
 
-    # Now emit as much DEDENT tokens as needed.
+    # Now emitToken as much DEDENT tokens as needed.
     while self.indents:
-        self.emit(createDedent())
+        self.emitToken(self.createDedent())
         self.indents.pop()
 
     # Put the EOF back on the token stream.
-    self.emit(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
+    self.emitToken(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
 
     next:Token = super().nextToken()
 
-    if next.getChannel() == Token.DEFAULT_CHANNEL:
+    if next.channel == Token.DEFAULT_CHANNEL:
         # Keep track of the last token on the default channel.
         self.lastToken = next
 
-    if tokens.empty():
+    if self.tokens:
         return next
     else:
-        res:Token = tokens.front;
-        tokens.removeFront();
+        res:Token = tokens[0];
+        self.tokens.pop(0);
         return res
 
 def createDedent(self):
     self.dedent:CommonToken = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
     self.dedent.setL = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
-    self.dedent.setLine(self.lastToken.getLine())
+    self.dedent.line = self.lastToken.line
     return self.dedent
 
 def commonToken(self, type:int, text:str):
@@ -308,30 +308,30 @@ NEWLINE
    )
    {
      import re
-     newLine:string = getText.replaceAll(regex(r"[^\r\n\f]+"), "")
-     spaces:string = getText.replaceAll(regex(r"[\r\n\f]+"), "")
-     next:int = _input.LA(1)
-     if opened > 0 or next == '\r' or next == '\n' or next == '\f' or next == '#':
+     newLine:str = re.sub(r'[^\r\n\f]+', '',  self.text)
+     spaces:str = re.sub(r'[\r\n\f]+', '',  self.text)
+     next:int = self._input.LA(1)
+     if self.opened > 0 or next == '\r' or next == '\n' or next == '\f' or next == '#':
         #  If we are inside a list or on a blank line, ignore all indents,
         #  dedents and line breaks.
-        skip()
+        self.skip()
      else:
-         emit(commonToken(NEWLINE, newLine))
-         indent:int = getIndentationCount(spaces)
+         self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, newLine))
+         indent:int = self.getIndentationCount(spaces)
          previous:int = 0
-         if not indents.empty:
+         if self.indents:
              previous =  indents.front
          if indent == previous:
              # skip indents of the same size as the present indent-size
-             skip()
+             self.skip()
          elif indent > previous:
-             indents.insertFront(indent)
-             emit(commonToken(RuleTranslatorParser.INDENT, spaces))
+             self.indents.insert(0, indent)
+             self.emitToken(self.commonToken(RuleTranslatorPyParser.INDENT, spaces))
          else:
              # Possibly emit more than 1 DEDENT token.
-             while not indents.empty() and indents.front > indent:
-                 self.emit(createDedent())
-                 indents.removeFront()
+             while self.indents and self.indents[0] > indent:
+                 self.emitToken(self.createDedent())
+                 self.indents.pop(0)
    }
  ;
 
@@ -366,15 +366,15 @@ HEX_INTEGER
 
 DOT : '.';
 STAR : '*';
-OPEN_PAREN : '(' {this.opened += 1};
-CLOSE_PAREN : ')' {this.opened -= 1};
+OPEN_PAREN : '(' {self.opened += 1};
+CLOSE_PAREN : ')' {self.opened -= 1};
 COMMA : ',';
 COLON : ':';
 SEMI_COLON : ';';
 POWER : '**';
 ASSIGN : '=';
-OPEN_BRACK : '[' {this.opened += 1};
-CLOSE_BRACK : ']' {this.opened -= 1};
+OPEN_BRACK : '[' {self.opened += 1};
+CLOSE_BRACK : ']' {self.opened -= 1};
 OR_OP : '|';
 XOR : '^';
 AND_OP : '&';
@@ -385,8 +385,8 @@ MINUS : '-';
 DIV : '/';
 MOD : '%';
 NOT_OP : '~';
-OPEN_BRACE : '{' {this.opened += 1};
-CLOSE_BRACE : '}' {this.opened -= 1};
+OPEN_BRACE : '{' {self.opened += 1};
+CLOSE_BRACE : '}' {self.opened -= 1};
 LESS_THAN : '<';
 GREATER_THAN : '>';
 EQUALS : '==';

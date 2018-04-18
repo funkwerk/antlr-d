@@ -9,7 +9,9 @@ def main(fileName):
     lexer = RuleTranslatorPyLexer(fs)
     stream = CommonTokenStream(lexer)
     nst:int = stream.getNumberOfOnChannelTokens()
-    print(nst)
+    print("number of tokens:",  nst,  "\n")
+    for el in stream.tokens:
+        print(el)
 
 if __name__ == '__main__':
     main(sys.argv[1])

@@ -52,8 +52,12 @@ int main(string[] argv) {
 
                 // Pass the tokens to the parser
                 auto parser = new RuleTranslatorParser(cts);
-                if(verbose)
+                if(verbose) {
                     writefln("\tNumber of on channel tokens \t= %s.\n", cts.getNumberOfOnChannelTokens);
+                    writefln("\ttokens:");
+                    foreach(t; cts.getTokens)
+                        writefln("\t\t%s", t);
+                }
 
                 // Specify our entry point
                 auto rootContext = parser.file_input;

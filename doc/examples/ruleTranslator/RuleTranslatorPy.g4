@@ -29,42 +29,42 @@ def emitToken(self, t:Token):
 
 def nextToken(self):
     #Check if the end-of-file is ahead and there are still some DEDENTS expected.
-    if self._input.LA(1) == Token.EOF and not self.indents.empty():
+    if self._input.LA(1) == Token.EOF and self.indents:
         # Remove any trailing EOF tokens from our buffer
         while true:
             if self.tokens[len(self.tokens)-1].getType == Token.EOF:
                 self.tokens.pop()
-            if self.indents:
+            if not self.indents:
                 break
 
-    # First emit an extra line break that serves as the end of the statement.
-    self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
+        # First emit an extra line break that serves as the end of the statement.
+        self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
 
-    # Now emitToken as much DEDENT tokens as needed.
-    while self.indents:
-        self.emitToken(self.createDedent())
-        self.indents.pop()
+        # Now emitToken as much DEDENT tokens as needed.
+        while self.indents:
+            self.emitToken(self.createDedent())
+            self.indents.pop()
 
-    # Put the EOF back on the token stream.
-    self.emitToken(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
-
+        # Put the EOF back on the token stream.
+        self.emitToken(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
+        
     next:Token = super().nextToken()
 
     if next.channel == Token.DEFAULT_CHANNEL:
         # Keep track of the last token on the default channel.
         self.lastToken = next
 
-    if self.tokens:
+    if not self.tokens:
         return next
     else:
-        res:Token = tokens[0];
+        res:Token = self.tokens[0];
         self.tokens.pop(0);
         return res
 
 def createDedent(self):
     self.dedent:CommonToken = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
-    self.dedent.setL = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
     self.dedent.line = self.lastToken.line
+    self.dedent.text = " " * self.indents[0]
     return self.dedent
 
 def commonToken(self, type:int, text:str):
@@ -310,8 +310,8 @@ NEWLINE
      import re
      newLine:str = re.sub(r'[^\r\n\f]+', '',  self.text)
      spaces:str = re.sub(r'[\r\n\f]+', '',  self.text)
-     next:int = self._input.LA(1)
-     if self.opened > 0 or next == '\r' or next == '\n' or next == '\f' or next == '#':
+     next:str = self._input.LA(1)
+     if self.opened > 0 or next == ord('\r') or next == ord('\n') or next == ord('\f') or next == ord('#'):
         #  If we are inside a list or on a blank line, ignore all indents,
         #  dedents and line breaks.
         self.skip()
@@ -320,7 +320,7 @@ NEWLINE
          indent:int = self.getIndentationCount(spaces)
          previous:int = 0
          if self.indents:
-             previous =  indents.front
+             previous =  self.indents[0]
          if indent == previous:
              # skip indents of the same size as the present indent-size
              self.skip()

@@ -311,7 +311,7 @@ NEWLINE
      newLine:str = re.sub(r'[^\r\n\f]+', '',  self.text)
      spaces:str = re.sub(r'[\r\n\f]+', '',  self.text)
      next:str = self._input.LA(1)
-     if self.opened > 0 or next == ord('\r') or next == ord('\n') or next == ord('\f') or next == ord('#'):
+     if self.opened > 0 or next in [ord(e) for e in ['\r', '\n', '\f', '#']]:
         #  If we are inside a list or on a blank line, ignore all indents,
         #  dedents and line breaks.
         self.skip()

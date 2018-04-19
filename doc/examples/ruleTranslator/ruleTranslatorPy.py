@@ -1,4 +1,5 @@
 from RuleTranslatorPyLexer import RuleTranslatorPyLexer
+from RuleTranslatorPyLexer import RuleTranslatorPyParser
 from antlr4.CommonTokenStream import CommonTokenStream
 
 import sys
@@ -12,6 +13,9 @@ def main(fileName):
     print("number of tokens:",  nst,  "\n")
     for el in stream.tokens:
         print(el)
+    parser = RuleTranslatorPyParser(stream)
+    rootContext = parser.file_input()
+    pass
 
 if __name__ == '__main__':
     main(sys.argv[1])

@@ -6,49 +6,49 @@
 
 module antlr.v4.runtime.atn.ParserATNSimulator;
 
-import std.typecons;
-import std.format;
-import std.conv;
-import std.stdio;
-import std.algorithm.searching;
-import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
+import antlr.v4.runtime.NoViableAltException;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.NoViableAltException;
+import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATNConfig;
+import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.ATNConfig;
-import antlr.v4.runtime.atn.AtomTransition;
-import antlr.v4.runtime.atn.SetTransition;
-import antlr.v4.runtime.atn.EpsilonTransition;
-import antlr.v4.runtime.atn.NotSetTransition;
-import antlr.v4.runtime.atn.DecisionState;
-import antlr.v4.runtime.atn.ATNConfigSet;
-import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ActionTransition;
+import antlr.v4.runtime.atn.AtomTransition;
+import antlr.v4.runtime.atn.DecisionState;
+import antlr.v4.runtime.atn.EpsilonTransition;
 import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
-import antlr.v4.runtime.dfa.PredPrediction;
-import antlr.v4.runtime.atn.PredictionMode;
-import antlr.v4.runtime.atn.PredictionModeConst;
+import antlr.v4.runtime.atn.NotSetTransition;
 import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.PredicateTransition;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
-import antlr.v4.runtime.atn.RuleTransition;
-import antlr.v4.runtime.atn.SingletonPredictionContext;
-import antlr.v4.runtime.atn.TransitionStates;
+import antlr.v4.runtime.atn.PredictionMode;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.SemanticContext;
+import antlr.v4.runtime.atn.SetTransition;
+import antlr.v4.runtime.atn.SingletonPredictionContext;
+import antlr.v4.runtime.atn.Transition;
+import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.dfa.PredPrediction;
 import antlr.v4.runtime.misc;
+import std.algorithm.searching;
+import std.conv;
+import std.format;
+import std.stdio;
+import std.typecons;
 
 alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b");
 
@@ -995,7 +995,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                  * (basically a graph subtraction algorithm).
                  */
                 if (config.state.stateNumber in statesFromAlt1 &&
-                    statesFromAlt1[config.state.stateNumber].opEquals(config.context)) {
+                                                    statesFromAlt1[config.state.stateNumber].opEquals(config.context)) {
                     // eliminated
                     continue;
                 }
@@ -1216,13 +1216,13 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     }
 
     public bool evalSemanticContext(SemanticContext pred, ParserRuleContext parserCallStack,
-        int alt, bool fullCtx)
+                                    int alt, bool fullCtx)
     {
         return pred.eval(parser, parserCallStack);
     }
 
     protected void closureATN(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
-                           bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
+                              bool collectPredicates, bool fullCtx, bool treatEofAsEpsilon)
     {
         int initialDepth = 0;
         closureCheckingStopState(config, configs, closureBusy, collectPredicates,
@@ -1296,7 +1296,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * Do the actual work of walking epsilon edges
      */
     protected void closure_(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
-        bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
+                            bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
 	ATNState p = config.state;
 

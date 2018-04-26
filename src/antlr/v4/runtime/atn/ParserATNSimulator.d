@@ -907,13 +907,13 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
          * multiple alternatives are viable.
          */
         if (skippedStopStates !is null && (!fullCtx || !PredictionMode.hasConfigInRuleStopState(reach))) {
-            assert(skippedStopStates.length != 0);
+            assert(skippedStopStates.length > 0);
             foreach (c; skippedStopStates) {
                 reach.add(c, mergeCache);
             }
         }
 
-        if ( reach.isEmpty)
+        if (reach.isEmpty)
             return null;
         return reach;
     }

@@ -151,7 +151,16 @@ public class TTSListener : RuleTranslatorBaseListener {
         writer.putnl("import std.conv;");
         writer.putnl("import std.datetime;");
         writer.putnl("import rule.Repository;");
-        writer.putnl("import rule.GeneratedRule;");
+        writer.putnl("import rule.GeneratedRule;\n");
+        writer.putnl("auto iterate(R)(R range)");
+        writer.putnl("{");
+        writer.putnl("    import std.algorithm : map;");
+        writer.putnl("    import std.range : enumerate;");
+        writer.putnl("    import std.typecons : tuple;\n");
+
+        writer.putnl("    return enumerate(range)");
+        writer.putnl("        .map!(a => tuple!(\"value\", \"first\", \"last\")(a.value, a.index == 0, a.index + 1 == range.length));");
+        writer.putnl("}");
     }
 
     /**
@@ -948,8 +957,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitFor_testlist(RuleTranslatorParser.For_testlistContext ctx)
     {
-        writer.putnl(format("int %s_index, %s; %s)",
-                            loopStack.front.foreachType,
+        writer.putnl(format("%s; %s.iterate)",
                             loopStack.front.foreachElementType,
                             loopStack.front.foreachType,
                             )
@@ -970,8 +978,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterFirst_e(RuleTranslatorParser.First_eContext ctx) {
         if (!stack.empty)
-            stack.front ~= format("%s_index == 0",
-                                  loopStack.front.foreachType,
+            stack.front ~= format("%s.first",
+                                  loopStack.front.foreachElementType,
                                   );
     }
 
@@ -982,9 +990,8 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterLast_e(RuleTranslatorParser.Last_eContext ctx) {
         if (!stack.empty)
-            stack.front ~= format("%s_index == %s.length-1",
-                                  loopStack.front.foreachType,
-                                  loopStack.front.foreachType);
+            stack.front ~= format("%s.last",
+                                  loopStack.front.foreachElementType);
     }
 
     /**

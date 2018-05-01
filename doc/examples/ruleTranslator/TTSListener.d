@@ -42,7 +42,10 @@ public class TTSListener : RuleTranslatorBaseListener {
     }
 
     private auto loopStack = SList!(LoopElement)();
+
     private string foreachElementName;
+
+    private string dottedName;
 
     private ushort indentLevel;
 
@@ -120,13 +123,6 @@ public class TTSListener : RuleTranslatorBaseListener {
         writer.print;
         writer.clear;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterRule_setting(RuleTranslatorParser.Rule_settingContext ctx) { }
 
     /**
      * {@inheritDoc}
@@ -330,14 +326,66 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterVar_stmt(RuleTranslatorParser.Var_stmtContext ctx) {
+    override public void exitVar_stmt(RuleTranslatorParser.Var_stmtContext ctx) {
         if (!stack.empty) {
-            stack.front ~= format("append(%s)", ctx.children[0].getText);
-            debug {
-                writefln("%s enterVar_stmt:", counter++);
-                foreach(el; stack.opSlice)
-                    writefln("\t%s", el);
+            stack.front ~= format("append(%s)", dottedName);
+        }
+        debug {
+            writefln("%s exitVar_stmt:", counter++);
+            writefln("\tdottedName = %s", dottedName);
+        }
+    }
+
+    /**
+     * When the name of the variable is equal to the foreach element,
+     * we need to append '.value' property
+     */
+    override public void enterFirst_part_of_dotted_name(RuleTranslatorParser.First_part_of_dotted_nameContext ctx) {
+        dottedName = ctx.getText;
+        if (!loopStack.empty) {
+            import std.algorithm : map;
+            import std.algorithm: canFind;
+            if (array(map!(a => a.foreachElementType)(loopStack[])).canFind(ctx.getText)) {
+                dottedName ~= ".value";
+                writefln("\tnew text = %s", loopStack.opSlice.map!(a => a.foreachElementType));
             }
+        }
+        debug {
+            writefln("%s enterFirst_part_of_dotted_name:", counter++);
+            writefln("\ttext = %s", ctx.getText);
+            writefln("\tdottedName = %s", dottedName);
+            foreach(el; stack.opSlice)
+                writefln("\t%s", el);
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterDotted_name_part(RuleTranslatorParser.Dotted_name_partContext ctx) {
+        debug {
+            writefln("%s enterDotted_name_part:", counter++);
+            writefln("\ttext = %s", ctx.getText);
+            dottedName ~= "." ~ ctx.getText;
+            writefln("\tdottedName = %s", dottedName);
+            foreach(el; stack.opSlice)
+                writefln("\t%s", el);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void exitDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) {
+        debug {
+            writefln("%s exitDotted_name:", counter++);
+            writefln("\ttext = %s", ctx.getText);
+            writefln("\tdottedName = %s", dottedName);
+            foreach(el; stack.opSlice)
+                writefln("\t%s", el);
         }
     }
 
@@ -375,11 +423,11 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx) {
+    override public void exitAtom_dotted_name(RuleTranslatorParser.Atom_dotted_nameContext ctx) {
         if (!stack.empty) {
-            stack.front ~= ctx.getText;
+            stack.front ~= dottedName;
             debug {
-                writefln("%s enterAtom_dotted_name:", counter++);
+                writefln("%s exitAtom_dotted_name:", counter++);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -503,11 +551,11 @@ public class TTSListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterTfpdef_name(RuleTranslatorParser.Tfpdef_nameContext ctx) {
+    override public void exitTfpdef_name(RuleTranslatorParser.Tfpdef_nameContext ctx) {
         if (!stack.empty) {
-            stack.front ~= ctx.getText;
+            stack.front ~= dottedName;
             debug {
-                writefln("%s enterTfpdefName:", counter++);
+                writefln("%s exitTfpdefName:", counter++);
                 foreach(el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -849,10 +897,10 @@ public class TTSListener : RuleTranslatorBaseListener {
     }
 
     /**
-          * {@inheritDoc}
-          *
-          * <p>The default implementation does nothing.</p>
-          */
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
     override public void exitAtom_funct_stmt(RuleTranslatorParser.Atom_funct_stmtContext ctx) {
         if (!stack.empty) {
             auto x = stack.front;

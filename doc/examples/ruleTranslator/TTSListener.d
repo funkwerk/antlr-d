@@ -364,24 +364,9 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterDotted_name_part(RuleTranslatorParser.Dotted_name_partContext ctx) {
+        dottedName ~= "." ~ ctx.getText;
         debug {
             writefln("%s enterDotted_name_part:", counter++);
-            writefln("\ttext = %s", ctx.getText);
-            dottedName ~= "." ~ ctx.getText;
-            writefln("\tdottedName = %s", dottedName);
-            foreach(el; stack.opSlice)
-                writefln("\t%s", el);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitDotted_name(RuleTranslatorParser.Dotted_nameContext ctx) {
-        debug {
-            writefln("%s exitDotted_name:", counter++);
             writefln("\ttext = %s", ctx.getText);
             writefln("\tdottedName = %s", dottedName);
             foreach(el; stack.opSlice)

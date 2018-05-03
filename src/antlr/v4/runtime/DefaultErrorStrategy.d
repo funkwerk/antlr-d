@@ -203,7 +203,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
                 recognizer.consume;
             }
         lastErrorIndex = recognizer.getInputStream.index;
-        if (lastErrorStates is null)
+        if (!lastErrorStates)
             lastErrorStates = new IntervalSet;
         lastErrorStates.add(recognizer.getState);
         IntervalSet followSet = getErrorRecoverySet(recognizer);
@@ -298,7 +298,6 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             if (singleTokenDeletion(recognizer) !is null) {
                 return;
             }
-
             throw new InputMismatchException(recognizer);
 
         case StateNames.PLUS_LOOP_BACK:

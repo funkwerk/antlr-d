@@ -5,11 +5,9 @@ ifeq ($(LBITS),64)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = dmd -w
-    UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lfluentasserts-core -L-lddmp -L-ldparse
 else
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
     DMD = ldmd2 -w -link-defaultlib-shared -debug=DefaultErrorStrategy
-    UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse
 endif
 
 SHELL = bash
@@ -31,6 +29,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse
 
 SOURCE_FILES := $(shell find $(SRC_DIR) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)

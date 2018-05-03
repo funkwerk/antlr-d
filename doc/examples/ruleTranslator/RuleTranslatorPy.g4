@@ -167,7 +167,8 @@ continue_stmt: 'continue';
 
 dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
-dotted_name: NAME trailer* ('.' NAME trailer*)*;
+dotted_name: first_part_of_dotted_name trailer* ('.' NAME trailer*)*;
+first_part_of_dotted_name: NAME;
 
 compound_stmt: if_stmt | for_stmt | with_stmt | block_stmt;
 

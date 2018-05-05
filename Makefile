@@ -22,37 +22,34 @@ MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
-SRC_DIR = src/antlr/v4/runtime
-SRC := $(shell find $(SRC_DIR) -name "*.d")
-XPATH_LEXER_SRC := $(shell find $(SRC_DIR) -name "*.g4")
+SRC_DIR = source
+SRC_ROOT = $(SRC_DIR)/antlr/v4/runtime
+SRC := $(shell find $(SRC_ROOT) -name "*.d")
+XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse
 
-SOURCE_FILES := $(shell find $(SRC_DIR) -name "*.d")
+SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)
 
-EXAMPLE_MODULE_FILES := $(shell find $(SRC_DIR) -name "*.d")
+EXAMPLE_MODULE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 EXAMPLE_TIMETABLE_DIR = doc/examples/time_table
 EXAMPLE_TIMETABLE_FILES := $(shell find $(EXAMPLE_TIMETABLE_DIR) -name "*.d")
 
 EXAMPLE_XML_DIR = doc/examples/xml
 EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 
-define NEWLINE
-
-
-endef
 UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
             $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
 
-UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst src.,,$(subst /,.,\
+UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst source.,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))))
 
-TEST_FLAGS = -cov -Isrc -J$(BUILD_DIR) -unittest
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
@@ -60,6 +57,9 @@ GENERATOR = axmi2d
 ANTLR = antlr4-4.7.1
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
+
+# required to detect model changes
+_dummy := $(shell mkdir -p $(BUILD_DIR)/$(MODEL_DIR))
 
 .PHONY : all
 all : generate unittest
@@ -118,13 +118,13 @@ install_library: $(BUILD_DIR)/libantlr-d.so.4.7
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
-	cp -R src/antlr $(EXPORT_INCLUDE)/antlr
+	cp -R source/antlr $(EXPORT_INCLUDE)/antlr
 
 .PHONY : clean
 clean :
-	rm -rf $(SRC_DIR)/**/**/*\.d_orig $(SRC_DIR)/**/**/*\.d~
-	rm -rf $(SRC_DIR)/**/*\.d_orig $(SRC_DIR)/**/*\.d~
-	rm -rf $(SRC_DIR)/*\.d_orig $(SRC_DIR)/*\.d~
+	rm -rf $(SRC_ROOT)/**/**/*\.d_orig $(SRC_ROOT)/**/**/*\.d~
+	rm -rf $(SRC_ROOT)/**/*\.d_orig $(SRC_ROOT)/**/*\.d~
+	rm -rf $(SRC_ROOT)/*\.d_orig $(SRC_ROOT)/*\.d~
 	rm -rf model/DRuntime*.zargo~
 	rm -rf ./*.lst
 
@@ -136,5 +136,5 @@ $(BUILD_DIR):
 	$(MKDIR_P) $(BUILD_DIR)/model
 
 $(BUILD_DIR)/%.receipt : %.zargo
-	time $(GENERATOR) $(GENERATOR_FLAGS) -s src -m $<
+	time $(GENERATOR) $(GENERATOR_FLAGS) -s source -m $<
 	@touch $@

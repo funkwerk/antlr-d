@@ -1,22 +1,24 @@
 # Make for Antlr4DTarget
 
+EXPORT = /usr/local
+
 LBITS := $(shell getconf LONG_BIT)
 ifeq ($(LBITS),64)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = dmd -w
+    EXPORT_INCLUDE = $(EXPORT)/include/dmd
 else
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
     DMD = ldmd2 -w -link-defaultlib-shared -debug=DefaultErrorStrategy
+    EXPORT_INCLUDE = $(EXPORT)/import
 endif
 
 SHELL = bash
 MKDIR_P = mkdir -p
 
 BUILD_DIR = build
-EXPORT = /usr/local
 EXPORT_LIB = $(EXPORT)/lib
-EXPORT_INCLUDE = $(EXPORT)/include/dmd
 
 MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")

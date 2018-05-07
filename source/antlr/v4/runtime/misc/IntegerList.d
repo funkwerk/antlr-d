@@ -226,11 +226,8 @@ class IntegerList
         if (data_.length != other.size) {
             return false;
         }
-
-        auto a = data_.assumeSorted;
-        auto b = other.data.assumeSorted;
         import std.algorithm.comparison : equal;
-        return a.equal(b);
+        return data_.equal(other.data);
     }
 
     /**
@@ -273,7 +270,7 @@ class IntegerList
 }
 
 version(unittest) {
-    import fluent.asserts;
+    import fluent.asserts : should, Assert;
     import unit_threaded;
 
     class Test {

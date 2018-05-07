@@ -452,9 +452,8 @@ class ATNConfigSet
 }
 
 version(unittest) {
-    import fluent.asserts;
+    import fluent.asserts : should, Assert;
     import unit_threaded;
-    import std.stdio;
     @Tags("atnConfigSet")
 	@("atnConfigSetTest")
 	unittest {

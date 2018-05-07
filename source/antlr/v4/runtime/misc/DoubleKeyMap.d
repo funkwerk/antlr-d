@@ -81,7 +81,7 @@ class DoubleKeyMap(K1, K2, V)
 }
 
 version(unittest) {
-    import fluent.asserts;
+    import fluent.asserts : should, Assert;
     import unit_threaded;
 
     class Test {

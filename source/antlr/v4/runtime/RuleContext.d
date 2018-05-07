@@ -274,7 +274,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 }
 
 version(unittest) {
-    import fluent.asserts;
+    import fluent.asserts : should, Assert;
     import unit_threaded;
 
     class Test {

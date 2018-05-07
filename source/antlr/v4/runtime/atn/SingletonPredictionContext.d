@@ -107,7 +107,7 @@ class SingletonPredictionContext : PredictionContext
 }
 
 version(unittest) {
-    import fluent.asserts;
+    import fluent.asserts : should, Assert;
     import unit_threaded;
 
     class Test {

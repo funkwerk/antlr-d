@@ -759,7 +759,7 @@ class IntervalSet : IntSet
 
     public final Interval[] intervals()
     {
-        return this.intervals_.dup;
+        return this.intervals_;
     }
 
 }

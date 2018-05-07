@@ -1195,7 +1195,7 @@ class ATNDeserializer
                             }
                     }
                 ATNState blockEndState = decision.optimizedTransitions[setTransitions.getMinElement].target.optimizedTransitions[0].target;
-                IntervalSet matchSet;
+                IntervalSet matchSet = new IntervalSet;
                 for (int i = 0; i < setTransitions.intervals.length; i++)
                     {
                         Interval interval = setTransitions.intervals[i];

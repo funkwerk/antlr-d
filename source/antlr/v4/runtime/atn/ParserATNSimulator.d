@@ -1593,9 +1593,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     public BitSet getConflictingAltsOrUniqueAlt(ATNConfigSet configs)
     {
-	BitSet *conflictingAlts;
+	auto conflictingAlts = new BitSet(1);
         if (configs.uniqueAlt != ATN.INVALID_ALT_NUMBER) {
-            conflictingAlts = new BitSet();
             conflictingAlts.set(configs.uniqueAlt, true);
         }
         else {

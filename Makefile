@@ -24,7 +24,7 @@ MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
-SRC_DIR = source
+SRC_DIR = runtime/source
 SRC_ROOT = $(SRC_DIR)/antlr/v4/runtime
 SRC := $(shell find $(SRC_ROOT) -name "*.d")
 XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
@@ -138,5 +138,5 @@ $(BUILD_DIR):
 	$(MKDIR_P) $(BUILD_DIR)/model
 
 $(BUILD_DIR)/%.receipt : %.zargo
-	time $(GENERATOR) $(GENERATOR_FLAGS) -s source -m $<
+	time $(GENERATOR) $(GENERATOR_FLAGS) -s $(SRC_DIR) -m $<
 	@touch $@

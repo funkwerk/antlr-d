@@ -25,6 +25,7 @@ MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
 SRC_DIR = runtime/source
+SRC_DIR_DOT = $(subst /,.,$(SRC_DIR))
 SRC_ROOT = $(SRC_DIR)/antlr/v4/runtime
 SRC := $(shell find $(SRC_ROOT) -name "*.d")
 XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
@@ -32,7 +33,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse -L-lstdx-allocator
 
 SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)
@@ -47,7 +48,7 @@ EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
             $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
 
-UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst source.,,$(subst /,.,\
+UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))))
 

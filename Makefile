@@ -129,7 +129,7 @@ clean :
 	rm -rf $(SRC_ROOT)/**/*\.d_orig $(SRC_ROOT)/**/*\.d~
 	rm -rf $(SRC_ROOT)/*\.d_orig $(SRC_ROOT)/*\.d~
 	rm -rf model/DRuntime*.zargo~
-	rm -rf ./*.lst
+	rm -rf $(BUILD_DIR)/*.lst
 
 .PHONY : clobber
 clobber :

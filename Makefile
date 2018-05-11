@@ -2,15 +2,22 @@
 
 EXPORT = /usr/local
 
-LBITS := $(shell getconf LONG_BIT)
-ifeq ($(LBITS),64)
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_M),x86_64)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = dmd -w
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
-else
+endif
+ifeq ($(UNAME_M),i686)
+    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
+    RDMD = rdmd
+    DMD = dmd -w
+    EXPORT_INCLUDE = $(EXPORT)/include/dmd
+endif
+ifeq ($(UNAME_M),arm)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
-    DMD = ldmd2 -w -link-defaultlib-shared -debug=DefaultErrorStrategy
+    DMD = ldmd2 -w -link-defaultlib-shared
     EXPORT_INCLUDE = $(EXPORT)/import
 endif
 

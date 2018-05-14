@@ -1,5 +1,5 @@
 import unit_threaded;
-import fluent.asserts;
+import fluent.asserts : should, Assert;
 
 class Test {
     @Tags("simpleTree")

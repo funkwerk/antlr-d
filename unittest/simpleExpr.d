@@ -6,7 +6,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 import ExprLexer;
 import ExprParser;
 import ExprBaseListener;
-import fluent.asserts;
+import fluent.asserts : should, Assert;
 import unit_threaded;
 
 

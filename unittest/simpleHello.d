@@ -4,7 +4,7 @@ import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
 import HelloLexer;
-import fluent.asserts;
+import fluent.asserts : should, Assert;
 import unit_threaded;
 
 

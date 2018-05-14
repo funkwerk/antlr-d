@@ -15,7 +15,8 @@ ifeq ($(UNAME_M),i686)
     DMD = dmd -w
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
 endif
-ifeq ($(UNAME_M),arm)
+# Rasperry PI
+ifeq ($(UNAME_M),armv7l)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
     DMD = ldmd2 -w -link-defaultlib-shared
     EXPORT_INCLUDE = $(EXPORT)/import

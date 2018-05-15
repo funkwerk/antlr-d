@@ -32,7 +32,7 @@ MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
-SRC_DIR = runtime/source
+SRC_DIR = source
 SRC_DIR_DOT = $(subst /,.,$(SRC_DIR))
 SRC_ROOT = $(SRC_DIR)/antlr/v4/runtime
 SRC := $(shell find $(SRC_ROOT) -name "*.d")

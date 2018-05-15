@@ -9,9 +9,11 @@
 		"Egbert Voigt <Egbert.Voigt@funkwerk-itk.com>"
 	],
         
-	"configurations": [
+	"configurations":
+        [
 		{
 			"name": "executable",
+                        "sourcePaths": ["source"],
                         "targetName": "antlr-d",
                         "targetPath": "lib", 
                         "targetType": "dynamicLibrary",
@@ -19,6 +21,7 @@
 		},
 		{
                         "name": "unittest",
+                        "sourcePaths": ["source"],
 			"targetType": "executable",
 			"excludedSourceFiles": [
 				"source/app.d"

@@ -1,3 +1,5 @@
 antlr4/antlr4-4.7.1/*
 build
 doc/examples/ruleTranslator/RuleTranslator*
+lib
+bin

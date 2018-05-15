@@ -347,7 +347,6 @@ public class TTSListener : RuleTranslatorBaseListener {
             import std.algorithm: canFind;
             if (array(map!(a => a.foreachElementType)(loopStack[])).canFind(ctx.getText)) {
                 dottedName ~= ".value";
-                writefln("\tnew text = %s", loopStack.opSlice.map!(a => a.foreachElementType));
             }
         }
         debug {

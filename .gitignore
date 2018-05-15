@@ -3,3 +3,5 @@ build
 doc/examples/ruleTranslator/RuleTranslator*
 lib
 bin
+.dub
+dub.selections.json

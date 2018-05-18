@@ -268,7 +268,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
     {
         foreach (int elementRemoveIndex, el; _listeners) {
-            if (listener == el) {
+            if (listener is el) {
                 _listeners.remove(elementRemoveIndex);
                 break;
             }

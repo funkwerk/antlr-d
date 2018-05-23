@@ -39,8 +39,6 @@ class IntervalSet : IntSet
 
     /**
      * The list of sorted, disjoint intervals.
-     * @uml
-     * @read
      */
     private Interval[] intervals_;
 
@@ -757,6 +755,10 @@ class IntervalSet : IntSet
 
     }
 
+    /**
+     * @uml
+     * @final
+     */
     public final Interval[] intervals()
     {
         return this.intervals_;

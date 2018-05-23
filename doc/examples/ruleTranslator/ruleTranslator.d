@@ -1,8 +1,10 @@
 module ruleTranslator;
 
 import RuleTranslatorLexer;
-import RuleTranslatorParser: RuleTranslatorParser;
+import RuleTranslatorParser : RuleTranslatorParser;
+import RuleTranslatorBaseListener : RuleTranslatorBaseListener;
 import RuleWriter: RuleWriter;
+import IBAListener;
 import TTSListener;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.CommonToken;
@@ -67,18 +69,34 @@ int main(string[] argv) {
                         // No syntax errors
                         auto base = baseName(filename);
                         auto outputName = base[0..lastIndexOf(base, '.')+1] ~ "d";
-                        auto baseListener = new TTSListener;
-                        auto writer = new RuleWriter;
-                        if(outputDir)
-                            {
-                                writer.setOutputPath(outputDir);
-                            }
-                        writer.setOutputFilename(outputName);
-                        baseListener.writer = writer;
-                        baseListener.withPropertyName = withPropertyName;
-                        baseListener.arguments = arguments;
-                        auto walker = new ParseTreeWalker;
-                        walker.walk(baseListener, rootContext);
+                        if (grammar_version == Version.iba) {
+                            auto baseListener = new IBAListener;
+                            auto writer = new RuleWriter;
+                            if(outputDir)
+                                {
+                                    writer.setOutputPath(outputDir);
+                                }
+                            writer.setOutputFilename(outputName);
+                            baseListener.writer = writer;
+
+                            auto walker = new ParseTreeWalker;
+                            walker.walk(baseListener, rootContext);
+                        }
+                        else {
+                            auto baseListener = new TTSListener;
+                            auto writer = new RuleWriter;
+                            if(outputDir)
+                                {
+                                    writer.setOutputPath(outputDir);
+                                }
+                            writer.setOutputFilename(outputName);
+                            baseListener.writer = writer;
+                            baseListener.withPropertyName = withPropertyName;
+                            baseListener.arguments = arguments;
+
+                            auto walker = new ParseTreeWalker;
+                            walker.walk(baseListener, rootContext);
+                        }
                     }
                 else
                     {

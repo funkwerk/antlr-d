@@ -1,3 +1,3 @@
-java -jar ~/Workspace/Antlr4DTarget/build/antlr4-4.7.1/tool/target/antlr4-4.7.1-complete.jar -Dlanguage=D RuleTranslator.g4 
-dmd ruleTranslator.d TTSListener.d RuleWriter.d RuleTranslatorBaseListener.d RuleTranslatorLexer.d RuleTranslatorListener.d RuleTranslatorParser.d -w -L-lantlr-d
+java -jar ../../../build/antlr4-4.7.1/tool/target/antlr4-4.7.1-complete.jar -Dlanguage=D RuleTranslator.g4 
+dmd ruleTranslator.d TTSListener.d IBAListener.d RuleWriter.d RuleTranslatorBaseListener.d RuleTranslatorLexer.d RuleTranslatorListener.d RuleTranslatorParser.d -w -L-lantlr-d
 ldmd2 -link-defaultlib-shared ruleTranslator.d TTSListener.d RuleWriter.d RuleTranslatorBaseListener.d RuleTranslatorLexer.d RuleTranslatorListener.d RuleTranslatorParser.d -w -L-lantlr-d

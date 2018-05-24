@@ -16,9 +16,8 @@ class ParseTreeProperty(V)
         return annotations[node];
     }
 
-    private void put(ParseTree node, V value)
+    public void put(ParseTree node, V value)
     {
-        annotations[node] = value;
     }
 
     public V removeFrom(ParseTree node)

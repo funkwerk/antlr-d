@@ -7,6 +7,9 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.ParseTreeProperty;
 import antlr.v4.runtime.tree.TerminalNode;
+import std.stdio;
+
+auto header = r"<?xml version='1.0' encoding='UTF-8'?>";
 
 /**
  * This class provides an empty implementation of {@link RuleTranslatorListener},
@@ -27,13 +30,19 @@ public class IBAListener : RuleTranslatorBaseListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) { }
+    override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
+        Result result;
+        result.s = header;
+        values.put(ctx, result);
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) { }
+    override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
+        writefln(values.get(ctx).s);
+    }
     /**
      * {@inheritDoc}
      *

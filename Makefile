@@ -129,7 +129,7 @@ install_library: $(BUILD_DIR)/libantlr-d.so.4.7
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
-	cp -R source/antlr $(EXPORT_INCLUDE)/antlr
+	cp -R source/antlr $(EXPORT_INCLUDE)
 
 .PHONY : clean
 clean :

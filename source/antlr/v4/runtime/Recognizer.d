@@ -65,11 +65,15 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public int[string][string] ruleIndexMapCache;
 
-    public ANTLRErrorListener!(U,V)[] _listeners = [new ConsoleErrorListener!(U,V)];
+    public ANTLRErrorListener!(U,V)[] _listeners;
 
     protected V _interp;
 
     private int _stateNumber = -1;
+
+    this() {
+        _listeners = [new ConsoleErrorListener!(U,V)];
+    }
 
     /**
      * @uml

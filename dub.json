@@ -16,7 +16,7 @@
                         "sourcePaths": ["source"],
                         "targetName": "antlr-d",
                         "targetPath": "lib", 
-                        "targetType": "dynamicLibrary",
+                        "targetType": "library",
                         "buildOptions": ["releaseMode"],
 		},
 		{

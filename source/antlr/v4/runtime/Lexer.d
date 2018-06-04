@@ -80,7 +80,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token _token;
 
-    public IntegerStack _modeStack = new IntegerStack();
+    public IntegerStack _modeStack;
 
     /**
      * @uml
@@ -134,6 +134,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
         tokenFactory_ = CommonTokenFactory.DEFAULT;
         this._input = input;
         this._tokenFactorySourcePair = tuple(this, input);
+        _modeStack = new IntegerStack();
     }
 
     public void reset()

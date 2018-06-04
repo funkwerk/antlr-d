@@ -300,10 +300,10 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     public static __gshared DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
 
-    static this()
-    {
-        this.mergeCache = new typeof(this.mergeCache);
-    }
+    // static this()
+    // {
+    //     this.mergeCache = new typeof(this.mergeCache);
+    // }
 
     protected DFA _dfa;
 
@@ -327,6 +327,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         super(atn, sharedContextCache);
         this.parser = parser;
         this.decisionToDFA = decisionToDFA;
+        if (mergeCache is null)
+            this.mergeCache = new typeof(this.mergeCache);
     }
 
     /**

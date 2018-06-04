@@ -10,7 +10,6 @@ import std.conv;
 import std.format;
 import std.stdio;
 import antlr.v4.runtime.atn.ATNSimulator;
-import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.UnsupportedOperationException;

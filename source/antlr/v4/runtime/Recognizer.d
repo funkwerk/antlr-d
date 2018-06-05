@@ -71,7 +71,8 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     private int _stateNumber = -1;
 
-    this() {
+    public this()
+    {
         _listeners = [new ConsoleErrorListener!(U,V)];
     }
 

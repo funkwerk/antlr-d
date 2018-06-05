@@ -297,13 +297,10 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * This maps graphs a and b to merged result c. (a,b)&rarr;c. We can avoid
      * the merge if we ever see a and b again.  Note that (b,a)&rarr;c should
      * also be examined during cache lookup.
+     * @uml
+     * @__gshared
      */
     public static __gshared DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
-
-    // static this()
-    // {
-    //     this.mergeCache = new typeof(this.mergeCache);
-    // }
 
     protected DFA _dfa;
 

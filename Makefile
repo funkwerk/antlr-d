@@ -41,7 +41,8 @@ XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse -L-lstdx-allocator
+UNITTEST_LIB = -L-lunit-threaded -L-lfluent-asserts -L-lddmp -L-ldparse -L-lstdx-allocator\
+               -L-ldshould
 
 SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)

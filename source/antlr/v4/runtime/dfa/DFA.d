@@ -6,18 +6,18 @@
 
 module antlr.v4.runtime.dfa.DFA;
 
-import std.conv;
-import std.algorithm.sorting;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
-import antlr.v4.runtime.dfa.DFAState;
-import antlr.v4.runtime.dfa.DFASerializer;
-import antlr.v4.runtime.dfa.LexerDFASerializer;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.StarLoopEntryState;
+import antlr.v4.runtime.dfa.DFASerializer;
+import antlr.v4.runtime.dfa.DFAState;
+import antlr.v4.runtime.dfa.LexerDFASerializer;
+import std.algorithm.sorting;
+import std.conv;
 
 // Class DFA
 /**
@@ -203,7 +203,7 @@ class DFA
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : equal, not, be, should;
     import unit_threaded;
 
     @Tags("DFA")
@@ -214,6 +214,6 @@ version(unittest) {
             import antlr.v4.runtime.atn.TokensStartState;
             DecisionState startState = new TokensStartState;
             DFA dfa = new DFA(startState);
-            dfa.should.not.beNull;
+            dfa.should.not.be(null);
         }
 }

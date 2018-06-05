@@ -6,14 +6,14 @@
 
 module antlr.v4.runtime.misc.IntervalSet;
 
-import std.stdio;
-import std.conv;
-import std.array;
-import std.algorithm;
-import std.container.rbtree;
-import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.TokenConstantDefinition;
+import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.misc;
+import std.algorithm;
+import std.array;
+import std.container.rbtree;
+import std.conv;
+import std.stdio;
 
 // Class IntervalSet
 /**
@@ -68,16 +68,7 @@ class IntervalSet : IntSet
             add(e);
     }
 
-    unittest
-    {
-        auto ts = new IntervalSet(99, 77, 8, 7, 78);
-        assert("{7..8, 77..78, 99}" == ts.toString);
-        ts = new IntervalSet(12);
-        assert("12" == ts.toString);
-    }
-
     /**
-     * @uml
      * Create a set with a single element, el.
      */
     public static IntervalSet of(int a)
@@ -88,7 +79,6 @@ class IntervalSet : IntSet
     }
 
     /**
-     * @uml
      * Create a set with all ints within range [a..b] (inclusive)
      */
     public static IntervalSet of(int a, int b)
@@ -199,28 +189,12 @@ class IntervalSet : IntSet
         return this;
     }
 
-    unittest
-    {
-        auto ts = new IntervalSet(99, 77, 8, 7, 78, 9, 11);
-        auto s = new IntervalSet(10, 12);
-        ts.addAll(s);
-        assert("{7..12, 77..78, 99}" == ts.toString);
-    }
-
     public IntervalSet complement(int minElement, int maxElement)
     {
         return this.complement(IntervalSet.of(minElement, maxElement));
     }
 
-    unittest
-    {
-        auto ts = new IntervalSet(11, 10, 8, 7, 78);
-        IntervalSet tn = ts.complement(1, 200);
-        assert("{1..6, 9, 12..77, 79..200}" == tn.toString);
-    }
-
     /**
-     * @uml
      * {@inheritDoc}
      */
     public IntervalSet complement(IntSet vocabulary)
@@ -333,14 +307,6 @@ class IntervalSet : IntSet
         return intersection;
     }
 
-    unittest
-    {
-        auto ta = new IntervalSet(11, 10, 8, 7, 78);
-        auto tb = new IntervalSet(12, 10, 8, 7, 79);
-        auto tand = ta.and(tb);
-        assert("{7..8, 10}" == tand.toString);
-    }
-
     public bool contains(int el)
     {
         foreach (I; intervals_) {
@@ -373,7 +339,6 @@ class IntervalSet : IntSet
     }
 
     /**
-     * @uml
      * Returns the maximum value contained in the set.
      *
      *  @return the maximum value contained in the set. If the set is empty, this
@@ -389,7 +354,6 @@ class IntervalSet : IntSet
     }
 
     /**
-     * @uml
      * Returns the minimum value contained in the set.
      *
      *  @return the minimum value contained in the set. If the set is empty, this
@@ -404,7 +368,6 @@ class IntervalSet : IntSet
     }
 
     /**
-     * @uml
      * combine all sets in the array returned the or'd value
      */
     public static IntervalSet or(IntervalSet[] sets)
@@ -417,22 +380,7 @@ class IntervalSet : IntSet
         return r;
     }
 
-    unittest
-    {
-        IntervalSet ts;
-        auto ts1 = new IntervalSet(99, 77, 8, 7, 78);
-        auto ts2 = new IntervalSet(99, 76, 8, 7, 78);
-        auto ts3 = new IntervalSet(55, 44);
-        IntervalSet[] tl;
-        tl ~= ts1;
-        tl ~= ts2;
-        tl ~= ts3;
-        auto r = ts.or(tl);
-        assert("{7..8, 44, 55, 76..78, 99}" == r.toString);
-    }
-
     /**
-     * @uml
      * Compute the set difference between two interval sets. The specific
      * operation is {@code left - right}. If either of the input sets is
      * {@code null}, it is treated as though it was an empty set.
@@ -586,10 +534,10 @@ class IntervalSet : IntSet
     }
 
     /**
-     * @uml
      * Get the ith element of ordered set.  Used only by RandomPhrase so
      * don't bother to implement if you're not doing that for a new
      * ANTLR code gen target.
+     * @uml
      * @safe
      * @pure
      */

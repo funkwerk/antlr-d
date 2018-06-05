@@ -139,7 +139,7 @@ class MurmurHash
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould: equal, should;
     import unit_threaded;
     @Tags("MurmurHash")
     @("Calculation")

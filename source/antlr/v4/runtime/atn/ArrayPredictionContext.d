@@ -6,12 +6,12 @@
 
 module antlr.v4.runtime.atn.ArrayPredictionContext;
 
-import std.stdio;
-import std.conv;
-import std.array;
-import std.container.array;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
+import std.array;
+import std.container.array;
+import std.conv;
+import std.stdio;
 
 // Class ArrayPredictionContext
 /**
@@ -142,7 +142,7 @@ class ArrayPredictionContext : PredictionContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -161,15 +161,15 @@ version(unittest) {
                 apc.toHash.should.equal(786443632U);
             else
                 apc.toHash.should.equal(6723470047294944096UL);
-            apc.getParent(0).should.beNull;
+            apc.getParent(0).should.be(null);
             apc.getReturnState(0).should.equal(PredictionContext.EMPTY_RETURN_STATE);
             auto apc1 = new ArrayPredictionContext(spc);
             apcp = apc;
-            Assert.equal(apc == apcp, true);
+            apc.should.equal(apcp);
             class A {}
             auto apc2 = new A;
-            Assert.equal(apc == apc2, false);
-            Assert.equal(apc == apc1, true);
+            apc.should.not.equal(apc2);
+            apc.should.equal(apc1);
         }
 
         @Tags("ArrayPredictionContext")
@@ -182,7 +182,7 @@ version(unittest) {
             apc.toString.should.equal("[12, null, $]");
             apc.size.should.equal(2);
             apc.isEmpty.should.equal(false);
-            apc.getParent(0).should.beNull;
+            apc.getParent(0).should.be(null);
             static if (size_t.sizeof == 4)
                 apc.toHash.should.equal(786443632U);
             else
@@ -195,7 +195,7 @@ version(unittest) {
                     .should.equal(4292457832056041856UL);
             apc.getReturnState(0).should.equal(12);
             auto apc1 = new ArrayPredictionContext(spc);
-            Assert.equal(apc != apc1, true);
+            apc.should.not.equal(apc1);
         }
 
         @Tags("ArrayPredictionContext")
@@ -209,13 +209,13 @@ version(unittest) {
             apc.toString.should.equal("[12, null, $]");
             apc.size.should.equal(2);
             apc.isEmpty.should.equal(false);
-            apc.getParent(0).should.beNull;
+            apc.getParent(0).should.be(null);
             apc.getReturnState(0).should.equal(12);
             apc.parents[0] = apc1;
             auto apc2 = new ArrayPredictionContext(apc.parents, apc.returnStates);
             apc2.toString.should.equal("[12,  [], $]");
             apc.toString.should.equal("[12,  [], $]");
-            Assert.equal(apc == apc2, false);
+            apc.should.not.equal(apc2);
             apc2.parents = apc1 ~ apc2.parents;
             apc2.returnStates = 13 ~ apc2.returnStates;
             apc2.toString.should.equal("[13,  [], 12,  [], $]");

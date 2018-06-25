@@ -6,21 +6,21 @@
 
 module antlr.v4.runtime.ParserRuleContext;
 
-import std.algorithm;
-import std.variant;
-import std.format;
-import std.conv;
-import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.tree.ParseTree;
-import antlr.v4.runtime.Token;
 import antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.misc;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.ErrorNodeImpl;
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.TerminalNodeImpl;
-import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.misc;
+import std.algorithm;
+import std.conv;
+import std.format;
+import std.variant;
 
 // Class ParserRuleContext
 /**
@@ -318,22 +318,20 @@ class ParserRuleContext : RuleContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
     @Tags("parserRC")
     @("emptyInstanceParserRuleContext")
     unittest {
         auto rpc = ParserRuleContext.EMPTY;
-        rpc.should.not.beNull;
+        rpc.should.not.be(null);
         rpc.getChildCount.should.equal(0);
         auto rpc1 = ParserRuleContext.EMPTY;
-        rpc1.should.not.beNull;
-        import std.stdio;
-        Assert.equal(rpc1 is rpc, true);
-        Assert.equal(rpc1 == rpc, true);
+        rpc1.should.not.be(null);
+        rpc1.should.be(rpc);
         rpc.getStart.should.equal(null);
         rpc.getStop.should.equal(null);
         rpc.getSourceInterval.toString.should.equal("-1..-2");
-        rpc.getParent.should.beNull;
+        rpc.getParent.should.be(null);
     }
 }

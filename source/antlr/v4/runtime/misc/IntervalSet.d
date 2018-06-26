@@ -715,7 +715,7 @@ class IntervalSet : IntSet
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -724,9 +724,10 @@ version(unittest) {
         @("Empty")
         unittest {
             IntervalSet s = new IntervalSet;
-            s.should.not.beNull;
+            s.should.not.be(null);
             s.intervals.length.should.equal(0);
             s.isNil.should.equal(true);
+        }
 
     // def testOne(self):
     //     s = IntervalSet()
@@ -820,6 +821,5 @@ version(unittest) {
     //     self.assertTrue(10 not in c)
     //     self.assertTrue(20 not in c)
 
-        }
     }
 }

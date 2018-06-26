@@ -5,7 +5,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.DecisionState;
-import fluent.asserts;
+import dshould : be, equal, not, should;
 
 class Test
 {
@@ -13,7 +13,7 @@ class Test
     @("constructATNDeserializationOptions")
     unittest {
         auto so = new ATNDeserializationOptions();
-        so.should.not.beNull;
+        so.should.not.be(null);
         so.verifyATN.should.equal(true);
         so.readOnly.should.equal(false);
         so.generateRuleBypassTransitions.should.equal(false);
@@ -23,7 +23,6 @@ class Test
     @("constructATNDeserializationDefaultOptions")
     unittest {
         auto so = ATNDeserializationOptions.defaultOptions;
-        so.should.not.beNull;
         so.verifyATN.should.equal(true);
         so.readOnly.should.equal(true);
         so.generateRuleBypassTransitions.should.equal(false);

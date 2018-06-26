@@ -190,7 +190,7 @@ class RuntimeMetaData
 
 version(unittest) {
 
-    import fluent.asserts;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -198,7 +198,7 @@ version(unittest) {
         @Tags("mt", "reg")
         @("compareMetaDataVersion")
         unittest {
-            Assert.equal("4.7",  RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
+            "4.7".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
             RuntimeMetaData.checkVersion("4.7", "4.7.1");
         }
     }

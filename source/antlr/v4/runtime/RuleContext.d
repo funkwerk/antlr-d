@@ -6,17 +6,17 @@
 
 module antlr.v4.runtime.RuleContext;
 
+import antlr.v4.runtime.InterfaceRecognizer;
+import antlr.v4.runtime.InterfaceRuleContext;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.misc;
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.RuleNode;
+import antlr.v4.runtime.tree.Trees;
 import std.array;
 import std.conv;
-import antlr.v4.runtime.ParserRuleContext;
-import antlr.v4.runtime.InterfaceRecognizer;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.InterfaceRuleContext;
-import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.tree.RuleNode;
-import antlr.v4.runtime.tree.ParseTree;
-import antlr.v4.runtime.tree.Trees;
-import antlr.v4.runtime.misc;
 
 // Class RuleContext
 /**
@@ -274,7 +274,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -283,7 +283,7 @@ version(unittest) {
         unittest {
             auto rcp = new RuleContext(null, -1);
             auto rc = new RuleContext(rcp, -1);
-            rc.should.not.beNull;
+            rc.should.not.be(null);
             rcp.depth.should.equal(1);
             rc.isEmpty.should.equal(true);
             rc.parent.isEmpty.should.equal(true);
@@ -310,12 +310,12 @@ version(unittest) {
             }
             auto rcp = new RuleContext(null, 1);
             auto rc = new RuleContext(rcp, 0);
-            rc.should.not.beNull;
+            rc.should.not.be(null);
             rc.toString(["A1", "B1"]).should.equal("[-1 -1]");
 
             rcp = new RuleContextT(null, 1);
             rc = new RuleContextT(rcp, 0);
-            rc.should.not.beNull;
+            rc.should.not.be(null);
             rc.toString(["A1", "B1"]).should.equal("[A1 B1]");
         }
     }

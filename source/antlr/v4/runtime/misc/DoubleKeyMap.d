@@ -81,7 +81,7 @@ class DoubleKeyMap(K1, K2, V)
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -93,9 +93,9 @@ version(unittest) {
             t1.put(7,1,12);
             t1.put(7,1,13);
             auto x = t1.get(7,1);
-            Assert.equal(x.get, 13);
+            x.get.should.equal(13);
             x = t1.get(7,2);
-            Assert.equal(x.isNull, true);
+            x.isNull.should.equal(true);
         }
 
         @Tags("DoubleKeyMap")

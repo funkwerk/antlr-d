@@ -79,13 +79,13 @@ class EmptyPredictionContext : SingletonPredictionContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
     @Tags("EmptyPredictionContext")
     @("Construction")
     unittest {
         auto spc = new EmptyPredictionContext;
-        spc.should.not.beNull;
+        spc.should.not.be(null);
         spc.isEmpty.should.equal(true);
         spc.getReturnState(0).should.equal(int.max);
         auto spc1 = new EmptyPredictionContext;
@@ -97,11 +97,11 @@ version(unittest) {
         spc2.isEmpty.should.equal(true);
         spc2.toString.should.equal("$");
         spc2.getReturnState(0).should.equal(int.max);
-        Assert.equal(spc2.classinfo == EmptyPredictionContext.classinfo, true);
-        Assert.equal(spc.opEquals(spc1), true);
+        spc2.classinfo.should.equal(EmptyPredictionContext.classinfo);
+        spc.opEquals(spc1).should.equal(true);
         import antlr.v4.runtime.ParserRuleContext;
         auto prc1 = new ParserRuleContext;
-        Assert.equal(spc2.opEquals(prc1), false);
+        spc2.opEquals(prc1).should.equal(false);
         spc.toDOTString(spc2).should.equal("digraph G {\nrankdir=LR;\n}\n");
     }
 }

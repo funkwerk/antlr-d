@@ -1253,12 +1253,12 @@ class ATNDeserializer
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
     @Tags("des11")
     @("testEncodingATNDeserialize")
     unittest {
         auto des = new ATNDeserializer;
-        des.should.not.beNull;
+        des.should.not.be(null);
     }
 }

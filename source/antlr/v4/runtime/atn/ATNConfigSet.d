@@ -6,22 +6,22 @@
 
 module antlr.v4.runtime.atn.ATNConfigSet;
 
-import std.bitmanip;
-import std.array;
-import std.conv;
-import std.format;
-import std.algorithm.iteration : map, sum;
-import std.algorithm.comparison : equal, max;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
-import antlr.v4.runtime.misc.AbstractEqualityComparator;
+import antlr.v4.runtime.atn.InterfaceATNSimulator;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.InterfaceATNSimulator;
+import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import antlr.v4.runtime.misc;
+import std.algorithm.comparison : equal, max;
+import std.algorithm.iteration : map, sum;
+import std.array;
+import std.bitmanip;
+import std.conv;
+import std.format;
 
 // Class ATNConfigSet
 /**
@@ -452,13 +452,13 @@ class ATNConfigSet
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
     @Tags("atnConfigSet")
 	@("atnConfigSetTest")
 	unittest {
             ATNConfigSet atnConfigSet = new ATNConfigSet;
-            atnConfigSet.should.not.beNull;
+            atnConfigSet.should.not.be(null);
             atnConfigSet.readonly.should.equal(false);
             atnConfigSet.toString.should.equal("[]");
             atnConfigSet.isEmpty.should.equal(true);

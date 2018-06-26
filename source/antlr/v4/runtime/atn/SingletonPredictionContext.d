@@ -107,7 +107,7 @@ class SingletonPredictionContext : PredictionContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -116,13 +116,13 @@ version(unittest) {
         @("Construction")
         unittest {
             PredictionContext spc = SingletonPredictionContext.create(null, 12);
-            spc.should.not.beNull;
+            spc.should.not.be(null);
             spc.toString.should.equal("12 $");
             spc.getReturnState(0).should.equal(12);
-            spc.getParent(0).should.be.instanceOf!PredictionContext;
+            (cast(PredictionContext)spc.getParent(0)).should.not.be(null);
             auto emptyPC = SingletonPredictionContext.create(null,
                                                              PredictionContext.EMPTY_RETURN_STATE);
-            emptyPC.should.be.instanceOf!SingletonPredictionContext;
+            (cast(SingletonPredictionContext)emptyPC).should.not.be(null);
             spc = SingletonPredictionContext.create(emptyPC, 11);
             spc.toString.should.equal("11 $");
             auto spc1 = SingletonPredictionContext.create(spc, 10);
@@ -135,12 +135,12 @@ version(unittest) {
             auto spc11 = SingletonPredictionContext.create(null, 11);
             auto spc12 = SingletonPredictionContext.create(null, 12);
             auto spc = SingletonPredictionContext.create(null, 12);
-            Assert.equal(spc == spc12, true);
-            Assert.equal(spc11 == spc12, false);
-            Assert.equal(spc12 == spc12, true);
+            spc.should.equal(spc12);
+            spc11.should.not.equal(spc12);
+            spc12.should.equal(spc12);
             class A {}
             auto a = new A;
-            Assert.equal(spc11 == a, false);
+            spc11.should.not.equal(a);
         }
     }
 }

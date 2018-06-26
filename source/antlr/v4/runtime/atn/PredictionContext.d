@@ -6,21 +6,21 @@
 
 module antlr.v4.runtime.atn.PredictionContext;
 
-import std.array;
-import std.conv;
-import std.algorithm.sorting;
-import core.atomic;
-import std.typecons;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNState;
-import antlr.v4.runtime.atn.EmptyPredictionContext;
-import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.ArrayPredictionContext;
-import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.EmptyPredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.RuleTransition;
+import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.misc;
+import core.atomic;
+import std.algorithm.sorting;
+import std.array;
+import std.conv;
+import std.typecons;
 
 // Class PredictionContext
 /**
@@ -721,7 +721,7 @@ abstract class PredictionContext
 }
 
 version(unittest) {
-    import fluent.asserts : should, Assert;
+    import dshould : be, equal, not, should;
     import unit_threaded;
 
     class Test {
@@ -730,7 +730,7 @@ version(unittest) {
         @("empty")
         unittest {
             auto spcA = new EmptyPredictionContext;
-            spcA.should.not.beNull;
+            spcA.should.not.be(null);
             auto spcB = new SingletonPredictionContext(new EmptyPredictionContext, 0);
             spcA.should.not.equal(spcB);
             spcA.hasEmptyPath.should.equal(true);
@@ -745,10 +745,10 @@ version(unittest) {
             DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
             auto spcA = new EmptyPredictionContext;
             auto apcA = new ArrayPredictionContext(spcA);
-            apcA.should.not.beNull;
+            apcA.should.not.be(null);
             auto spcB = new EmptyPredictionContext;
             auto apcB = new ArrayPredictionContext(spcB);
-            apcB.should.not.beNull;
+            apcB.should.not.be(null);
             auto spcC = new EmptyPredictionContext;
 
             PredictionContext[] predA = [apcA, apcB, spcC, apcA]; // not unique
@@ -761,7 +761,7 @@ version(unittest) {
         @("mergeEmptyContext")
         unittest {
             auto spcC = new EmptyPredictionContext;
-            spcC.should.not.beNull;
+            spcC.should.not.be(null);
             auto spcD = new EmptyPredictionContext;
 
             PredictionContext[] predB = [spcC, spcD];

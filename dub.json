@@ -27,7 +27,6 @@
 				"source/app.d"
 			],
 			"dependencies": {
-			    "fluent-asserts": ">=0.11.4",
                             "dshould": "~>0.1",
 			    "unit-threaded": ">=0.7.45"
 			},

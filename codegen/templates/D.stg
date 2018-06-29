@@ -963,10 +963,10 @@ public class <lexer.name> : <superClass; null="Lexer"> {
 
 	override
 	public wstring getSerializedATN() { return _serializedATN; }
-        
+
         override
 	public string[] getChannelNames() { return channelNames; }
-        
+
 	override
 	public string[] getModeNames() { return modeNames; }
 

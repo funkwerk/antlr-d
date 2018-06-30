@@ -729,27 +729,42 @@ version(unittest) {
             s.isNil.should.equal(true);
         }
 
-    // def testOne(self):
-    //     s = IntervalSet()
-    //     s.addOne(30)
-    //     self.assertTrue(30 in s)
-    //     self.assertFalse(29 in s)
-    //     self.assertFalse(31 in s)
+        @Tags("IntervalSet")
+        @("One")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(29).should.equal(false);
+            s.contains(31).should.equal(false);
+        }
 
-    // def testTwo(self):
-    //     s = IntervalSet()
-    //     s.addOne(30)
-    //     s.addOne(40)
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
-    //     self.assertFalse(35 in s)
+        @Tags("IntervalSet")
+        @("Two")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30);
+            s.add(40);
+            s.intervals.length.should.equal(2);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(35).should.equal(false);
+        }
 
-    // def testRange(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(30,41))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
-    //     self.assertTrue(35 in s)
+        @Tags("IntervalSet")
+        @("Range")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30, 41);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(35).should.equal(true);
+        }
 
     // def testDistinct1(self):
     //     s = IntervalSet()

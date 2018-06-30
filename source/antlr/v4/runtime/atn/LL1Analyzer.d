@@ -6,33 +6,37 @@
 
 module antlr.v4.runtime.atn.LL1Analyzer;
 
-import std.container.array;
-import std.container.rbtree;
-import std.conv;
-import std.stdio;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.NotSetTransition;
 import antlr.v4.runtime.atn.PredictionContext;
-import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.SingletonPredictionContext;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.WildcardTransition;
 import antlr.v4.runtime.misc.IntervalSet;
+import std.container.array;
+import std.container.rbtree;
+import std.conv;
+import std.stdio;
 
 // Class LL1Analyzer
 /**
- * TODO add class description
+ * LL1 Analyzer
  */
 class LL1Analyzer
 {
 
+    /**
+     * Special value added to the lookahead sets to indicate that we hit
+     *  a predicate during analysis if {@code seeThruPreds==false}.
+     */
     public static const int HIT_PRED = TokenConstantDefinition.INVALID_TYPE;
 
     public ATN atn;
@@ -43,7 +47,6 @@ class LL1Analyzer
     }
 
     /**
-     * @uml
      * Calculates the SLL(1) expected lookahead set for each outgoing transition
      * if an {@link ATNState}. The returned array has one element for each
      * outgoing transition in {@code s}. If the closure from transition
@@ -55,13 +58,14 @@ class LL1Analyzer
      */
     public IntervalSet[] getDecisionLookahead(ATNState s)
     {
-        //		System.out.println("LOOK("+s.stateNumber+")");
+        debug
+            writefln("LL1Analyzer: LOOK(%s)", s.stateNumber);
         if (s is null) {
             return null;
         }
 
-        IntervalSet[] look = new IntervalSet[s.getNumberOfTransitions()];
-        for (int alt = 0; alt < s.getNumberOfTransitions(); alt++) {
+        IntervalSet[] look = new IntervalSet[s.getNumberOfTransitions];
+        for (int alt = 0; alt < s.getNumberOfTransitions; alt++) {
             look[alt] = new IntervalSet();
             auto lookBusy = new Array!ATNConfig();
             bool seeThruPreds = false; // fail to get lookahead upon pred
@@ -69,7 +73,7 @@ class LL1Analyzer
                   look[alt], lookBusy, new Array!bool(), seeThruPreds, false);
             // Wipe out lookahead for this alternative if we found nothing
             // or we had a predicate when we !seeThruPreds
-            if ( look[alt].size()==0 || look[alt].contains(HIT_PRED) ) {
+            if (look[alt].size == 0 || look[alt].contains(HIT_PRED)) {
                 look[alt] = null;
             }
         }
@@ -77,7 +81,6 @@ class LL1Analyzer
     }
 
     /**
-     * @uml
      * Compute set of tokens that can follow {@code s} in the ATN in the
      * specified {@code ctx}.
      *
@@ -99,7 +102,6 @@ class LL1Analyzer
     }
 
     /**
-     * @uml
      * Compute set of tokens that can follow {@code s} in the ATN in the
      * specified {@code ctx}.
      *
@@ -128,7 +130,6 @@ class LL1Analyzer
     }
 
     /**
-     * @uml
      * Compute set of tokens that can follow {@code s} in the ATN in the
      * specified {@code ctx}.
      *
@@ -162,10 +163,10 @@ class LL1Analyzer
                          Array!ATNConfig* lookBusy, Array!bool* calledRuleStack, bool seeThruPreds, bool addEOF)
     {
         debug
-            writefln("LL1Ana:_LOOK(%s, ctx=%s), look = %s", s.stateNumber,
+            writefln("LL1Analyzer: _LOOK(%s, ctx=%s), look = %s", s.stateNumber,
                      ctx, look.intervals);
         ATNConfig c = new ATNConfig(s, 0, ctx);
-        foreach(lb; *lookBusy)
+        foreach (lb; *lookBusy)
             if (lb == c)
                 return;
         *lookBusy = *lookBusy ~ c;
@@ -179,12 +180,12 @@ class LL1Analyzer
                 return;
             }
         }
-        if (s.classinfo == RuleStopState.classinfo) {
+        if (cast(RuleStopState)s) {
             if (ctx is null ) {
                 look.add(TokenConstantDefinition.EPSILON);
                 return;
             }
-            else if (ctx.isEmpty() && addEOF) {
+            else if (ctx.isEmpty && addEOF) {
                 look.add(TokenConstantDefinition.EOF);
                 return;
             }

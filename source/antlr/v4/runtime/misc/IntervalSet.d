@@ -121,12 +121,15 @@ class IntervalSet : IntSet
         add(Interval.of(a ,b));
     }
 
+    /**
+     * copy on write so we can cache a..a intervals and sets of that
+     */
     protected void add(Interval addition)
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        debug (Interval)
+        debug (IntervalSet)
             writefln("add %1$s to %2$s", addition, intervals_);
-        if (addition.b < addition.a ) {
+        if (addition.b < addition.a) {
             return;
         }
         // find position in list
@@ -145,15 +148,16 @@ class IntervalSet : IntSet
                 while (++index < intervals_.length) {
                     Interval next = intervals_[index];
                     if (!bigger.adjacent(next) && bigger.disjoint(next)) {
-                        break;
+                        continue;
                     }
                     // if we bump up against or overlap next, merge
                     intervals_ = intervals_.remove(index);
                     // move backwards to what we just set
-                    intervals_[index-1] = bigger.unionInterval(next); // set to 3 merged ones
+                    intervals_[--index] = bigger.unionInterval(next); // set to 3 merged ones
                 }
                 return;
             }
+
             if (addition.startsBeforeDisjoint(r)) {
                 // insert before r
                 intervals_ = intervals_[0..index] ~ addition ~
@@ -581,12 +585,12 @@ class IntervalSet : IntSet
                 break;
             }
             // if on left edge x..b, adjust left
-            if ( el==a ) {
+            if (el == a) {
                 I.a++;
                 break;
             }
             // if on right edge a..x, adjust right
-            if ( el==b ) {
+            if (el == b) {
                 I.b--;
                 break;
             }
@@ -766,75 +770,134 @@ version(unittest) {
             s.contains(35).should.equal(true);
         }
 
-    // def testDistinct1(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(30,32))
-    //     s.addRange(range(40,42))
-    //     self.assertEquals(2,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
-    //     self.assertFalse(35 in s)
+        @Tags("IntervalSet")
+        @("Distinct1")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30, 32);
+            s.add(40, 42);
+            s.intervals.length.should.equal(2);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(35).should.equal(false);
+        }
 
-    // def testDistinct2(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(40,42))
-    //     s.addRange(range(30,32))
-    //     self.assertEquals(2,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
-    //     self.assertFalse(35 in s)
+        @Tags("IntervalSet")
+        @("Distinct2")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(40, 42);
+            s.add(30, 32);
+            s.intervals.length.should.equal(2);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(35).should.equal(false);
+        }
 
-    // def testContiguous1(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(30,36))
-    //     s.addRange(range(36,41))
-    //     self.assertEquals(1,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
-    //     self.assertTrue(35 in s)
+        @Tags("IntervalSet")
+        @("Contiguous1")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30, 36);
+            s.add(36, 41);
+            s.add(41, 44);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(43).should.equal(true);
+            s.contains(44).should.equal(true);
+            s.contains(45).should.equal(false);
+        }
 
-    // def testContiguous2(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(36,41))
-    //     s.addRange(range(30,36))
-    //     self.assertEquals(1,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(40 in s)
+        @Tags("IntervalSet")
+        @("Contiguous2")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(41, 44);
+            s.add(36, 41);
+            s.add(30, 36);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(43).should.equal(true);
+            s.contains(44).should.equal(true);
+            s.contains(45).should.equal(false);
+        }
 
-    // def testOverlapping1(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(30,40))
-    //     s.addRange(range(35,45))
-    //     self.assertEquals(1,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(44 in s)
+        @Tags("IntervalSet")
+        @("Overlapping1")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30, 40);
+            s.add(35, 44);
+            s.add(31, 36);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(43).should.equal(true);
+            s.contains(44).should.equal(true);
+            s.contains(45).should.equal(false);
+        }
 
-    // def testOverlapping2(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(35,45))
-    //     s.addRange(range(30,40))
-    //     self.assertEquals(1,len(s.intervals))
-    //     self.assertTrue(30 in s)
-    //     self.assertTrue(44 in s)
+        @Tags("IntervalSet")
+        @("Overlapping2")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(35, 44);
+            s.add(31, 36);
+            s.add(30, 40);
+            s.intervals.length.should.equal(1);
+            s.isNil.should.equal(false);
+            s.contains(30).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(43).should.equal(true);
+            s.contains(44).should.equal(true);
+            s.contains(45).should.equal(false);
+        }
 
-    // def testOverlapping3(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(30,32))
-    //     s.addRange(range(40,42))
-    //     s.addRange(range(50,52))
-    //     s.addRange(range(20,61))
-    //     self.assertEquals(1,len(s.intervals))
-    //     self.assertTrue(20 in s)
-    //     self.assertTrue(60 in s)
+        @Tags("IntervalSet")
+        @("Overlapping3")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(30, 32);
+            s.add(40, 42);
+            s.add(140, 144);
+            s.add(50, 52);
+            s.add(20, 61);
+            s.add(50, 52);
+            s.intervals.length.should.equal(2);
+            s.isNil.should.equal(false);
+            s.contains(20).should.equal(true);
+            s.contains(40).should.equal(true);
+            s.contains(43).should.equal(true);
+            s.contains(61).should.equal(true);
+            s.contains(4).should.equal(false);
+            s.contains(62).should.equal(false);
+            s.contains(139).should.equal(false);
+            s.contains(140).should.equal(true);
+            s.contains(144).should.equal(true);
+            s.contains(145).should.equal(false);
+            s.toString.should.equal("{20..61, 140..144}");
+        }
 
-    // def testComplement(self):
-    //     s = IntervalSet()
-    //     s.addRange(range(10,21))
-    //     c = s.complement(1,100)
-    //     self.assertTrue(1 in c)
-    //     self.assertTrue(100 in c)
-    //     self.assertTrue(10 not in c)
-    //     self.assertTrue(20 not in c)
-
+        @Tags("IntervalSet")
+        @("Complement")
+        unittest {
+            IntervalSet s = new IntervalSet;
+            s.add(10, 21);
+            auto c = s.complement(1, 100);
+            c.intervals.length.should.equal(2);
+            c.toString.should.equal("{1..9, 22..100}");
+            c.contains(1).should.equal(true);
+            c.contains(40).should.equal(true);
+            c.contains(22).should.equal(true);
+            c.contains(10).should.equal(false);
+            c.contains(20).should.equal(false);
+        }
     }
 }

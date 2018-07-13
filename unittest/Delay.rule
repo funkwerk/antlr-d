@@ -10,9 +10,9 @@ base de.Phrases
 announceTrain(product, line, trainNumber, metaCategory)
 
 if passengerEnd:
-    "von" stationName(origin) # low
+    "von" stationName(origin)
 else:
-    announceDestinationAndVias(destination, announcedVias)
+    announceDestinationAndVias(destinodeation, announcedVias)
 
 if linkType == "SPLIT_REMOTE":
     "mit"
@@ -41,7 +41,7 @@ if trackChanged:
 
 if earlyDestination:
     "heute nur bis"
-    stationName(earlyDestination)"." # low
+    stationName(earlyDestination)"."
     "Wir informieren Sie über Anschlüsse im Zug."
 
 announceOmittedStops(omittedStops)

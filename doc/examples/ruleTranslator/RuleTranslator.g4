@@ -28,7 +28,8 @@ DEDENT
   }
 
   public override Token nextToken() {
-    // Check if the end-of-file is ahead and there are still some DEDENTS expected.
+    // Check if the end-of-file is ahead and there are still
+    // some DEDENTS expected.
     if (_input.LA(1) == EOF && !this.indents.empty) {
       // Remove any trailing EOF tokens from our buffer.
       {
@@ -75,7 +76,8 @@ DEDENT
   private CommonToken commonToken(int type, string text) {
     int stop = this.getCharIndex() - 1;
     int start = to!int(text.length == 0 ? stop : stop - text.length + 1);
-    return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
+    return new CommonToken(this._tokenFactorySourcePair, type,
+                           DEFAULT_TOKEN_CHANNEL, start, stop);
   }
 
   // Calculates the indentation of the provided spaces, taking the
@@ -112,7 +114,7 @@ DEDENT
 
 file_input: rule_setting
             import_stmts
-            (NEWLINE | funcdef)* 
+            (NEWLINE | funcdef)*
             (NEWLINE | ruledef?)
             EOF;
 
@@ -147,7 +149,7 @@ tfpdef:
       | STRING      # tfpdef_string
       | funct_stmt  # tfpdef_funct_stm
       ;
- 
+
 //
 stmt: (simple_stmt | compound_stmt |flow_stmt);
 simple_stmt: small_stmt+ NEWLINE;
@@ -158,7 +160,7 @@ small_stmt: (
     |funct_stmt
 );
 
-string_stmt: STRING (low | high |);
+string_stmt: STRING;
 
 funct_stmt: funct_name funct_parameters (dot_e funct_stmt)*;
 funct_name: dotted_name;
@@ -167,7 +169,8 @@ funct_parameters: parameters;
 
 var_stmt: dotted_name;
 
-// For normal and annotated assignments, additional restrictions enforced by the interpreter
+// For normal and annotated assignments, additional restrictions enforced
+// by the interpreter
 flow_stmt: break_stmt | continue_stmt;
 break_stmt: 'break';
 continue_stmt: 'continue';
@@ -196,7 +199,7 @@ for_exprlist: exprlist;
 // BLOCK
 block_stmt: BLOCK COLON block_suite;
 
-block_suite: NEWLINE INDENT simple_stmt+ (low | high |) DEDENT;
+block_suite: NEWLINE INDENT simple_stmt+ DEDENT;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;
@@ -266,9 +269,6 @@ arglist: argument (',' argument)*  (',')?;
 // that precede iterable unpackings are blocked; etc.
 argument: test;
 
-low: LOW;
-high: HIGH;
-
 
 /*
  * lexer rules
@@ -309,8 +309,6 @@ FALSE : 'False';
 CONTINUE : 'continue';
 BREAK : 'break';
 BLOCK : 'block';
-LOW : 'low';
-HIGH : 'high';
 
 NEWLINE
  : ( {atStartOfInput()}?   SPACES
@@ -321,7 +319,8 @@ NEWLINE
      string newLine = getText.replaceAll(regex(r"[^\r\n\f]+"), "");
      string spaces = getText.replaceAll(regex(r"[\r\n\f]+"), "");
      int next = _input.LA(1);
-     if (opened > 0 || next == '\r' || next == '\n' || next == '\f' || next == '#') {
+     if (opened > 0 || next == '\r' || next == '\n' || next == '\f' ||
+         next == '#') {
        // If we're inside a list or on a blank line, ignore all indents,
        // dedents and line breaks.
        skip();
@@ -358,11 +357,13 @@ NAME
 /// stringprefix    ::=  "r" | "u" | "R" | "U" | "f" | "F"
 ///                      | "fr" | "Fr" | "fR" | "FR" | "rf" | "rF" | "Rf" | "RF"
 STRING_LITERAL
- : ( [rR] | [uU] | [fF] | ( [fF] [rR] ) | ( [rR] [fF] ) )? ( SHORT_STRING | LONG_STRING )
+ : ( [rR] | [uU] | [fF] | ( [fF] [rR] ) | ( [rR] [fF] ) )? ( SHORT_STRING |
+                                                             LONG_STRING )
  ;
 
 /// bytesliteral   ::=  bytesprefix(shortbytes | longbytes)
-/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR" | "rb" | "rB" | "Rb" | "RB"
+/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR" |
+///                     "rb" | "rB" | "Rb" | "RB"
 BYTES_LITERAL
  : ( [bB] | ( [bB] [rR] ) | ( [rR] [bB] ) ) ( SHORT_BYTES | LONG_BYTES )
  ;
@@ -438,12 +439,14 @@ UNKNOWN_CHAR
 
 /// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
 /// shortstringitem ::=  shortstringchar | stringescapeseq
-/// shortstringchar ::=  <any source character except "\" or newline or the quote>
+/// shortstringchar ::=  <any source character except "\" or newline or
+///                       the quote>
 fragment SHORT_STRING
  : '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n\f'] )* '\''
  | '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n\f"] )* '"'
  ;
-/// longstring      ::=  "'''" longstringitem* "'''" | '"""' longstringitem* '"""'
+/// longstring      ::=  "'''" longstringitem* "'''" |
+///                      '"""' longstringitem* '"""'
 fragment LONG_STRING
  : '\'\'\'' LONG_STRING_ITEM*? '\'\'\''
  | '"""' LONG_STRING_ITEM*? '"""'
@@ -566,7 +569,9 @@ fragment LINE_JOINING
  : '\\' SPACES? ( '\r'? '\n' | '\r' | '\f')
  ;
 
-/// id_start     ::=  <all characters in general categories Lu, Ll, Lt, Lm, Lo, Nl, the underscore, and characters with the Other_ID_Start property>
+/// id_start     ::=  <all characters in general categories Lu, Ll, Lt, Lm,
+///                    Lo, Nl, the underscore, and characters with
+///                    the Other_ID_Start property>
 fragment ID_START
  : '_'
  | [A-Z]

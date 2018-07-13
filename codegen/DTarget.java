@@ -30,8 +30,8 @@ public class DTarget extends Target {
 		"abstract", "assert", "bool", "break", "byte", "case", "catch",
 		"char", "class", "const", "continue", "default", "do", "double", "else",
 		"enum", "extends", "false", "final", "finally", "float", "for", "goto",
-		"if", "implements", "import", "instanceof", "int", "interface",
-		"long", "native", "new", "null", "package", "private", "protected",
+		"if", "implements", "import", "instanceof", "in", "int", "interface",
+		"long", "native", "new", "null", "out", "package", "private", "protected",
 		"public", "return", "short", "static", "super", "switch",
 		"synchronized", "this", "throw", "throws", "transient", "true", "try",
 		"void", "volatile", "while"

@@ -8,7 +8,7 @@ base en.Phrases
 
 if product != "hahnenkammShuttle":
     block:
-        "Attention please!" high
+        "Attention please!"
     trainTypeNumber(trainNumber, product, metaCategory)
     if  passengerEnd or boarding == "GET_OFF_ONLY":
         "from" stationName(origin)

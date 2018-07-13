@@ -1055,12 +1055,14 @@ version(unittest) {
         @Tags("Generator")
         @("Parser")
         unittest {
-            auto antlrInput = new ANTLRInputStream(File("unittest/ruleDelay.rule", "r"));
+            auto antlrInput = new ANTLRInputStream(File("unittest/Delay.rule", "r"));
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             // Pass the tokens to the parser
             auto parser = new RuleTranslatorParser(cts);
             cts.getNumberOfOnChannelTokens.should.equal(405);
+            foreach (t; cts.getTokens)
+                        writefln("\t\t%s", t);
             // Specify our entry point
             auto rootContext = parser.file_input;
             parser.getNumberOfSyntaxErrors.should.equal(0);

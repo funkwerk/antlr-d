@@ -2,7 +2,7 @@ rule Phrases de
 
 def productTrainNumber(trainNumber, product):
     if station.empty:
-        "foo" low
-        "baz" high
-        "x"
+        foo:low
+        baz:high
+        x
         al(beta.x)

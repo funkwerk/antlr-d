@@ -1087,30 +1087,6 @@ public class IBAListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitArgument(RuleTranslatorParser.ArgumentContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterLow(RuleTranslatorParser.LowContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitLow(RuleTranslatorParser.LowContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterHigh(RuleTranslatorParser.HighContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitHigh(RuleTranslatorParser.HighContext ctx) { }
 
     /**
      * {@inheritDoc}

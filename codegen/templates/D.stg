@@ -832,7 +832,8 @@ ListenerDispatchMethod(method) ::= <<
 import <parser.grammarName>Listener;
 override
 public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
-	if (listener.classinfo == <parser.grammarName>Listener.<parser.grammarName>Listener.classinfo) (cast(<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
+    if (cast(<parser.grammarName>Listener.<parser.grammarName>Listener)listener)
+        (cast(<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
 }
 >>
 

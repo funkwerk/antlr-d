@@ -83,7 +83,7 @@ class BufferedTokenStream : TokenStream
     {
         assert (tokenSource !is null, "tokenSource cannot be null");
     }
-    body
+    do
     {
             this.tokenSource = tokenSource;
     }
@@ -163,7 +163,7 @@ class BufferedTokenStream : TokenStream
     {
         assert (i >= 0);
     }
-    body
+    do
     {
             int n = i - to!int(tokens.length) + 1; // how many more elements we need?
             if ( n > 0 ) {
@@ -206,7 +206,7 @@ class BufferedTokenStream : TokenStream
     {
         assert( i >= 0 && i < tokens.length, format("token index %1$s out of range 0..%2$s", i, tokens.length-1));
     }
-    body
+    do
     {
         return tokens[i];
     }
@@ -325,7 +325,7 @@ class BufferedTokenStream : TokenStream
                stop > 0  && start < tokens.length,
                format("start %1$s or stop %2$s not in 0..%3$s", start, stop, tokens.length - 1));
     }
-    body
+    do
     {
             if (start > stop)
                 return null;
@@ -416,7 +416,7 @@ class BufferedTokenStream : TokenStream
         lazyInit();
         assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
     }
-    body
+    do
     {
             int nextOnChannel =
                 nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
@@ -449,7 +449,7 @@ class BufferedTokenStream : TokenStream
         lazyInit();
         assert(tokenIndex >= 0 && tokenIndex < tokens.length, format("%1$s not in 0..%2$s", tokenIndex, tokens.length-1));
     }
-    body
+    do
     {
 
             if (tokenIndex == 0) {

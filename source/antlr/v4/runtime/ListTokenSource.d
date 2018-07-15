@@ -96,7 +96,7 @@ class ListTokenSource : TokenSource
     {
         assert(tokens !is null, "tokens cannot be null");
     }
-    body
+    do
     {
         _factory = CommonTokenFactory.DEFAULT;
         this.tokens = tokens;

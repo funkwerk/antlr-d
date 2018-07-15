@@ -11,7 +11,6 @@ import antlr.v4.runtime.atn.LexerActionType;
 
 // Interface LexerAction
 /**
- * @uml
  * Represents a single action which can be executed following the successful
  * match of a lexer rule. Lexer actions are used for both embedded action syntax
  * and ANTLR 4's new lexer command syntax.
@@ -20,7 +19,6 @@ interface LexerAction
 {
 
     /**
-     * @uml
      * Gets the serialization type of the lexer action.
      *
      *  @return The serialization type of the lexer action.
@@ -28,7 +26,6 @@ interface LexerAction
     public LexerActionType getActionType();
 
     /**
-     * @uml
      * Gets whether the lexer action is position-dependent. Position-dependent
      * actions may have different semantics depending on the {@link CharStream}
      * index at the time the action is executed.
@@ -45,7 +42,6 @@ interface LexerAction
     public bool isPositionDependent();
 
     /**
-     * @uml
      * Execute the lexer action in the context of the specified {@link Lexer}.
      *
      * <p>For position-dependent actions, the input stream must already be

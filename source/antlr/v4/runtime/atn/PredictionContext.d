@@ -183,7 +183,7 @@ abstract class PredictionContext
     {
         assert(a !is null && b !is null); // must be empty context, never null
     }
-    body
+    do
     {
         // share same graph if both same
         if (a is b || a.opEquals(b))

@@ -72,7 +72,7 @@ struct BitSet
     {
         assert(bitSet.length > bitIndex);
     }
-    body
+    do
     {
         return bitSet[bitIndex];
     }

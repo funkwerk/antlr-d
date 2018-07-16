@@ -68,6 +68,7 @@ GENERATOR = axmi2d
 ANTLR = antlr4-4.7.1
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
+TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/v4/test/runtime/templates
 
 # required to detect model changes
 _dummy := $(shell mkdir -p $(BUILD_DIR)/$(MODEL_DIR))
@@ -102,6 +103,9 @@ prepare_generator : | $(BUILD_DIR)
 	mkdir -p $(TARGET)
 	cp -r codegen/templates/*.stg \
 		$(TARGET)
+	mkdir -p $(TEST_TEMPLATE_DIR)
+	cp test/D.test.stg \
+		$(TEST_TEMPLATE_DIR)
 	cd $(BUILD_DIR)/$(ANTLR) && $(MVN) -DskipTests install
 
 .PHONY : build_examples

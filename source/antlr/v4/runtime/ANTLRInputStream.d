@@ -31,15 +31,15 @@
 
 module antlr.v4.runtime.ANTLRInputStream;
 
-import std.conv;
-import std.stdio;
-import std.file;
-import std.format;
-import std.algorithm;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.misc.Interval;
+import std.algorithm;
+import std.conv;
+import std.file;
+import std.format;
+import std.stdio;
 
 // Class ANTLRInputStream
 /**

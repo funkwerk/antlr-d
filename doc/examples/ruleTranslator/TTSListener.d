@@ -1025,6 +1025,37 @@ public class TTSListener : RuleTranslatorBaseListener {
             stack.front ~= format("%s.last",
                                   loopStack.front.foreachElementType);
     }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterAdd(RuleTranslatorParser.AddContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " + ";
+            debug {
+                writefln("%s enterAdd:", counter++);
+                foreach(el; stack.opSlice)
+                    writefln("\t%s", el);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    override public void enterMinus(RuleTranslatorParser.MinusContext ctx) {
+        if (!stack.empty) {
+            stack.front ~= " - ";
+            debug {
+                writefln("%s enterMinus:", counter++);
+                foreach(el; stack.opSlice)
+                    writefln("\t%s", el);
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}

@@ -229,7 +229,7 @@ expr: xor_expr ('|' xor_expr)* | dotted_name;
 xor_expr: and_expr ('^' and_expr)*;
 and_expr: shift_expr ('&' shift_expr)*;
 shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
-arith_expr: term (('+'|'-') term)*;
+arith_expr: term ((add|minus) term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;
 
@@ -243,6 +243,9 @@ atom:
     | LAST          # last_e
     | FIRST         # first_e
     ;
+
+add: ADD;
+minus:MINUS;
 
 testlist_comp: (test) ( (',' (test))* (',')? );
 trailer: '[' subscriptlist ']' ;

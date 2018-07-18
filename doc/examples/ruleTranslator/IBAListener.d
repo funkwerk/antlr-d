@@ -823,18 +823,7 @@ public class IBAListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitAnd_expr(RuleTranslatorParser.And_exprContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void enterShift_expr(RuleTranslatorParser.Shift_exprContext ctx) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitShift_expr(RuleTranslatorParser.Shift_exprContext ctx) { }
+
     /**
      * {@inheritDoc}
      *

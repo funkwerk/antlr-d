@@ -227,8 +227,7 @@ comp_op: LESS_THAN      # less_than
 
 expr: xor_expr ('|' xor_expr)* | dotted_name;
 xor_expr: and_expr ('^' and_expr)*;
-and_expr: shift_expr ('&' shift_expr)*;
-shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
+and_expr: arith_expr ('&' arith_expr)*;
 arith_expr: term ((add|minus) term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;

@@ -269,10 +269,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
                 ctx_.addErrorNode(t);
             }
         }
-        debug(Parser) {
-            import std.stdio;
-            writefln("---------- match end %s", t);
-        }
         return t;
     }
 

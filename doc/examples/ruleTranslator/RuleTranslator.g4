@@ -33,9 +33,9 @@ DEDENT
     if (_input.LA(1) == EOF && !this.indents.empty) {
       // Remove any trailing EOF tokens from our buffer.
       {
-      	  if (tokens.back.getType == EOF) {
+          if (tokens.back.getType == EOF) {
                 tokens.removeBack();
-	  }
+          }
       } while (!this.indents.empty)
 
       // First emit an extra line break that serves as the end of the statement.
@@ -271,10 +271,9 @@ arglist: argument (',' argument)*  (',')?;
 // that precede iterable unpackings are blocked; etc.
 argument: test;
 
-
-/*
+/*************
  * lexer rules
- */
+ *************/
 
 STRING
  : STRING_LITERAL
@@ -904,7 +903,8 @@ fragment ID_START
  | [\uFFDA-\uFFDC]
  ;
 
-/// id_continue  ::=  <all characters in id_start, plus characters in the categories Mn, Mc, Nd, Pc and others with the Other_ID_Continue property>
+/// id_continue  ::=  <all characters in id_start, plus characters in the categories Mn, Mc, Nd, Pc and others
+///  with the Other_ID_Continue property>
 fragment ID_CONTINUE
  : ID_START
  | [0-9]

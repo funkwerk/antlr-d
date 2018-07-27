@@ -17,5 +17,23 @@ version 4.7.1](http://www.antlr.org/) yet.
 - java 1.8
 - maven
 ## Example
+Put the
 
+    grammar Expr;		
+    prog:	(expr NEWLINE)* ;
+    expr:	expr ('*'|'/') expr
+        |	expr ('+'|'-') expr
+        |	INT
+        |	'(' expr ')'
+        ;
+    NEWLINE : [\r\n]+ ;
+    INT : [0-9]+ ;
+
+in the file Expr.g4.
+
+Now call
+
+    java -jar -Dlanguage=D build/antlr4-4.7.1/tool/target/antlr4-4.7.1-complete.jar Expr.g4
+
+and the correspondig Lexer, Parser and Listener D-Source files are generated.
 ## Restrictions

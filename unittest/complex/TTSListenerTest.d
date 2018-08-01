@@ -22,23 +22,21 @@ version(unittest) {
     class Test {
 
         @Tags("Lexer")
-        @("simple_grammar")
+        @("complex_grammar")
         unittest {
-            auto antlrInput = new ANTLRInputStream(File("unittest/ruleSimple.rule", "r"));
+            auto antlrInput = new ANTLRInputStream(File("unittest/complex/simple.rule", "r"));
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
-            //cts.getNumberOfOnChannelTokens.should.equal(111);
-            // auto f = File("unittest/simple_tokens.cmp");
-            // auto charRange = f.byLine();
-            // string s;
-            // int i;
-            // foreach (t; charRange) {
-            //     s = cts.get(i++).to!string;
-            //     t.should.equal(s);
-            // }
-            writefln("++++++++++++++++++++++++++++++++++++++++++++");
+            cts.getNumberOfOnChannelTokens.should.equal(35);
+            auto f = File("unittest/complex/simple_tokens.cmp");
+            auto charRange = f.byLine();
+            string s;
+            int i;
+            foreach (t; charRange) {
+                s = cts.get(i++).to!string;
+                t.should.equal(s);
+            }
             auto parser = new RuleTranslatorParser(cts);
-            writefln("--------------------------------------------");
             // Specify entry point
             auto rootContext = parser.file_input;
         }

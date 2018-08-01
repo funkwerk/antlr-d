@@ -33,7 +33,6 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 // Class Lexer
 /**
- * @uml
  * A lexer is recognizer that draws input symbols from a character stream.
  * lexer grammars result in a subclass of this object. A Lexer object
  * uses simplified match() and error recovery mechanisms in the interest
@@ -61,8 +60,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     protected TokenFactorySourcePair _tokenFactorySourcePair;
 
     /**
-     * @uml
      * How to create token objects
+     * @uml
      * @read
      * @write
      * @override
@@ -83,7 +82,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public IntegerStack _modeStack;
 
     /**
-     * @uml
      * What character index in the stream did the current token start at?
      * Needed, for example, to get the text for current token.  Set at
      * the start of nextToken.
@@ -91,13 +89,11 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public int _tokenStartCharIndex = -1;
 
     /**
-     * @uml
      * The line on which the first character of the token resides
      */
     public int _tokenStartLine;
 
     /**
-     * @uml
      * The character position of first character within the line
      */
     public int _tokenStartCharPositionInLine;
@@ -105,13 +101,11 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public bool _hitEOF;
 
     /**
-     * @uml
      * The channel number for the current token
      */
     public int _channel;
 
     /**
-     * @uml
      * The token type for the current token
      */
     public int _type;
@@ -119,7 +113,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public int _mode;
 
     /**
-     * @uml
      * You can set the text for the current token to override what is in
      * the input char buffer.  Use setText() or can set this instance var.
      */
@@ -157,7 +150,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Return a token from this source; i.e., match a token on the char
      * stream.
      */
@@ -226,7 +218,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Instruct the lexer to skip creating a token for current lexer rule
      * and look for another token.  nextToken() knows to keep looking when
      * a lexer rule finishes with token set to SKIP_TOKEN.  Recall that
@@ -266,8 +257,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Set the char stream and reset the lexer
+     * @uml
      * @override
      */
     public override void setInputStream(IntStream input)
@@ -294,7 +285,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * By default does not support multiple emits per nextToken invocation
      * for efficiency reasons.  Subclass and override this method, nextToken,
      * and getToken (to push tokens into a list and pull from that list
@@ -306,7 +296,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * The standard method called to automatically emit a token at the
      * outermost lexical rule.  The token object should point into the
      * char buffer start..stop.  If there is a text override in 'text',
@@ -355,7 +344,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * What is the index of the current character of lookahead?
      */
     public int getCharIndex()
@@ -364,8 +352,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
-     * eturn the text matched so far for the current token or any
+     * Return the text matched so far for the current token or any
      * text override.
      */
     public string getText()
@@ -377,7 +364,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Set the complete text of this token; it wipes any previous
      * changes to the text.
      */
@@ -387,7 +373,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Override if emitting multiple tokens.
      */
     public Token getToken()
@@ -431,10 +416,10 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Used to print out token names like ID during debugging and
      * error reporting.  The generated parsers implement a method
      * that overrides this to point to their String[] tokenNames
+     * @uml
      * @override
      */
     public override string[] getTokenNames()
@@ -443,7 +428,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Return a list of all Token objects in input char stream.
      * Forces load of all tokens. Does not include EOF token.
      */
@@ -512,7 +496,6 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     }
 
     /**
-     * @uml
      * Lexers can normally match any char in it's vocabulary after matching
      * a token, so do the easy thing and just kill a character and hope
      * it all works out.  You can instead use the rule invocation stack

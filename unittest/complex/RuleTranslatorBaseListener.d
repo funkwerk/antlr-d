@@ -809,18 +809,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterShift_expr(RuleTranslatorParser.Shift_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitShift_expr(RuleTranslatorParser.Shift_exprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	override public void enterArith_expr(RuleTranslatorParser.Arith_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -953,6 +941,30 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	override public void enterAdd(RuleTranslatorParser.AddContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitAdd(RuleTranslatorParser.AddContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void enterMinus(RuleTranslatorParser.MinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	override public void exitMinus(RuleTranslatorParser.MinusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	override public void enterTestlist_comp(RuleTranslatorParser.Testlist_compContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1068,30 +1080,6 @@ public class RuleTranslatorBaseListener : RuleTranslatorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	override public void exitArgument(RuleTranslatorParser.ArgumentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterLow(RuleTranslatorParser.LowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitLow(RuleTranslatorParser.LowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void enterHigh(RuleTranslatorParser.HighContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitHigh(RuleTranslatorParser.HighContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

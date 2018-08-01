@@ -1,4 +1,4 @@
-module TTSListenerTest;
+module TTSListener;
 
 import RuleTranslatorBaseListener;
 import RuleTranslatorParser: RuleTranslatorParser;
@@ -155,7 +155,9 @@ public class TTSListener : RuleTranslatorBaseListener {
         writer.putnl("    import std.typecons : tuple;\n");
 
         writer.putnl("    return enumerate(range)");
-        writer.putnl("        .map!(a => tuple!(\"value\", \"first\", \"last\")(a.value, a.index == 0, a.index + 1 == range.length));");
+        writer.putnl("        .map!(a => tuple!(\"value\", \"first\",
+                                  \"last\")(a.value, a.index == 0,
+                                  a.index + 1 == range.length));");
         writer.putnl("}");
     }
 
@@ -1039,33 +1041,5 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void exitTrailer(RuleTranslatorParser.TrailerContext ctx) {
         trailerMode = false;
-    }
-}
-
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import dshould.thrown;
-    import unit_threaded;
-    import RuleTranslatorLexer;
-    import antlr.v4.runtime.ANTLRInputStream;
-    import antlr.v4.runtime.CommonTokenStream;
-
-    class Test {
-
-        @Tags("Generator")
-        @("Parser")
-        unittest {
-            auto antlrInput = new ANTLRInputStream(File("unittest/Delay.rule", "r"));
-            auto lexer = new RuleTranslatorLexer(antlrInput);
-            auto cts = new CommonTokenStream(lexer);
-            // Pass the tokens to the parser
-            auto parser = new RuleTranslatorParser(cts);
-            cts.getNumberOfOnChannelTokens.should.equal(405);
-            foreach (t; cts.getTokens)
-                        writefln("\t\t%s", t);
-            // Specify our entry point
-            auto rootContext = parser.file_input;
-            parser.getNumberOfSyntaxErrors.should.equal(0);
-        }
     }
 }

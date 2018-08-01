@@ -56,9 +56,10 @@ EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
             $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
 
-UNITTEST_MODULES := $(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
+UNITTEST_MODULES := $(subst complex.,,\
+		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),\
-		$(filter-out %/TestRunner.d, $(UNITTEST_FILES)))))))
+		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
 
 TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/

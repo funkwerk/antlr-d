@@ -11,12 +11,12 @@ class RuleWriter{
     public ushort indentLevel;
 
     struct Result { ushort indent; string s;}
-    
+
     private Result[] result;
 
     this() {
     }
-    
+
     this(string pathName) {
         this.pathName = pathName;
     }
@@ -38,13 +38,13 @@ class RuleWriter{
     public void put(string s) {
         result ~= set(s);
     }
-    
+
     public void put(string[] s) {
-        foreach(el; s) {
+        foreach (el; s) {
             result ~= set(el);
         }
     }
-    
+
     public void putnl(string s) {
         s ~= "\n";
         Result r =  set(s);
@@ -55,7 +55,7 @@ class RuleWriter{
         Result r;
         r.indent = indentLevel;
         r.s = s;
-        return r;  
+        return r;
     }
 
     public void print() {
@@ -72,7 +72,7 @@ class RuleWriter{
         else
             lastEndWithNL = false;
         }
-        if(pathName) {
+        if (pathName) {
             auto f = File(pathName ~ "/" ~ fileName, "w");
             f.write(r.data);
             f.close;
@@ -82,4 +82,3 @@ class RuleWriter{
         }
     }
 }
-

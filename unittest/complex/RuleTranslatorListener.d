@@ -688,16 +688,6 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitAnd_expr(RuleTranslatorParser.And_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#shift_expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterShift_expr(RuleTranslatorParser.Shift_exprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#shift_expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitShift_expr(RuleTranslatorParser.Shift_exprContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#arith_expr}.
 	 * @param ctx the parse tree
 	 */
@@ -824,6 +814,26 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 */
 	void exitFirst_e(RuleTranslatorParser.First_eContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#add}.
+	 * @param ctx the parse tree
+	 */
+	void enterAdd(RuleTranslatorParser.AddContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#add}.
+	 * @param ctx the parse tree
+	 */
+	void exitAdd(RuleTranslatorParser.AddContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link RuleTranslatorParser#minus}.
+	 * @param ctx the parse tree
+	 */
+	void enterMinus(RuleTranslatorParser.MinusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link RuleTranslatorParser#minus}.
+	 * @param ctx the parse tree
+	 */
+	void exitMinus(RuleTranslatorParser.MinusContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link RuleTranslatorParser#testlist_comp}.
 	 * @param ctx the parse tree
 	 */
@@ -923,24 +933,4 @@ public interface RuleTranslatorListener : ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArgument(RuleTranslatorParser.ArgumentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#low}.
-	 * @param ctx the parse tree
-	 */
-	void enterLow(RuleTranslatorParser.LowContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#low}.
-	 * @param ctx the parse tree
-	 */
-	void exitLow(RuleTranslatorParser.LowContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link RuleTranslatorParser#high}.
-	 * @param ctx the parse tree
-	 */
-	void enterHigh(RuleTranslatorParser.HighContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link RuleTranslatorParser#high}.
-	 * @param ctx the parse tree
-	 */
-	void exitHigh(RuleTranslatorParser.HighContext ctx);
 }

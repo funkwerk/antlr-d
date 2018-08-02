@@ -21,8 +21,36 @@ version(unittest) {
 
     class Test {
 
+        @Tags("ANTLRInputStream")
+        @("input file missing")
+        unittest {
+            try
+                auto antlrInput = new ANTLRInputStream(File("simple.rule1"));
+            catch (Exception e)
+                e.msg.should.equal("Cannot open file `simple.rule1' in " ~
+                                   "mode `rb' (No such file or directory)");
+        }
+
         @Tags("Lexer")
-        @("complex_grammar")
+        @("rule")
+        unittest {
+            auto antlrInput = new ANTLRInputStream(File("unittest/complex/complex.rule", "r"));
+            auto lexer = new RuleTranslatorLexer(antlrInput);
+            auto cts = new CommonTokenStream(lexer);
+            cts.getNumberOfOnChannelTokens.should.equal(405);
+            auto f = File("unittest/complex/tokens.cmp", "r");
+            auto charRange = f.byLine();
+            string s;
+            int i;
+            foreach (t; charRange) {
+                s = cts.get(i++).to!string;
+                t.should.equal(s);
+            }
+        }
+
+        
+        @Tags("Parser")
+        @("simple rule")
         unittest {
             auto antlrInput = new ANTLRInputStream(File("unittest/complex/simple.rule", "r"));
             auto lexer = new RuleTranslatorLexer(antlrInput);

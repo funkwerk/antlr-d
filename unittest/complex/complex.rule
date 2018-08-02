@@ -1,0 +1,89 @@
+# Text definition DEFAS
+# for automatic announcements
+# Version 2018-02-21
+
+rule Delay as DELAY de
+
+base de.Phrases
+
+"Information zu"
+announceTrain(product, line, trainNumber, metaCategory)
+
+if passengerEnd:
+    "von" stationName(origin) # low
+else:
+    announceDestinationAndVias(destination, announcedVias)
+
+if linkType == "SPLIT_REMOTE":
+    "mit"
+    announceTrain(parts[1].product, parts[1].line,
+        parts[1].trainNumber,parts[1].metaCategory)
+    announceDestinationAndVias(parts[1].destination, parts[1].announcedVias)
+","
+if passengerEnd:
+    announceArrivalTime(arrivalTime)
+else:
+    announceDepartureTime(departureTime)
+","
+
+if indefiniteDelay or isIndefiniteDelay(delay):
+    "heute unbestimmt verspätet" # low
+else:
+    "heute circa"
+    announceDuration(roundDelay(delay))
+    "später"
+
+if trackChanged:
+    "und von Gleis" track
+    if onSamePlatform:
+        "direkt gegenüber"
+"."
+
+if earlyDestination:
+    "heute nur bis"
+    stationName(earlyDestination)"." # low
+    "Wir informieren Sie über Anschlüsse im Zug."
+
+announceOmittedStops(omittedStops)
+announceAdditionalStops(additionalStops)
+
+if additional:
+    "heute zusätzlicher Zug"
+    announceTrain(additional.product, additional.line, additional.trainNumber, additional.metaCategory)
+    ","
+
+    announceDepartureTime(additional.departureTime)
+    "von Gleis" additional.track # low
+
+    if additional.onSamePlatform:
+        "direkt gegenüber"
+    "."
+
+if trackChanged:
+    "Ich wiederhole" ":"
+    announceTrain(product, line, trainNumber, metaCategory)
+
+    if passengerEnd:
+        "von" stationName(origin) # low
+    else:
+        announceDestinationAndVias(destination, announcedVias)
+    ","
+    if passengerEnd:
+        announceArrivalTime(arrivalTime)
+    else:
+        announceDepartureTime(departureTime)
+    ","
+    "heute von Gleis" track
+    if onSamePlatform:
+        "direkt gegenüber"
+    "."
+
+if delay >= minutes(10):
+    if not reason.empty:
+        "Grund dafür" reasonText(reason) "."
+    if delay >= minutes(30):
+        if isProviderResponsibleForReason(reason):
+            "wir bitten um Entschuldigung" "."
+
+if not passengerEnd:
+    announceFirstClass(firstClassPlatformSections)

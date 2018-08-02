@@ -296,7 +296,7 @@ version(unittest) {
             (new IntegerList(-3))
                 .should
                 .throwAn!IllegalArgumentException
-                .where.msg.should.be("Capacity can't be a negativ value!");
+                .where.msg.should.equal("Capacity can't be a negativ value!");
         }
 
         @Tags("IntegerList")

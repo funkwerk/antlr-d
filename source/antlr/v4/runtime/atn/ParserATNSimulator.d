@@ -609,7 +609,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         // create new target state; we'll add to DFA after it's complete
         DFAState D = new DFAState(reach);
         int predictedAlt = getUniqueAlt(reach);
-        debug {
+        debug(ParserATNSimulator) {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
             writefln("SLL altSubSets=%1$s"~
                      ", configs=%2$s"~

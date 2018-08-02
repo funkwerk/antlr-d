@@ -61,7 +61,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest -debug
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

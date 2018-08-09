@@ -61,7 +61,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest -debug
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -g -unittest -debug -debug=ParserATNSimulator
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
@@ -112,9 +112,9 @@ prepare_generator : | $(BUILD_DIR)
 .PHONY : build_examples
 build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
-		-Dlanguage=D -o $(BUILD_DIR) doc/examples/Expr.g4
+		-Dlanguage=D -atn -o $(BUILD_DIR) doc/examples/Expr.g4
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
-		-Dlanguage=D -o $(BUILD_DIR) doc/examples/ruleTranslator/RuleTranslator.g4
+		-atn -o $(BUILD_DIR) doc/examples/ruleTranslator/RuleTranslator.g4
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator

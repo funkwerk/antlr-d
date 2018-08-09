@@ -2,9 +2,13 @@ grammar RuleTranslatorPy;
 
 // mainly a modified python syntax
 
+options {
+    language=Python3;
+}
+
 tokens {
-INDENT,
-DEDENT
+    INDENT,
+    DEDENT
 }
 
 @lexer::header {
@@ -105,7 +109,7 @@ def atStartOfInput(self):
 
 file_input: rule_setting
             import_stmts
-            (NEWLINE | funcdef)* 
+            (NEWLINE | funcdef)*
             (NEWLINE | ruledef?)
             EOF;
 
@@ -140,7 +144,7 @@ tfpdef:
       | STRING      # tfpdef_string
       | funct_stmt  # tfpdef_funct_stm
       ;
- 
+
 //
 stmt: (simple_stmt | compound_stmt |flow_stmt);
 simple_stmt: small_stmt+ NEWLINE;
@@ -151,7 +155,7 @@ small_stmt: (
     |funct_stmt
 );
 
-string_stmt: STRING (low | high |);
+string_stmt: STRING;
 
 funct_stmt: funct_name funct_parameters (dot_e funct_stmt)*;
 funct_name: dotted_name;
@@ -160,14 +164,17 @@ funct_parameters: parameters;
 
 var_stmt: dotted_name;
 
-// For normal and annotated assignments, additional restrictions enforced by the interpreter
+// For normal and annotated assignments, additional restrictions enforced
+// by the interpreter
 flow_stmt: break_stmt | continue_stmt;
 break_stmt: 'break';
 continue_stmt: 'continue';
 
 dotted_as_name: dotted_name ('as' NAME)?;
 dotted_as_names: dotted_as_name (',' dotted_as_name)*;
-dotted_name: first_part_of_dotted_name trailer* ('.' NAME trailer*)*;
+dotted_name: dotted_name_first_part ('.' dotted_name_part)*;
+dotted_name_first_part : first_part_of_dotted_name trailer*;
+dotted_name_part : NAME trailer*;
 first_part_of_dotted_name: NAME;
 
 compound_stmt: if_stmt | for_stmt | with_stmt | block_stmt;
@@ -187,7 +194,7 @@ for_exprlist: exprlist;
 // BLOCK
 block_stmt: BLOCK COLON block_suite;
 
-block_suite: NEWLINE INDENT simple_stmt+ (low | high |) DEDENT;
+block_suite: NEWLINE INDENT simple_stmt+ DEDENT;
 
 with_stmt: 'with' with_item (',' with_item)*  ':' suite;
 with_item: test ('as' expr)?;
@@ -200,8 +207,8 @@ or_test: and_test (or_e and_test)*;
 or_e: OR;
 and_test: not_test (and_e not_test)*;
 and_e: AND;
-not_test: notE not_test | comparison;
-notE: NOT;
+not_test: noT not_test | comparison;
+noT: NOT;
 comparison: expr (comp_op expr)*;
 
 comp_op: LESS_THAN      # less_than
@@ -215,9 +222,8 @@ comp_op: LESS_THAN      # less_than
 
 expr: xor_expr ('|' xor_expr)* | dotted_name;
 xor_expr: and_expr ('^' and_expr)*;
-and_expr: shift_expr ('&' shift_expr)*;
-shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
-arith_expr: term (('+'|'-') term)*;
+and_expr: arith_expr ('&' arith_expr)*;
+arith_expr: term ((add|minus) term)*;
 term: factor (('*'|'@'|'/'|'%'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | atom;
 
@@ -231,6 +237,9 @@ atom:
     | LAST          # last_e
     | FIRST         # first_e
     ;
+
+add: ADD;
+minus:MINUS;
 
 testlist_comp: (test) ( (',' (test))* (',')? );
 trailer: '[' subscriptlist ']' ;
@@ -257,13 +266,9 @@ arglist: argument (',' argument)*  (',')?;
 // that precede iterable unpackings are blocked; etc.
 argument: test;
 
-low: LOW;
-high: HIGH;
-
-
-/*
+/*************
  * lexer rules
- */
+ *************/
 
 STRING
  : STRING_LITERAL
@@ -300,8 +305,6 @@ FALSE : 'False';
 CONTINUE : 'continue';
 BREAK : 'break';
 BLOCK : 'block';
-LOW : 'low';
-HIGH : 'high';
 
 NEWLINE
  : ( {self.atStartOfInput()}?   SPACES
@@ -345,11 +348,13 @@ NAME
 /// stringprefix    ::=  "r" | "u" | "R" | "U" | "f" | "F"
 ///                      | "fr" | "Fr" | "fR" | "FR" | "rf" | "rF" | "Rf" | "RF"
 STRING_LITERAL
- : ( [rR] | [uU] | [fF] | ( [fF] [rR] ) | ( [rR] [fF] ) )? ( SHORT_STRING | LONG_STRING )
+ : ( [rR] | [uU] | [fF] | ( [fF] [rR] ) | ( [rR] [fF] ) )? ( SHORT_STRING |
+                                                             LONG_STRING )
  ;
 
 /// bytesliteral   ::=  bytesprefix(shortbytes | longbytes)
-/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR" | "rb" | "rB" | "Rb" | "RB"
+/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR" |
+///                     "rb" | "rB" | "Rb" | "RB"
 BYTES_LITERAL
  : ( [bB] | ( [bB] [rR] ) | ( [rR] [bB] ) ) ( SHORT_BYTES | LONG_BYTES )
  ;
@@ -425,12 +430,14 @@ UNKNOWN_CHAR
 
 /// shortstring     ::=  "'" shortstringitem* "'" | '"' shortstringitem* '"'
 /// shortstringitem ::=  shortstringchar | stringescapeseq
-/// shortstringchar ::=  <any source character except "\" or newline or the quote>
+/// shortstringchar ::=  <any source character except "\" or newline or
+///                       the quote>
 fragment SHORT_STRING
  : '\'' ( STRING_ESCAPE_SEQ | ~[\\\r\n\f'] )* '\''
  | '"' ( STRING_ESCAPE_SEQ | ~[\\\r\n\f"] )* '"'
  ;
-/// longstring      ::=  "'''" longstringitem* "'''" | '"""' longstringitem* '"""'
+/// longstring      ::=  "'''" longstringitem* "'''" |
+///                      '"""' longstringitem* '"""'
 fragment LONG_STRING
  : '\'\'\'' LONG_STRING_ITEM*? '\'\'\''
  | '"""' LONG_STRING_ITEM*? '"""'
@@ -553,7 +560,9 @@ fragment LINE_JOINING
  : '\\' SPACES? ( '\r'? '\n' | '\r' | '\f')
  ;
 
-/// id_start     ::=  <all characters in general categories Lu, Ll, Lt, Lm, Lo, Nl, the underscore, and characters with the Other_ID_Start property>
+/// id_start     ::=  <all characters in general categories Lu, Ll, Lt, Lm,
+///                    Lo, Nl, the underscore, and characters with
+///                    the Other_ID_Start property>
 fragment ID_START
  : '_'
  | [A-Z]
@@ -884,7 +893,8 @@ fragment ID_START
  | [\uFFDA-\uFFDC]
  ;
 
-/// id_continue  ::=  <all characters in id_start, plus characters in the categories Mn, Mc, Nd, Pc and others with the Other_ID_Continue property>
+/// id_continue  ::=  <all characters in id_start, plus characters in the categories Mn, Mc, Nd, Pc and others
+///  with the Other_ID_Continue property>
 fragment ID_CONTINUE
  : ID_START
  | [0-9]

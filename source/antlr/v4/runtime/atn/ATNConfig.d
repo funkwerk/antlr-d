@@ -24,13 +24,6 @@ import antlr.v4.runtime.misc.MurmurHash;
  * chain used to arrive at the state.  The semantic context is
  * the tree of semantic predicates encountered before reaching
  * an ATN state.
- * @uml
- * A tuple: (ATN state, predicted alt, syntactic, semantic context).
- * The syntactic context is a graph-structured stack node whose
- * path(s) to the root is the rule invocation(s)
- * chain used to arrive at the state.  The semantic context is
- * the tree of semantic predicates encountered before reaching
- * an ATN state.
  */
 class ATNConfig
 {
@@ -244,6 +237,17 @@ class ATNConfig
         }
         buf.put(')');
         return buf.data;
+    }
+
+    /**
+     * @uml
+     * @trusted
+     * @nothrow
+     */
+    public void resetToStandardHashAndEqual() @trusted nothrow
+    {
+        this.hashOfFp = &ATNConfigObjectEqualityComparator.toHash;
+        this.opEqualsFp = &ATNConfigObjectEqualityComparator.opEquals;
     }
 
 }

@@ -6,20 +6,22 @@
 
 module antlr.v4.runtime.atn.PredictionMode;
 
-import std.typecons;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNConfig;
-import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AltAndContextMap;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.RuleStopState;
+import antlr.v4.runtime.atn.ContextMapObjectEqualityComparator;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.BitSet;
+import std.typecons;
 
 // Class PredictionMode
 /**
- * Utility methods for analyzing configuration sets for conflicts and/or
+ * This enumeration defines the prediction modes available in ANTLR 4 along with
+ * utility methods for analyzing configuration sets for conflicts and/or
  * ambiguities.
  */
 class PredictionMode
@@ -455,29 +457,25 @@ class PredictionMode
      * For each configuration {@code c} in {@code configs}:
      *
      * <pre>
-     * map[c] U= c.{@link ATNConfig#alt alt} # map hash/equals uses s and x, not
+     * map[c] U= c.{@link ATNConfig#alt alt} # map hash/equals uses stack and context, not
      * alt and not pred
      * </pre>
      */
     public static BitSet[] getConflictingAltSubsets(ATNConfigSet configs)
     {
 	AltAndContextMap configToAlts;
-        BitSet *alts;
+        ATNConfig* p;
 
         foreach (ATNConfig c; configs.configs) {
-            // c.hashOfFp = &ContextMapObjectEqualityComparator.toHash;
-            // c.opEqualsFp = &ContextMapObjectEqualityComparator.opEquals;
-            if (!configToAlts.hasKey(c))
-                {
-                    alts = new BitSet();
-                    alts.set(0, false);
-                    configToAlts.put(c, *alts);
-                }
-            else {
-                *alts = configToAlts.get(c);
+            if (!configToAlts.hasKey(c)) {
+                BitSet s;
+                p = &c; //  save for reset to standard map behavior
+                configToAlts.put(c, s);
             }
-            alts.set(c.alt, true);
+            BitSet b = configToAlts.get(c);
+            b.set(c.alt, true);
         }
+        p.resetToStandardHashAndEqual;
         return configToAlts.altAndContextMap.values;
     }
 

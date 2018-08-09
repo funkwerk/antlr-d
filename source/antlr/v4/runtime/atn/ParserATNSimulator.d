@@ -599,7 +599,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      * {@code t}. If {@code t} does not lead to a valid DFA state, this method
      * returns {@link #ERROR}.
      */
-    public DFAState computeTargetState(ref DFA dfa, DFAState previousD, int t)
+    public DFAState computeTargetState(DFA dfa, DFAState previousD, int t)
     {
         ATNConfigSet reach = computeReachSet(previousD.configs, t, false);
         if (reach is null) {
@@ -609,7 +609,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         // create new target state; we'll add to DFA after it's complete
         DFAState D = new DFAState(reach);
         int predictedAlt = getUniqueAlt(reach);
-        debug(ParserATNSimulator) {
+        debug {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
             writefln("SLL altSubSets=%1$s"~
                      ", configs=%2$s"~

@@ -1,10 +1,13 @@
 grammar RuleTranslator;
-
 // mainly a modified python syntax
 
+options {
+    language=D;
+}
+
 tokens {
-INDENT,
-DEDENT
+    INDENT,
+    DEDENT
 }
 
 @lexer::members {

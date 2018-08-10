@@ -53,6 +53,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      */
     public this()
     {
+        this(true);
     }
 
     /**

@@ -61,7 +61,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -g -unittest -debug -debug=ParserATNSimulator
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest 
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

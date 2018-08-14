@@ -467,17 +467,17 @@ class PredictionMode
         BitSet *alts;
 
         foreach (ATNConfig c; configs.configs) {
-            auto cc = new ATNConfig(c);
-            if (!configToAlts.hasKey(cc))
+            auto c_copy = new ATNConfig(c);
+            if (!configToAlts.hasKey(c_copy))
                 {
                     alts = new BitSet();
                     alts.set(0, false); //  initialise alts
-                    configToAlts.put(cc, *alts);
+                    configToAlts.put(c_copy, *alts);
                 }
             else {
-                *alts = configToAlts.get(cc);
+                *alts = configToAlts.get(c_copy);
             }
-            alts.set(cc.alt, true);
+            alts.set(c_copy.alt, true);
         }
         return configToAlts.altAndContextMap.values;
     }

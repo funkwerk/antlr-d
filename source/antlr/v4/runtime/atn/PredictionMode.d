@@ -464,18 +464,21 @@ class PredictionMode
     public static BitSet[] getConflictingAltSubsets(ATNConfigSet configs)
     {
 	AltAndContextMap configToAlts;
-        ATNConfig* p;
+        BitSet *alts;
 
         foreach (ATNConfig c; configs.configs) {
-            if (!configToAlts.hasKey(c)) {
-                BitSet s;
-                p = &c; //  save for reset to standard map behavior
-                configToAlts.put(c, s);
+            auto cc = new ATNConfig(c);
+            if (!configToAlts.hasKey(cc))
+                {
+                    alts = new BitSet();
+                    alts.set(0, false); //  initialise alts
+                    configToAlts.put(cc, *alts);
+                }
+            else {
+                *alts = configToAlts.get(cc);
             }
-            BitSet b = configToAlts.get(c);
-            b.set(c.alt, true);
+            alts.set(cc.alt, true);
         }
-        p.resetToStandardHashAndEqual;
         return configToAlts.altAndContextMap.values;
     }
 

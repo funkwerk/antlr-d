@@ -33,7 +33,6 @@ import std.conv;
  *
  * @author Sam Harwell
  */
-
 class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
 {
 

@@ -239,15 +239,4 @@ class ATNConfig
         return buf.data;
     }
 
-    /**
-     * @uml
-     * @trusted
-     * @nothrow
-     */
-    public void resetToStandardHashAndEqual() @trusted nothrow
-    {
-        this.hashOfFp = &ATNConfigObjectEqualityComparator.toHash;
-        this.opEqualsFp = &ATNConfigObjectEqualityComparator.opEquals;
-    }
-
 }

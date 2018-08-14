@@ -17,7 +17,7 @@
             "targetName": "antlr-d",
             "targetPath": "lib", 
             "targetType": "library",
-            "buildOptions": ["releaseMode"],
+            "buildOptions": ["debugInfo"],
 	},
 	{
             "name": "unittest",

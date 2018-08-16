@@ -11,7 +11,10 @@ version(unittest) {
     import antlr.v4.runtime.ANTLRInputStream;
     import antlr.v4.runtime.CommonToken;
     import antlr.v4.runtime.CommonTokenStream;
+    import antlr.v4.runtime.DiagnosticErrorListener;
     import antlr.v4.runtime.LexerNoViableAltException;
+    import antlr.v4.runtime.Token;
+    import antlr.v4.runtime.atn.ParserATNSimulator;
     import antlr.v4.runtime.tree.ParseTreeWalker;
     import dshould : be, equal, not, should;
     import dshould.thrown;
@@ -48,9 +51,8 @@ version(unittest) {
             }
         }
 
-        
         @Tags("Parser")
-        @("simple rule")
+        @("simple_rule")
         unittest {
             auto antlrInput = new ANTLRInputStream(File("unittest/complex/simple.rule", "r"));
             auto lexer = new RuleTranslatorLexer(antlrInput);
@@ -67,6 +69,30 @@ version(unittest) {
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
             auto rootContext = parser.file_input;
+            parser.getNumberOfSyntaxErrors.should.equal(0);
         }
+
+        @Tags("Parser")
+        @("simple_rule_syntax_error")
+        unittest {
+            auto antlrInput = new ANTLRInputStream(File("unittest/complex/simple_error.rule", "r"));
+            auto lexer = new RuleTranslatorLexer(antlrInput);
+            auto cts = new CommonTokenStream(lexer);
+            cts.getNumberOfOnChannelTokens.should.equal(36);
+            auto f = File("unittest/complex/simple_tokens_error.cmp");
+            auto charRange = f.byLine();
+            string s;
+            int i;
+            foreach (t; charRange) {
+                s = cts.get(i++).to!string;
+                t.should.equal(s);
+            }
+            auto parser = new RuleTranslatorParser(cts);
+            parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
+            // Specify entry point
+            auto rootContext = parser.file_input;
+            parser.getNumberOfSyntaxErrors.should.equal(3);
+        }
+
     }
 }

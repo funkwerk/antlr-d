@@ -8,10 +8,16 @@
 module antlr.v4.runtime.DiagnosticErrorListener;
 
 import antlr.v4.runtime.BaseErrorListener;
-import std.format;
+import antlr.v4.runtime.InterfaceParser;
+import antlr.v4.runtime.atn.ATNConfig;
+import antlr.v4.runtime.atn.ATNConfigSet;
+import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.misc.BitSet;
+import antlr.v4.runtime.misc.Interval;
 import std.conv;
+import std.format;
 
-// Singleton Template DiagnosticErrorListener
+// Class Template DiagnosticErrorListener
 /**
  * This implementation of {@link ANTLRErrorListener} can be used to identify
  * certain potential correctness and performance problems in grammars. "Reports"
@@ -42,11 +48,6 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
     protected bool exactOnly;
 
     /**
-     * The single instance of DiagnosticErrorListener.
-     */
-    private static __gshared DiagnosticErrorListener instance_;
-
-    /**
      * Initializes a new instance of {@link DiagnosticErrorListener} which only
      * reports exact ambiguities.
      */
@@ -71,18 +72,18 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public override void reportAmbiguity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
                                          bool exact, BitSet ambigAlts, ATNConfigSet configs)
     {
 	if (exactOnly && !exact) {
             return;
         }
 
-        string format = "reportAmbiguity d=%s: ambigAlts=%s, input='%s'";
+        string format_info = "reportAmbiguity d=%s: ambigAlts=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
         BitSet conflictingAlts = getConflictingAlts(ambigAlts, configs);
-        string text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
-        string message = format(format, decision, conflictingAlts, text);
+        string text = recognizer.getTokenStream.getText(Interval.of(startIndex, stopIndex));
+        string message = format(format_info, decision, conflictingAlts, text);
         recognizer.notifyErrorListeners(message);
     }
 
@@ -90,13 +91,13 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex,
+    public override void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, int startIndex,
                                                      int stopIndex, BitSet conflictingAlts, ATNConfigSet configs)
     {
-	string format = "reportAttemptingFullContext d=%s, input='%s'";
+        string format_info = "reportAttemptingFullContext d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
         string text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
-        string message = format(format, decision, text);
+        string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }
 
@@ -104,31 +105,30 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex,
+    public override void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, int startIndex,
                                                   int stopIndex, int prediction, ATNConfigSet configs)
     {
-	string format = "reportContextSensitivity d=%s, input='%s'";
+        string format_info = "reportContextSensitivity d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
         string text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
-        string message = format(format, decision, text);
+        string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }
 
-    protected string getDecisionDescription(Parser recognizer, DFA dfa)
+    protected string getDecisionDescription(InterfaceParser recognizer, DFA dfa)
     {
-	int decision = dfa.decision;
+        int decision = dfa.decision;
         int ruleIndex = dfa.atnStartState.ruleIndex;
 
         string[] ruleNames = recognizer.getRuleNames();
         if (ruleIndex < 0 || ruleIndex >= ruleNames.length) {
-            return to!string(valueOf(decision));
+            return to!string(decision);
         }
 
         string ruleName = ruleNames[ruleIndex];
-        if (ruleName is null || ruleName.isEmpty()) {
-            return to!string(valueOf(decision));
+        if (ruleName is null || ruleName.length == 0) {
+            return to!string(decision);
         }
-
         return format("%d (%s)", decision, ruleName);
 
     }
@@ -146,32 +146,16 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      */
     protected BitSet getConflictingAlts(BitSet reportedAlts, ATNConfigSet configs)
     {
-	if (reportedAlts) {
+        if (reportedAlts.length) {
             return reportedAlts;
         }
 
-        BitSet result = new BitSet();
+        BitSet* result = new BitSet();
         foreach (ATNConfig config; configs.configs) {
             result.set(config.alt, true);
         }
 
-        return result;
-    }
-
-    /**
-     * Creates the single instance of DiagnosticErrorListener.
-     */
-    private shared static this()
-    {
-        instance_ = new DiagnosticErrorListener;
-    }
-
-    /**
-     * Returns: A single instance of DiagnosticErrorListener.
-     */
-    public static DiagnosticErrorListener instance()
-    {
-        return instance_;
+        return *result;
     }
 
 }

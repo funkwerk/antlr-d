@@ -1,0 +1,10 @@
+# Text definition DEFAS
+# for automatic announcements
+# Version 2018-02-21
+
+rule Delay as DELAY de
+
+base de.Phrases
+
+if linkType == "SPLIT_REMOTE" extra:
+    announceDestinationAndVias(parts[1].destination, parts.announcedVias)

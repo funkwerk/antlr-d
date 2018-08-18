@@ -73,7 +73,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public this()
     {
-        _listeners = [new ConsoleErrorListener!(U,V)];
+        _listeners = [ConsoleErrorListener!(U,V).instance];
     }
 
     /**

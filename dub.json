@@ -17,7 +17,6 @@
             "targetName": "antlr-d",
             "targetPath": "lib", 
             "targetType": "library",
-            "buildOptions": ["debugInfo"],
 	},
 	{
             "name": "unittest",
@@ -28,7 +27,7 @@
 	    ],
 	    "dependencies": {
                 "dshould": "~>0.1",
-		"unit-threaded": "~>0.7"
+		"unit-threaded": "==0.7.50"
 	    },
 	    "preBuildCommands": [
 		"dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"

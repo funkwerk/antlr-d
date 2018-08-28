@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  Copyright (c) 2017 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.Recognizer;
@@ -54,7 +29,7 @@ import antlr.v4.runtime.atn.ParseInfo;
 
 // Class Template Recognizer
 /**
- * TODO add class description
+ * Base for Lexer and Parser
  */
 abstract class Recognizer(U, V) : InterfaceRecognizer
 {
@@ -77,7 +52,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * Used to print out token names like ID during debugging and
      * error reporting.  The generated parsers implement a method
      * that overrides this to point to their String[] tokenNames.
@@ -89,7 +63,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     abstract public string[] getRuleNames();
 
     /**
-     * @uml
      * Get the vocabulary used by the recognizer.
      *
      *  @return A {@link Vocabulary} instance providing information about the
@@ -101,17 +74,16 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * Get a map from token names to token types.
      * <p>Used for XPath and tree pattern compilation.</p>
      */
     public int[string] getTokenTypeMap()
     {
-        Vocabulary vocabulary = getVocabulary();
+        Vocabulary vocabulary = getVocabulary;
         int[string] result = tokenTypeMapCache[vocabulary];
         if (result is null) {
-            int[string] result1;
-            result = result1;
+            int[string] result_mapping;
+            result = result_mapping;
             for (int i = 0; i < getATN.maxTokenType; i++) {
                 string literalName = vocabulary.getLiteralName(i);
                 if (literalName !is null) {
@@ -132,7 +104,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * Get a map from rule names to rule indexes.
      *
      * <p>Used for XPath and tree pattern compilation.
@@ -164,7 +135,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * If this recognizer was generated, it will have a serialized ATN
      * representation of the grammar.
      *
@@ -177,14 +147,12 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * For debugging and other purposes, might want the grammar name.
      * Have ANTLR generate an implementation for this method.
      */
     abstract public string getGrammarFileName();
 
     /**
-     * @uml
      * Get the {@link ATN} used by the recognizer for prediction.
      *
      *  @return The {@link ATN} used by the recognizer for prediction.
@@ -192,7 +160,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     abstract public ATN getATN();
 
     /**
-     * @uml
      * Get the ATN interpreter used by the recognizer for prediction.
      *
      *  @return The ATN interpreter used by the recognizer for prediction.
@@ -203,7 +170,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * If profiling during the parse/lex, this will return DecisionInfo records
      * for each decision in recognizer in a ParseInfo object.
      */
@@ -218,7 +184,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * What is the error header, normally line/character position information?
      */
     public string getErrorHeader(RecognitionException e)
@@ -229,7 +194,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * How should a token be displayed in an error message? The default
      * is to display just the text, but during development you might
      * want to have a lot of information spit out.  Override in that case
@@ -296,7 +260,6 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
      * subclass needs to override these if there are sempreds or actions
      * that the ATN interp needs to execute
      */
@@ -324,20 +287,18 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     }
 
     /**
-     * @uml
-     * @final
      * Indicate that the recognizer has changed internal state that is
      * consistent with the ATN state passed in.  This way we always know
      * where we are in the ATN as the parser goes along. The rule
      * context objects form a stack that lets us see the stack of
      * invoking rules. Combine this and we have complete ATN
      * configuration information.
+     * @uml
+     * @final
      */
     public final void setState(int atnState)
     {
-        //writeln("setState "+atnState);
         _stateNumber = atnState;
-        // if ( traceATNStates ) _ctx.trace(atnState);
     }
 
     abstract public IntStream getInputStream();

@@ -12,7 +12,6 @@ import std.format;
 import std.range;
 import std.typecons;
 
-
 /**
  * A buffert list of interger values
  */

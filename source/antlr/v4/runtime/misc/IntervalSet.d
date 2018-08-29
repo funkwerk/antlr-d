@@ -15,7 +15,6 @@ import std.container.rbtree;
 import std.conv;
 import std.stdio;
 
-
 /**
  * This class implements the {@link IntSet} backed by a sorted array of
  * non-overlapping intervals. It is particularly efficient for representing

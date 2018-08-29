@@ -32,7 +32,6 @@ module antlr.v4.runtime.misc.IntegerStack;
 
 import antlr.v4.runtime.misc.IntegerList;
 
-
 /**
  * TODO add class description
  */

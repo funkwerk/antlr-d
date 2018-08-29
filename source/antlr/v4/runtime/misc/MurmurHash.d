@@ -9,7 +9,6 @@ module antlr.v4.runtime.misc.MurmurHash;
 import std.conv;
 import std.stdio;
 
-
 /**
  * @author Sam Harwell
  * @author Egbert Voigt (D)

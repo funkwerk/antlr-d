@@ -8,7 +8,6 @@ module antlr.v4.runtime.misc.AbstractEqualityComparator;
 
 import antlr.v4.runtime.misc.EqualityComparator;
 
-
 /**
  * This abstract base class is provided so performance-critical applications can
  * use virtual- instead of interface-dispatch when calling comparator methods.

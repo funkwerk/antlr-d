@@ -1,6 +1,5 @@
 module antlr.v4.runtime.misc.IntSet;
 
-
 /**
  * TODO add interface description
  */

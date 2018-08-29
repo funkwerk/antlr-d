@@ -4,7 +4,6 @@ import std.array;
 import std.traits;
 import std.conv;
 
-
 /**
  * TODO add class description
  */

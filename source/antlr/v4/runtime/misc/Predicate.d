@@ -1,6 +1,5 @@
 module antlr.v4.runtime.misc.Predicate;
 
-
 /**
  * TODO add interface description
  */

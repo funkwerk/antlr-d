@@ -3,7 +3,6 @@ module antlr.v4.runtime.atn.BasicBlockStartState;
 import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.StateNames;
 
-
 /**
  * TODO add class description
  */

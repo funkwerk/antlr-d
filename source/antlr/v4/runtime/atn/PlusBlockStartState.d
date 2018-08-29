@@ -4,7 +4,6 @@ import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.PlusLoopbackState;
 import antlr.v4.runtime.atn.StateNames;
 
-
 /**
  * @uml
  * Start of {@code (A|B|...)+} loop. Technically a decision state, but

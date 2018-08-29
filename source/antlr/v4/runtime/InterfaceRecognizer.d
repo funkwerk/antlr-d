@@ -5,7 +5,6 @@ import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.IntStream;
 
-
 /**
  * TODO add interface description
  */

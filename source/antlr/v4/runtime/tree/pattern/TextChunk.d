@@ -3,7 +3,6 @@ module antlr.v4.runtime.tree.pattern.TextChunk;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.tree.pattern.Chunk;
 
-
 /**
  * @uml
  * Represents a span of raw text (concrete syntax) between tags in a tree

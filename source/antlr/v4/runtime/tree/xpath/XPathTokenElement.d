@@ -6,7 +6,6 @@ import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.Tree;
 import antlr.v4.runtime.tree.Trees;
 
-
 /**
  * TODO add class description
  */

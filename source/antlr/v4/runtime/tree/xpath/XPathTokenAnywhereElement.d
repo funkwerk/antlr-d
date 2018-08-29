@@ -4,7 +4,6 @@ import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.tree.ParseTree;
 
-
 /**
  * TODO add class description
  */

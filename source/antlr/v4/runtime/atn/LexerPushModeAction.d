@@ -12,7 +12,6 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc;
 
-
 /**
  * @uml
  * Implements the {@code pushMode} lexer action by calling

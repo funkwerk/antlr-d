@@ -22,7 +22,6 @@ import antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.misc.IntervalSet;
 
-
 /**
  * Class implementation adapted from Java code
  */

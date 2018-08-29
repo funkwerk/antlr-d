@@ -27,7 +27,6 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ParseInfo;
 
-
 /**
  * Base for Lexer and Parser
  */

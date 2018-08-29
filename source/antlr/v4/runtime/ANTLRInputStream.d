@@ -41,7 +41,6 @@ import std.file;
 import std.format;
 import std.stdio;
 
-
 /**
  * Vacuum all input from a {@link Reader}/{@link InputStream} and then treat it
  * like a {@code char[]} buffer. Can also pass in a {@link String} or

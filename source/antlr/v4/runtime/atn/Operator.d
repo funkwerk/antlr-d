@@ -2,7 +2,6 @@ module antlr.v4.runtime.atn.Operator;
 
 import antlr.v4.runtime.atn.SemanticContext;
 
-
 /**
  * This is the base class for semantic context "operators", which operate on
  * a collection of semantic context "operands".

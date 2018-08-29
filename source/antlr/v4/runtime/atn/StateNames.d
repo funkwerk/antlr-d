@@ -1,6 +1,5 @@
 module antlr.v4.runtime.atn.StateNames;
 
-
 /**
  * @uml
  * Type: ushort

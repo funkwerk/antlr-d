@@ -36,7 +36,6 @@ import antlr.v4.runtime.tree.pattern.ParseTreeMatch;
 import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 import antlr.v4.runtime.tree.xpath.XPath;
 
-
 /**
  * @uml
  * A pattern like {@code <ID> = <expr>;} converted to a {@link ParseTree} by

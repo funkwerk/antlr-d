@@ -5,7 +5,6 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenFactory;
 
-
 /**
  * TODO add interface description
  */

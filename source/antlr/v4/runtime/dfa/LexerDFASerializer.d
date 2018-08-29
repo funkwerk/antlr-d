@@ -5,7 +5,6 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.dfa.DFASerializer;
 import antlr.v4.runtime.VocabularyImpl;
 
-
 /**
  * TODO add class description
  */

@@ -39,7 +39,6 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.atn.StateNames;
 
-
 /**
  * TODO add class description
  */

@@ -38,7 +38,6 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 
-
 /**
  * This class provides a default implementation of the {@link Vocabulary}
  * interface.

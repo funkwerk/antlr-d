@@ -3,7 +3,6 @@ module antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.StateNames : StateNames;
 
-
 /**
  * TODO add class description
  */

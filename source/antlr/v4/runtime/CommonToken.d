@@ -19,7 +19,6 @@ import antlr.v4.runtime.misc.Interval;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-
 /**
  * TODO add class description
  */

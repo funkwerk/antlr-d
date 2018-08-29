@@ -34,7 +34,6 @@ module antlr.v4.runtime.tree.xpath.XPathElement;
 import std.format;
 import antlr.v4.runtime.tree.ParseTree;
 
-
 /**
  * TODO add class description
  */

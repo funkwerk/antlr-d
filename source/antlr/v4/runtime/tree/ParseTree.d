@@ -33,7 +33,6 @@ module antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.SyntaxTree;
 import antlr.v4.runtime.InterfaceRecognizer;
 
-
 /**
  * TODO add interface description
  * @uml

@@ -10,7 +10,6 @@ import std.algorithm : min;
 import std.stdio : stderr;
 import std.string : indexOf;
 
-
 /**
  * This class provides access to the current version of the ANTLR 4 runtime
  * library as compile-time and runtime constants, along with methods for

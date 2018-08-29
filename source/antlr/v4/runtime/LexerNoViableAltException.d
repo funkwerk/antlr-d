@@ -15,7 +15,6 @@ import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.misc.Utils;
 import std.format;
 
-
 /**
  * TODO add class description
  */

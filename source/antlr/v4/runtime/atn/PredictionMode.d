@@ -18,7 +18,6 @@ import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.BitSet;
 import std.typecons;
 
-
 /**
  * This enumeration defines the prediction modes available in ANTLR 4 along with
  * utility methods for analyzing configuration sets for conflicts and/or

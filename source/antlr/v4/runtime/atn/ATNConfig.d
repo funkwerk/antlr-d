@@ -16,7 +16,6 @@ import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.misc.MurmurHash;
 
-
 /**
  * A tuple: (ATN state, predicted alt, syntactic, semantic context).
  * The syntactic context is a graph-structured stack node whose

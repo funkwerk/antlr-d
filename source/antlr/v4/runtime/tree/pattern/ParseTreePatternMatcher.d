@@ -62,7 +62,6 @@ import antlr.v4.runtime.tree.pattern.ParseTreeMatch;
 import antlr.v4.runtime.tree.pattern.RuleTagToken;
 import antlr.v4.runtime.misc.ParseCancellationException;
 
-
 /**
  * @uml
  * A tree pattern matching mechanism for ANTLR {@link ParseTree}s.

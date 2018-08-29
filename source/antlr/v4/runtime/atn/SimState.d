@@ -2,7 +2,6 @@ module antlr.v4.runtime.atn.SimState;
 
 import antlr.v4.runtime.dfa.DFAState;
 
-
 /**
  * When we hit an accept state in either the DFA or the ATN, we
  * have to notify the character stream to start buffering characters

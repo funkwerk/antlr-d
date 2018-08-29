@@ -11,7 +11,6 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc;
 
-
 /**
  * Implements the {@code popMode} lexer action by calling {@link Lexer#popMode}.
  *

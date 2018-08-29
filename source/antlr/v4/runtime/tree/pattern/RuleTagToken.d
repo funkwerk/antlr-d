@@ -38,7 +38,6 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 
-
 /**
  * @uml
  * A {@link Token} object representing an entire subtree matched by a parser

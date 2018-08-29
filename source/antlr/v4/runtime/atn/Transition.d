@@ -21,7 +21,6 @@ import antlr.v4.runtime.atn.PrecedencePredicateTransition;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.misc.IntervalSet;
 
-
 /**
  * An ATN transition between any two ATN states.  Subclasses define
  * atom, set, epsilon, action, predicate, rule transitions.

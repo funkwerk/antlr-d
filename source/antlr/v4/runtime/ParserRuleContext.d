@@ -22,7 +22,6 @@ import std.conv;
 import std.format;
 import std.variant;
 
-
 /**
  * A rule invocation record for parsing.
  *

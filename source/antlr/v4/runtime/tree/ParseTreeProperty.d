@@ -2,7 +2,6 @@ module antlr.v4.runtime.tree.ParseTreeProperty;
 
 import antlr.v4.runtime.tree.ParseTree;
 
-
 /**
  * Associate a property with a parse tree node. Useful with parse tree listeners
  * that need to associate values with particular tree nodes, kind of like

@@ -26,7 +26,6 @@ import std.container.rbtree;
 import std.conv;
 import std.stdio;
 
-
 /**
  * LL1 Analyzer
  */

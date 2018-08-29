@@ -2,7 +2,6 @@ module antlr.v4.runtime.TokenConstantDefinition;
 
 import antlr.v4.runtime.IntStreamConstant;
 
-
 /**
  * @uml
  * Token constant definitions

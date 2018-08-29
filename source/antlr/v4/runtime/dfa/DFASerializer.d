@@ -37,7 +37,6 @@ import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 
-
 /**
  * @uml
  * A DFA walker that knows how to dump them to serialized strings.

@@ -1,6 +1,5 @@
 module antlr.v4.runtime.RuntimeException;
 
-
 /**
  * TODO add class description
  */

@@ -30,7 +30,6 @@
 
 module antlr.v4.runtime.Vocabulary;
 
-
 /**
  * @uml
  * This interface provides information about the vocabulary used by a

@@ -33,7 +33,6 @@ module antlr.v4.runtime.atn.PredictionContextCache;
 import std.conv;
 import antlr.v4.runtime.atn.PredictionContext;
 
-
 /**
  * @uml
  * Used to cache {@link PredictionContext} objects. Its used for the shared

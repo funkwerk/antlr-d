@@ -36,7 +36,6 @@ import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.misc.Interval;
 
-
 /**
  * TODO add interface description
  */

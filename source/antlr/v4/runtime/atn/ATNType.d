@@ -30,7 +30,6 @@
 
 module antlr.v4.runtime.atn.ATNType;
 
-
 /**
  * @uml
  * Represents the type of recognizer an ATN applies to.

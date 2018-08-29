@@ -32,7 +32,6 @@ module antlr.v4.runtime.atn.DecisionState;
 
 import antlr.v4.runtime.atn.ATNState;
 
-
 /**
  * TODO add class description
  */

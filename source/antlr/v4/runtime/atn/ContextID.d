@@ -1,6 +1,5 @@
 module antlr.v4.runtime.atn.ContextID;
 
-
 /**
  * TODO add class description
  */

@@ -3,7 +3,6 @@ module antlr.v4.runtime.tree.pattern.TokenTagToken;
 import antlr.v4.runtime.CommonToken;
 import std.conv;
 
-
 /**
  * @uml
  * {@link Token} object representing a token of a particular type; e.g.,

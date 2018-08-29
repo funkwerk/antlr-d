@@ -22,7 +22,6 @@ import std.array;
 import std.conv;
 import std.typecons;
 
-
 /**
  * TODO add class description
  */

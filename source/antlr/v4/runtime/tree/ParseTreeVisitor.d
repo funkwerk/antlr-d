@@ -6,7 +6,6 @@
 
 module antlr.v4.runtime.tree.ParseTreeVisitor;
 
-
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
  * visitors implement this interface and the {@code XVisitor} interface for

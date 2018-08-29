@@ -14,7 +14,6 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.LexerActionExecutor;
 import antlr.v4.runtime.dfa.PredPrediction;
 
-
 /**
  * A DFA state represents a set of possible ATN configurations.
  * As Aho, Sethi, Ullman p. 117 says "The DFA uses its state

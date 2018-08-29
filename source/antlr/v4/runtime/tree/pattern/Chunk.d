@@ -1,6 +1,5 @@
 module antlr.v4.runtime.tree.pattern.Chunk;
 
-
 /**
  * @uml
  * A chunk is either a token tag, a rule tag, or a span of literal text within a

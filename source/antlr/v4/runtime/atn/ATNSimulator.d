@@ -15,7 +15,6 @@ import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.PredictionContext;
 
-
 /**
  * TODO add class description
  */

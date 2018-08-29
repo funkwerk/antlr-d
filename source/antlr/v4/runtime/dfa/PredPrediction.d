@@ -3,7 +3,6 @@ module antlr.v4.runtime.dfa.PredPrediction;
 import std.format;
 import antlr.v4.runtime.atn.SemanticContext;
 
-
 /**
  * TODO add class description
  */

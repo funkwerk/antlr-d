@@ -32,7 +32,6 @@ module antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 
-
 /**
  * TODO add class description
  */

@@ -34,7 +34,6 @@ import antlr.v4.runtime.tree.TerminalNodeImpl;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.Token;
 
-
 /**
  * @uml
  * Represents a token that was consumed during resynchronization

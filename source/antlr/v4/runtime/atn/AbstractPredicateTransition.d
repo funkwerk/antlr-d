@@ -33,7 +33,6 @@ module antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.ATNState;
 
-
 /**
  * TODO add class description
  */

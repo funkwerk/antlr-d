@@ -3,7 +3,6 @@ module antlr.v4.runtime.tree.pattern.TagChunk;
 import antlr.v4.runtime.tree.pattern.Chunk;
 import antlr.v4.runtime.IllegalArgumentException;
 
-
 /**
  * @uml
  * Represents a placeholder tag in a tree pattern. A tag can have any of the

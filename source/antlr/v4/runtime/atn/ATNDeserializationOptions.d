@@ -31,7 +31,6 @@
 
 module antlr.v4.runtime.atn.ATNDeserializationOptions;
 
-
 /**
  * Options setting for deserialization
  */

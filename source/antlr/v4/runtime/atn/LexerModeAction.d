@@ -37,7 +37,6 @@ import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
 
-
 /**
  * @uml
  * Implements the {@code mode} lexer action by calling {@link Lexer#mode} with

@@ -40,7 +40,6 @@ import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
-
 /**
  * TODO add class description
  */

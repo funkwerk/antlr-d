@@ -6,7 +6,6 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.SemanticContext;
 
-
 /**
  * TODO add class description
  */

@@ -17,7 +17,6 @@ import antlr.v4.runtime.misc.Interval;
 import std.conv;
 import std.format;
 
-
 /**
  * This implementation of {@link ANTLRErrorListener} can be used to identify
  * certain potential correctness and performance problems in grammars. "Reports"

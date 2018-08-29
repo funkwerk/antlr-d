@@ -62,7 +62,6 @@ import std.format;
 import std.stdio;
 import std.uuid;
 
-
 /**
  * TODO add class description
  */

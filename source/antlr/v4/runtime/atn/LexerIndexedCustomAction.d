@@ -36,7 +36,6 @@ import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.misc.MurmurHash;
 
-
 /**
  * TODO add class description
  */

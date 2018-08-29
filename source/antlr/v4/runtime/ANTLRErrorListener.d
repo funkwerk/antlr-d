@@ -14,7 +14,6 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.misc;
 
-
 /**
  * How to emit recognition errors.
  */

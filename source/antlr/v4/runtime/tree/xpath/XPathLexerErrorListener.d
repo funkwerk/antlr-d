@@ -5,7 +5,6 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 
-
 /**
  * TODO add class description
  */

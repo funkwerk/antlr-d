@@ -36,7 +36,6 @@ import antlr.v4.runtime.misc.IntervalSet;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
 
-
 /**
  * TODO add class description
  */

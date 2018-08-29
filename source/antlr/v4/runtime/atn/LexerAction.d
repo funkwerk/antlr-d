@@ -9,7 +9,6 @@ module antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.InterfaceLexer;
 import antlr.v4.runtime.atn.LexerActionType;
 
-
 /**
  * Represents a single action which can be executed following the successful
  * match of a lexer rule. Lexer actions are used for both embedded action syntax

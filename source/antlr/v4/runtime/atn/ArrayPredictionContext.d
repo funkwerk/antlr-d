@@ -13,7 +13,6 @@ import std.container.array;
 import std.conv;
 import std.stdio;
 
-
 /**
  * Array of prediction contexts
  */

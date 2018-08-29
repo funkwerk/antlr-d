@@ -9,7 +9,6 @@ import antlr.v4.runtime.misc.Interval;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-
 /**
  * This default implementation of {@link TokenFactory} creates
  * {@link CommonToken} objects.

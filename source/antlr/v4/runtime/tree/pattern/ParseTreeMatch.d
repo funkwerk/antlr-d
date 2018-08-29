@@ -35,7 +35,6 @@ import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 
-
 /**
  * TODO add class description
  * @uml

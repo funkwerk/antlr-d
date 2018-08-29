@@ -36,7 +36,6 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.DecisionInfo;
 import antlr.v4.runtime.atn.ProfilingATNSimulator;
 
-
 /**
  * This class provides access to specific and aggregate statistics gathered
  * during profiling of a parser.

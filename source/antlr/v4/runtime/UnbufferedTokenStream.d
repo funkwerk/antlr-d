@@ -15,7 +15,7 @@ import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
 
-// Class UnbufferedTokenStream
+
 /**
  * TODO add class description
  */

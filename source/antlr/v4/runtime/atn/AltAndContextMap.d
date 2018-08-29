@@ -4,7 +4,7 @@ import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.misc.BitSet;
 import antlr.v4.runtime.atn.ContextMapObjectEqualityComparator;
 
-// Struct AltAndContextMap
+
 /**
  * A structure that ATN configurations maps to bit vectors
  */

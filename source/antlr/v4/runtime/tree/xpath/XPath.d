@@ -56,7 +56,7 @@ import antlr.v4.runtime.tree.xpath.XPathRuleAnywhereElement;
 import antlr.v4.runtime.tree.xpath.XPathTokenElement;
 import antlr.v4.runtime.tree.xpath.XPathTokenAnywhereElement;
 
-// Class XPath
+
 /**
  * @uml
  * Represent a subset of XPath XML path syntax for use in identifying nodes in

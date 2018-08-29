@@ -4,7 +4,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.StarLoopEntryState;
 
-// Class StarLoopbackState
+
 /**
  * TODO add class description
  */

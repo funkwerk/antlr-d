@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.tree.Tree;
 
-// Interface Tree
+
 /**
  * @uml
  * The basic notion of a tree has a parent, a payload, and a list of children.

@@ -62,7 +62,7 @@ import std.format;
 import std.stdio;
 import std.uuid;
 
-// Class ATNDeserializer
+
 /**
  * TODO add class description
  */

@@ -33,7 +33,7 @@ module antlr.v4.runtime.atn.BasicState;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.StateNames;
 
-// Class BasicState
+
 /**
  * TODO add class description
  */

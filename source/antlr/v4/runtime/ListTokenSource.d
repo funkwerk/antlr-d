@@ -14,7 +14,7 @@ import antlr.v4.runtime.CommonToken;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-// Class ListTokenSource
+
 /**
  * @uml
  * Provides an implementation of {@link TokenSource} as a wrapper around a list

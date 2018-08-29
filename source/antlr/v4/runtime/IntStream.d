@@ -1,6 +1,6 @@
 module antlr.v4.runtime.IntStream;
 
-// Interface IntStream
+
 /**
  * TODO add interface description
  */

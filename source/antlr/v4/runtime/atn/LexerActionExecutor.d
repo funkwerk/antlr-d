@@ -13,7 +13,7 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerIndexedCustomAction;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Class LexerActionExecutor
+
 /**
  * @uml
  * Represents an executor for a sequence of lexer actions which traversed during

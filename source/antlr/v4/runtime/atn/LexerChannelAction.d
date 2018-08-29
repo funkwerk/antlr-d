@@ -37,7 +37,7 @@ import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
 
-// Class LexerChannelAction
+
 /**
  * @uml
  * @final

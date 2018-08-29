@@ -35,7 +35,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 
-// Interface ParseTreeListener
+
 /**
  * @uml
  * This interface describes the minimal core of methods triggered

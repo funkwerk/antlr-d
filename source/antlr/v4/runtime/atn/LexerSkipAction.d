@@ -11,7 +11,7 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc;
 
-// Singleton LexerSkipAction
+
 /**
  * Implements the {@code skip} lexer action by calling {@link Lexer#skip}.
  *

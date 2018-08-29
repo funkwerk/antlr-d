@@ -18,7 +18,7 @@ import antlr.v4.runtime.tree.Trees;
 import std.array;
 import std.conv;
 
-// Class RuleContext
+
 /**
  * A rule context is a record of a single rule invocation.
  *

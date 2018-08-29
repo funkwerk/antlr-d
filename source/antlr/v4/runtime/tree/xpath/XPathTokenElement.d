@@ -6,7 +6,7 @@ import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.Tree;
 import antlr.v4.runtime.tree.Trees;
 
-// Class XPathTokenElement
+
 /**
  * TODO add class description
  */

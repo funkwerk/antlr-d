@@ -35,7 +35,7 @@ import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.RuleStartState;
 import antlr.v4.runtime.atn.ATNState;
 
-// Class RuleTransition
+
 /**
  * TODO add class description
  */

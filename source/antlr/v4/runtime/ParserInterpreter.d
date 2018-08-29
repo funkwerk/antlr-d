@@ -44,7 +44,7 @@ import antlr.v4.runtime.atn.PredictionContextCache;
 alias ParentContextPair = Tuple!(ParserRuleContext, "a", int, "b");
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-// Class ParserInterpreter
+
 /**
  * @uml
  * A parser simulator that mimics what ANTLR's generated

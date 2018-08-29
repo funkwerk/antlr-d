@@ -10,7 +10,7 @@ import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Class AND
+
 /**
  * TODO add class description
  */

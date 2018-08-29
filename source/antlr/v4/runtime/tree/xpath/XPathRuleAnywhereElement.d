@@ -4,7 +4,7 @@ import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.tree.xpath.XPathElement;
 
-// Class XPathRuleAnywhereElement
+
 /**
  * TODO add class description
  */

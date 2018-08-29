@@ -40,7 +40,7 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.misc.BitSet;
 
-// Class Template ProxyErrorListener
+
 /**
  * @uml
  * This implementation of {@link ANTLRErrorListener} dispatches all calls to a

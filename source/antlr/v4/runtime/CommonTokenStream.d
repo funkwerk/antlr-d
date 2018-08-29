@@ -13,7 +13,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 
-// Class CommonTokenStream
+
 /**
  * This class extends {@link BufferedTokenStream} with functionality to filter
  * token streams to tokens on a particular channel (tokens where

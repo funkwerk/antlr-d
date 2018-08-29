@@ -20,7 +20,7 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
 
-// Class BufferedTokenStream
+
 /**
  * This implementation of {@link TokenStream} loads tokens from a
  * {@link TokenSource} on-demand, and places the tokens in a buffer to provide

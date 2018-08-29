@@ -1,6 +1,6 @@
 module antlr.v4.runtime.atn.TransitionStates;
 
-// Enum TransitionStates
+
 /**
  * TODO add enumeration class description
  * @uml

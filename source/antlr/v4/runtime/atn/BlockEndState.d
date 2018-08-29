@@ -4,7 +4,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.BlockStartState;
 import antlr.v4.runtime.atn.StateNames;
 
-// Class BlockEndState
+
 /**
  * TODO add class description
  */

@@ -31,7 +31,7 @@
 
 module antlr.v4.runtime.IntStreamConstant;
 
-// Class IntStreamConstant
+
 /**
  * Constants of IntStream
  */

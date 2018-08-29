@@ -10,7 +10,7 @@ import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
 
-// Interface ANTLRErrorStrategy
+
 /**
  * The interface for defining strategies to deal with syntax errors encountered
  * during a parse by ANTLR-generated parsers. We distinguish between three

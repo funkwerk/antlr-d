@@ -36,7 +36,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.misc.IntervalSet;
 
-// Class AtomTransition
+
 /**
  * TODO add class description
  */

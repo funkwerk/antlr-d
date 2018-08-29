@@ -4,7 +4,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.RuleStopState;
 import antlr.v4.runtime.atn.StateNames : StateNames;
 
-// Class RuleStartState
+
 /**
  * TODO add class description
  */

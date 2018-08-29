@@ -30,7 +30,7 @@
 
 module antlr.v4.runtime.atn.ATNType;
 
-// Enum ATNType
+
 /**
  * @uml
  * Represents the type of recognizer an ATN applies to.

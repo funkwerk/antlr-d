@@ -15,7 +15,7 @@ import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.misc.Utils;
 import std.format;
 
-// Class LexerNoViableAltException
+
 /**
  * TODO add class description
  */

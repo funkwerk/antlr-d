@@ -3,7 +3,7 @@ module antlr.v4.runtime.InterfaceParser;
 import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.TokenStream;
 
-// Interface InterfaceParser
+
 /**
  * TODO add interface description
  */

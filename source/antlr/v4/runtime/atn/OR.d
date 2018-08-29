@@ -42,7 +42,7 @@ import antlr.v4.runtime.atn.Operator;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Class OR
+
 /**
  * A semantic context which is true whenever at least one of the contained
  * contexts is true.

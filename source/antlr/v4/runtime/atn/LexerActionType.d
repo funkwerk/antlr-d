@@ -1,6 +1,6 @@
 module antlr.v4.runtime.atn.LexerActionType;
 
-// Enum LexerActionType
+
 /**
  * @uml
  * Represents the serialization type of a {@link LexerAction}.

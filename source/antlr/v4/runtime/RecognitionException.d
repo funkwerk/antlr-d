@@ -14,7 +14,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.misc.IntervalSet;
 
-// Class RecognitionException
+
 /**
  * The root of the ANTLR exception hierarchy. In general, ANTLR tracks just
  * 3 kinds of errors: prediction errors, failed predicate errors, and

@@ -37,7 +37,7 @@ import antlr.v4.runtime.atn.AmbiguityInfo;
 import antlr.v4.runtime.atn.ErrorInfo;
 import antlr.v4.runtime.atn.PredicateEvalInfo;
 
-// Class DecisionInfo
+
 /**
  * This class contains profiling gathered for a particular decision.
  *

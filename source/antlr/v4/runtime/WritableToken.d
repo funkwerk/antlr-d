@@ -2,7 +2,7 @@ module antlr.v4.runtime.WritableToken;
 
 import antlr.v4.runtime.Token;
 
-// Interface WritableToken
+
 /**
  * Add write functions for Token attributes
  */

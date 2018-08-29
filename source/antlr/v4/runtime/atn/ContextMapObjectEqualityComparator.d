@@ -3,7 +3,7 @@ module antlr.v4.runtime.atn.ContextMapObjectEqualityComparator;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Singleton ContextMapObjectEqualityComparator
+
 /**
  * TODO add class description
  */

@@ -39,7 +39,7 @@ import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.misc.IntervalSet;
 import std.algorithm.mutation: remove;
 
-// Class ATNState
+
 /**
  * The following images show the relation of states and
  * {@link ATNState#transitions} for various grammar constructs.

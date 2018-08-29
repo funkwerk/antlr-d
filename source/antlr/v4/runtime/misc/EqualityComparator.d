@@ -31,7 +31,7 @@
 
 module antlr.v4.runtime.misc.EqualityComparator;
 
-// Interface Template EqualityComparator
+
 /**
  * @uml
  * This interface provides an abstract concept of object equality independent of

@@ -39,7 +39,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.atn.StateNames;
 
-// Class TerminalNodeImpl
+
 /**
  * TODO add class description
  */

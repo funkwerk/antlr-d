@@ -33,7 +33,7 @@ module antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.RuleContext;
 
-// Interface RuleNode
+
 /**
  * TODO add interface description
  */

@@ -4,7 +4,7 @@ import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.Trees;
 import antlr.v4.runtime.tree.ParseTree;
 
-// Class XPathTokenAnywhereElement
+
 /**
  * TODO add class description
  */

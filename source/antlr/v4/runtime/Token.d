@@ -10,7 +10,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
 
-// Interface Token
+
 /**
  * A token has properties: text, type, line, character position in the line
  * (so we can ignore tabs), token channel, index, and source from which

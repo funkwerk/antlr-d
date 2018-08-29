@@ -26,7 +26,7 @@ import std.container.rbtree;
 import std.conv;
 import std.stdio;
 
-// Class LL1Analyzer
+
 /**
  * LL1 Analyzer
  */

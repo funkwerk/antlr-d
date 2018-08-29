@@ -34,7 +34,7 @@ import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.atn.StarLoopbackState;
 
-// Class StarLoopEntryState
+
 /**
  * TODO add class description
  */

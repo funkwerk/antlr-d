@@ -5,7 +5,7 @@ import antlr.v4.runtime.InterfaceRuleContext;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.IntStream;
 
-// Interface InterfaceRecognizer
+
 /**
  * TODO add interface description
  */

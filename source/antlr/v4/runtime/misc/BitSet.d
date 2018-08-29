@@ -10,7 +10,7 @@ import std.bitmanip;
 import std.conv;
 import std.algorithm;
 
-// Struct BitSet
+
 /**
  * This struct implements a vector of bits that grows as needed. Each component
  * of the bit set has a bool value. The bits of a BitSet are indexed by nonnegative integers.

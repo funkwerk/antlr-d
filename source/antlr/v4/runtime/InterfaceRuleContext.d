@@ -1,6 +1,6 @@
 module antlr.v4.runtime.InterfaceRuleContext;
 
-// Interface InterfaceRuleContext
+
 /**
  * TODO add interface description
  */

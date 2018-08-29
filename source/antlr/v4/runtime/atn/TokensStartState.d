@@ -33,7 +33,7 @@ module antlr.v4.runtime.atn.TokensStartState;
 import antlr.v4.runtime.atn.DecisionState;
 import antlr.v4.runtime.atn.StateNames : StateNames;
 
-// Class TokensStartState
+
 /**
  * @uml
  * The Tokens rule start state linking to each lexer rule start state

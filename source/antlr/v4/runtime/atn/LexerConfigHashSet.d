@@ -3,7 +3,7 @@ module antlr.v4.runtime.atn.LexerConfigHashSet;
 import antlr.v4.runtime.atn.AbstractConfigHashSet;
 import antlr.v4.runtime.misc.ObjectEqualityComparator;
 
-// Class LexerConfigHashSet
+
 /**
  * TODO add class description
  */

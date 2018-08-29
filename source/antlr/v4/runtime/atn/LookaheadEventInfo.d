@@ -34,7 +34,7 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.DecisionEventInfo;
 
-// Class LookaheadEventInfo
+
 /**
  * This class represents profiling event information for tracking the lookahead
  * depth required in order to make a prediction.

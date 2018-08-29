@@ -35,7 +35,7 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.atn.DecisionEventInfo;
 import antlr.v4.runtime.atn.ATNConfigSet;
 
-// Class ErrorInfo
+
 /**
  * @uml
  * This class represents profiling event information for a syntax error

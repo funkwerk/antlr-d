@@ -1,6 +1,6 @@
 module antlr.v4.runtime.misc.Predicate;
 
-// Interface Template Predicate
+
 /**
  * TODO add interface description
  */

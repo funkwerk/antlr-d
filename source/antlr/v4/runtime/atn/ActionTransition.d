@@ -5,7 +5,7 @@ import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
 import antlr.v4.runtime.atn.ATNState;
 
-// Class ActionTransition
+
 /**
  * TODO add class description
  */

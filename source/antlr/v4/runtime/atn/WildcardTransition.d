@@ -34,7 +34,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.TransitionStates;
 
-// Class WildcardTransition
+
 /**
  * TODO add class description
  */

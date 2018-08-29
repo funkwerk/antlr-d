@@ -31,7 +31,7 @@ import std.typecons;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-// Class DefaultErrorStrategy
+
 /**
  * This is the default implementation of {@link ANTLRErrorStrategy} used for
  * error reporting and recovery in ANTLR parsers.

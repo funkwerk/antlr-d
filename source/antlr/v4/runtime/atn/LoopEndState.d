@@ -33,7 +33,7 @@ module antlr.v4.runtime.atn.LoopEndState;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.StateNames;
 
-// Class LoopEndState
+
 /**
  * TODO add class description
  */

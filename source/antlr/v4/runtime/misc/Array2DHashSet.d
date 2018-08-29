@@ -16,7 +16,7 @@ import std.algorithm.mutation : remove;
 import std.algorithm.searching : canFind;
 import antlr.v4.runtime.misc;
 
-// Class Template Array2DHashSet
+
 /**
  * Set implementation with closed hashing (open addressing).
  */

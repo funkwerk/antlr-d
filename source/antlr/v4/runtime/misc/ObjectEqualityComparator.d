@@ -2,7 +2,7 @@ module antlr.v4.runtime.misc.ObjectEqualityComparator;
 
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
 
-// Singleton ObjectEqualityComparator
+
 /**
  * This default implementation of {@link EqualityComparator} uses object equality
  * for comparisons by calling {@link Object#hashCode} and {@link Object#equals}.

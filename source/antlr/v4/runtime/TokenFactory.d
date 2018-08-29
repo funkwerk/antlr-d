@@ -12,7 +12,7 @@ import std.typecons;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-// Interface TokenFactory
+
 /**
  * The default mechanism for creating tokens. It's used by default in Lexer and
  * the error handling strategy (to create missing tokens).  Notifying the parser

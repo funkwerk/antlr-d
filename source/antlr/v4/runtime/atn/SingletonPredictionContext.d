@@ -9,7 +9,7 @@ module antlr.v4.runtime.atn.SingletonPredictionContext;
 import std.conv;
 import antlr.v4.runtime.atn;
 
-// Class SingletonPredictionContext
+
 /**
  * TODO add class description
  */

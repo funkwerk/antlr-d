@@ -7,7 +7,7 @@ import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc.MurmurHash;
 import antlr.v4.runtime.misc.Utils;
 
-// Class LexerTypeAction
+
 /**
  * @uml
  * Implements the {@code type} lexer action by calling {@link Lexer#setType}

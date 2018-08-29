@@ -47,7 +47,7 @@ import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
 
-// Class ProfilingATNSimulator
+
 /**
  * TODO add class description
  */

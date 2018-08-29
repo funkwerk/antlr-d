@@ -5,7 +5,7 @@ import antlr.v4.runtime.tree.xpath.XPathElement;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.Trees;
 
-// Class XPathWildcardAnywhereElement
+
 /**
  * TODO add class description
  */

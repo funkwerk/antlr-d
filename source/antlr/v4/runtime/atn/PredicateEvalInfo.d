@@ -35,7 +35,7 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.DecisionEventInfo;
 import antlr.v4.runtime.atn.SemanticContext;
 
-// Class PredicateEvalInfo
+
 /**
  * This class represents profiling event information for semantic predicate
  * evaluations which occur during prediction.

@@ -3,7 +3,7 @@ module antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.misc.Interval;
 
-// Interface CharStream
+
 /**
  * A source of characters for an ANTLR lexer.
  */

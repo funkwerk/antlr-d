@@ -33,7 +33,7 @@ module antlr.v4.runtime.atn.DecisionEventInfo;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.TokenStream;
 
-// Class DecisionEventInfo
+
 /**
  * This is the base class for gathering detailed information about prediction
  * events which occur during parsing.

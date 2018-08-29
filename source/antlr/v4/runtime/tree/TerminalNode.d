@@ -33,7 +33,7 @@ module antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.Token;
 
-// Interface TerminalNode
+
 /**
  * TODO add interface description
  */

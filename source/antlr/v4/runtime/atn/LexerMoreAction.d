@@ -11,7 +11,7 @@ import antlr.v4.runtime.atn.LexerAction;
 import antlr.v4.runtime.atn.LexerActionType;
 import antlr.v4.runtime.misc;
 
-// Singleton LexerMoreAction
+
 /**
  * Provides a singleton instance of this parameterless lexer action.
  */

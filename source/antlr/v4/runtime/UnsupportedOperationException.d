@@ -2,7 +2,7 @@ module antlr.v4.runtime.UnsupportedOperationException;
 
 import antlr.v4.runtime.RuntimeException;
 
-// Class UnsupportedOperationException
+
 /**
  * TODO add class description
  */

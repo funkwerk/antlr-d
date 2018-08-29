@@ -8,7 +8,7 @@ module antlr.v4.runtime.atn.EmptyPredictionContext;
 
 import antlr.v4.runtime.atn;
 
-// Class EmptyPredictionContext
+
 /**
  * Empty PredictionContex
  */

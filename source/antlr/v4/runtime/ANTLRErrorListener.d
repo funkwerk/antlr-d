@@ -14,7 +14,7 @@ import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.misc;
 
-// Interface Template ANTLRErrorListener
+
 /**
  * How to emit recognition errors.
  */

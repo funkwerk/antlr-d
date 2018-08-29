@@ -6,7 +6,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.atn.TransitionStates;
 
-// Class PredicateTransition
+
 /**
  * TODO add class description
  */

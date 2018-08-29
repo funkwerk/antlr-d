@@ -2,7 +2,7 @@ module antlr.v4.runtime.InterpreterRuleContext;
 
 import antlr.v4.runtime.ParserRuleContext;
 
-// Class InterpreterRuleContext
+
 /**
  * This class extends {@link ParserRuleContext} by allowing the value of
  * {@link #getRuleIndex} to be explicitly set for the context.

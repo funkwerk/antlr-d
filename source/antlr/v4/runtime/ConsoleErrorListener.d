@@ -11,7 +11,7 @@ import antlr.v4.runtime.BaseErrorListener;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
 
-// Class Template ConsoleErrorListener
+
 /**
  * TODO add class description
  */

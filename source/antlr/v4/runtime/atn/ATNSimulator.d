@@ -15,7 +15,7 @@ import antlr.v4.runtime.dfa.DFAState;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.PredictionContext;
 
-// Class ATNSimulator
+
 /**
  * TODO add class description
  */

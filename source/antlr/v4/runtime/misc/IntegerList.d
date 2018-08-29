@@ -12,7 +12,7 @@ import std.format;
 import std.range;
 import std.typecons;
 
-// Class IntegerList
+
 /**
  * A buffert list of interger values
  */

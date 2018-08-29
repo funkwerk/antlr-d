@@ -1,6 +1,6 @@
 module antlr.v4.runtime.atn.PredictionModeConst;
 
-// Enum PredictionModeConst
+
 /**
  * This enumeration defines the prediction modes available in ANTLR 4 along with
  * utility methods for analyzing configuration sets for conflicts and/or

@@ -3,7 +3,7 @@ module antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Singleton ATNConfigObjectEqualityComparator
+
 /**
  * TODO add class description
  */

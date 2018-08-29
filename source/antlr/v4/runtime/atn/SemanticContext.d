@@ -38,7 +38,7 @@ import antlr.v4.runtime.atn.AND;
 import antlr.v4.runtime.atn.OR;
 import antlr.v4.runtime.misc.MurmurHash;
 
-// Class SemanticContext
+
 /**
  * @uml
  * A tree structure used to record the semantic context in which

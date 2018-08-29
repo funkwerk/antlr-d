@@ -46,7 +46,7 @@ import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.misc.IntegerStack;
 import antlr.v4.runtime.misc.IntervalSet;
 
-// Class Parser
+
 /**
  * TODO add class description
  */

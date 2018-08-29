@@ -1,6 +1,6 @@
 module antlr.v4.runtime.atn.StateNames;
 
-// Enum StateNames
+
 /**
  * @uml
  * Type: ushort

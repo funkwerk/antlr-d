@@ -32,7 +32,7 @@ module antlr.v4.runtime.tree.ErrorNode;
 
 import antlr.v4.runtime.tree.TerminalNode;
 
-// Interface ErrorNode
+
 /**
  * TODO add interface description
  */

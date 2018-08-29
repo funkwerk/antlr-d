@@ -8,7 +8,7 @@ import antlr.v4.runtime.dfa.DFA;
 import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.misc.BitSet;
 
-// Class Template BaseErrorListener
+
 /**
  * Provides an empty default implementation of {@link ANTLRErrorListener}. The
  * default implementation of each method does nothing, but can be overridden as

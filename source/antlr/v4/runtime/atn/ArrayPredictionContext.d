@@ -13,7 +13,7 @@ import std.container.array;
 import std.conv;
 import std.stdio;
 
-// Class ArrayPredictionContext
+
 /**
  * Array of prediction contexts
  */

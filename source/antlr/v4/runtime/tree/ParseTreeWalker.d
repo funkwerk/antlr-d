@@ -8,7 +8,7 @@ import antlr.v4.runtime.tree.ParseTreeWalker;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTree;
 
-// Class ParseTreeWalker
+
 /**
  * TODO add class description
  */

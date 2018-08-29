@@ -5,7 +5,7 @@ import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RecognitionException;
 import antlr.v4.runtime.atn.LexerATNSimulator;
 
-// Class XPathLexerErrorListener
+
 /**
  * TODO add class description
  */

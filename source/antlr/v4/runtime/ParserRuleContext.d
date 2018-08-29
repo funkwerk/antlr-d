@@ -22,7 +22,7 @@ import std.conv;
 import std.format;
 import std.variant;
 
-// Class ParserRuleContext
+
 /**
  * A rule invocation record for parsing.
  *

@@ -8,7 +8,7 @@ import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.AbstractPredicateTransition;
 import antlr.v4.runtime.atn.PredicateTransition;
 
-// Class FailedPredicateException
+
 /**
  * TODO add class description
  */

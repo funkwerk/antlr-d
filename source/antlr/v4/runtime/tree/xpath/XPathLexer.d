@@ -1,4 +1,4 @@
-// Generated from src/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.7.1
+
 module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;

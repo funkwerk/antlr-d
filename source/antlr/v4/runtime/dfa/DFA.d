@@ -19,7 +19,7 @@ import antlr.v4.runtime.dfa.LexerDFASerializer;
 import std.algorithm.sorting;
 import std.conv;
 
-// Class DFA
+
 /**
  * A set of DFA states
  */

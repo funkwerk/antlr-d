@@ -33,7 +33,7 @@ module antlr.v4.runtime.misc.Interval;
 import std.algorithm;
 import std.conv;
 
-// Class Interval
+
 /**
  * @uml
  * An immutable inclusive interval a..b

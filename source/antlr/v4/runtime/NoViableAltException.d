@@ -7,7 +7,7 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.atn.ATNConfigSet;
 
-// Class NoViableAltException
+
 /**
  * TODO add class description
  */

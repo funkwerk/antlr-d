@@ -38,7 +38,7 @@ import antlr.v4.runtime.misc.IntervalSet;
 
 alias tostring = to!string;
 
-// Class RangeTransition
+
 /**
  * TODO add class description
  */

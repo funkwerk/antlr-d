@@ -2,7 +2,7 @@ module antlr.v4.runtime.InterfaceLexer;
 
 import antlr.v4.runtime.InterfaceRuleContext;
 
-// Interface InterfaceLexer
+
 /**
  * TODO add interface description
  */

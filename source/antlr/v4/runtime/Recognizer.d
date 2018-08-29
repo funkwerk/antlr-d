@@ -52,7 +52,7 @@ import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ParseInfo;
 
-// Class Template Recognizer
+
 /**
  * TODO add class description
  */

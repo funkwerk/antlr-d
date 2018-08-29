@@ -31,7 +31,6 @@ import antlr.v4.runtime.InterfaceRuleContext;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
-// Class Lexer
 /**
  * A lexer is recognizer that draws input symbols from a character stream.
  * lexer grammars result in a subclass of this object. A Lexer object

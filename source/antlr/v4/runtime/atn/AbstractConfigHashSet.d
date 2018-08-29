@@ -9,7 +9,7 @@ module antlr.v4.runtime.atn.AbstractConfigHashSet;
 import antlr.v4.runtime.atn.ATNConfig;
 import antlr.v4.runtime.misc;
 
-// Class AbstractConfigHashSet
+
 /**
  * A special, abstract container for the graph-structured stack
  */

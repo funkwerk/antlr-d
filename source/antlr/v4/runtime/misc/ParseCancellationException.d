@@ -33,7 +33,7 @@ module antlr.v4.runtime.misc.ParseCancellationException;
 
 import antlr.v4.runtime.IllegalArgumentException;
 
-// Class ParseCancellationException
+
 /**
  * TODO add class description
  */

@@ -22,7 +22,7 @@ import std.array;
 import std.conv;
 import std.typecons;
 
-// Class PredictionContext
+
 /**
  * TODO add class description
  */

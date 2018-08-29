@@ -52,7 +52,7 @@ import std.typecons;
 
 alias ATNConfigSetATNConfigSetPair = Tuple!(ATNConfigSet, "a", ATNConfigSet, "b");
 
-// Class ParserATNSimulator
+
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
  *

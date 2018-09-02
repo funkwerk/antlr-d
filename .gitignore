@@ -6,3 +6,4 @@ lib
 bin
 .dub
 dub.selections.json
+docs

@@ -1,22 +1,22 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.atn.ATNSimulator;
 
-import std.uuid;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.InterfaceATNSimulator;
-import antlr.v4.runtime.dfa.DFAState;
-import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.PredictionContext;
+import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.dfa.DFAState;
+import std.uuid;
 
 /**
- * TODO add class description
+ * ATN simulator base class
  */
 abstract class ATNSimulator : InterfaceATNSimulator
 {
@@ -24,14 +24,12 @@ abstract class ATNSimulator : InterfaceATNSimulator
     public static int SERIALIZED_VERSION;
 
     /**
-     * @uml
      * This is the current serialized UUID.
      * deprecated Use {@link ATNDeserializer#checkCondition(boolean)} instead.
      */
     public static UUID SERIALIZED_UUID;
 
     /**
-     * @uml
      * Must distinguish between missing edge and edge we know leads nowhere
      */
     public static DFAState ERROR;
@@ -76,7 +74,6 @@ abstract class ATNSimulator : InterfaceATNSimulator
     abstract public void reset();
 
     /**
-     * @uml
      * Clear the DFA cache used by the current instance. Since the DFA cache may
      * be shared by multiple ATN simulators, this method may affect the
      * performance (but not accuracy) of other parsers which are being used
@@ -95,6 +92,8 @@ abstract class ATNSimulator : InterfaceATNSimulator
         return sharedContextCache;
     }
 
+    /**
+     */
     public PredictionContext getCachedContext(PredictionContext context)
     {
         if (sharedContextCache is null)
@@ -103,15 +102,6 @@ abstract class ATNSimulator : InterfaceATNSimulator
         return PredictionContext.getCachedContext(context,
                                                   sharedContextCache,
                                                   visited);
-    }
-
-    /**
-     * @uml
-     * deprecated Use {@link ATNDeserializer#deserialize} instead.
-     */
-    public ATN deserialize(wstring data)
-    {
-        return new ATNDeserializer().deserialize(data);
     }
 
 }

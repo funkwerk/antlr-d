@@ -137,8 +137,9 @@ class PredictionMode
             if (configs.hasSemanticContext) {
                 // dup configs, tossing out semantic predicates
                 ATNConfigSet dupli = new ATNConfigSet();
+                auto _ = new SemanticContext();
                 foreach (ATNConfig c; configs.configs) {
-                    c = new ATNConfig(c,SemanticContext.NONE);
+                    c = new ATNConfig(c, SemanticContext.NONE);
                     dupli.add(c);
                 }
                 configs = dupli;

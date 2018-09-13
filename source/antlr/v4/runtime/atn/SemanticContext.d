@@ -48,7 +48,7 @@ import antlr.v4.runtime.misc.MurmurHash;
  * <p>I have scoped the {@link AND}, {@link OR}, and {@link Predicate} subclasses of
  * {@link SemanticContext} within the scope of this outer class.</p>
  */
- class SemanticContext
+class SemanticContext
 {
     public bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
@@ -60,6 +60,8 @@ import antlr.v4.runtime.misc.MurmurHash;
      * a predicate of the form {@code {true}?}.
      */
     public static SemanticContext NONE;
+
+    public this () {if (!NONE) NONE = new Predicate();}
 
     /**
      * @uml
@@ -240,8 +242,7 @@ import antlr.v4.runtime.misc.MurmurHash;
         public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
         {
             if (parser.precpred(parserCallStack, precedence)) {
-                if (!SemanticContext.NONE)
-                    SemanticContext.NONE = new Predicate;
+                auto _ = new SemanticContext();
                 return SemanticContext.NONE;
             }
             else {

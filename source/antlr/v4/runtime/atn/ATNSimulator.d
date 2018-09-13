@@ -92,8 +92,6 @@ abstract class ATNSimulator : InterfaceATNSimulator
         return sharedContextCache;
     }
 
-    /**
-     */
     public PredictionContext getCachedContext(PredictionContext context)
     {
         if (sharedContextCache is null)

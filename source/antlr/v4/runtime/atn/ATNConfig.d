@@ -6,15 +6,15 @@
 
 module antlr.v4.runtime.atn.ATNConfig;
 
-import std.array;
-import std.conv;
-import std.stdio;
 import antlr.v4.runtime.InterfaceRecognizer;
+import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.misc.MurmurHash;
+import std.array;
+import std.conv;
+import std.stdio;
 
 /**
  * A tuple: (ATN state, predicted alt, syntactic, semantic context).
@@ -98,6 +98,7 @@ class ATNConfig
 
     public this(ATNState state, int alt, PredictionContext context)
     {
+        auto _ = new SemanticContext();
         this(state, alt, context, SemanticContext.NONE);
     }
 

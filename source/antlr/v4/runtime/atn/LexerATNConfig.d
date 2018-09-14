@@ -56,7 +56,10 @@ class LexerATNConfig : ATNConfig
 
     public this(ATNState state, int alt, PredictionContext context)
     {
-        auto _ = new SemanticContext();
+        if (!SemanticContext.NONE) {
+            auto sp = new SemanticContext;
+            SemanticContext.NONE = sp.new SemanticContext.Predicate;
+        }
         super(state, alt, context, SemanticContext.NONE);
         this.passedThroughNonGreedyDecision = false;
         this.lexerActionExecutor = null;
@@ -64,7 +67,10 @@ class LexerATNConfig : ATNConfig
 
     public this(ATNState state, int alt, PredictionContext context, LexerActionExecutor lexerActionExecutor)
     {
-        auto _ = new SemanticContext();
+        if (!SemanticContext.NONE) {
+            auto sp = new SemanticContext;
+            SemanticContext.NONE = sp.new SemanticContext.Predicate;
+        }
         super(state, alt, context, SemanticContext.NONE);
         this.lexerActionExecutor = lexerActionExecutor;
         this.passedThroughNonGreedyDecision = false;

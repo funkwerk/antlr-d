@@ -61,7 +61,6 @@ class SemanticContext
      */
     public static SemanticContext NONE;
 
-    public this () {if (!NONE) NONE = new Predicate();}
 
     /**
      * @uml
@@ -242,7 +241,8 @@ class SemanticContext
         public override SemanticContext evalPrecedence(InterfaceRecognizer parser, RuleContext parserCallStack)
         {
             if (parser.precpred(parserCallStack, precedence)) {
-                auto _ = new SemanticContext();
+                if (!SemanticContext.NONE)
+                    SemanticContext.NONE = new Predicate;
                 return SemanticContext.NONE;
             }
             else {

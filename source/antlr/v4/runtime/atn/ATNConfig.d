@@ -11,6 +11,7 @@ import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
+//import antlr.v4.runtime.atn.Predicate;
 import antlr.v4.runtime.misc.MurmurHash;
 import std.array;
 import std.conv;
@@ -98,7 +99,10 @@ class ATNConfig
 
     public this(ATNState state, int alt, PredictionContext context)
     {
-        auto _ = new SemanticContext();
+        if (!SemanticContext.NONE) {
+            auto sp = new SemanticContext;
+            SemanticContext.NONE = sp.new SemanticContext.Predicate;
+        }
         this(state, alt, context, SemanticContext.NONE);
     }
 

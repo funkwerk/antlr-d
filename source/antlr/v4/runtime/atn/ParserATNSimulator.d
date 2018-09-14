@@ -1063,7 +1063,10 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
 
         int nPredAlts = 0;
-        auto _ = new SemanticContext();
+        if (!SemanticContext.NONE) {
+            auto sp = new SemanticContext;
+            SemanticContext.NONE = sp.new SemanticContext.Predicate;
+        }
         for (int i = 1; i <= nalts; i++) {
             if (altToPred[i] is null) {
                 altToPred[i] = SemanticContext.NONE;
@@ -1082,8 +1085,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     {
 	PredPrediction[] pairs;
         bool containsPredicate = false;
-        // import std.stdio;
-        // writefln("getPredicatePrediction %s", altToPred);
+
         for (int i = 1; i < altToPred.length; i++) {
             SemanticContext pred = altToPred[i];
 

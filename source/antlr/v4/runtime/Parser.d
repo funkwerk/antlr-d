@@ -8,43 +8,43 @@ module antlr.v4.runtime.Parser;
 
 import std.stdio;
 import std.algorithm;
-import std.conv;
-import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.ANTLRErrorListener;
-import antlr.v4.runtime.DefaultErrorStrategy;
-import antlr.v4.runtime.Lexer;
-import antlr.v4.runtime.IntStream;
-import antlr.v4.runtime.InterfaceRuleContext;
-import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.ParserRuleContext;
-import antlr.v4.runtime.Recognizer;
-import antlr.v4.runtime.RecognitionException;
-import antlr.v4.runtime.UnsupportedOperationException;
-import antlr.v4.runtime.Token;
+import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.CommonToken;
-import antlr.v4.runtime.TokenFactory;
-import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.DefaultErrorStrategy;
+import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.InterfaceParser;
+import antlr.v4.runtime.InterfaceRuleContext;
+import antlr.v4.runtime.Lexer;
+import antlr.v4.runtime.ParserRuleContext;
+import antlr.v4.runtime.RecognitionException;
+import antlr.v4.runtime.Recognizer;
+import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
+import antlr.v4.runtime.TokenFactory;
+import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATN;
-import antlr.v4.runtime.atn.ATNSimulator;
-import antlr.v4.runtime.atn.ParserATNSimulator;
-import antlr.v4.runtime.atn.ParseInfo;
-import antlr.v4.runtime.atn.PredictionMode;
-import antlr.v4.runtime.atn.RuleTransition;
-import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
+import antlr.v4.runtime.atn.ATNDeserializer;
+import antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.atn.ATNState;
+import antlr.v4.runtime.atn.ParseInfo;
+import antlr.v4.runtime.atn.ParserATNSimulator;
+import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.ProfilingATNSimulator;
+import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.dfa.DFA;
-import antlr.v4.runtime.tree.pattern.ParseTreePattern;
-import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
-import antlr.v4.runtime.tree.ParseTreeListener;
-import antlr.v4.runtime.tree.ErrorNode;
-import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.misc.IntegerStack;
 import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.tree.ErrorNode;
+import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
+import std.conv;
 
 
 /**
@@ -612,10 +612,8 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     public void notifyErrorListeners(Token offendingToken, string msg, RecognitionException e)
     {
         _syntaxErrors++;
-        int line = -1;
-        int charPositionInLine = -1;
-        line = offendingToken.getLine();
-        charPositionInLine = offendingToken.getCharPositionInLine();
+        int line = offendingToken.getLine();
+        int charPositionInLine = offendingToken.getCharPositionInLine();
         ANTLRErrorListener!(Token, ParserATNSimulator) listener = getErrorListenerDispatch();
         listener.syntaxError(this, cast(Object)offendingToken, line, charPositionInLine, msg, e);
     }

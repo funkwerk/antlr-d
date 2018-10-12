@@ -125,7 +125,7 @@ build_xpathlexer : prepare_generator
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+	$(DMD) -shared -g -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
 .PHONY: install_library
 install_library: $(BUILD_DIR)/libantlr-d.so.4.7

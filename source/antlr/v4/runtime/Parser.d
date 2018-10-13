@@ -6,8 +6,6 @@
 
 module antlr.v4.runtime.Parser;
 
-import std.stdio;
-import std.algorithm;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.ANTLRErrorStrategy;
 import antlr.v4.runtime.CommonToken;
@@ -37,15 +35,15 @@ import antlr.v4.runtime.atn.PredictionMode;
 import antlr.v4.runtime.atn.ProfilingATNSimulator;
 import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.dfa.DFA;
-import antlr.v4.runtime.misc.IntegerStack;
-import antlr.v4.runtime.misc.IntervalSet;
+import antlr.v4.runtime.misc;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
+import std.algorithm;
 import std.conv;
-
+import std.stdio;
 
 /**
  * TODO add class description
@@ -185,8 +183,9 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      * @uml
      * The number of syntax errors reported during parsing. This value is
      * incremented each time {@link #notifyErrorListeners} is called.
+     * @read
      */
-    public int _syntaxErrors;
+    private int numberOfSyntaxErrors_;
 
     /**
      * @uml
@@ -214,7 +213,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         _errHandler = new DefaultErrorStrategy;
         _errHandler.reset(this);
         ctx_ = null;
-        _syntaxErrors = 0;
+        numberOfSyntaxErrors_ = 0;
         matchedEOF = false;
         _precedenceStack = new IntegerStack();
         _precedenceStack.clear;
@@ -469,18 +468,6 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     /**
      * @uml
-     * Gets the number of syntax errors reported during parsing. This value is
-     * incremented each time {@link #notifyErrorListeners} is called.
-     *
-     *  @see #notifyErrorListeners
-     */
-    public int getNumberOfSyntaxErrors()
-    {
-        return _syntaxErrors;
-    }
-
-    /**
-     * @uml
      * @override
      */
     public override TokenFactory!CommonToken tokenFactory()
@@ -611,7 +598,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void notifyErrorListeners(Token offendingToken, string msg, RecognitionException e)
     {
-        _syntaxErrors++;
+        numberOfSyntaxErrors_++;
         int line = offendingToken.getLine();
         int charPositionInLine = offendingToken.getCharPositionInLine();
         ANTLRErrorListener!(Token, ParserATNSimulator) listener = getErrorListenerDispatch();
@@ -1048,6 +1035,11 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
     public final void ctx(ParserRuleContext ctx)
     {
         this.ctx_ = ctx;
+    }
+
+    public final int numberOfSyntaxErrors()
+    {
+        return this.numberOfSyntaxErrors_;
     }
 
 }

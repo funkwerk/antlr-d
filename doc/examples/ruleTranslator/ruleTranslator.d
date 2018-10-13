@@ -64,7 +64,7 @@ int main(string[] argv) {
                 // Specify our entry point
                 auto rootContext = parser.file_input;
 
-                if(!parser.getNumberOfSyntaxErrors)
+                if(!parser.numberOfSyntaxErrors)
                     {
                         // No syntax errors
                         auto base = baseName(filename);
@@ -100,7 +100,7 @@ int main(string[] argv) {
                     }
                 else
                     {
-                        writefln("\t%s syntax errors", parser.getNumberOfSyntaxErrors);
+                        writefln("\t%s syntax errors", parser.numberOfSyntaxErrors);
                         parserFailed = true;
                     }
             }

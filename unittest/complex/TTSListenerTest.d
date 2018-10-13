@@ -69,7 +69,7 @@ version(unittest) {
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
             auto rootContext = parser.file_input;
-            parser.getNumberOfSyntaxErrors.should.equal(0);
+            parser.numberOfSyntaxErrors.should.equal(0);
         }
 
         @Tags("Parser")
@@ -91,7 +91,7 @@ version(unittest) {
             parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
             // Specify entry point
             auto rootContext = parser.file_input;
-            parser.getNumberOfSyntaxErrors.should.equal(3);
+            parser.numberOfSyntaxErrors.should.equal(3);
         }
 
     }

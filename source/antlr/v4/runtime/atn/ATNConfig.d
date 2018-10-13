@@ -11,7 +11,6 @@ import antlr.v4.runtime.atn.ATNConfigObjectEqualityComparator;
 import antlr.v4.runtime.atn.ATNState;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
-//import antlr.v4.runtime.atn.Predicate;
 import antlr.v4.runtime.misc.MurmurHash;
 import std.array;
 import std.conv;

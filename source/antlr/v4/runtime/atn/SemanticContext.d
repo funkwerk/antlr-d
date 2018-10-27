@@ -278,11 +278,11 @@ class SemanticContext
          */
         public override bool opEquals(Object obj)
         {
-            if (obj.classinfo != PrecedencePredicate.classinfo) {
+            if (! cast(PrecedencePredicate)obj) {
                 return false;
             }
 
-            if (this == obj) {
+            if (this is obj) {
                 return true;
             }
 

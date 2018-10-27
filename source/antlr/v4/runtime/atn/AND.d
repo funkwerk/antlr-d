@@ -1,17 +1,26 @@
+/*
+ * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.atn.AND;
 
-import std.conv;
-import std.algorithm.comparison;
-import std.algorithm.iteration;
 import antlr.v4.runtime.InterfaceRecognizer;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.Operator;
-import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.MurmurHash;
+import std.algorithm.comparison;
+import std.algorithm.iteration;
+import std.algorithm.searching;
+import std.conv;
 
 /**
- * TODO add class description
+ * A semantic context which is true whenever none of the contained contexts
+ * is false.
+
  */
 class AND : Operator
 {
@@ -20,6 +29,20 @@ class AND : Operator
 
     public this(SemanticContext a, SemanticContext b)
     {
+        SemanticContext[] operands;
+        if (cast(AND)a) operands ~= (cast(AND)a).opnds;
+        else operands ~= a;
+        if (cast(AND)b) operands ~= (cast(AND)b).opnds;
+        else operands ~= b;
+
+        SemanticContext.PrecedencePredicate[] precedencePredicates =
+            filterPrecedencePredicates(operands);
+        if (precedencePredicates.length) {
+            // interested in the transition with the lowest precedence
+            SemanticContext.PrecedencePredicate reduced = minElement(precedencePredicates);
+            operands ~= reduced;
+        }
+        this.opnds = operands;
     }
 
     /**
@@ -37,8 +60,10 @@ class AND : Operator
      */
     public override bool opEquals(Object obj)
     {
-	if (this is obj) return true;
-        if (obj.classinfo != AND.classinfo) return false;
+	if (this is obj)
+            return true;
+        if (!cast(AND)obj)
+            return false;
         AND other = cast(AND)obj;
         return equal(this.opnds, other.opnds);
     }
@@ -60,7 +85,8 @@ class AND : Operator
     public override bool eval(InterfaceRecognizer parser, RuleContext parserCallStack)
     {
 	foreach (SemanticContext opnd; opnds) {
-            if (!opnd.eval(parser, parserCallStack)) return false;
+            if (!opnd.eval(parser, parserCallStack))
+                return false;
         }
         return true;
     }
@@ -101,7 +127,7 @@ class AND : Operator
         }
 
         return result;
-	
+
     }
 
     /**

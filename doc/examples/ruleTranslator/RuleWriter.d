@@ -10,13 +10,13 @@ class RuleWriter{
 
     public ushort indentLevel;
 
-    struct Result { ushort indent; string s;}
-    
-    private Result[] result;
+    struct Result { ushort indent; string text;}
+
+    private Result[] results;
 
     this() {
     }
-    
+
     this(string pathName) {
         this.pathName = pathName;
     }
@@ -32,47 +32,69 @@ class RuleWriter{
     }
 
     public void clear() {
-        result.length = 0;
+        results.length = 0;
     }
 
     public void put(string s) {
-        result ~= set(s);
+        results ~= set(s);
     }
-    
+
     public void put(string[] s) {
-        foreach(el; s) {
-            result ~= set(el);
+        foreach (el; s) {
+            results ~= set(el);
         }
     }
-    
+
     public void putnl(string s) {
         s ~= "\n";
         Result r =  set(s);
-        result ~= r;
+        results ~= r;
+    }
+
+    public void put(Result r) {
+        results ~= set(r.text, r.indent);
+    }
+
+    public void put(Result[] r) {
+        foreach (el; r) {
+            results ~= set(el.text, el.indent);
+        }
+    }
+
+    public void putnl(Result r) {
+        Result res =  set(r.text ~ "\n", r.indent);
+        results ~= res;
     }
 
     public Result set(string s) {
         Result r;
-        r.indent = indentLevel;
-        r.s = s;
-        return r;  
+        r.indent = this.indentLevel;
+        r.text = s;
+        return r;
+    }
+
+    public Result set(string s, short indent) {
+        Result r;
+        r.indent = indent;
+        r.text = s;
+        return r;
     }
 
     public void print() {
         auto r =  appender!string;
         bool lastEndWithNL = true;
-        foreach (e; result) {
+        foreach (e; results) {
             if (lastEndWithNL)
                 while (e.indent-- > 0) {
                     r.put("    "); //indent 4 spaces per level
                 }
-            r.put(e.s);
-        if (e.s.length != 0 && e.s[$-1] == '\n')
+            r.put(e.text);
+        if (e.text.length != 0 && e.text[$-1] == '\n')
             lastEndWithNL = true;
         else
             lastEndWithNL = false;
         }
-        if(pathName) {
+        if (pathName) {
             auto f = File(pathName ~ "/" ~ fileName, "w");
             f.write(r.data);
             f.close;
@@ -82,4 +104,3 @@ class RuleWriter{
         }
     }
 }
-

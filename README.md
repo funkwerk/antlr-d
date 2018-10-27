@@ -11,8 +11,8 @@ version 4.7.1](http://www.antlr.org/) yet.
    in build/antlr4-4.7.1/tool/target/antlr4-4.7.1-complete.jar
 ### Dependencies
 #### D runtime
-- fluent-asserts v0.11.4
-- dshould v01.18
+- dshould 0.1
+- unit-threaded 0.7.50
 #### ANTLR tool
 - java 1.8
 - maven
@@ -37,3 +37,4 @@ Now call
 
 and the correspondig Lexer, Parser and Listener D-Source files are generated.
 ## Restrictions
+- UTF-16 support not finished

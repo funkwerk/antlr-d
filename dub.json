@@ -20,14 +20,12 @@
 	},
 	{
             "name": "unittest",
-            "sourcePaths": ["source"],
+            "sourcePaths": ["unittest/complex", "unittest/simple"],
+            "importPaths": ["unittest/complex", "unittest/simple"],
 	    "targetType": "executable",
-	    "excludedSourceFiles": [
-		"source/app.d"
-	    ],
 	    "dependencies": {
                 "dshould": "~>0.1",
-		"unit-threaded": "==0.7.50"
+		"unit-threaded": "==0.7.51"
 	    },
 	    "preBuildCommands": [
 		"dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"

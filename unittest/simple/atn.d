@@ -6,10 +6,11 @@ import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.DecisionState;
 import dshould : be, equal, not, should;
+import unit_threaded;
 
 class Test
 {
-
+    @Tags("simpleExprT", "reg")
     @("constructATNDeserializationOptions")
     unittest {
         auto so = new ATNDeserializationOptions();

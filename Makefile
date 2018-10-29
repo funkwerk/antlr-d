@@ -127,14 +127,18 @@ build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
 	$(DMD) -shared -g -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
-.PHONY: install_library
-install_library: $(BUILD_DIR)/libantlr-d.so.4.7
+.PHONY: install
+install: $(BUILD_DIR)/libantlr-d.so.4.7
 	cp $(BUILD_DIR)/libantlr-d.so.4.7 $(EXPORT_LIB)
 	rm -rf $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
 	cp -R source/antlr $(EXPORT_INCLUDE)
+
+.PHONY: docs
+ docs:
+	$(DMD) -op -Dd${BUILD_DIR}/docs -o- $(SOURCE_FILES)
 
 .PHONY : clean
 clean :

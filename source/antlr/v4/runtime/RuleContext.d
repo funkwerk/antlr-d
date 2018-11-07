@@ -113,7 +113,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
      */
     public Interval getSourceInterval()
     {
-        return new Interval(-1, -2); // INVALID;
+        return cast(Interval)Interval.INVALID;
     }
 
     public RuleContext getRuleContext()
@@ -268,6 +268,14 @@ class RuleContext : RuleNode, InterfaceRuleContext
     public RuleContext getParent()
     {
         return parent;
+    }
+
+    /**
+     * since 4.7. {@see ParseTree#setParent} comment
+     */
+    public void setParent(RuleContext parent)
+    {
+        this.parent = parent;
     }
 
 }

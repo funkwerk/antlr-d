@@ -77,9 +77,23 @@ class ParserRuleContext : RuleContext
     {
     }
 
+    public this(ParserRuleContext parent, int invokingStateNumber)
+    {
+        super(parent, invokingStateNumber);
+    }
+
     /**
      * COPY a ctx (I'm deliberately not using copy constructor) to avoid
-     * confusion with creating node with parent. Does not copy children.
+     * confusion with creating node with parent. Does not copy children
+     * (except error leaves).
+     *
+     *  This is used in the generated parser code to flip a generic XContext
+     *  node for rule X to a YContext for alt label Y. In that sense, it is
+     *  not really a generic copy function.
+     *
+     *  If we do an error sync() at start of a rule, we might add error nodes
+     *  to the generic XContext so this function must copy those nodes to
+     *  the YContext as well else they are lost!
      */
     public void copyFrom(ParserRuleContext ctx)
     {
@@ -88,11 +102,16 @@ class ParserRuleContext : RuleContext
 
         this.start = ctx.start;
         this.stop = ctx.stop;
-    }
-
-    public this(ParserRuleContext parent, int invokingStateNumber)
-    {
-        super(parent, invokingStateNumber);
+        // copy any error nodes to alt label node
+        if (ctx.children) {
+            this.children.length = 0;
+            // reset parent pointer for any error nodes
+            foreach (ParseTree child; ctx.children) {
+                if (cast(ErrorNode)child) {
+                    addChild(cast(ErrorNode)child);
+                }
+            }
+        }
     }
 
     public void enterRule(ParseTreeListener listener)
@@ -104,18 +123,39 @@ class ParserRuleContext : RuleContext
     }
 
     /**
-     * Does not set parent link; other add methods do that
+     * Add a parse tree node to this as a child.  Works for
+     *  internal and leaf nodes. Does not set parent link;
+     *  other add methods must do that. Other addChild methods
+     *  call this.
+     *
+     *  We cannot set the parent pointer of the incoming node
+     *  because the existing interfaces do not have a setParent()
+     *  method and I don't want to break backward compatibility for this.
+     *
+     *  @since 4.7
      */
-    public TerminalNode addChild(TerminalNode t)
+    public ParseTree addAnyChild(ParseTree t)
     {
+        if (children is null) {
+            ParseTree[] newChildren;
+            children = newChildren;
+        }
         children ~= t;
         return t;
     }
 
     public RuleContext addChild(RuleContext ruleInvocation)
     {
-        children ~= ruleInvocation;
-        return ruleInvocation;
+        return cast(RuleContext)addAnyChild(ruleInvocation);
+    }
+
+    /**
+     * Add a token leaf node child and force its parent to be this node.
+     */
+    public TerminalNode addChild(TerminalNode t)
+    {
+        t.setParent(this);
+        return cast(TerminalNode)addAnyChild(t);
     }
 
     /**
@@ -274,7 +314,7 @@ class ParserRuleContext : RuleContext
     public override Interval getSourceInterval()
     {
         if (start is null) {
-            return new Interval(-1, -2); // INVALID
+            return cast(Interval)Interval.INVALID;
         }
         if (stop is null || stop.getTokenIndex()<start.getTokenIndex()) {
             return Interval.of(start.getTokenIndex(), start.getTokenIndex()-1); // empty

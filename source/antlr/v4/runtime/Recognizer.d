@@ -118,8 +118,8 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
             result = ruleIndexMapCache[to!string(joiner(ruleNames, ","))];
         }
         else {
-            foreach (int i, rn; ruleNames) {
-                result[rn] = i;
+            foreach (i, rn; ruleNames) {
+                result[rn] = to!int(i);
             }
             ruleIndexMapCache[to!string(joiner(ruleNames, ","))] = result;
         }
@@ -235,9 +235,9 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
     {
-        foreach (int elementRemoveIndex, el; _listeners) {
+        foreach (elementRemoveIndex, el; _listeners) {
             if (listener is el) {
-                _listeners.remove(elementRemoveIndex);
+                _listeners.remove(to!int(elementRemoveIndex));
                 break;
             }
         }

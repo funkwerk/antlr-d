@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -133,7 +133,7 @@ class IntervalSet : IntSet
         }
         // find position in list
         // Use iterators as we modify list in place
-        foreach (int index, ref el; intervals_) {
+        foreach (index, ref el; intervals_) {
             Interval r = el;
             if (addition.equals(r)) {
                 return;
@@ -651,7 +651,7 @@ class IntervalSet : IntSet
         if (this.size() > 1) {
             buf.put("{");
         }
-        foreach (int index, I; this.intervals_) {
+        foreach (index, I; this.intervals_) {
             int a = I.a;
             int b = I.b;
             if (a == b) {
@@ -683,7 +683,7 @@ class IntervalSet : IntSet
         if (size() > 1) {
             buf.put("{");
         }
-        foreach (int index, I; this.intervals_) {
+        foreach (index, I; this.intervals_) {
             int a = I.a;
             int b = I.b;
             if ( a==b ) {

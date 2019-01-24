@@ -17,7 +17,7 @@ import std.format;
 class ReplaceOp : RewriteOperation
 {
 
-    private size_t lastIndex;
+    public size_t lastIndex;
 
     public this(size_t from, size_t to, string text)
     {

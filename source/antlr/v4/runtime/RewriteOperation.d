@@ -22,6 +22,11 @@ class RewriteOperation : TokenStreamRewriter
 
     public string text;
 
+    // public this()
+    // {
+    //     assert(false, "default construction not allowed!");
+    // }
+
     public this(size_t index)
     {
 	this.index = index;

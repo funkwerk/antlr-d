@@ -15,6 +15,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.misc.Interval;
+import std.algorithm.comparison;
 import std.format;
 import std.conv;
 
@@ -452,19 +453,19 @@ class TokenStreamRewriter
 
         // WALK REPLACES
         for (size_t i = 0; i < rewrites.length; i++) {
-            if ( !(i in rewrites)) continue;
             RewriteOperation op = rewrites[i];
+            if (op is null) continue;
             if ( !(cast(ReplaceOp)op) )
                 continue;
             ReplaceOp rop = cast(ReplaceOp)rewrites[i];
             // Wipe prior inserts within range
-            InsertBeforeOp[] inserts = getKindOfOps(rewrites, InsertBeforeOp, i);
+            InsertBeforeOp[] inserts = getKindOfOps!InsertBeforeOp(rewrites, i);
             foreach (InsertBeforeOp iop; inserts) {
                 if ( iop.index == rop.index ) {
                     // E.g., insert before 2, delete 2..2; update replace
                     // text to include insert before, kill insert
-                    rewrites.set(iop.instructionIndex, null);
-                    rop.text = iop.text.toString() ~ (rop.text !is null?rop.text.toString():"");
+                    rewrites[iop.instructionIndex] = null;
+                    rop.text = iop.text ~ (rop.text !is null?rop.text:"");
                 }
                 else if (iop.index > rop.index && iop.index <= rop.lastIndex ) {
                     // delete insert as it's a no-op.
@@ -480,20 +481,19 @@ class TokenStreamRewriter
                     continue;
                 }
                 // throw exception unless disjoint or identical
-                boolean disjoint =
+                bool disjoint =
                     prevRop.lastIndex<rop.index || prevRop.index > rop.lastIndex;
                 // Delete special case of replace (text==null):
                 // D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
                 if ( prevRop.text==null && rop.text==null && !disjoint ) {
                     //System.out.println("overlapping deletes: "+prevRop+", "+rop);
                     rewrites[prevRop.instructionIndex] = null; // kill first delete
-                    rop.index = Math.min(prevRop.index, rop.index);
-                    rop.lastIndex = Math.max(prevRop.lastIndex, rop.lastIndex);
+                    rop.index = min(prevRop.index, rop.index);
+                    rop.lastIndex = max(prevRop.lastIndex, rop.lastIndex);
                     debug
                         stderr.println("new rop "+rop);
                 }
                 else if ( !disjoint ) {
-                    throw new IllegalArgumentException("replace op boundaries of "+rop+" overlap with previous "+prevRop);
                     throw
                         new
                         IllegalArgumentException(format(
@@ -515,8 +515,8 @@ class TokenStreamRewriter
             foreach (InsertBeforeOp prevIop; prevInserts) {
                 if (prevIop.index == iop.index) {
                     if (cast(InsertAfterOp)prevIop) {
-                        iop.text = cast(string[])(catOpText(prevIop.text, iop.text));
-                        rewrites.set[prevIop.instructionIndex] = null;
+                        iop.text = catOpText(prevIop.text, iop.text);
+                        rewrites[prevIop.instructionIndex] = null;
                     }
                     else if (cast(InsertBeforeOp)prevIop) { // combine objects
                         // convert to strings...we're in process of toString'ing
@@ -528,7 +528,7 @@ class TokenStreamRewriter
                 }
             }
             // look for replaces where iop.index is in range; error
-            ReplaceOp[] prevReplaces = getKindOfOps(rewrites, ReplaceOp, i);
+            ReplaceOp[] prevReplaces = getKindOfOps!ReplaceOp(rewrites, i);
             foreach (ReplaceOp rop; prevReplaces) {
                 if ( iop.index == rop.index ) {
                     rop.text = catOpText(iop.text, rop.text);
@@ -536,16 +536,20 @@ class TokenStreamRewriter
                     continue;
                 }
                 if ( iop.index >= rop.index && iop.index <= rop.lastIndex ) {
-                    throw new IllegalArgumentException("insert op " ~ iop ~" within boundaries of previous "+rop);
+                    throw
+                        new
+                        IllegalArgumentException(
+                                                 format("insert op %s within boundaries of previous %s",
+                                                        iop, rop));
                 }
             }
         }
         // System.out.println("rewrites after="+rewrites);
-        RewriteOperation[size_t]> m;
+        RewriteOperation[size_t] m;
         for (int i = 0; i < rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
             if ( op is null ) continue; // ignore deleted ops
-            if ( m[op.index] != null ) {
+            if ( m[op.index] !is null ) {
                 throw new Error("should only be one op per index");
             }
             m[op.index] = op;
@@ -558,8 +562,8 @@ class TokenStreamRewriter
     {
 	string x;
         string y;
-        if (a !is null) x = a.toString;
-        if (b !is null) y = b.toString;
+        if (a !is null) x = a;
+        if (b !is null) y = b;
         return x~y;
     }
 

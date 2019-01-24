@@ -117,6 +117,10 @@ class TokenStreamRewriter
 
     private RewriteOperation[] rewriteOps;
 
+    public this()
+    {
+    }
+
     public this(TokenStream tokens)
     {
         tokens_ = tokens;

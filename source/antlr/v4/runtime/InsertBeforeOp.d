@@ -16,7 +16,7 @@ import std.conv;
 class InsertBeforeOp : RewriteOperation
 {
 
-    public this(size_t index, Object text)
+    public this(size_t index, string text)
     {
 	super(index,text);
     }

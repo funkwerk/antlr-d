@@ -10,7 +10,7 @@ import antlr.v4.runtime.InsertBeforeOp;
 class InsertAfterOp : InsertBeforeOp
 {
 
-    public this(size_t index, Object text)
+    public this(size_t index, string text)
     {
         super(index+1, text); // insert after is insert before index+1
     }

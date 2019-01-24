@@ -9,11 +9,14 @@ module antlr.v4.runtime.TokenStreamRewriter;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.InsertAfterOp;
 import antlr.v4.runtime.InsertBeforeOp;
+import antlr.v4.runtime.ReplaceOp;
 import antlr.v4.runtime.RewriteOperation;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.misc.Interval;
 import std.format;
-
+import std.conv;
 
 /**
  * Useful for rewriting out a buffered input token stream after doing some
@@ -109,10 +112,7 @@ class TokenStreamRewriter
 
     protected RewriteOperation[][string] programs;
 
-    /**
-     * Map String (program name) &rarr; Integer index
-     */
-    protected int[string] lastRewriteTokenIndexes;
+    protected size_t[string] lastRewriteTokenIndexes;
 
     private RewriteOperation[] rewriteOps;
 
@@ -153,22 +153,22 @@ class TokenStreamRewriter
         rollback(programName, MIN_TOKEN_INDEX);
     }
 
-    public void insertAfter(Token t, Object text)
+    public void insertAfter(Token t, string text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, t, text);
     }
 
-    public void insertAfter(int index, Object text)
+    public void insertAfter(int index, string text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, index, text);
     }
 
-    public void insertAfter(string programName, Token t, Object text)
+    public void insertAfter(string programName, Token t, string text)
     {
         insertAfter(programName, t.getTokenIndex, text);
     }
 
-    public void insertAfter(string programName, int index, Object text)
+    public void insertAfter(string programName, int index, string text)
     {
         // to insert after, just insert before next index (even if past end)
         RewriteOperation op = new InsertAfterOp(index, text);
@@ -177,22 +177,22 @@ class TokenStreamRewriter
         rewrites ~= op;
     }
 
-    public void insertBefore(Token t, Object text)
+    public void insertBefore(Token t, string text)
     {
         insertBefore(DEFAULT_PROGRAM_NAME, t, text);
     }
 
-    public void insertBefore(size_t index, Object text)
+    public void insertBefore(size_t index, string text)
     {
 	insertBefore(DEFAULT_PROGRAM_NAME, index, text);
     }
 
-    public void insertBefore(string programName, Token t, Object text)
+    public void insertBefore(string programName, Token t, string text)
     {
 	insertBefore(programName, t.getTokenIndex(), text);
     }
 
-    public void insertBefore(string programName, size_t index, Object text)
+    public void insertBefore(string programName, size_t index, string text)
     {
         RewriteOperation op = new InsertBeforeOp(index, text);
         RewriteOperation[] rewrites = getProgram(programName);
@@ -200,27 +200,27 @@ class TokenStreamRewriter
         rewrites ~= op;
     }
 
-    public void replace(size_t index, Object text)
+    public void replace(size_t index, string text)
     {
 	replace(DEFAULT_PROGRAM_NAME, index, index, text);
     }
 
-    public void replace(size_t from, size_t to, Object text)
+    public void replace(size_t from, size_t to, string text)
     {
 	replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
-    public void replace(Token indexT, Object text)
+    public void replace(Token indexT, string text)
     {
 	replace(DEFAULT_PROGRAM_NAME, indexT, indexT, text);
     }
 
-    public void replace(size_t from, size_t to, Object text)
+    public void replace(size_t from, size_t to, string text)
     {
 	replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
-    public void replace(string programName, size_t from, size_t to, Object text)
+    public void replace(string programName, size_t from, size_t to, string text)
     {
 	if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
@@ -235,12 +235,345 @@ class TokenStreamRewriter
         rewrites ~= op;
     }
 
-    public void replace(string programName, Token from, Token to, Object text)
+    public void replace(string programName, Token from, Token to, string text)
     {
 	replace(programName,
                 from.getTokenIndex,
                 to.getTokenIndex,
                 text);
+    }
+
+    /**
+     * Delete token (can not use delete as identifier)
+     */
+    public void deleteT(size_t index)
+    {
+        deleteT(DEFAULT_PROGRAM_NAME, index, index);
+    }
+
+    public void deleteT(size_t from, size_t to)
+    {
+        deleteT(DEFAULT_PROGRAM_NAME, from, to);
+    }
+
+    public void deleteT(Token indexT)
+    {
+	deleteT(DEFAULT_PROGRAM_NAME, indexT, indexT);
+    }
+
+    public void deleteT(Token from, Token to)
+    {
+        deleteT(DEFAULT_PROGRAM_NAME, from, to);
+    }
+
+    public void deleteT(string programName, size_t from, size_t to)
+    {
+	replace(programName,from,to,null);
+    }
+
+    public void deleteT(string programName, Token from, Token to)
+    {
+	replace(programName,from,to,null);
+    }
+
+    public size_t getLastRewriteTokenIndex()
+    {
+	return getLastRewriteTokenIndex(DEFAULT_PROGRAM_NAME);
+    }
+
+    private size_t getLastRewriteTokenIndex(string programName)
+    {
+        if (programName in lastRewriteTokenIndexes) {
+            return lastRewriteTokenIndexes[programName];
+        }
+        else {
+            return -1;
+        }
+    }
+
+    private void setLastRewriteTokenIndex(string programName, size_t i)
+    {
+        lastRewriteTokenIndexes[programName] =  i;
+    }
+
+    private RewriteOperation[] getProgram(string name)
+    {
+        if (name in programs) {
+            return programs[name];
+        }
+        else {
+            return initializeProgram(name);
+        }
+    }
+
+    private RewriteOperation[] initializeProgram(string name)
+    {
+        RewriteOperation[] iso;
+        programs[name] = iso;
+        return iso;
+    }
+
+    /**
+     * Return the text from the original tokens altered per the
+     *  instructions given to this rewriter.
+     */
+    public string getText()
+    {
+	return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens.size()-1));
+    }
+
+    /**
+     * Return the text from the original tokens altered per the
+     *  instructions given to this rewriter in programName.
+     */
+    public string getText(string programName)
+    {
+	return getText(programName, Interval.of(0,tokens.size-1));
+    }
+
+    /**
+     * Return the text associated with the tokens in the interval from the
+     *  original token stream but with the alterations given to this rewriter.
+     *  The interval refers to the indexes in the original token stream.
+     *  We do not alter the token stream in any way, so the indexes
+     *  and intervals are still consistent. Includes any operations done
+     *  to the first and last token in the interval. So, if you did an
+     *  insertBefore on the first token, you would get that insertion.
+     *  The same is true if you do an insertAfter the stop token.
+     */
+    public string getText(Interval interval)
+    {
+	return getText(DEFAULT_PROGRAM_NAME, interval);
+    }
+
+    public string getText(string programName, Interval interval)
+    {
+        RewriteOperation[] rewrites;
+        if (programName in programs)
+            rewrites = programs[programName];
+        int start = interval.a;
+        int stop = interval.b;
+
+        // ensure start/end are in range
+        if ( stop>tokens.size-1 ) stop = tokens.size-1;
+        if ( start<0 ) start = 0;
+
+        if (rewrites.length == 0) {
+            return tokens.getText(interval); // no instructions to execute
+        }
+        string buf;
+
+        // First, optimize instruction stream
+        RewriteOperation[size_t] indexToOp = reduceToSingleOperationPerIndex(rewrites);
+
+        // Walk buffer, executing instructions and emitting tokens
+        int i = start;
+        while ( i <= stop && i < tokens.size() ) {
+            RewriteOperation op = indexToOp[i];
+            indexToOp.remove(i); // remove so any left have index size-1
+            Token t = tokens.get(i);
+            if (op is null) {
+                // no operation at that index, just dump token
+                if (t.getType !=TokenConstantDefinition.EOF)
+                    buf ~= t.getText;
+                i++; // move to ne xt token
+            }
+            else {
+                i = to!int(op.execute(buf)); // execute operation and skip
+            }
+        }
+
+        // include stuff after end if it's last index in buffer
+        // So, if they did an insertAfter(lastValidIndex, "foo"), include
+        // foo if end==lastValidIndex.
+        if ( stop==tokens.size()-1 ) {
+            // Scan any remaining operations after last token
+            // should be included (they will be inserts).
+            foreach (RewriteOperation op; indexToOp.values()) {
+                if (op.index >= tokens.size-1)
+                    buf ~= to!string(op.text);
+            }
+        }
+        return buf;
+    }
+
+    /**
+     *  overlapping replaces that are not completed nested). Inserts to
+     *  same index need to be combined etc...  Here are the cases:
+     *
+     *  I.i.u I.j.v								leave alone, nonoverlapping
+     *  I.i.u I.i.v								combine: Iivu
+     *
+     *  R.i-j.u R.x-y.v	| i-j in x-y			delete first R
+     *  R.i-j.u R.i-j.v							delete first R
+     *  R.i-j.u R.x-y.v	| x-y in i-j			ERROR
+     *  R.i-j.u R.x-y.v	| boundaries overlap	ERROR
+     *
+     *  Delete special case of replace (text==null):
+     *  D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
+     *
+     *  I.i.u R.x-y.v | i in (x+1)-y			delete I (since insert before
+     *											we're not deleting i)
+     *  I.i.u R.x-y.v | i not in (x+1)-y		leave alone, nonoverlapping
+     *  R.x-y.v I.i.u | i in x-y				ERROR
+     *  R.x-y.v I.x.u 							R.x-y.uv (combine, delete I)
+     *  R.x-y.v I.i.u | i not in x-y			leave alone, nonoverlapping
+     *
+     *  I.i.u = insert u before op @ index i
+     *  R.x-y.u = replace x-y indexed tokens with u
+     *
+     *  First we need to examine replaces. For any replace op:
+     *
+     * 		1. wipe out any insertions before op within that range.
+     *		2. Drop any replace op before that is contained completely within
+     *	 that range.
+     *		3. Throw exception upon boundary overlap with any previous replace.
+     *
+     *  Then we can deal with inserts:
+     *
+     * 		1. for any inserts to same index, combine even if not adjacent.
+     * 		2. for any prior replace with same left boundary, combine this
+     *	 insert with replace and delete this replace.
+     * 		3. throw exception if index in same range as previous replace
+     *
+     *  Don't actually delete; make op null in list. Easier to walk list.
+     *  Later we can throw as we add to index &rarr; op map.
+     *
+     *  Note that I.2 R.2-2 will wipe out I.2 even though, technically, the
+     *  inserted stuff would be before the replace range. But, if you
+     *  add tokens in front of a method body '{' and then delete the method
+     *  body, I think the stuff before the '{' you added should disappear too.
+     *
+     *  Return a map from token index to operation.
+     */
+    public RewriteOperation[size_t] reduceToSingleOperationPerIndex(RewriteOperation[] rewrites)
+    {
+        //		System.out.println("rewrites="+rewrites);
+
+        // WALK REPLACES
+        for (size_t i = 0; i < rewrites.length; i++) {
+            if ( !(i in rewrites)) continue;
+            RewriteOperation op = rewrites[i];
+            if ( !(cast(ReplaceOp)op) )
+                continue;
+            ReplaceOp rop = cast(ReplaceOp)rewrites[i];
+            // Wipe prior inserts within range
+            InsertBeforeOp[] inserts = getKindOfOps(rewrites, InsertBeforeOp, i);
+            foreach (InsertBeforeOp iop; inserts) {
+                if ( iop.index == rop.index ) {
+                    // E.g., insert before 2, delete 2..2; update replace
+                    // text to include insert before, kill insert
+                    rewrites.set(iop.instructionIndex, null);
+                    rop.text = iop.text.toString() ~ (rop.text !is null?rop.text.toString():"");
+                }
+                else if (iop.index > rop.index && iop.index <= rop.lastIndex ) {
+                    // delete insert as it's a no-op.
+                    rewrites[iop.instructionIndex] =  null;
+                }
+            }
+            // Drop any prior replaces contained within
+            ReplaceOp[] prevReplaces = getKindOfOps!ReplaceOp(rewrites, i);
+            foreach (ReplaceOp prevRop; prevReplaces) {
+                if (prevRop.index>=rop.index && prevRop.lastIndex <= rop.lastIndex ) {
+                    // delete replace as it's a no-op.
+                    rewrites[prevRop.instructionIndex] = null;
+                    continue;
+                }
+                // throw exception unless disjoint or identical
+                boolean disjoint =
+                    prevRop.lastIndex<rop.index || prevRop.index > rop.lastIndex;
+                // Delete special case of replace (text==null):
+                // D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
+                if ( prevRop.text==null && rop.text==null && !disjoint ) {
+                    //System.out.println("overlapping deletes: "+prevRop+", "+rop);
+                    rewrites[prevRop.instructionIndex] = null; // kill first delete
+                    rop.index = Math.min(prevRop.index, rop.index);
+                    rop.lastIndex = Math.max(prevRop.lastIndex, rop.lastIndex);
+                    debug
+                        stderr.println("new rop "+rop);
+                }
+                else if ( !disjoint ) {
+                    throw new IllegalArgumentException("replace op boundaries of "+rop+" overlap with previous "+prevRop);
+                    throw
+                        new
+                        IllegalArgumentException(format(
+                                                        "replace op boundaries of %s overlap with previous %s",
+                                                        rop,
+                                                        prevRop));
+                }
+            }
+        }
+
+        // WALK INSERTS
+        for (int i = 0; i < rewrites.length; i++) {
+            RewriteOperation op = rewrites[i];
+            if ( op is null ) continue;
+            if ( !(cast(InsertBeforeOp)op) ) continue;
+            InsertBeforeOp iop = cast(InsertBeforeOp)rewrites[i];
+            // combine current insert with prior if any at same index
+            InsertBeforeOp[] prevInserts = getKindOfOps!InsertBeforeOp(rewrites, i);
+            foreach (InsertBeforeOp prevIop; prevInserts) {
+                if (prevIop.index == iop.index) {
+                    if (cast(InsertAfterOp)prevIop) {
+                        iop.text = cast(string[])(catOpText(prevIop.text, iop.text));
+                        rewrites.set[prevIop.instructionIndex] = null;
+                    }
+                    else if (cast(InsertBeforeOp)prevIop) { // combine objects
+                        // convert to strings...we're in process of toString'ing
+                        // whole token buffer so no lazy eval issue with any templates
+                        iop.text = catOpText(iop.text, prevIop.text);
+                        // delete redundant prior insert
+                        rewrites[prevIop.instructionIndex] = null;
+                    }
+                }
+            }
+            // look for replaces where iop.index is in range; error
+            ReplaceOp[] prevReplaces = getKindOfOps(rewrites, ReplaceOp, i);
+            foreach (ReplaceOp rop; prevReplaces) {
+                if ( iop.index == rop.index ) {
+                    rop.text = catOpText(iop.text, rop.text);
+                    rewrites[i] = null;	// delete current insert
+                    continue;
+                }
+                if ( iop.index >= rop.index && iop.index <= rop.lastIndex ) {
+                    throw new IllegalArgumentException("insert op " ~ iop ~" within boundaries of previous "+rop);
+                }
+            }
+        }
+        // System.out.println("rewrites after="+rewrites);
+        RewriteOperation[size_t]> m;
+        for (int i = 0; i < rewrites.length; i++) {
+            RewriteOperation op = rewrites[i];
+            if ( op is null ) continue; // ignore deleted ops
+            if ( m[op.index] != null ) {
+                throw new Error("should only be one op per index");
+            }
+            m[op.index] = op;
+        }
+        //System.out.println("index to op: "+m);
+        return m;
+    }
+
+    private string catOpText(string a, string b)
+    {
+	string x;
+        string y;
+        if (a !is null) x = a.toString;
+        if (b !is null) y = b.toString;
+        return x~y;
+    }
+
+    private auto getKindOfOps(T)(RewriteOperation[] rewrites, size_t before)
+    {
+	T[] ops;
+        for (int i=0; i<before && i<rewrites.length; i++) {
+            RewriteOperation op = rewrites[i];
+            if (op is null) continue; // ignore deleted
+            if (T.classinfo == op.classinfo) {
+                ops ~= cast(T)(op);
+            }
+        }
+        return ops;
     }
 
     public final TokenStream tokens()

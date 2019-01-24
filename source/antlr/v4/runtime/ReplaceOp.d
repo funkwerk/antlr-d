@@ -19,7 +19,7 @@ class ReplaceOp : RewriteOperation
 
     private size_t lastIndex;
 
-    public this(size_t from, size_t to, Object text)
+    public this(size_t from, size_t to, string text)
     {
         super(from, text);
         lastIndex = to;

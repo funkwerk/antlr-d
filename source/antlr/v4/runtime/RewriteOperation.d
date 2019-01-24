@@ -20,19 +20,14 @@ class RewriteOperation : TokenStreamRewriter
      */
     public size_t index;
 
-    public Object text;
-
-    public this()
-    {
-        assert(false, "default construction not allowed!");
-    }
+    public string text;
 
     public this(size_t index)
     {
 	this.index = index;
     }
 
-    public this(size_t index, Object text)
+    public this(size_t index, string text)
     {
 	this.index = index;
         this.text = text;

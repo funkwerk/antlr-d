@@ -12,7 +12,7 @@ endif
 ifeq ($(UNAME_M),i686)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
-    DMD = dmd -w
+    DMD = ldmd2 -w
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
@@ -61,7 +61,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(patsubst %.d,%$(NEWLINE),\
 		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest 
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

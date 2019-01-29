@@ -6,7 +6,7 @@ UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),x86_64)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
-    DMD = dmd -w
+    DMD = ldmd2 -w
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
 endif
 ifeq ($(UNAME_M),i686)
@@ -53,13 +53,11 @@ EXAMPLE_TIMETABLE_FILES := $(shell find $(EXAMPLE_TIMETABLE_DIR) -name "*.d")
 EXAMPLE_XML_DIR = doc/examples/xml
 EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 
-UNITTEST_FILES := $(filter %.d, $(filter-out Makefile%,\
-            $(filter-out build/%, $(filter-out .git/%, $(shell grep -l -r unittest)))))
+UNITTEST_FILES := $(shell grep -l -r unittest $(SRC_DIR) $(UNITTEST_DIR))
 
 UNITTEST_MODULES := $(subst complex.,,\
 		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
-		$(patsubst %.d,%$(NEWLINE),\
-		$(filter-out %/TestRunner.d, $(UNITTEST_FILES))))))))
+		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES)))))))
 
 TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/

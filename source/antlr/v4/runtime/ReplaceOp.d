@@ -31,6 +31,10 @@ class ReplaceOp : RewriteOperation
      */
     public override size_t execute(ref string buf)
     {
+           debug(TokenStreamRewriter) {
+                import std.stdio : writefln;
+                writefln("ReplaceOp: execute buf = %s", buf);
+            }
         if (text) {
             buf ~= to!string(text);
         }

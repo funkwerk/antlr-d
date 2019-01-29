@@ -18,7 +18,7 @@ class InsertBeforeOp : RewriteOperation
 
     public this(size_t index, string text)
     {
-	super(index,text);
+        super(index, text);
     }
 
     /**

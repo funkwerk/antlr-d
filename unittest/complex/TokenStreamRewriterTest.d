@@ -43,7 +43,8 @@ version(unittest) {
 	 */
 	override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             auto str = "alpha";
-            rewriter.insertAfter(ctx.start, str);
+            rewriter.insertBefore(ctx.start, str);
+            rewriter.insertAfter(ctx.start, "beta");
             writefln("exitStmt ctx.start = %s, %s", ctx.start, str);
         }
     }
@@ -82,6 +83,7 @@ base de.Phrases
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
             writefln(extractor.rewriter.getText);
+            1.should.equal(9);
         }
     }
 }

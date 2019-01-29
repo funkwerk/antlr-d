@@ -30,17 +30,13 @@ class RewriteOperation : TokenStreamRewriter
 
     public this(size_t index)
     {
-	this.index = index;
+        this.index = index;
     }
 
     public this(size_t index, string text)
     {
-	this.index = index;
+        this.index = index;
         this.text = text;
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("RewriteOperation constructor: index = %s, text = %s", index, text);
-        }
     }
 
     /**
@@ -49,7 +45,7 @@ class RewriteOperation : TokenStreamRewriter
      */
     public size_t execute(ref string buf)
     {
-	return index;
+        return index;
     }
 
     /**
@@ -58,11 +54,9 @@ class RewriteOperation : TokenStreamRewriter
      */
     public override string toString()
     {
-        string opName = this.classinfo.name;
-        //int dollar_index = opName.indexOf('$');
-        // opName = opName.substring(dollar_index+1, opName.length());
-        return format("<%s@%s:\"%s\">", opName, tokens.get(to!int(index)),
-                      text);
+        import std.array : split;
+        auto opName = this.classinfo.name.split(".")[$-1];
+        return format("<%s@%s:\"%s\">", opName, tokens.get(to!int(index)), text);
     }
 
 }

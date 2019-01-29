@@ -107,7 +107,7 @@ class TokenStreamRewriter
      * @uml
      * @read
      */
-    protected TokenStream tokens_;
+    private static TokenStream tokens_;
 
     protected RewriteOperation[][string] programs;
 
@@ -127,7 +127,7 @@ class TokenStreamRewriter
 
     public void rollback(int instructionIndex)
     {
-	rollback(DEFAULT_PROGRAM_NAME, instructionIndex);
+        rollback(DEFAULT_PROGRAM_NAME, instructionIndex);
     }
 
     /**
@@ -169,38 +169,14 @@ class TokenStreamRewriter
     public void insertAfter(string programName, Token t, string text)
     {
         insertAfter(programName, t.getTokenIndex, text);
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("hhhhhh insertAfter: programName = %s, t = %s, text = %s",programName, t, text);
-        }
-
     }
 
     public void insertAfter(string programName, int index, string text)
     {
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("insertAfter: programName = %s, index = %s, text = %s", programName, index, text);
-        }
         // to insert after, just insert before next index (even if past end)
         RewriteOperation op = new InsertAfterOp(index, text);
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("insertAfter: op.classinfo = %s", op.classinfo);
-        }
-        //RewriteOperation[] *rewrites = &getProgram(programName);
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("getProgram(programName = %s)", programName);
-        }
-        op.instructionIndex = getProgram(programName).length;
-        setProgram(programName, op);
-        //programs[programName] = rewrites;
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            //writefln("rewrites.length = %s, text = %s, index = %s, instructionIndex = %s", rewrites.length, rewrites[0].index, rewrites[0].text, rewrites[0].instructionIndex);
-            writefln("bbbbbbbbb programName = %s, %s", programName, programs[programName]);
-        }
+        op.instructionIndex = programs[programName].length;
+        programs[programName] ~= op;
     }
 
     public void insertBefore(Token t, string text)
@@ -210,45 +186,44 @@ class TokenStreamRewriter
 
     public void insertBefore(size_t index, string text)
     {
-	insertBefore(DEFAULT_PROGRAM_NAME, index, text);
+        insertBefore(DEFAULT_PROGRAM_NAME, index, text);
     }
 
     public void insertBefore(string programName, Token t, string text)
     {
-	insertBefore(programName, t.getTokenIndex(), text);
+        insertBefore(programName, t.getTokenIndex(), text);
     }
 
     public void insertBefore(string programName, size_t index, string text)
     {
         RewriteOperation op = new InsertBeforeOp(index, text);
-        RewriteOperation[] rewrites = getProgram(programName);
-        op.instructionIndex = rewrites.length;
-        rewrites ~= op;
+        op.instructionIndex = programs[programName].length;
+        programs[programName] ~= op;
     }
 
     public void replace(size_t index, string text)
     {
-	replace(DEFAULT_PROGRAM_NAME, index, index, text);
+        replace(DEFAULT_PROGRAM_NAME, index, index, text);
     }
 
     public void replace(size_t from, size_t to, string text)
     {
-	replace(DEFAULT_PROGRAM_NAME, from, to, text);
+        replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
     public void replace(Token indexT, string text)
     {
-	replace(DEFAULT_PROGRAM_NAME, indexT, indexT, text);
+        replace(DEFAULT_PROGRAM_NAME, indexT, indexT, text);
     }
 
     public void replace(Token from, Token to, string text)
     {
-	replace(DEFAULT_PROGRAM_NAME, from, to, text);
+        replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
     public void replace(string programName, size_t from, size_t to, string text)
     {
-	if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
+        if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
                 new
                 IllegalArgumentException(
@@ -263,7 +238,7 @@ class TokenStreamRewriter
 
     public void replace(string programName, Token from, Token to, string text)
     {
-	replace(programName,
+        replace(programName,
                 from.getTokenIndex,
                 to.getTokenIndex,
                 text);
@@ -284,7 +259,7 @@ class TokenStreamRewriter
 
     public void deleteT(Token indexT)
     {
-	deleteT(DEFAULT_PROGRAM_NAME, indexT, indexT);
+        deleteT(DEFAULT_PROGRAM_NAME, indexT, indexT);
     }
 
     public void deleteT(Token from, Token to)
@@ -294,17 +269,17 @@ class TokenStreamRewriter
 
     public void deleteT(string programName, size_t from, size_t to)
     {
-	replace(programName,from,to,null);
+        replace(programName,from,to,null);
     }
 
     public void deleteT(string programName, Token from, Token to)
     {
-	replace(programName,from,to,null);
+        replace(programName,from,to,null);
     }
 
     public size_t getLastRewriteTokenIndex()
     {
-	return getLastRewriteTokenIndex(DEFAULT_PROGRAM_NAME);
+        return getLastRewriteTokenIndex(DEFAULT_PROGRAM_NAME);
     }
 
     private size_t getLastRewriteTokenIndex(string programName)
@@ -332,11 +307,6 @@ class TokenStreamRewriter
         }
     }
 
-    private void setProgram(string name, RewriteOperation op)
-    {
-        programs[name] ~= op;
-    }
-
     private RewriteOperation[] initializeProgram(string name)
     {
         RewriteOperation[] iso;
@@ -350,11 +320,7 @@ class TokenStreamRewriter
      */
     public string getText()
     {
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("getText Interval.of(0,tokens_.size()-1) = %s", Interval.of(0,tokens_.size()-1));
-        }
-	return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens_.size()-1));
+        return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens_.size()-1));
     }
 
     /**
@@ -363,7 +329,7 @@ class TokenStreamRewriter
      */
     public string getText(string programName)
     {
-	return getText(programName, Interval.of(0,tokens_.size-1));
+        return getText(programName, Interval.of(0,tokens_.size-1));
     }
 
     /**
@@ -378,24 +344,16 @@ class TokenStreamRewriter
      */
     public string getText(Interval interval)
     {
-	return getText(DEFAULT_PROGRAM_NAME, interval);
+        return getText(DEFAULT_PROGRAM_NAME, interval);
     }
 
     public string getText(string programName, Interval interval)
     {
         RewriteOperation[] rewrites;
-        
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("getText(string programName, Interval interval) = %s", interval);
-            writefln("programName in programs = %s", programName in programs);
-        }
+
         if (programName in programs)
             rewrites = programs[programName];
-         debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("zzzzzzzz rewrites = programs[programName] = %s, rewrites.length = %s", rewrites, rewrites.length);
-        }
+
         int start = interval.a;
         int stop = interval.b;
 
@@ -404,17 +362,12 @@ class TokenStreamRewriter
             stop = tokens_.size-1;
         if ( start < 0 )
             start = 0;
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("aaaa getText(string programName, Interval interval) = %s, rewrites.length = %s", interval, rewrites.length);
-            writefln("yyyy programName in programs = %s, start = %s, stop = %s, tokens_.getText(interval) = %s END", programName in programs, start, stop, tokens_.getText(interval));
-        }
         if (rewrites.length == 0) {
             return tokens_.getText(interval); // no instructions to execute
         }
         debug(TokenStreamRewriter) {
             import std.stdio : writefln;
-            writefln("xxx getText(string programName, Interval interval) = %s", interval);
+            writefln("getText(string programName, Interval interval = %s) = %s", interval, tokens_.getText(interval));
         }
         string buf;
 
@@ -423,25 +376,40 @@ class TokenStreamRewriter
 
         // Walk buffer, executing instructions and emitting tokens
         int i = start;
-        while ( i <= stop && i < tokens_.size() ) {
-            RewriteOperation op = indexToOp[i];
-            indexToOp.remove(i); // remove so any left have index size-1
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("indexToOp = % s, start = index = %s, stop = %s, size = %s",indexToOp, i, stop, tokens_.size);
+        }
+        while (i <= stop && i < tokens_.size) {
+            debug(TokenStreamRewriter) {
+                import std.stdio : writefln;
+                writefln("xxx index = %s", i);
+            }
             Token t = tokens_.get(i);
-            if (op is null) {
+            if (!(i in indexToOp)) {
                 // no operation at that index, just dump token
-                if (t.getType !=TokenConstantDefinition.EOF)
+                if (t.getType != TokenConstantDefinition.EOF)
                     buf ~= t.getText;
                 i++; // move to ne xt token
+                debug(TokenStreamRewriter) {
+                    import std.stdio : writefln;
+                    writefln("no operation buf = %s, i = %s", buf, i);
+                }
             }
             else {
-                i = to!int(op.execute(buf)); // execute operation and skip
+                debug(TokenStreamRewriter) {
+                    import std.stdio : writefln;
+                    writefln("before execute buf = %s, i = %s", buf, i);
+                }
+                i = to!int(indexToOp[i].execute(buf)); // execute operation and skip
+                indexToOp.remove(i); // remove so any left have index size-1
             }
         }
 
         // include stuff after end if it's last index in buffer
         // So, if they did an insertAfter(lastValidIndex, "foo"), include
         // foo if end==lastValidIndex.
-        if ( stop==tokens_.size()-1 ) {
+        if (stop == tokens_.size()-1) {
             // Scan any remaining operations after last token
             // should be included (they will be inserts).
             foreach (RewriteOperation op; indexToOp.values()) {
@@ -503,14 +471,28 @@ class TokenStreamRewriter
      */
     protected RewriteOperation[size_t] reduceToSingleOperationPerIndex(RewriteOperation[] rewrites)
     {
-        //		System.out.println("rewrites="+rewrites);
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("reduceToSingleOperationPerIndex");
+            foreach (i, rew; rewrites)
+                writefln("\trewrites[%s] = %s", i, rew);
+        }
 
         // WALK REPLACES
         for (size_t i = 0; i < rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
+            debug(TokenStreamRewriter) {
+                import std.stdio : writefln;
+                writefln("op0 = %s", op);
+            }
             if (op is null) continue;
-            if ( !(cast(ReplaceOp)op) )
+            if (!(cast(ReplaceOp)op)) {
                 continue;
+            }
+            debug(TokenStreamRewriter) {
+                import std.stdio : writefln;
+                writefln("op = %s", op);
+            }
             ReplaceOp rop = cast(ReplaceOp)rewrites[i];
             // Wipe prior inserts within range
             InsertBeforeOp[] inserts = getKindOfOps!InsertBeforeOp(rewrites, i);
@@ -561,14 +543,30 @@ class TokenStreamRewriter
         }
 
         // WALK INSERTS
+        debug(TokenStreamRewriter) {
+            import std.stdio : stderr, writefln;
+            writefln("WALK INSERTS");
+        }
         for (int i = 0; i < rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
-            if ( op is null ) continue;
-            if ( !(cast(InsertBeforeOp)op) ) continue;
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("op = %s", op);
+            }
+            if (op is null) continue;
+            if (!(cast(InsertBeforeOp)op)) continue;
             InsertBeforeOp iop = cast(InsertBeforeOp)rewrites[i];
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("iop = %s, i = %s", iop, i);
+            }
             // combine current insert with prior if any at same index
             InsertBeforeOp[] prevInserts = getKindOfOps!InsertBeforeOp(rewrites, i);
             foreach (InsertBeforeOp prevIop; prevInserts) {
+                debug(TokenStreamRewriter) {
+                    import std.stdio : stderr, writefln;
+                    writefln("prevIop = %s", prevIop);
+                }
                 if (prevIop.index == iop.index) {
                     if (cast(InsertAfterOp)prevIop) {
                         iop.text = catOpText(prevIop.text, iop.text);
@@ -584,7 +582,15 @@ class TokenStreamRewriter
                 }
             }
             // look for replaces where iop.index is in range; error
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("look for replaces where iop.index is in range, i = %s", i);
+            }
             ReplaceOp[] prevReplaces = getKindOfOps!ReplaceOp(rewrites, i);
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("prevReplaces = %s", prevReplaces);
+            }
             foreach (ReplaceOp rop; prevReplaces) {
                 if ( iop.index == rop.index ) {
                     rop.text = catOpText(iop.text, rop.text);
@@ -600,23 +606,31 @@ class TokenStreamRewriter
                 }
             }
         }
-        // System.out.println("rewrites after="+rewrites);
+
+        debug(TokenStreamRewriter) {
+            import std.stdio : stderr, writefln;
+            writefln("rewrites after = %s", rewrites);
+        }
         RewriteOperation[size_t] m;
         for (int i = 0; i < rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
-            if ( op is null ) continue; // ignore deleted ops
-            if ( m[op.index] !is null ) {
+            if (op is null) continue; // ignore deleted ops
+            if (op.index in m) {
                 throw new Error("should only be one op per index");
             }
             m[op.index] = op;
         }
         //System.out.println("index to op: "+m);
+        debug(TokenStreamRewriter) {
+            import std.stdio : stderr, writefln;
+            writefln("index to op: = %s", m);
+        }
         return m;
     }
 
     protected string catOpText(string a, string b)
     {
-	string x;
+        string x;
         string y;
         if (a !is null) x = a;
         if (b !is null) y = b;
@@ -625,7 +639,7 @@ class TokenStreamRewriter
 
     protected auto getKindOfOps(T)(RewriteOperation[] rewrites, size_t before)
     {
-	T[] ops;
+        T[] ops;
         for (int i=0; i<before && i<rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
             if (op is null) continue; // ignore deleted
@@ -636,9 +650,9 @@ class TokenStreamRewriter
         return ops;
     }
 
-    public final TokenStream tokens()
+    public static TokenStream tokens()
     {
-        return this.tokens_;
+        return tokens_;
     }
 
 }

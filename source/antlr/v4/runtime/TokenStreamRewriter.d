@@ -223,6 +223,10 @@ class TokenStreamRewriter
 
     public void replace(string programName, size_t from, size_t to, string text)
     {
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("replace constructor: from = %s, to = %s, text = %s", from, to, text);
+        }
         if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
                 new
@@ -231,13 +235,16 @@ class TokenStreamRewriter
                                                 from, to, tokens_.size));
         }
         RewriteOperation op = new ReplaceOp(from, to, text);
-        RewriteOperation[] rewrites = getProgram(programName);
-        op.instructionIndex = rewrites.length;
-        rewrites ~= op;
+        op.instructionIndex = programs[programName].length;
+        programs[programName] ~= op;
     }
 
     public void replace(string programName, Token from, Token to, string text)
-    {
+    {		
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("replace constructor: from = %s, to = %s, text = %s", from, to, text);
+        }
         replace(programName,
                 from.getTokenIndex,
                 to.getTokenIndex,

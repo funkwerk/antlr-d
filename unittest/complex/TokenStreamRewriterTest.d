@@ -43,9 +43,8 @@ version(unittest) {
 	 */
 	override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             auto str = "alpha";
-            rewriter.insertBefore(ctx.start, str);
             rewriter.insertAfter(ctx.start, "beta");
-            writefln("exitStmt ctx.start = %s, %s", ctx.start, str);
+            rewriter.insertBefore(ctx.start, str);
         }
     }
         
@@ -54,19 +53,26 @@ version(unittest) {
         @Tags("TokenStreamRewriter")
         @("input is a simple rule")
         unittest {
-            auto str =
-                `# Text definition DEFAS
+			auto input =
+			`# Text definition DEFAS
 # for automatic announcements
 # Version 2018-02-21
 
 rule Delay as DELAY de
-
 base de.Phrases
 
 "Information zu"
+`
+;
+
+            auto expected =
+                `
+ruleDelayasDELAYde
+basede.Phrases
+alpha"Information zu"beta
 `;
 
-            auto antlrInput = new ANTLRInputStream(str);
+            auto antlrInput = new ANTLRInputStream(input);
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
@@ -82,8 +88,8 @@ base de.Phrases
             auto extractor = new InsertTestListener(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            writefln(extractor.rewriter.getText);
-            1.should.equal(9);
+            auto str = extractor.rewriter.getText;        
+            str.should.equal(expected);
         }
     }
 }

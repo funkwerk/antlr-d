@@ -18,6 +18,10 @@ class InsertBeforeOp : RewriteOperation
 
     public this(size_t index, string text)
     {
+   		debug(TokenStreamRewriter) {
+			import std.stdio : writefln;
+			writefln("InsertBeforeOp constructor: index = %s, text = %s", index, text);
+		}
         super(index, text);
     }
 

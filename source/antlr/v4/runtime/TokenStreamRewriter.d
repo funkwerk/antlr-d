@@ -365,10 +365,7 @@ class TokenStreamRewriter
         if (rewrites.length == 0) {
             return tokens_.getText(interval); // no instructions to execute
         }
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("getText(string programName, Interval interval = %s) = %s", interval, tokens_.getText(interval));
-        }
+
         string buf;
 
         // First, optimize instruction stream
@@ -376,33 +373,21 @@ class TokenStreamRewriter
 
         // Walk buffer, executing instructions and emitting tokens
         int i = start;
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("indexToOp = % s, start = index = %s, stop = %s, size = %s",indexToOp, i, stop, tokens_.size);
-        }
+
         while (i <= stop && i < tokens_.size) {
-            debug(TokenStreamRewriter) {
-                import std.stdio : writefln;
-                writefln("xxx index = %s", i);
-            }
             Token t = tokens_.get(i);
-            if (!(i in indexToOp)) {
+            RewriteOperation op;
+            if (i in indexToOp)
+                op = indexToOp[i];
+            indexToOp.remove(i); // remove so any left have index size-1
+            if (!op) {
                 // no operation at that index, just dump token
                 if (t.getType != TokenConstantDefinition.EOF)
                     buf ~= t.getText;
-                i++; // move to ne xt token
-                debug(TokenStreamRewriter) {
-                    import std.stdio : writefln;
-                    writefln("no operation buf = %s, i = %s", buf, i);
-                }
+                i++; // move to next token
             }
             else {
-                debug(TokenStreamRewriter) {
-                    import std.stdio : writefln;
-                    writefln("before execute buf = %s, i = %s", buf, i);
-                }
-                i = to!int(indexToOp[i].execute(buf)); // execute operation and skip
-                indexToOp.remove(i); // remove so any left have index size-1
+                i = to!int(op.execute(buf)); // execute operation and skip
             }
         }
 
@@ -549,17 +534,9 @@ class TokenStreamRewriter
         }
         for (int i = 0; i < rewrites.length; i++) {
             RewriteOperation op = rewrites[i];
-            debug(TokenStreamRewriter) {
-                import std.stdio : stderr, writefln;
-                writefln("op = %s", op);
-            }
             if (op is null) continue;
             if (!(cast(InsertBeforeOp)op)) continue;
             InsertBeforeOp iop = cast(InsertBeforeOp)rewrites[i];
-            debug(TokenStreamRewriter) {
-                import std.stdio : stderr, writefln;
-                writefln("iop = %s, i = %s", iop, i);
-            }
             // combine current insert with prior if any at same index
             InsertBeforeOp[] prevInserts = getKindOfOps!InsertBeforeOp(rewrites, i);
             foreach (InsertBeforeOp prevIop; prevInserts) {
@@ -619,11 +596,6 @@ class TokenStreamRewriter
                 throw new Error("should only be one op per index");
             }
             m[op.index] = op;
-        }
-        //System.out.println("index to op: "+m);
-        debug(TokenStreamRewriter) {
-            import std.stdio : stderr, writefln;
-            writefln("index to op: = %s", m);
         }
         return m;
     }

@@ -18,11 +18,11 @@ class InsertAfterOp : InsertBeforeOp
 
     public this(size_t index, string text)
     {
-        super(index+1, text); // insert after is insert before index+1
    		debug(TokenStreamRewriter) {
 			import std.stdio : writefln;
 			writefln("InsertAfterOp constructor: index = %s, text = %s", index, text);
 		}
+        super(index+1, text); // insert after is insert before index+1
     }
 
 }

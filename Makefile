@@ -59,7 +59,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES)))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest -debug=TokenStreamRewriter
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

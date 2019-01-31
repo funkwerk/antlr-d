@@ -325,7 +325,7 @@ class TokenStreamRewriter(T)
      * Return the text from the original tokens altered per the
      *  instructions given to this rewriter.
      */
-    public string getText()
+    public T getText()
     {
         return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens_.size()-1));
     }
@@ -334,7 +334,7 @@ class TokenStreamRewriter(T)
      * Return the text from the original tokens altered per the
      *  instructions given to this rewriter in programName.
      */
-    public string getText(string programName)
+    public T getText(string programName)
     {
         return getText(programName, Interval.of(0,tokens_.size-1));
     }

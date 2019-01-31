@@ -609,11 +609,11 @@ class TokenStreamRewriter(T)
 
     protected T catOpText(T a, T b)
     {
-        string x;
-        string y;
-        if (a !is null) x = a;
-        if (b !is null) y = b;
-        return x~y;
+        if (a && b)
+            return a ~ b;
+        if (a)
+            return a;
+        return b;
     }
 
     protected auto getKindOfOps(U)(RewriteOperation!T[] rewrites, size_t before)

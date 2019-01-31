@@ -13,7 +13,7 @@ import std.format;
 /**
  * TODO add class description
  */
-class RewriteOperation : TokenStreamRewriter
+class RewriteOperation(T) : TokenStreamRewriter!T
 {
 
     /**

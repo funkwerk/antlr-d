@@ -13,7 +13,7 @@ import antlr.v4.runtime.InsertBeforeOp;
  *  first and then the "insert befores" at same index. Implementation
  *  of "insert after" is "insert before index+1".
  */
-class InsertAfterOp : InsertBeforeOp
+class InsertAfterOp(T) : InsertBeforeOp!T
 {
 
     public this(size_t index, string text)

@@ -13,7 +13,7 @@ import std.conv;
 /**
  * Rewriter operation
  */
-class InsertBeforeOp : RewriteOperation
+class InsertBeforeOp(T) : RewriteOperation!T
 {
 
     public this(size_t index, string text)

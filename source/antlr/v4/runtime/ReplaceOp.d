@@ -14,12 +14,12 @@ import std.format;
  * I'm going to try replacing range from x..y with (y-x)+1 ReplaceOp
  *  instructions.
  */
-class ReplaceOp : RewriteOperation
+class ReplaceOp(T) : RewriteOperation!T
 {
 
     public size_t lastIndex;
 
-    public this(size_t from, size_t to, string text)
+    public this(size_t from, size_t to, T text)
     {
         super(from, text);
         lastIndex = to;
@@ -29,14 +29,10 @@ class ReplaceOp : RewriteOperation
      * @uml
      * @override
      */
-    public override size_t execute(ref string buf)
+    public override size_t execute(ref T buf)
     {
-           debug(TokenStreamRewriter) {
-                import std.stdio : writefln;
-                writefln("ReplaceOp: execute buf = %s", buf);
-            }
         if (text) {
-            buf ~= to!string(text);
+            buf ~= text;
         }
         return lastIndex+1;
     }

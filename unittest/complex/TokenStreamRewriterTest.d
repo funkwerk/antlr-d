@@ -24,11 +24,11 @@ version(unittest) {
 
     public class InsertTestListenerReplace : RuleTranslatorBaseListener {
 			
-        TokenStreamRewriter rewriter;
+        TokenStreamRewriter!string rewriter;
 			
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter(tokens);
+            rewriter = new TokenStreamRewriter!string(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>
@@ -52,11 +52,11 @@ version(unittest) {
     
     public class InsertTestListenerDelete : RuleTranslatorBaseListener {
 			
-        TokenStreamRewriter rewriter;
+        TokenStreamRewriter!string rewriter;
 			
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter(tokens);
+            rewriter = new TokenStreamRewriter!string(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>
@@ -80,11 +80,11 @@ version(unittest) {
     
     public class InsertTestListener : RuleTranslatorBaseListener {
 			
-        TokenStreamRewriter rewriter;
+        TokenStreamRewriter!string rewriter;
 			
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter(tokens);
+            rewriter = new TokenStreamRewriter!string(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>

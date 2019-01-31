@@ -156,12 +156,12 @@ class TokenStreamRewriter(T)
         rollback(programName, MIN_TOKEN_INDEX);
     }
 
-    public void insertAfter(Token t, string text)
+    public void insertAfter(Token t, T text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, t, text);
     }
 
-    public void insertAfter(int index, string text)
+    public void insertAfter(int index, T text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, index, text);
     }
@@ -211,7 +211,7 @@ class TokenStreamRewriter(T)
         replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
-    public void replace(Token indexT, string text)
+    public void replace(Token indexT, T text)
     {
         replace(DEFAULT_PROGRAM_NAME, indexT, indexT, text);
     }
@@ -304,7 +304,7 @@ class TokenStreamRewriter(T)
         lastRewriteTokenIndexes[programName] =  i;
     }
 
-    private RewriteOperation!T[] getProgram(T name)
+    private RewriteOperation!T[] getProgram(string name)
     {
         if (name in programs) {
             return programs[name];
@@ -314,7 +314,7 @@ class TokenStreamRewriter(T)
         }
     }
 
-    private RewriteOperation!T[] initializeProgram(T name)
+    private RewriteOperation!T[] initializeProgram(string name)
     {
         RewriteOperation!T[] iso;
         programs[name] = iso;
@@ -607,7 +607,7 @@ class TokenStreamRewriter(T)
         return m;
     }
 
-    protected string catOpText(string a, string b)
+    protected T catOpText(T a, T b)
     {
         string x;
         string y;

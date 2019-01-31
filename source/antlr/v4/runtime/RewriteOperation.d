@@ -26,14 +26,14 @@ class RewriteOperation(T) : TokenStreamRewriter!T
      */
     public size_t index;
 
-    public string text;
+    public T text;
 
     public this(size_t index)
     {
         this.index = index;
     }
 
-    public this(size_t index, string text)
+    public this(size_t index, T text)
     {
         this.index = index;
         this.text = text;
@@ -43,7 +43,7 @@ class RewriteOperation(T) : TokenStreamRewriter!T
      * Execute the rewrite operation by possibly adding to the buffer.
      *  Return the index of the next token to operate on.
      */
-    public size_t execute(ref string buf)
+    public size_t execute(ref T buf)
     {
         return index;
     }

@@ -16,7 +16,7 @@ import antlr.v4.runtime.InsertBeforeOp;
 class InsertAfterOp(T) : InsertBeforeOp!T
 {
 
-    public this(size_t index, string text)
+    public this(size_t index, T text)
     {
    		debug(TokenStreamRewriter) {
 			import std.stdio : writefln;

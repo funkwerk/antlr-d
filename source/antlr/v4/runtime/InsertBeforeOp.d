@@ -16,7 +16,7 @@ import std.conv;
 class InsertBeforeOp(T) : RewriteOperation!T
 {
 
-    public this(size_t index, string text)
+    public this(size_t index, T text)
     {
    		debug(TokenStreamRewriter) {
 			import std.stdio : writefln;
@@ -29,9 +29,9 @@ class InsertBeforeOp(T) : RewriteOperation!T
      * @uml
      * @override
      */
-    public override size_t execute(ref string buf)
+    public override size_t execute(ref T buf)
     {
-        buf ~= to!string(text);
+        buf ~= to!T(text);
         if (tokens.get(to!int(index)).getType != TokenConstantDefinition.EOF)
             {
                 buf ~= tokens.get(to!int(index)).getText;

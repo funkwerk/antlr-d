@@ -21,7 +21,6 @@ class InsertBeforeOp(T) : RewriteOperation!T
         super(index, text);
     }
 
-
     /**
      * @uml
      * @override

@@ -354,7 +354,6 @@ class TokenStreamRewriter(T)
         return getText(DEFAULT_PROGRAM_NAME, interval);
     }
 
-
     public T getText(string programName, Interval interval)
     {
         RewriteOperation!T[] rewrites;
@@ -629,18 +628,6 @@ class TokenStreamRewriter(T)
         return b;
     }
 
-    protected T getPositionText(Token token)
-    {
-        T buf;
-        return buf;
-    }
-
-    protected T getPositionText(TokenStream tokens, Interval interval)
-    {
-        T buf;
-        return buf;
-    }
-
     protected auto getKindOfOps(U)(RewriteOperation!T[] rewrites, size_t before)
     {
         U[] ops;
@@ -652,6 +639,18 @@ class TokenStreamRewriter(T)
             }
         }
         return ops;
+    }
+
+    protected T getPositionText(Token token)
+    {
+        T buf;
+        return buf;
+    }
+
+    protected T getPositionText(TokenStream tokens, Interval interval)
+    {
+        T buf;
+        return buf;
     }
 
     public static TokenStream tokens()

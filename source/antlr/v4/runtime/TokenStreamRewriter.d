@@ -354,6 +354,7 @@ class TokenStreamRewriter(T)
         return getText(DEFAULT_PROGRAM_NAME, interval);
     }
 
+
     public T getText(string programName, Interval interval)
     {
         RewriteOperation!T[] rewrites;
@@ -369,11 +370,17 @@ class TokenStreamRewriter(T)
             stop = tokens_.size-1;
         if ( start < 0 )
             start = 0;
+
         if (rewrites.length == 0) {
-            return tokens_.getText(interval); // no instructions to execute
+            static if (is(T == string)) {
+                return tokens_.getText(interval); // no instructions to execute
+            }
+            else {
+                return getPositionText(tokens_, interval);
+            }
         }
 
-        string buf;
+        T buf;
 
         // First, optimize instruction stream
         RewriteOperation!T[size_t] indexToOp = reduceToSingleOperationPerIndex(rewrites);
@@ -389,8 +396,14 @@ class TokenStreamRewriter(T)
             indexToOp.remove(i); // remove so any left have index size-1
             if (!op) {
                 // no operation at that index, just dump token
-                if (t.getType != TokenConstantDefinition.EOF)
-                    buf ~= t.getText;
+                if (t.getType != TokenConstantDefinition.EOF) {
+                    static if (is(T == string)) {
+                        buf ~= t.getText;
+                    }
+                    else {
+                        buf ~= getPositionText(t);
+                    }
+                }
                 i++; // move to next token
             }
             else {
@@ -406,7 +419,7 @@ class TokenStreamRewriter(T)
             // should be included (they will be inserts).
             foreach (RewriteOperation!T op; indexToOp.values()) {
                 if (op.index >= tokens_.size-1)
-                    buf ~= to!string(op.text);
+                    buf ~= to!T(op.text);
             }
         }
         return buf;
@@ -493,7 +506,7 @@ class TokenStreamRewriter(T)
                     // E.g., insert before 2, delete 2..2; update replace
                     // text to include insert before, kill insert
                     rewrites[iop.instructionIndex] = null;
-                    rop.text = iop.text ~ (rop.text !is null?rop.text:"");
+                    rop.text = iop.text ~ (rop.text !is null?rop.text:T.init);
                 }
                 else if (iop.index > rop.index && iop.index <= rop.lastIndex ) {
                     // delete insert as it's a no-op.
@@ -614,6 +627,18 @@ class TokenStreamRewriter(T)
         if (a)
             return a;
         return b;
+    }
+
+    protected T getPositionText(Token token)
+    {
+        T buf;
+        return buf;
+    }
+
+    protected T getPositionText(TokenStream tokens, Interval interval)
+    {
+        T buf;
+        return buf;
     }
 
     protected auto getKindOfOps(U)(RewriteOperation!T[] rewrites, size_t before)

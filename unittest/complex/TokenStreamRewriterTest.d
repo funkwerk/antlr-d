@@ -23,9 +23,9 @@ version(unittest) {
     import unit_threaded;
 
     public class InsertTestListenerReplace : RuleTranslatorBaseListener {
-			
+
         TokenStreamRewriter!string rewriter;
-			
+
         this(TokenStream tokens)
         {
             rewriter = new TokenStreamRewriter!string(tokens);
@@ -37,11 +37,11 @@ version(unittest) {
             writefln("enterFile");
         }
         /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
+         * {@inheritDoc}
+         *
+         * <p>The default implementation does nothing.</p>
+         */
+        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             debug(TokenStreamRewriter) {
                 import std.stdio : writefln;
                 writefln("exitStmt ctx.start = %s", ctx.start);
@@ -49,11 +49,11 @@ version(unittest) {
             rewriter.replace(ctx.start, ctx.stop, "gamma");
         }
     }
-    
+
     public class InsertTestListenerDelete : RuleTranslatorBaseListener {
-			
+
         TokenStreamRewriter!string rewriter;
-			
+
         this(TokenStream tokens)
         {
             rewriter = new TokenStreamRewriter!string(tokens);
@@ -64,12 +64,13 @@ version(unittest) {
         override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
             writefln("enterFile");
         }
+
         /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
+         * {@inheritDoc}
+         *
+         * <p>The default implementation does nothing.</p>
+         */
+        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             debug(TokenStreamRewriter) {
                 import std.stdio : writefln;
                 writefln("exitStmt ctx.start = %s", ctx.start);
@@ -77,11 +78,39 @@ version(unittest) {
             rewriter.deleteT(ctx.start, ctx.stop);
         }
     }
-    
+
+    public class InsertTestListenerResult : RuleTranslatorBaseListener {
+
+        struct Result { ushort indent; string text;}
+        TokenStreamRewriter!(Result[]) rewriter;
+
+        this(TokenStream tokens)
+        {
+            rewriter = new TokenStreamRewriter!(Result[])(tokens);
+            //rewriter = new TokenStreamRewriter!string(tokens);
+        }
+        /**
+         * <p>The default implementation does nothing.</p>
+         */
+        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
+            writefln("enterFile");
+        }
+        /**
+         * {@inheritDoc}
+         *
+         * <p>The default implementation does nothing.</p>
+         */
+        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
+            //auto str = "alpha";
+            //rewriter.insertAfter(ctx.start, "beta");
+            //rewriter.insertBefore(ctx.start, str);
+        }
+    }
+
     public class InsertTestListener : RuleTranslatorBaseListener {
-			
+
         TokenStreamRewriter!string rewriter;
-			
+
         this(TokenStream tokens)
         {
             rewriter = new TokenStreamRewriter!string(tokens);
@@ -93,20 +122,20 @@ version(unittest) {
             writefln("enterFile");
         }
         /**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
+         * {@inheritDoc}struct Result { ushort indent; string text;}
+         *
+         * <p>The default implementation does nothing.</p>
+         */
+        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             auto str = "alpha";
             rewriter.insertAfter(ctx.start, "beta");
             rewriter.insertBefore(ctx.start, str);
         }
     }
-        
+
     class Test {
         @Tags("TokenStreamRewriter")
-        @("replace")
+        @("replace_and_delete")
         unittest {
             auto input =
                 `# Text definition DEFAS
@@ -142,7 +171,16 @@ gamma`;
             auto extractor = new InsertTestListenerReplace(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;        
+            auto str = extractor.rewriter.getText;
+            str.should.equal(expected);
+            extractor.rewriter.deleteProgram;
+            str = extractor.rewriter.getText;
+            expected =
+                `
+ruleDelayasDELAYde
+basede.Phrases
+"Information zu"
+`;
             str.should.equal(expected);
         }
 
@@ -184,7 +222,7 @@ alpha"Information zu"beta
             auto extractor = new InsertTestListener(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;        
+            auto str = extractor.rewriter.getText;
             str.should.equal(expected);
         }
     }
@@ -225,7 +263,7 @@ basede.Phrases
             auto extractor = new InsertTestListenerDelete(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;        
+            auto str = extractor.rewriter.getText;
             str.should.equal(expected);
         }
 }

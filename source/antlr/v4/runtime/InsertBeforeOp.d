@@ -18,12 +18,9 @@ class InsertBeforeOp(T) : RewriteOperation!T
 
     public this(size_t index, T text)
     {
-   		debug(TokenStreamRewriter) {
-			import std.stdio : writefln;
-			writefln("InsertBeforeOp constructor: index = %s, text = %s", index, text);
-		}
         super(index, text);
     }
+
 
     /**
      * @uml
@@ -34,7 +31,10 @@ class InsertBeforeOp(T) : RewriteOperation!T
         buf ~= to!T(text);
         if (tokens.get(to!int(index)).getType != TokenConstantDefinition.EOF)
             {
-                buf ~= tokens.get(to!int(index)).getText;
+                static if (is(T == string))
+                    buf ~= tokens.get(to!int(index)).getText;
+                else
+                    buf ~= getPositionText(tokens.get(to!int(index)));
             }
         return index+1;
     }

@@ -87,8 +87,8 @@ version(unittest) {
         this(TokenStream tokens)
         {
             rewriter = new TokenStreamRewriter!(Result[])(tokens);
-            //rewriter = new TokenStreamRewriter!string(tokens);
         }
+
         /**
          * <p>The default implementation does nothing.</p>
          */

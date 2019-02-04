@@ -639,7 +639,7 @@ setState(<m.stateNumber>);
 <if(m.labels)><m.labels:{l | <labelref(l)> = }>_input.LT(1);<endif>
 <capture>
 if ( <if(invert)><m.varName> \<= 0 || <else>!<endif>(<expr>) ) {
-	<if(m.labels)><m.labels:{l | <labelref(l)> = (Token)}><endif>_errHandler.recoverInline(this);
+	<if(m.labels)><m.labels:{l | <labelref(l)> = cast(Token)}><endif>_errHandler.recoverInline(this);
 }
 else {
     if (_input.LA(1) == TokenConstantDefinition.EOF)
@@ -850,9 +850,9 @@ recRuleLabeledAltStartAction(ruleName, currentAltLabel, label, isListLabel) ::= 
 _localctx = new <currentAltLabel; format="cap">Context(new <ruleName; format="cap">Context(_parentctx, _parentState));
 <if(label)>
 <if(isListLabel)>
-((<currentAltLabel; format="cap">Context)_localctx).<label>.add(_prevctx);
+(cast(<currentAltLabel; format="cap">Context)_localctx).<label>.add(_prevctx);
 <else>
-((<currentAltLabel; format="cap">Context)_localctx).<label> = _prevctx;
+(cast(<currentAltLabel; format="cap">Context)_localctx).<label> = _prevctx;
 <endif>
 <endif>
 pushNewRecursionContext(_localctx, _startState, RULE_<ruleName>);

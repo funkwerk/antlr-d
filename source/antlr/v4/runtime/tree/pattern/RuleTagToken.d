@@ -144,7 +144,7 @@ class RuleTagToken : Token
      * <p>This method returns the rule tag formatted with {@code <} and {@code >}
      * delimiters.</p>
      */
-    public override string getText()
+    public override Variant getText()
     {
         if (label !is null) {
             return "<" ~ label ~ ":" ~ ruleName ~ ">";

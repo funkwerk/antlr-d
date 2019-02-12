@@ -72,7 +72,7 @@ class CommonToken : WritableToken
      *
      *  @see #getText()
      */
-    protected string text;
+    protected Variant text;
 
     /**
      * This is the backing field for {@link #getTokenIndex} and

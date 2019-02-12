@@ -84,7 +84,7 @@ class TokenTagToken : CommonToken
      *  formatted with {@code <} and {@code >} delimiters.</p>
      * @override
      */
-    public override string getText()
+    public override Variant getText()
     {
         if (label !is null) {
             return "<" ~ label ~ ":" ~ tokenName ~ ">";

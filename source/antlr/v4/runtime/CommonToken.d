@@ -16,6 +16,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.misc.Interval;
+import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -122,7 +123,7 @@ class CommonToken : WritableToken
      *  @param type The token type.
      *  @param text The text of the token.
      */
-    public this(int type, string text)
+    public this(int type, Variant text)
     {
 	this.type = type;
         this.channel = TokenConstantDefinition.DEFAULT_CHANNEL;
@@ -180,7 +181,7 @@ class CommonToken : WritableToken
      * @uml
      * @override
      */
-    public override string getText()
+    public override Variant getText()
     {
 	if (text) {
             return text;
@@ -208,7 +209,7 @@ class CommonToken : WritableToken
      * should be obtained from the input along with the start and stop indexes
      * of the token.
      */
-    public override void setText(string text)
+    public override void setText(Variant text)
     {
         this.text = text;
     }

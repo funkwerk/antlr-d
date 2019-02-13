@@ -17,6 +17,7 @@ import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.Trees;
 import std.array;
 import std.conv;
+import std.variant;
 
 /**
  * A rule context is a record of a single rule invocation.
@@ -134,16 +135,18 @@ class RuleContext : RuleNode, InterfaceRuleContext
      * added to the parse trees, they will not appear in the output of this
      * method.
      */
-    public string getText()
+    public Variant getText()
     {
         if (getChildCount() == 0) {
-            return "";
+            Variant v = "";
+            return v;
         }
         auto builder = appender!(string);
         for (int i = 0; i < getChildCount(); i++) {
-            builder.put(getChild(i).getText());
+            builder.put(to!string(getChild(i).getText));
         }
-        return builder.data;
+        Variant v = builder.data;
+        return v;
     }
 
     public int getRuleIndex()

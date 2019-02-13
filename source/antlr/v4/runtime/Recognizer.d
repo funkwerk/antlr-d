@@ -209,7 +209,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
     public string getTokenErrorDisplay(Token t)
     {
 	if (t is null) return "<no token>";
-        string s = t.getText();
+        string s = to!string(t.getText);
         if (s is null) {
             if (t.getType() == TokenConstantDefinition.EOF) {
                 s = "<EOF>";

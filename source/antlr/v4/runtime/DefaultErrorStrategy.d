@@ -25,9 +25,11 @@ import antlr.v4.runtime.atn.RuleTransition;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.misc.IntervalSet;
 import std.array;
+import std.conv;
 import std.format;
 import std.stdio;
 import std.typecons;
+import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -637,8 +639,9 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             current = lookback;
         }
         TokenFactorySourcePair tsp = tuple(current.getTokenSource(), current.getTokenSource().getInputStream());
+        Variant v = tokenText;
         return
-            recognizer.tokenFactory().create(tsp, expectedTokenType, tokenText,
+            recognizer.tokenFactory().create(tsp, expectedTokenType, v,
                                              TokenConstantDefinition.DEFAULT_CHANNEL,
                                              -1, -1,
                                              current.getLine(), current.getCharPositionInLine());
@@ -676,7 +679,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected string getSymbolText(Token symbol)
     {
-        return symbol.getText;
+        return to!string(symbol.getText);
     }
 
     protected int getSymbolType(Token symbol)

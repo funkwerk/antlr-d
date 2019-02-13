@@ -526,7 +526,7 @@ class BufferedTokenStream : TokenStream
         for (int i = start; i <= stop; i++) {
             Token t = tokens[i];
             if (t.getType == TokenConstantDefinition.EOF) break;
-            buf.put(t.getText());
+            buf.put(to!string(t.getText));
         }
         return buf.data;
     }

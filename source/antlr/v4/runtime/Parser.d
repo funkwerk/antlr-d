@@ -60,12 +60,12 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         public void enterEveryRule(ParserRuleContext ctx)
         {
             writeln("enter   " ~ getRuleNames()[ctx.getRuleIndex()] ~
-                    ", LT(1)=" ~ _input.LT(1).getText());
+                    ", LT(1)=" ~ to!string(_input.LT(1).getText));
         }
 
         public void visitTerminal(TerminalNode node)
         {
-            writeln("consume " ~ node.getSymbol().getText ~ " rule " ~
+            writeln("consume " ~ to!string(node.getSymbol.getText) ~ " rule " ~
                     getRuleNames()[ctx_.getRuleIndex()]);
         }
 
@@ -80,7 +80,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         public override void exitEveryRule(ParserRuleContext ctx)
         {
             writeln("exit   " ~ getRuleNames()[ctx.getRuleIndex()] ~
-                    ", LT(1)=" ~ _input.LT(1).getText());
+                    ", LT(1)=" ~ to!string(_input.LT(1).getText));
         }
 
     }

@@ -14,6 +14,8 @@ import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.tree.ParseTree;
 import antlr.v4.runtime.tree.TerminalNode;
+import std.conv;
+import std.variant;
 
 /**
  * TODO add class description
@@ -74,7 +76,7 @@ class TerminalNodeImpl : TerminalNode
         return visitor.visitTerminal(this);
     }
 
-    public string getText()
+    public Variant getText()
     {
         return symbol.getText();
     }
@@ -92,7 +94,7 @@ class TerminalNodeImpl : TerminalNode
     {
         if (symbol.getType() == TokenConstantDefinition.EOF )
             return "<EOF>";
-        return symbol.getText();
+        return to!string(symbol.getText);
     }
 
     public string toStringTree()

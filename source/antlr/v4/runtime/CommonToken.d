@@ -183,18 +183,21 @@ class CommonToken : WritableToken
      */
     public override Variant getText()
     {
-	if (text) {
+        Variant Null;
+	if (text !is Null) {
             return text;
         }
 
         CharStream input = getInputStream();
-        if (input is null) return null;
+        if (input is null) return Null;
         int n = input.size();
         if ( start<n && stop<n) {
-            return input.getText(Interval.of(start,stop));
+            Variant v = input.getText(Interval.of(start,stop));
+            return v;
         }
         else {
-            return "<EOF>";
+            Variant v = "<EOF>";
+            return v;
         }
     }
 
@@ -338,7 +341,7 @@ class CommonToken : WritableToken
         if (channel > 0) {
             channelStr=",channel=" ~ to!string(channel);
         }
-        string txt = getText;
+        string txt = to!string(getText);
         if (txt) {
             txt = txt.replace("\n","\\n");
             txt = txt.replace("\r","\\r");

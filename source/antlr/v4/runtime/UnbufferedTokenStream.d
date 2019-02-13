@@ -295,7 +295,7 @@ class UnbufferedTokenStream : TokenStream
         auto buf = appender!string;
         for (int i = a; i <= b; i++) {
             Token t = tokens[i];
-            buf.put(t.getText);
+            buf.put(to!string(t.getText));
         }
 
         return buf.data;

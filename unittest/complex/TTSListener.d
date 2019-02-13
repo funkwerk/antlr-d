@@ -8,10 +8,12 @@ import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import std.algorithm.iteration;
 import std.array;
+import std.conv;
 import std.container : SList;
 import std.format;
 import std.stdio;
 import std.string;
+import std.variant;
 
 /**
  * This class provides an empty implementation of {@link RuleTranslatorListener},
@@ -167,7 +169,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterClass_name(RuleTranslatorParser.Class_nameContext ctx) {
-        ruleSetting.className = ctx.getText;
+        ruleSetting.className = to!(string)(ctx.getText);
     }
 
     /**
@@ -176,7 +178,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterRule_name(RuleTranslatorParser.Rule_nameContext ctx) {
-        ruleSetting.ruleName = ctx.getText;
+        ruleSetting.ruleName = to!(string)(ctx.getText);
     }
 
     /**
@@ -193,7 +195,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitLanguage(RuleTranslatorParser.LanguageContext ctx) {
-        ruleSetting.language = ctx.getText;
+        ruleSetting.language = to!(string)(ctx.getText);
     }
 
     /**
@@ -204,7 +206,7 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void enterImport_stmt(RuleTranslatorParser.Import_stmtContext ctx) {
         string app;
         foreach (el; ctx.children[2..$])
-            app ~= el.getText;
+            app ~= to!string(el.getText);
         writer.putnl(format("import %s;", app));
     }
 
@@ -214,7 +216,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterBase_rules(RuleTranslatorParser.Base_rulesContext ctx) {
-        ruleSetting.baseName = ctx.getText;
+        ruleSetting.baseName = to!(string)(ctx.getText);
     }
 
     /**
@@ -243,7 +245,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void exitFunctionName(RuleTranslatorParser.FunctionNameContext ctx) {
-        writer.put(ctx.getText);
+        writer.put(to!(string)(ctx.getText));
     }
     /**
      * {@inheritDoc}
@@ -297,7 +299,7 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void enterParameters(RuleTranslatorParser.ParametersContext ctx) {
         if (funcdefFlag)
             {
-                auto spl = splitter(ctx.getText[1..($-1)], ',');
+                auto spl = splitter(to!(string)(ctx.getText)[1..($-1)], ',');
                 writer.putnl('(' ~ spl.map!(a => "T_" ~ a).join(", ") ~ ')');
                 writer.putnl("    (" ~ spl.map!(a => "T_" ~ a ~ ' ' ~ a).join(", ") ~ ')');
                 writer.putnl("{");
@@ -342,17 +344,17 @@ public class TTSListener : RuleTranslatorBaseListener {
      * we need to append '.value' property
      */
     override public void enterFirst_part_of_dotted_name(RuleTranslatorParser.First_part_of_dotted_nameContext ctx) {
-        dottedName = ctx.getText;
+        dottedName = to!(string)(ctx.getText);
         if (!loopStack.empty) {
             import std.algorithm : map;
             import std.algorithm: canFind;
-            if (array(map!(a => a.foreachElementType)(loopStack[])).canFind(ctx.getText)) {
+            if (array(map!(a => a.foreachElementType)(loopStack[])).canFind(to!(string)(ctx.getText))) {
                 dottedName ~= ".value";
             }
         }
         debug {
             writefln("%s enterFirst_part_of_dotted_name:", counter++);
-            writefln("\ttext = %s", ctx.getText);
+            writefln("\ttext = %s", to!(string)(ctx.getText));
             writefln("\tdottedName = %s", dottedName);
             foreach (el; stack.opSlice)
                 writefln("\t%s", el);
@@ -364,10 +366,10 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterDotted_name_part(RuleTranslatorParser.Dotted_name_partContext ctx) {
-        dottedName ~= "." ~ ctx.getText;
+        dottedName ~= "." ~ to!(string)(ctx.getText);
         debug {
             writefln("%s enterDotted_name_part:", counter++);
-            writefln("\ttext = %s", ctx.getText);
+            writefln("\ttext = %s", to!(string)(ctx.getText));
             writefln("\tdottedName = %s", dottedName);
             foreach (el; stack.opSlice)
                 writefln("\t%s", el);
@@ -425,9 +427,9 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterFunct_name(RuleTranslatorParser.Funct_nameContext ctx) {
         if (!stack.empty) {
-            stack.front ~= ctx.getText;
+            stack.front ~= to!(string)(ctx.getText);
             debug {
-                writefln("%s enterFunct_name: %s", counter++, ctx.getText);
+                writefln("%s enterFunct_name: %s", counter++, to!(string)(ctx.getText));
                 foreach (el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -490,7 +492,7 @@ public class TTSListener : RuleTranslatorBaseListener {
             string[] s;
             stack.insert(s);
             debug {
-                writefln("%s enterFunct_parameters: %s", counter++, ctx.getText);
+                writefln("%s enterFunct_parameters: %s", counter++, to!(string)(ctx.getText));
                 foreach (el; stack.opSlice)
                     writefln("\t%s", el);
             }
@@ -521,7 +523,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterTfpdef_number(RuleTranslatorParser.Tfpdef_numberContext ctx) {
         if (!stack.empty) {
-            stack.front ~= ctx.getText;
+            stack.front ~= to!(string)(ctx.getText);
             debug {
                 writefln("%s enterTfpdef_number(%s):", counter++, trailerMode);
                 foreach (el; stack.opSlice)
@@ -553,7 +555,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterTfpdef_string(RuleTranslatorParser.Tfpdef_stringContext ctx) {
         if (!stack.empty) {
-            stack.front ~= ctx.getText;
+            stack.front ~= to!(string)(ctx.getText);
             debug {
                 writefln("%s enterTfpdef_string:", counter++);
                 foreach (el; stack.opSlice)
@@ -839,7 +841,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterNumber_e(RuleTranslatorParser.Number_eContext ctx) {
         if (!stack.empty && !trailerMode) {
-            stack.front ~= ctx.getText;
+            stack.front ~= to!(string)(ctx.getText);
             debug {
                 writefln("%s enterNumber_e(%s):", counter++, trailerMode);
                 foreach (el; stack.opSlice)
@@ -855,7 +857,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      */
     override public void enterString_e(RuleTranslatorParser.String_eContext ctx) {
         if (!stack.empty)
-            stack.front ~= ctx.getText;
+            stack.front ~= to!(string)(ctx.getText);
         debug {
             writefln("%s enterString_e:", counter++);
             foreach (el; stack.opSlice)
@@ -961,7 +963,7 @@ public class TTSListener : RuleTranslatorBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     override public void enterFor_exprlist(RuleTranslatorParser.For_exprlistContext ctx) {
-        foreachElementName = ctx.getText;
+        foreachElementName = to!(string)(ctx.getText);
     }
 
     /**
@@ -972,7 +974,7 @@ public class TTSListener : RuleTranslatorBaseListener {
     override public void enterFor_testlist(RuleTranslatorParser.For_testlistContext ctx) {
         LoopElement l;
         l.foreachElementType = foreachElementName;
-        l.foreachType = ctx.getText;
+        l.foreachType = to!(string)(ctx.getText);
         l.foreachIndex = 0;
         loopStack.front = l;
         debug {

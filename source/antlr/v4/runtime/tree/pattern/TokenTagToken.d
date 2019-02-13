@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.tree.pattern.TokenTagToken;
 
 import antlr.v4.runtime.CommonToken;
 import std.conv;
+import std.format;
+import std.variant;
 
 /**
  * @uml
@@ -87,9 +95,11 @@ class TokenTagToken : CommonToken
     public override Variant getText()
     {
         if (label !is null) {
-            return "<" ~ label ~ ":" ~ tokenName ~ ">";
+            Variant r = format("<%s:%s>", label, tokenName);
+            return r;
         }
-        return "<" ~ tokenName ~ ">";
+        Variant r = format("<%s>", tokenName);
+        return r;
     }
 
     /**

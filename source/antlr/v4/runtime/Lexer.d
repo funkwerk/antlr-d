@@ -10,6 +10,7 @@ import std.stdio;
 import std.typecons;
 import std.array;
 import std.conv;
+import std.variant;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -303,8 +304,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token emit()
     {
+        Variant v = _text;
         Token t = tokenFactory_.create(_tokenFactorySourcePair, _type,
-                                       _text, _channel, _tokenStartCharIndex,
+                                       v, _channel, _tokenStartCharIndex,
                                        getCharIndex()-1, _tokenStartLine,
                                        _tokenStartCharPositionInLine);
         emit(t);
@@ -315,7 +317,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     {
         int cpos = getCharPositionInLine();
         int line = getLine();
-        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstantDefinition.EOF, null, TokenConstantDefinition.DEFAULT_CHANNEL,
+        Variant Null;
+        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstantDefinition.EOF, Null, TokenConstantDefinition.DEFAULT_CHANNEL,
                                          _input.index(), _input.index()-1,
                                          line, cpos);
         emit(eof);

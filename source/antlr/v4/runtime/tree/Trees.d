@@ -1,38 +1,14 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2013 Terence Parr
- *  Copyright (c) 2013 Sam Harwell
- *  Copyright (c) 2017 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.tree.Trees;
 
 import std.array;
 import std.conv;
+import std.variant;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.RuleContext;
@@ -133,7 +109,7 @@ class Trees
             else if (t.classinfo == TerminalNode.classinfo) {
                 Token symbol = (cast(TerminalNode)t).getSymbol();
                 if (symbol !is null) {
-                    string s = symbol.getText();
+                    string s = to!string(symbol.getText);
                     return s;
                 }
             }
@@ -141,7 +117,7 @@ class Trees
         // no recog for rule names
         Object payload = t.getPayload();
         if (payload.classinfo == Token.classinfo) {
-            return (cast(Token)payload).getText();
+            return to!string((cast(Token)payload).getText);
         }
         return t.getPayload().toString();
     }
@@ -291,7 +267,8 @@ class Trees
             Interval range = child.getSourceInterval();
             if (child.classinfo == ParserRuleContext.classinfo && (range.b < startIndex || range.a > stopIndex) ) {
                 if (isAncestorOf(child, root)) { // replace only if subtree doesn't have displayed root
-                    CommonToken abbrev = new CommonToken(TokenConstantDefinition.INVALID_TYPE, "...");
+                    Variant v = "...";
+                    CommonToken abbrev = new CommonToken(TokenConstantDefinition.INVALID_TYPE, v);
                     t.children[i] =  new TerminalNodeImpl(abbrev);
                 }
             }

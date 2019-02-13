@@ -116,7 +116,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * You can set the text for the current token to override what is in
      * the input char buffer.  Use setText() or can set this instance var.
      */
-    public string _text;
+    public Variant _text;
 
     public this()
     {
@@ -142,7 +142,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
         _tokenStartCharIndex = -1;
         _tokenStartCharPositionInLine = -1;
         _tokenStartLine = -1;
-        _text = null;
+        _text.init;
         _hitEOF = false;
         _mode = Lexer.DEFAULT_MODE;
         _modeStack.clear();
@@ -173,7 +173,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                 _tokenStartCharIndex = _input.index;
                 _tokenStartCharPositionInLine = getInterpreter.getCharPositionInLine();
                 _tokenStartLine = getInterpreter.getLine;
-                _text = null;
+                _text.init;
                 do {
                     _type = TokenConstantDefinition.INVALID_TYPE;
                     debug(Lexer) {
@@ -357,19 +357,21 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * Return the text matched so far for the current token or any
      * text override.
      */
-    public string getText()
+    public Variant getText()
     {
-        if (_text !is null) {
+        Variant Null;
+        if (_text !is Null) {
             return _text;
         }
-        return getInterpreter().getText(_input);
+        Variant v = getInterpreter().getText(_input);
+        return v;
     }
 
     /**
      * Set the complete text of this token; it wipes any previous
      * changes to the text.
      */
-    public void setText(string text)
+    public void setText(Variant text)
     {
         this._text = text;
     }

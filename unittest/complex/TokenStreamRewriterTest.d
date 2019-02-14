@@ -131,8 +131,8 @@ version(unittest) {
         override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             Variant str_a = "alpha";
             Variant str_b = "beta";
+            rewriter.insertBefore(ctx.start, str_a);
             rewriter.insertAfter(ctx.start, str_b);
-            rewriter.insertBefore(ctx.start, str_b);
         }
     }
 

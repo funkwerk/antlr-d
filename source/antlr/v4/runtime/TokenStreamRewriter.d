@@ -238,6 +238,11 @@ class TokenStreamRewriter
         RewriteOperation op = new ReplaceOp(from, to, text);
         op.instructionIndex = programs[programName].length;
         programs[programName] ~= op;
+
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("replace end: op = %s, programs = %s", op, programs);
+        }
     }
 
     public void replace(string programName, Token from, Token to, Variant text)
@@ -392,19 +397,31 @@ class TokenStreamRewriter
                 }
 
         while (i <= stop && i < tokens_.size) {
+            Token t = tokens_.get(i);
             debug(TokenStreamRewriter) {
                     import std.stdio : stderr, writefln;
-                    writefln("i = %s", i);
+                    writefln("i = %s, token = %s", i, t);
                 }
-            Token t = tokens_.get(i);
             RewriteOperation op;
             if (i in indexToOp)
                 op = indexToOp[i];
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("indexToOp = %s", indexToOp);
+            }
             indexToOp.remove(i); // remove so any left have index size-1
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("indexToOp end = %s", indexToOp);
+            }
             if (!op) {
                 // no operation at that index, just dump token
                 if (t.getType != TokenConstantDefinition.EOF) {
-                    buf ~= t.getText;
+                    Variant Null;
+                    if (buf is Null)
+                        buf = t.getText;
+                    else
+                        buf ~= t.getText;
                 }
                 i++; // move to next token
             }

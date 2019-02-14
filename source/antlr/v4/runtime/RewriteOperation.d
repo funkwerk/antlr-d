@@ -36,6 +36,8 @@ class RewriteOperation : TokenStreamRewriter
 
     public this(size_t index, Variant text)
     {
+        this.index = index;
+        this.text = text;
     }
 
     /**

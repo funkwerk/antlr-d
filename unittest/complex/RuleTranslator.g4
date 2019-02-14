@@ -317,8 +317,9 @@ NEWLINE
    )
    {
      import std.regex;
-     string newLine = getText.replaceAll(regex(r"[^\r\n\f]+"), "");
-     string spaces = getText.replaceAll(regex(r"[\r\n\f]+"), "");
+     string s = to!string(getText);
+     string newLine = s.replaceAll(regex(r"[^\r\n\f]+"), "");
+     string spaces = s.replaceAll(regex(r"[\r\n\f]+"), "");
      int next = _input.LA(1);
      if (opened > 0 || next == '\r' || next == '\n' || next == '\f' ||
          next == '#') {

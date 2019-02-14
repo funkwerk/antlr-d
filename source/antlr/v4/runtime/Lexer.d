@@ -10,6 +10,7 @@ import std.stdio;
 import std.typecons;
 import std.array;
 import std.conv;
+import std.variant;
 import antlr.v4.runtime.ANTLRErrorListener;
 import antlr.v4.runtime.Recognizer;
 import antlr.v4.runtime.RecognitionException;
@@ -115,7 +116,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * You can set the text for the current token to override what is in
      * the input char buffer.  Use setText() or can set this instance var.
      */
-    public string _text;
+    public Variant _text;
 
     public this()
     {
@@ -141,7 +142,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
         _tokenStartCharIndex = -1;
         _tokenStartCharPositionInLine = -1;
         _tokenStartLine = -1;
-        _text = null;
+        _text.init;
         _hitEOF = false;
         _mode = Lexer.DEFAULT_MODE;
         _modeStack.clear();
@@ -172,7 +173,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                 _tokenStartCharIndex = _input.index;
                 _tokenStartCharPositionInLine = getInterpreter.getCharPositionInLine();
                 _tokenStartLine = getInterpreter.getLine;
-                _text = null;
+                _text.init;
                 do {
                     _type = TokenConstantDefinition.INVALID_TYPE;
                     debug(Lexer) {
@@ -303,8 +304,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token emit()
     {
+        Variant v = _text;
         Token t = tokenFactory_.create(_tokenFactorySourcePair, _type,
-                                       _text, _channel, _tokenStartCharIndex,
+                                       v, _channel, _tokenStartCharIndex,
                                        getCharIndex()-1, _tokenStartLine,
                                        _tokenStartCharPositionInLine);
         emit(t);
@@ -315,7 +317,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     {
         int cpos = getCharPositionInLine();
         int line = getLine();
-        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstantDefinition.EOF, null, TokenConstantDefinition.DEFAULT_CHANNEL,
+        Variant Null;
+        Token eof = tokenFactory_.create(_tokenFactorySourcePair, TokenConstantDefinition.EOF, Null, TokenConstantDefinition.DEFAULT_CHANNEL,
                                          _input.index(), _input.index()-1,
                                          line, cpos);
         emit(eof);
@@ -354,19 +357,21 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * Return the text matched so far for the current token or any
      * text override.
      */
-    public string getText()
+    public Variant getText()
     {
-        if (_text !is null) {
+        Variant Null;
+        if (_text !is Null) {
             return _text;
         }
-        return getInterpreter().getText(_input);
+        Variant v = getInterpreter().getText(_input);
+        return v;
     }
 
     /**
      * Set the complete text of this token; it wipes any previous
      * changes to the text.
      */
-    public void setText(string text)
+    public void setText(Variant text)
     {
         this._text = text;
     }

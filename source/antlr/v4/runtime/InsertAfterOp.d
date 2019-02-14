@@ -7,21 +7,22 @@
 module antlr.v4.runtime.InsertAfterOp;
 
 import antlr.v4.runtime.InsertBeforeOp;
+import std.variant;
 
 /**
  * Distinguish between insert after/before to do the "insert afters"
  *  first and then the "insert befores" at same index. Implementation
  *  of "insert after" is "insert before index+1".
  */
-class InsertAfterOp(T) : InsertBeforeOp!T
+class InsertAfterOp : InsertBeforeOp
 {
 
-    public this(size_t index, T text)
+    public this(size_t index, Variant text)
     {
-   		debug(TokenStreamRewriter) {
-			import std.stdio : writefln;
-			writefln("InsertAfterOp constructor: index = %s, text = %s", index, text);
-		}
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("InsertAfterOp constructor: index = %s, text = %s", index, text);
+        }
         super(index+1, text); // insert after is insert before index+1
     }
 

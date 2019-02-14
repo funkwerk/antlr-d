@@ -18,6 +18,7 @@ import antlr.v4.runtime.misc.Interval;
 import std.algorithm.comparison;
 import std.format;
 import std.conv;
+import std.variant;
 
 /**
  * Useful for rewriting out a buffered input token stream after doing some
@@ -95,7 +96,7 @@ import std.conv;
  * If you don't use named rewrite streams, a "default" stream is used as the
  * first example shows.</p>
  */
-class TokenStreamRewriter(T)
+class TokenStreamRewriter
 {
 
     public static immutable string DEFAULT_PROGRAM_NAME = "default";
@@ -109,11 +110,11 @@ class TokenStreamRewriter(T)
      */
     private static TokenStream tokens_;
 
-    protected RewriteOperation!T[][string] programs;
+    protected RewriteOperation[][string] programs;
 
     protected size_t[string] lastRewriteTokenIndexes;
 
-    private RewriteOperation!T[] rewriteOps;
+    private RewriteOperation[] rewriteOps;
 
     public this()
     {
@@ -137,7 +138,7 @@ class TokenStreamRewriter(T)
      */
     public void rollback(string programName, int instructionIndex)
     {
-        RewriteOperation!T[] ist = programs[programName];
+        RewriteOperation[] ist = programs[programName];
         if (programName in programs) {
             programs[programName] = programs[programName][MIN_TOKEN_INDEX .. instructionIndex];
         }
@@ -156,76 +157,76 @@ class TokenStreamRewriter(T)
         rollback(programName, MIN_TOKEN_INDEX);
     }
 
-    public void insertAfter(Token t, T text)
+    public void insertAfter(Token t, Variant text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, t, text);
     }
 
-    public void insertAfter(int index, T text)
+    public void insertAfter(int index, Variant text)
     {
         insertAfter(DEFAULT_PROGRAM_NAME, index, text);
     }
 
-    public void insertAfter(string programName, Token t, T text)
+    public void insertAfter(string programName, Token t, Variant text)
     {
         insertAfter(programName, t.getTokenIndex, text);
     }
 
-    public void insertAfter(string programName, int index, T text)
+    public void insertAfter(string programName, int index, Variant text)
     {
         // to insert after, just insert before next index (even if past end)
-        RewriteOperation!T op = new InsertAfterOp!T(index, text);
+        RewriteOperation op = new InsertAfterOp(index, text);
         op.instructionIndex = programs[programName].length;
         programs[programName] ~= op;
     }
 
-    public void insertBefore(Token t, T text)
+    public void insertBefore(Token t, Variant text)
     {
         insertBefore(DEFAULT_PROGRAM_NAME, t, text);
     }
 
-    public void insertBefore(size_t index, T text)
+    public void insertBefore(size_t index, Variant text)
     {
         insertBefore(DEFAULT_PROGRAM_NAME, index, text);
     }
 
-    public void insertBefore(string programName, Token t, T text)
+    public void insertBefore(string programName, Token t, Variant text)
     {
         insertBefore(programName, t.getTokenIndex(), text);
     }
 
-    public void insertBefore(string programName, size_t index, T text)
+    public void insertBefore(string programName, size_t index, Variant text)
     {
-        RewriteOperation!T op = new InsertBeforeOp!T(index, text);
+        RewriteOperation op = new InsertBeforeOp(index, text);
         op.instructionIndex = programs[programName].length;
         programs[programName] ~= op;
     }
 
-    public void replace(size_t index, T text)
+    public void replace(size_t index, Variant text)
     {
         replace(DEFAULT_PROGRAM_NAME, index, index, text);
     }
 
-    public void replace(size_t from, size_t to, T text)
+    public void replace(size_t from, size_t to, Variant text)
     {
         replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
-    public void replace(Token indexT, T text)
+    public void replace(Token indexT, Variant text)
     {
         replace(DEFAULT_PROGRAM_NAME, indexT, indexT, text);
     }
 
-    public void replace(Token from, Token to, T text)
+    public void replace(Token from, Token to, Variant text)
     {
         replace(DEFAULT_PROGRAM_NAME, from, to, text);
     }
 
-    public void replace(string programName, size_t from, size_t to, T text)
+    public void replace(string programName, size_t from, size_t to, Variant text)
     {
         debug(TokenStreamRewriter) {
             import std.stdio : writefln;
-            writefln("replace constructor: from = %s, to = %s, text = %s", from, to, text);
+            writefln("replace constructor1: from = %s, to = %s, text = %s", from, to, text);
         }
         if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
@@ -234,16 +235,21 @@ class TokenStreamRewriter(T)
                                          format("replace: range invalid: %s..%s(size=%s)",
                                                 from, to, tokens_.size));
         }
-        RewriteOperation!T op = new ReplaceOp!T(from, to, text);
+        RewriteOperation op = new ReplaceOp(from, to, text);
         op.instructionIndex = programs[programName].length;
         programs[programName] ~= op;
+
+        debug(TokenStreamRewriter) {
+            import std.stdio : writefln;
+            writefln("replace end: op = %s, programs = %s", op, programs);
+        }
     }
 
-    public void replace(string programName, Token from, Token to, T text)
+    public void replace(string programName, Token from, Token to, Variant text)
     {
         debug(TokenStreamRewriter) {
             import std.stdio : writefln;
-            writefln("replace constructor: from = %s, to = %s, text = %s", from, to, text);
+            writefln("replace constructor2: from = %s, to = %s, text = %s", from, to, text);
         }
         replace(programName,
                 from.getTokenIndex,
@@ -276,12 +282,14 @@ class TokenStreamRewriter(T)
 
     public void deleteT(string programName, size_t from, size_t to)
     {
-        replace(programName,from,to,null);
+        Variant Null;
+        replace(programName, from, to, Null);
     }
 
     public void deleteT(string programName, Token from, Token to)
     {
-        replace(programName,from,to,null);
+        Variant Null;
+        replace(programName, from, to, Null);
     }
 
     public size_t getLastRewriteTokenIndex()
@@ -304,7 +312,7 @@ class TokenStreamRewriter(T)
         lastRewriteTokenIndexes[programName] =  i;
     }
 
-    private RewriteOperation!T[] getProgram(string name)
+    private RewriteOperation[] getProgram(string name)
     {
         if (name in programs) {
             return programs[name];
@@ -314,9 +322,9 @@ class TokenStreamRewriter(T)
         }
     }
 
-    private RewriteOperation!T[] initializeProgram(string name)
+    private RewriteOperation[] initializeProgram(string name)
     {
-        RewriteOperation!T[] iso;
+        RewriteOperation[] iso;
         programs[name] = iso;
         return iso;
     }
@@ -325,7 +333,7 @@ class TokenStreamRewriter(T)
      * Return the text from the original tokens altered per the
      *  instructions given to this rewriter.
      */
-    public T getText()
+    public Variant getText()
     {
         return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens_.size()-1));
     }
@@ -334,7 +342,7 @@ class TokenStreamRewriter(T)
      * Return the text from the original tokens altered per the
      *  instructions given to this rewriter in programName.
      */
-    public T getText(string programName)
+    public Variant getText(string programName)
     {
         return getText(programName, Interval.of(0,tokens_.size-1));
     }
@@ -349,14 +357,14 @@ class TokenStreamRewriter(T)
      *  insertBefore on the first token, you would get that insertion.
      *  The same is true if you do an insertAfter the stop token.
      */
-    public T getText(Interval interval)
+    public Variant getText(Interval interval)
     {
         return getText(DEFAULT_PROGRAM_NAME, interval);
     }
 
-    public T getText(string programName, Interval interval)
+    public Variant getText(string programName, Interval interval)
     {
-        RewriteOperation!T[] rewrites;
+        RewriteOperation[] rewrites;
 
         if (programName in programs)
             rewrites = programs[programName];
@@ -371,37 +379,49 @@ class TokenStreamRewriter(T)
             start = 0;
 
         if (rewrites.length == 0) {
-            static if (is(T == string)) {
-                return tokens_.getText(interval); // no instructions to execute
-            }
-            else {
-                return getPositionText(tokens_, interval);
-            }
+            Variant r = tokens_.getText(interval);
+            return r; // no instructions to execute
         }
 
-        T buf;
+        Variant buf;
 
         // First, optimize instruction stream
-        RewriteOperation!T[size_t] indexToOp = reduceToSingleOperationPerIndex(rewrites);
+        RewriteOperation[size_t] indexToOp = reduceToSingleOperationPerIndex(rewrites);
 
         // Walk buffer, executing instructions and emitting tokens
         int i = start;
 
+        debug(TokenStreamRewriter) {
+                    import std.stdio : stderr, writefln;
+                    writefln("tokens_.size = %s", tokens_.size);
+                }
+
         while (i <= stop && i < tokens_.size) {
             Token t = tokens_.get(i);
-            RewriteOperation!T op;
+            debug(TokenStreamRewriter) {
+                    import std.stdio : stderr, writefln;
+                    writefln("i = %s, token = %s", i, t);
+                }
+            RewriteOperation op;
             if (i in indexToOp)
                 op = indexToOp[i];
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("indexToOp = %s", indexToOp);
+            }
             indexToOp.remove(i); // remove so any left have index size-1
+            debug(TokenStreamRewriter) {
+                import std.stdio : stderr, writefln;
+                writefln("indexToOp end = %s", indexToOp);
+            }
             if (!op) {
                 // no operation at that index, just dump token
                 if (t.getType != TokenConstantDefinition.EOF) {
-                    static if (is(T == string)) {
+                    Variant Null;
+                    if (buf is Null)
+                        buf = t.getText;
+                    else
                         buf ~= t.getText;
-                    }
-                    else {
-                        buf ~= getPositionText(t);
-                    }
                 }
                 i++; // move to next token
             }
@@ -416,11 +436,17 @@ class TokenStreamRewriter(T)
         if (stop == tokens_.size()-1) {
             // Scan any remaining operations after last token
             // should be included (they will be inserts).
-            foreach (RewriteOperation!T op; indexToOp.values()) {
+            foreach (RewriteOperation op; indexToOp.values()) {
                 if (op.index >= tokens_.size-1)
-                    buf ~= to!T(op.text);
+                    buf ~= op.text;
             }
         }
+
+
+        debug(TokenStreamRewriter) {
+                    import std.stdio : stderr, writefln;
+                    writefln("buf = %s", buf);
+                }
         return buf;
     }
 
@@ -473,7 +499,7 @@ class TokenStreamRewriter(T)
      *
      *  Return a map from token index to operation.
      */
-    protected RewriteOperation!T[size_t] reduceToSingleOperationPerIndex(RewriteOperation!T[] rewrites)
+    protected RewriteOperation[size_t] reduceToSingleOperationPerIndex(RewriteOperation[] rewrites)
     {
         debug(TokenStreamRewriter) {
             import std.stdio : writefln;
@@ -484,28 +510,29 @@ class TokenStreamRewriter(T)
 
         // WALK REPLACES
         for (size_t i = 0; i < rewrites.length; i++) {
-            RewriteOperation!T op = rewrites[i];
+            RewriteOperation op = rewrites[i];
             debug(TokenStreamRewriter) {
                 import std.stdio : writefln;
                 writefln("op0 = %s", op);
             }
             if (op is null) continue;
-            if (!(cast(ReplaceOp!T)op)) {
+            if (!(cast(ReplaceOp)op)) {
                 continue;
             }
             debug(TokenStreamRewriter) {
                 import std.stdio : writefln;
                 writefln("op = %s", op);
             }
-            ReplaceOp!T rop = cast(ReplaceOp!T)rewrites[i];
+            ReplaceOp rop = cast(ReplaceOp)rewrites[i];
             // Wipe prior inserts within range
-            InsertBeforeOp!T[] inserts = getKindOfOps!(InsertBeforeOp!T)(rewrites, i);
-            foreach (InsertBeforeOp!T iop; inserts) {
+            InsertBeforeOp[] inserts = getKindOfOps!(InsertBeforeOp)(rewrites, i);
+            foreach (InsertBeforeOp iop; inserts) {
                 if ( iop.index == rop.index ) {
                     // E.g., insert before 2, delete 2..2; update replace
                     // text to include insert before, kill insert
                     rewrites[iop.instructionIndex] = null;
-                    rop.text = iop.text ~ (rop.text !is null?rop.text:T.init);
+                    Variant Null;
+                    rop.text = iop.text ~ (rop.text !is Null?rop.text:Null);
                 }
                 else if (iop.index > rop.index && iop.index <= rop.lastIndex ) {
                     // delete insert as it's a no-op.
@@ -513,8 +540,8 @@ class TokenStreamRewriter(T)
                 }
             }
             // Drop any prior replaces contained within
-            ReplaceOp!T[] prevReplaces = getKindOfOps!(ReplaceOp!T)(rewrites, i);
-            foreach (ReplaceOp!T prevRop; prevReplaces) {
+            ReplaceOp[] prevReplaces = getKindOfOps!(ReplaceOp)(rewrites, i);
+            foreach (ReplaceOp prevRop; prevReplaces) {
                 if (prevRop.index>=rop.index && prevRop.lastIndex <= rop.lastIndex ) {
                     // delete replace as it's a no-op.
                     rewrites[prevRop.instructionIndex] = null;
@@ -552,23 +579,23 @@ class TokenStreamRewriter(T)
             writefln("WALK INSERTS");
         }
         for (int i = 0; i < rewrites.length; i++) {
-            RewriteOperation!T op = rewrites[i];
+            RewriteOperation op = rewrites[i];
             if (op is null) continue;
-            if (!(cast(InsertBeforeOp!T)op)) continue;
-            InsertBeforeOp!T iop = cast(InsertBeforeOp!T)rewrites[i];
+            if (!(cast(InsertBeforeOp)op)) continue;
+            InsertBeforeOp iop = cast(InsertBeforeOp)rewrites[i];
             // combine current insert with prior if any at same index
-            InsertBeforeOp!T[] prevInserts = getKindOfOps!(InsertBeforeOp!T)(rewrites, i);
-            foreach (InsertBeforeOp!T prevIop; prevInserts) {
+            InsertBeforeOp[] prevInserts = getKindOfOps!(InsertBeforeOp)(rewrites, i);
+            foreach (InsertBeforeOp prevIop; prevInserts) {
                 debug(TokenStreamRewriter) {
                     import std.stdio : stderr, writefln;
                     writefln("prevIop = %s", prevIop);
                 }
                 if (prevIop.index == iop.index) {
-                    if (cast(InsertAfterOp!T)prevIop) {
+                    if (cast(InsertAfterOp)prevIop) {
                         iop.text = catOpText(prevIop.text, iop.text);
                         rewrites[prevIop.instructionIndex] = null;
                     }
-                    else if (cast(InsertBeforeOp!T)prevIop) { // combine objects
+                    else if (cast(InsertBeforeOp)prevIop) { // combine objects
                         // convert to strings...we're in process of toString'ing
                         // whole token buffer so no lazy eval issue with any templates
                         iop.text = catOpText(iop.text, prevIop.text);
@@ -582,12 +609,12 @@ class TokenStreamRewriter(T)
                 import std.stdio : stderr, writefln;
                 writefln("look for replaces where iop.index is in range, i = %s", i);
             }
-            ReplaceOp!T[] prevReplaces = getKindOfOps!(ReplaceOp!T)(rewrites, i);
+            ReplaceOp[] prevReplaces = getKindOfOps!(ReplaceOp)(rewrites, i);
             debug(TokenStreamRewriter) {
                 import std.stdio : stderr, writefln;
                 writefln("prevReplaces = %s", prevReplaces);
             }
-            foreach (ReplaceOp!T rop; prevReplaces) {
+            foreach (ReplaceOp rop; prevReplaces) {
                 if ( iop.index == rop.index ) {
                     rop.text = catOpText(iop.text, rop.text);
                     rewrites[i] = null;	// delete current insert
@@ -607,10 +634,10 @@ class TokenStreamRewriter(T)
             import std.stdio : stderr, writefln;
             writefln("rewrites after = %s", rewrites);
         }
-        RewriteOperation!T[size_t] m;
+        RewriteOperation[size_t] m;
         for (int i = 0; i < rewrites.length; i++) {
-            RewriteOperation!T op = rewrites[i];
-            if (op is null) continue; // ignore deleted ops
+            RewriteOperation op = rewrites[i];
+            if (!op) continue; // ignore deleted ops
             if (op.index in m) {
                 throw new Error("should only be one op per index");
             }
@@ -619,38 +646,27 @@ class TokenStreamRewriter(T)
         return m;
     }
 
-    protected T catOpText(T a, T b)
+    protected Variant catOpText(Variant a, Variant b)
     {
-        if (a && b)
+        Variant Null;
+        if (a !is Null && b !is Null)
             return a ~ b;
-        if (a)
+        if (a !is Null)
             return a;
         return b;
     }
 
-    protected auto getKindOfOps(U)(RewriteOperation!T[] rewrites, size_t before)
+    protected auto getKindOfOps(U)(RewriteOperation[] rewrites, size_t before)
     {
         U[] ops;
         for (int i=0; i<before && i<rewrites.length; i++) {
-            RewriteOperation!T op = rewrites[i];
+            RewriteOperation op = rewrites[i];
             if (op is null) continue; // ignore deleted
             if (U.classinfo == op.classinfo) {
                 ops ~= cast(U)(op);
             }
         }
         return ops;
-    }
-
-    protected T getPositionText(Token token)
-    {
-        T buf;
-        return buf;
-    }
-
-    protected T getPositionText(TokenStream tokens, Interval interval)
-    {
-        T buf;
-        return buf;
     }
 
     public static TokenStream tokens()

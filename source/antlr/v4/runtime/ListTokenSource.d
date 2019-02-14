@@ -1,16 +1,17 @@
 module antlr.v4.runtime.ListTokenSource;
 
-import std.conv;
-import std.string;
-import std.algorithm;
-import std.typecons;
-import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.CharStream;
+import antlr.v4.runtime.CommonToken;
+import antlr.v4.runtime.CommonTokenFactory;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenFactory;
-import antlr.v4.runtime.CharStream;
-import antlr.v4.runtime.CommonTokenFactory;
-import antlr.v4.runtime.CommonToken;
+import antlr.v4.runtime.TokenSource;
+import std.algorithm;
+import std.conv;
+import std.string;
+import std.typecons;
+import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -114,9 +115,10 @@ class ListTokenSource : TokenSource
 			// have to calculate the result from the line/column of the previous
 			// token, along with the text of the token.
 			Token lastToken = tokens[$ - 1];
-			string tokenText = lastToken.getText();
-			if (tokenText !is null) {
-				auto lastNewLine = tokenText.lastIndexOf('\n');
+			auto tokenText = lastToken.getText();
+                        Variant Null;
+			if (tokenText !is Null) {
+                            auto lastNewLine = (to!string(tokenText)).lastIndexOf('\n');
 				if (lastNewLine >= 0) {
                                     return to!int((tokenText.length) - lastNewLine - 1);
 				}
@@ -144,7 +146,8 @@ class ListTokenSource : TokenSource
 
                 int stop = max(-1, start - 1);
                 TokenFactorySourcePair tfsp = tuple(this, getInputStream());
-                eofToken = _factory.create(tfsp, TokenConstantDefinition.EOF, "EOF", TokenConstantDefinition.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
+                Variant v = "EOF";
+                eofToken = _factory.create(tfsp, TokenConstantDefinition.EOF, v, TokenConstantDefinition.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
             }
             return eofToken;
         }
@@ -172,7 +175,7 @@ class ListTokenSource : TokenSource
             Token lastToken = tokens[tokens.length - 1];
             int line = lastToken.getLine();
 
-            string tokenText = lastToken.getText();
+            string tokenText = to!string(lastToken.getText);
             if (tokenText !is null) {
                 foreach (c; tokenText) {
                     if (c == '\n') {

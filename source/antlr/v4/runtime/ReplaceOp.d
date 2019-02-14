@@ -9,17 +9,18 @@ module antlr.v4.runtime.ReplaceOp;
 import antlr.v4.runtime.RewriteOperation;
 import std.conv;
 import std.format;
+import std.variant;
 
 /**
  * I'm going to try replacing range from x..y with (y-x)+1 ReplaceOp
  *  instructions.
  */
-class ReplaceOp(T) : RewriteOperation!T
+class ReplaceOp : RewriteOperation
 {
 
     public size_t lastIndex;
 
-    public this(size_t from, size_t to, T text)
+    public this(size_t from, size_t to, Variant text)
     {
         super(from, text);
         lastIndex = to;
@@ -29,9 +30,10 @@ class ReplaceOp(T) : RewriteOperation!T
      * @uml
      * @override
      */
-    public override size_t execute(ref T buf)
+    public override size_t execute(ref Variant buf)
     {
-        if (text) {
+        Variant Null;
+        if (text !is Null) {
             buf ~= text;
         }
         return lastIndex+1;
@@ -43,7 +45,8 @@ class ReplaceOp(T) : RewriteOperation!T
      */
     public override string toString()
     {
-        if (text is null)
+        Variant Null;
+        if (text is Null)
             {
                 return format("<DeleteOp@%s..%s>", tokens.get(to!int(index)),
                               tokens.get(to!int(lastIndex)));

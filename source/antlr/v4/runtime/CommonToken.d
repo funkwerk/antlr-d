@@ -16,6 +16,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.misc.Interval;
+import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -71,7 +72,7 @@ class CommonToken : WritableToken
      *
      *  @see #getText()
      */
-    protected string text;
+    protected Variant text;
 
     /**
      * This is the backing field for {@link #getTokenIndex} and
@@ -122,7 +123,7 @@ class CommonToken : WritableToken
      *  @param type The token type.
      *  @param text The text of the token.
      */
-    public this(int type, string text)
+    public this(int type, Variant text)
     {
 	this.type = type;
         this.channel = TokenConstantDefinition.DEFAULT_CHANNEL;
@@ -180,20 +181,23 @@ class CommonToken : WritableToken
      * @uml
      * @override
      */
-    public override string getText()
+    public override Variant getText()
     {
-	if (text) {
+        Variant Null;
+	if (text !is Null) {
             return text;
         }
 
         CharStream input = getInputStream();
-        if (input is null) return null;
+        if (input is null) return Null;
         int n = input.size();
         if ( start<n && stop<n) {
-            return input.getText(Interval.of(start,stop));
+            Variant v = input.getText(Interval.of(start,stop));
+            return v;
         }
         else {
-            return "<EOF>";
+            Variant v = "<EOF>";
+            return v;
         }
     }
 
@@ -208,7 +212,7 @@ class CommonToken : WritableToken
      * should be obtained from the input along with the start and stop indexes
      * of the token.
      */
-    public override void setText(string text)
+    public override void setText(Variant text)
     {
         this.text = text;
     }
@@ -337,7 +341,7 @@ class CommonToken : WritableToken
         if (channel > 0) {
             channelStr=",channel=" ~ to!string(channel);
         }
-        string txt = getText;
+        string txt = to!string(getText);
         if (txt) {
             txt = txt.replace("\n","\\n");
             txt = txt.replace("\r","\\r");

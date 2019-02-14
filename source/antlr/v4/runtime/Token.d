@@ -9,6 +9,7 @@ module antlr.v4.runtime.Token;
 import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
+import std.variant;
 
 /**
  * A token has properties: text, type, line, character position in the line
@@ -21,7 +22,7 @@ interface Token
     /**
      * Get the text of the token.
      */
-    public string getText();
+    public Variant getText();
 
     /**
      * Get the token type of the token

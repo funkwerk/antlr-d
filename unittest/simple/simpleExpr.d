@@ -7,6 +7,7 @@ import ExprBaseListener;
 import ExprLexer;
 import ExprParser;
 import std.stdio;
+import std.conv;
 import unit_threaded;
 
 class Test
@@ -65,7 +66,7 @@ class Test
         progContext.children[1].classinfo.should.equal(TerminalNode.classinfo);
         progContext.children[2].classinfo.should.equal(RuleNode.classinfo);
         progContext.children[3].classinfo.should.equal(TerminalNode.classinfo);
-        (cast(RuleContext) progContext.getChild(0)).getText.should.equal("100");
+        to!string((cast(RuleContext) progContext.getChild(0)).getText).should.equal("100");
 
         auto baseLis = new ExprListener;
         auto walker = new ParseTreeWalker;

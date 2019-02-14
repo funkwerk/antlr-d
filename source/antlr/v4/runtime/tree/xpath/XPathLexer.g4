@@ -29,8 +29,10 @@ BANG	 : '!' ;
 
 ID       : NameStartChar NameChar*
                {
-               import std.ascii;
-               string text = getText();
+               import std.ascii : isUpper;
+               import std.conv : to;
+
+               string text = to!string(getText);
 	       if (isUpper(text[0])) setType(TOKEN_REF);
 	       else setType(RULE_REF);
 	       }

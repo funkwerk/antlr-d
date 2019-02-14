@@ -1,6 +1,7 @@
 module antlr.v4.runtime.WritableToken;
 
 import antlr.v4.runtime.Token;
+import std.variant;
 
 /**
  * Add write functions for Token attributes
@@ -8,7 +9,7 @@ import antlr.v4.runtime.Token;
 interface WritableToken : Token
 {
 
-    public void setText(string text);
+    public void setText(Variant text);
 
     public void setType(int ttype);
 

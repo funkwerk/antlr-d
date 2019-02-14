@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.CommonTokenFactory;
 
 import std.typecons;
+import std.variant;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CharStream;
@@ -74,22 +81,24 @@ class CommonTokenFactory : TokenFactory!CommonToken
         this(false);
     }
 
-    public CommonToken create(TokenFactorySourcePair source, int type, string text, int channel,
+    public CommonToken create(TokenFactorySourcePair source, int type, Variant text, int channel,
         int start, int stop, int line, int charPositionInLine)
     {
         CommonToken t = new CommonToken(source, type, channel, start, stop);
         t.setLine(line);
         t.setCharPositionInLine(charPositionInLine);
-        if (text !is null) {
+        Variant Null;
+        if (text !is Null) {
             t.setText(text);
         }
         else if (copyText && source.b !is null ) {
-            t.setText(source.b.getText(Interval.of(start,stop)));
+            Variant v = source.b.getText(Interval.of(start,stop));
+            t.setText(v);
         }
         return t;
     }
 
-    public CommonToken create(int type, string text)
+    public CommonToken create(int type, Variant text)
     {
         return new CommonToken(type, text);
     }

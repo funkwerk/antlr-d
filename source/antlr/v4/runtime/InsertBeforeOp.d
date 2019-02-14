@@ -9,14 +9,15 @@ module antlr.v4.runtime.InsertBeforeOp;
 import antlr.v4.runtime.RewriteOperation;
 import antlr.v4.runtime.TokenConstantDefinition;
 import std.conv;
+import std.variant;
 
 /**
  * Rewriter operation
  */
-class InsertBeforeOp(T) : RewriteOperation!T
+class InsertBeforeOp : RewriteOperation
 {
 
-    public this(size_t index, T text)
+    public this(size_t index, Variant text)
     {
         super(index, text);
     }
@@ -25,15 +26,12 @@ class InsertBeforeOp(T) : RewriteOperation!T
      * @uml
      * @override
      */
-    public override size_t execute(ref T buf)
+    public override size_t execute(ref Variant buf)
     {
-        buf ~= to!T(text);
+        buf ~= text;
         if (tokens.get(to!int(index)).getType != TokenConstantDefinition.EOF)
             {
-                static if (is(T == string))
-                    buf ~= tokens.get(to!int(index)).getText;
-                else
-                    buf ~= getPositionText(tokens.get(to!int(index)));
+                buf ~= tokens.get(to!int(index)).getText;
             }
         return index+1;
     }

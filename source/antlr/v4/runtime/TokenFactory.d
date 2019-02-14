@@ -9,6 +9,7 @@ module antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.TokenSource;
 import std.typecons;
+import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
@@ -26,12 +27,12 @@ interface TokenFactory(Symbol)
      * error handling strategy. If text!=null, than the start and stop positions
      * are wiped to -1 in the text override is set in the CommonToken.
      */
-    public Symbol create(TokenFactorySourcePair source, int type, string text, int channel,
+    public Symbol create(TokenFactorySourcePair source, int type, Variant text, int channel,
         int start, int stop, int line, int charPositionInLine);
 
     /**
      * Generically useful
      */
-    public Symbol create(int type, string text);
+    public Symbol create(int type, Variant text);
 
 }

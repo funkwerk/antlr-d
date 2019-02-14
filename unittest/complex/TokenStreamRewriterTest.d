@@ -20,15 +20,16 @@ version(unittest) {
     import std.conv : to;
     import std.stdio : File, writefln;
     import std.file;
+    import std.variant;
     import unit_threaded;
 
     public class InsertTestListenerReplace : RuleTranslatorBaseListener {
 
-        TokenStreamRewriter!string rewriter;
+        TokenStreamRewriter rewriter;
 
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter!string(tokens);
+            rewriter = new TokenStreamRewriter(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>
@@ -46,17 +47,18 @@ version(unittest) {
                 import std.stdio : writefln;
                 writefln("exitStmt ctx.start = %s", ctx.start);
             }
-            rewriter.replace(ctx.start, ctx.stop, "gamma");
+            Variant parameter = "gamma";
+            rewriter.replace(ctx.start, ctx.stop, parameter);
         }
     }
 
     public class InsertTestListenerDelete : RuleTranslatorBaseListener {
 
-        TokenStreamRewriter!string rewriter;
+        TokenStreamRewriter rewriter;
 
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter!string(tokens);
+            rewriter = new TokenStreamRewriter(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>
@@ -82,11 +84,11 @@ version(unittest) {
     public class InsertTestListenerResult : RuleTranslatorBaseListener {
 
         struct Result { ushort indent; string text;}
-        TokenStreamRewriter!(Result[]) rewriter;
+        TokenStreamRewriter rewriter;
 
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter!(Result[])(tokens);
+            rewriter = new TokenStreamRewriter(tokens);
         }
 
         /**
@@ -109,11 +111,11 @@ version(unittest) {
 
     public class InsertTestListener : RuleTranslatorBaseListener {
 
-        TokenStreamRewriter!string rewriter;
+        TokenStreamRewriter rewriter;
 
         this(TokenStream tokens)
         {
-            rewriter = new TokenStreamRewriter!string(tokens);
+            rewriter = new TokenStreamRewriter(tokens);
         }
         /**
          * <p>The default implementation does nothing.</p>
@@ -127,9 +129,10 @@ version(unittest) {
          * <p>The default implementation does nothing.</p>
          */
         override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            auto str = "alpha";
-            rewriter.insertAfter(ctx.start, "beta");
-            rewriter.insertBefore(ctx.start, str);
+            Variant str_a = "alpha";
+            Variant str_b = "beta";
+            rewriter.insertBefore(ctx.start, str_a);
+            rewriter.insertAfter(ctx.start, str_b);
         }
     }
 
@@ -171,10 +174,10 @@ gamma`;
             auto extractor = new InsertTestListenerReplace(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;
+            auto str = extractor.rewriter.getText.get!(string);
             str.should.equal(expected);
             extractor.rewriter.deleteProgram;
-            str = extractor.rewriter.getText;
+            str = extractor.rewriter.getText.get!(string);
             expected =
                 `
 ruleDelayasDELAYde
@@ -222,7 +225,7 @@ alpha"Information zu"beta
             auto extractor = new InsertTestListener(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;
+            auto str = extractor.rewriter.getText.get!(string);
             str.should.equal(expected);
         }
     }
@@ -263,7 +266,7 @@ basede.Phrases
             auto extractor = new InsertTestListenerDelete(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText;
+            auto str = extractor.rewriter.getText.get!(string);
             str.should.equal(expected);
         }
 }

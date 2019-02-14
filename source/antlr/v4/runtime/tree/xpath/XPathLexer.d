@@ -1,4 +1,4 @@
-
+// Generated from source/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.7.1
 module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
@@ -24,8 +24,7 @@ public class XPathLexer : Lexer {
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
     public static immutable int
-    TOKEN_REF=1, RULE_REF=2, ANYWHERE=3, ROOT=4, WILDCARD=5, BANG=6, ID=7,
-        STRING=8;
+    TOKEN_REF=1,RULE_REF=2,ANYWHERE=3,ROOT=4,WILDCARD=5,BANG=6,ID=7,STRING=8;
     public static string[] channelNames = [
                                            "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
                                            ];
@@ -34,16 +33,14 @@ public class XPathLexer : Lexer {
                                         ];
 
     public static string[] ruleNames = [
-                                        "ANYWHERE", "ROOT", "WILDCARD", "BANG", "ID", "NameChar", "NameStartChar",
-                                        "STRING"
+                                        "ANYWHERE","ROOT","WILDCARD","BANG","ID","NameChar","NameStartChar","STRING"
                                         ];
 
     private static const string[] _LITERAL_NAMES = [
-                                                    null, null, null, "'//'", "'/'", "'*'", "'!'"
+                                                    null,null,null,"'//'","'/'","'*'","'!'"
                                                     ];
     private static const string[] _SYMBOLIC_NAMES = [
-                                                     null, "TOKEN_REF", "RULE_REF", "ANYWHERE", "ROOT", "WILDCARD", "BANG",
-                                                     "ID", "STRING"
+                                                     null,"TOKEN_REF","RULE_REF","ANYWHERE","ROOT","WILDCARD","BANG","ID","STRING"
                                                      ];
     public static Vocabulary VOCABULARY;
 
@@ -105,7 +102,7 @@ public class XPathLexer : Lexer {
         case 4:
             ID_action(cast(InterfaceRuleContext)_localctx, actionIndex);
             break;
-        default: assert(0);
+        default: {}
         }
     }
     private void ID_action(InterfaceRuleContext _localctx, int actionIndex) {
@@ -114,12 +111,13 @@ public class XPathLexer : Lexer {
 
             import std.ascii : isUpper;
             import std.conv : to;
+
             string text = to!string(getText);
             if (isUpper(text[0])) setType(TOKEN_REF);
             else setType(RULE_REF);
 
             break;
-        default: assert(0);
+        default: {}
         }
     }
 

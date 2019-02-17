@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.ListTokenSource;
 
 import antlr.v4.runtime.CharStream;
@@ -16,7 +22,6 @@ import std.variant;
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 /**
- * @uml
  * Provides an implementation of {@link TokenSource} as a wrapper around a list
  * of {@link Token} objects.
  *
@@ -28,13 +33,11 @@ class ListTokenSource : TokenSource
 {
 
     /**
-     * @uml
      * The wrapped collection of {@link Token} objects to return.
      */
     public Token[] tokens;
 
     /**
-     * @uml
      * The name of the input source. If this value is {@code null}, a call to
      * {@link #getSourceName} should return the source name used to create the
      * the next token in {@link #tokens} (or the previous token if the end of
@@ -43,7 +46,6 @@ class ListTokenSource : TokenSource
     private string sourceName;
 
     /**
-     * @uml
      * The index into {@link #tokens} of token to return by the next call to
      * {@link #nextToken}. The end of the input is indicated by this value
      * being greater than or equal to the number of items in {@link #tokens}.
@@ -51,20 +53,17 @@ class ListTokenSource : TokenSource
     protected int i;
 
     /**
-     * @uml
      * This field caches the EOF token for the token source.
      */
     protected Token eofToken;
 
     /**
-     * @uml
      * This is the backing field for {@link #getTokenFactory} and
      *  {@link setTokenFactory}.
      */
     public TokenFactory!CommonToken _factory;
 
     /**
-     * @uml
      * Constructs a new {@link ListTokenSource} instance from the specified
      * collection of {@link Token} objects.
      *
@@ -78,7 +77,6 @@ class ListTokenSource : TokenSource
     }
 
     /**
-     * @uml
      * Constructs a new {@link ListTokenSource} instance from the specified
      * collection of {@link Token} objects and source name.
      *

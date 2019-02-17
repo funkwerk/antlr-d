@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  Copyright (c) 2012 Egbert Voigt
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.ANTLRInputStream;
@@ -56,25 +31,21 @@ class ANTLRInputStream : CharStream
     public static int INITIAL_BUFFER_SIZE = 1024;;
 
     /**
-     * @uml
      * The data being scanned
      */
     protected char[] data;
 
     /**
-     * @uml
      * How many characters are actually in the buffer
      */
     protected int n;
 
     /**
-     * @uml
      * 0..n-1 index into string of next char
      */
     protected int p = 0;
 
     /**
-     * @uml
      * What is name or source of this char stream?
      */
     public string name;
@@ -84,7 +55,6 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * @uml
      * Copy data in string to a local char array
      */
     public this(string input)
@@ -94,7 +64,6 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * @uml
      * This is the preferred constructor for strings as no data is copied
      */
     public this(char[] data, int numberOfActualCharsInArray)
@@ -112,7 +81,8 @@ class ANTLRInputStream : CharStream
     {
         debug(ANTLRInput)
             writefln("load %1$s in chunks of %2$s", size, readChunkSize);
-        data = to!(char[])(r.name.readText);
+        name = r.name;
+        data = to!(char[])(name.readText);
         // set the actual size of the data available;
         n = to!int(data.length);
         debug(ANTLRInput)
@@ -120,7 +90,6 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * @uml
      * Reset the stream so that it's in the same state it was
      * when the object was created *except* the data array is not
      * touched.
@@ -200,8 +169,8 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * @uml
      * mark/release do nothing; we have entire buffer
+     * @uml
      * @override
      */
     public override int mark()
@@ -218,9 +187,9 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * @uml
      * consume() ahead until p==index; can't just set p=index as we must
      * update line and charPositionInLine. If we seek backwards, just set p
+     * @uml
      * @override
      */
     public override void seek(int index)
@@ -259,7 +228,7 @@ class ANTLRInputStream : CharStream
      */
     public override string getSourceName()
     {
-        if (name is null || name.length == 0) {
+        if (!name) {
             return IntStreamConstant.UNKNOWN_SOURCE_NAME;
         }
         return name;

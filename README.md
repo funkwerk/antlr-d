@@ -13,6 +13,7 @@ version 4.7.1](http://www.antlr.org/) yet.
 #### ANTLR tool
 - java 1.8
 - maven
+- 7-Zip (Only on windows)
 ## Example
 Put the
 

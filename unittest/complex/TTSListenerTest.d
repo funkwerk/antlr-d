@@ -41,7 +41,7 @@ version(unittest) {
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             cts.getNumberOfOnChannelTokens.should.equal(405);
-            auto f = File("unittest/complex/tokens.cmp", "r");
+            auto f = File("unittest/complex/tokens.cmp");
             auto charRange = f.byLine();
             string s;
             int i;
@@ -49,6 +49,7 @@ version(unittest) {
                 s = cts.get(i++).to!string;
                 t.should.equal(s);
             }
+            f.close;
         }
 
         @Tags("Parser")
@@ -66,6 +67,7 @@ version(unittest) {
                 s = cts.get(i++).to!string;
                 t.should.equal(s);
             }
+            f.close;
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
             auto rootContext = parser.file_input;
@@ -87,6 +89,7 @@ version(unittest) {
                 s = cts.get(i++).to!string;
                 t.should.equal(s);
             }
+            f.close;
             auto parser = new RuleTranslatorParser(cts);
             parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
             // Specify entry point

@@ -1,21 +1,21 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.CommonToken;
 
-import std.conv;
-import std.array;
-import std.typecons;
-import std.container : DList;
-import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
+import std.array;
+import std.container : DList;
+import std.conv;
+import std.typecons;
 import std.variant;
 
 alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
@@ -83,14 +83,20 @@ class CommonToken : WritableToken
     /**
      * This is the backing field for {@link #getStartIndex} and
      * {@link #setStartIndex}.
+     * @uml
+     * @read
+     * @write
      */
-    protected int start;
+    protected int startIndex_;
 
     /**
      * This is the backing field for {@link #getStopIndex} and
      * {@link #setStopIndex}.
+     * @uml
+     * @read
+     * @write
      */
-    protected int stop;
+    protected int stopIndex_;
 
     /**
      * Constructs a new {@link CommonToken} with the specified token type.
@@ -108,11 +114,11 @@ class CommonToken : WritableToken
 	this.source = source;
         this.type = type;
         this.channel = channel;
-        this.start = start;
-        this.stop = stop;
-        if (source.a !is null) {
-            this.line = source.a.getLine();
-            this.charPositionInLine = source.a.getCharPositionInLine();
+        this.startIndex_ = start;
+        this.stopIndex_ = stop;
+        if (source.a) {
+            this.line = source.a.getLine;
+            this.charPositionInLine = source.a.getCharPositionInLine;
         }
     }
 
@@ -146,20 +152,20 @@ class CommonToken : WritableToken
      */
     public this(Token oldToken)
     {
-	type = oldToken.getType();
-        line = oldToken.getLine();
-        index = oldToken.getTokenIndex();
-        charPositionInLine = oldToken.getCharPositionInLine();
-        channel = oldToken.getChannel();
-        start = oldToken.getStartIndex();
-        stop = oldToken.getStopIndex();
+	type = oldToken.getType;
+        line = oldToken.getLine;
+        index = oldToken.getTokenIndex;
+        charPositionInLine = oldToken.getCharPositionInLine;
+        channel = oldToken.getChannel;
+        startIndex_ = oldToken.startIndex;
+        stopIndex_ = oldToken.stopIndex;
 
         if (oldToken.classinfo == CommonToken.classinfo) {
             text = (cast(CommonToken)oldToken).text;
             source = (cast(CommonToken)oldToken).source;
         }
         else {
-            text = oldToken.getText();
+            text = oldToken.getText;
             TokenFactorySourcePair sourceNew = tuple(
                                                      oldToken.getTokenSource,
                                                      oldToken.getInputStream);
@@ -188,11 +194,11 @@ class CommonToken : WritableToken
             return text;
         }
 
-        CharStream input = getInputStream();
+        CharStream input = getInputStream;
         if (input is null) return Null;
-        int n = input.size();
-        if ( start<n && stop<n) {
-            Variant v = input.getText(Interval.of(start,stop));
+        int n = input.size;
+        if (startIndex_ < n && stopIndex_ < n) {
+            Variant v = input.getText(Interval.of(startIndex_, stopIndex_));
             return v;
         }
         else {
@@ -202,8 +208,6 @@ class CommonToken : WritableToken
     }
 
     /**
-     * @uml
-     * @override
      * Explicitly set the text for this token. If {code text} is not
      * {@code null}, then {@link #getText} will return this value rather than
      * extracting the text from the input.
@@ -211,6 +215,8 @@ class CommonToken : WritableToken
      *  @param text The explicit text of the token, or {@code null} if the text
      * should be obtained from the input along with the start and stop indexes
      * of the token.
+     * @uml
+     * @override
      */
     public override void setText(Variant text)
     {
@@ -271,34 +277,6 @@ class CommonToken : WritableToken
      * @uml
      * @override
      */
-    public override int getStartIndex()
-    {
-        return start;
-    }
-
-    public void setStartIndex(int start)
-    {
-        this.start = start;
-    }
-
-    /**
-     * @uml
-     * @override
-     */
-    public override int getStopIndex()
-    {
-        return stop;
-    }
-
-    public void setStopIndex(int stop)
-    {
-        this.stop = stop;
-    }
-
-    /**
-     * @uml
-     * @override
-     */
     public override int getTokenIndex()
     {
         return index;
@@ -350,10 +328,30 @@ class CommonToken : WritableToken
         else {
             txt = "<no text>";
         }
-        return "[@" ~ to!string(getTokenIndex) ~ "," ~ to!string(start) ~ ":"
-            ~ to!string(stop) ~ "='" ~ txt ~ "',<" ~ to!string(type)
+        return "[@" ~ to!string(getTokenIndex) ~ "," ~ to!string(startIndex_) ~ ":"
+            ~ to!string(stopIndex_) ~ "='" ~ txt ~ "',<" ~ to!string(type)
             ~ ">" ~ channelStr ~ "," ~ to!string(line) ~ ":"
             ~ to!string(getCharPositionInLine) ~ "]";
+    }
+
+    public final int startIndex()
+    {
+        return this.startIndex_;
+    }
+
+    public final void startIndex(int startIndex)
+    {
+        this.startIndex_ = startIndex;
+    }
+
+    public final int stopIndex()
+    {
+        return this.stopIndex_;
+    }
+
+    public final void stopIndex(int stopIndex)
+    {
+        this.stopIndex_ = stopIndex;
     }
 
 }

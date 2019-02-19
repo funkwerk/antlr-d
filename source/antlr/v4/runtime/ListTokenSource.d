@@ -122,7 +122,7 @@ class ListTokenSource : TokenSource
 				}
 			}
 
-			return lastToken.getCharPositionInLine() + lastToken.getStopIndex() - lastToken.getStartIndex() + 1;
+			return lastToken.getCharPositionInLine() + lastToken.stopIndex - lastToken.startIndex + 1;
 		}
 
 		// only reach this if tokens is empty, meaning EOF occurs at the first
@@ -136,7 +136,7 @@ class ListTokenSource : TokenSource
             if (eofToken is null) {
                 int start = -1;
                 if (tokens.length > 0) {
-                    int previousStop = tokens[$ - 1].getStopIndex();
+                    int previousStop = tokens[$ - 1].stopIndex;
                     if (previousStop != -1) {
                         start = previousStop + 1;
                     }

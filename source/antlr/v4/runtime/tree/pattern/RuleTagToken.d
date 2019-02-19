@@ -173,7 +173,7 @@ class RuleTagToken : Token
      * @uml
      * @override
      */
-    public override int getStartIndex()
+    public override int startIndex()
     {
         return -1;
     }
@@ -182,7 +182,7 @@ class RuleTagToken : Token
      * @uml
      * @override
      */
-    public override int getStopIndex()
+    public override int stopIndex()
     {
         return -1;
     }

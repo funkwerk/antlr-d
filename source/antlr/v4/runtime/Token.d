@@ -58,17 +58,9 @@ interface Token
      */
     public int getTokenIndex();
 
-    /**
-     * The starting character index of the token
-     * This method is optional; return -1 if not implemented.
-     */
-    public int getStartIndex();
+    public int startIndex();
 
-    /**
-     * The last character index of the token.
-     * This method is optional; return -1 if not implemented.
-     */
-    public int getStopIndex();
+    public int stopIndex();
 
     /**
      * Gets the {@link TokenSource} which created this token.

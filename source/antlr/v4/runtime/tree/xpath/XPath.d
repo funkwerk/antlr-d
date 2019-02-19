@@ -198,7 +198,7 @@ class XPath
             if (ttype == TokenConstantDefinition.INVALID_TYPE ) {
                 throw new IllegalArgumentException(word~
                                                    " at index "~
-                                                   to!string(wordToken.getStartIndex) ~
+                                                   to!string(wordToken.startIndex) ~
                                                    " isn't a valid token name");
             }
             return anywhere ?
@@ -208,7 +208,7 @@ class XPath
             if ( ruleIndex==-1 ) {
                 throw new IllegalArgumentException(word ~
                                                    " at index "~
-                                                   to!string(wordToken.getStartIndex) ~
+                                                   to!string(wordToken.startIndex) ~
                                                    " isn't a valid rule name");
             }
             return anywhere ?

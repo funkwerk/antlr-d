@@ -13,7 +13,7 @@ ifeq ($(UNAME_M),i686)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w
-    EXPORT_INCLUDE = $(EXPORT)/include/dmd
+    EXPORT_INCLUDE = $(EXPORT)/include/d
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
 ifeq ($(UNAME_M),armv7l)

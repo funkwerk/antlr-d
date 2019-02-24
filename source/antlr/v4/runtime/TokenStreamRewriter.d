@@ -335,7 +335,8 @@ class TokenStreamRewriter
      */
     public Variant getText()
     {
-        return getText(DEFAULT_PROGRAM_NAME, Interval.of(0,tokens_.size()-1));
+		auto i = Interval.of(0, tokens_.size - 1);
+        return getText(DEFAULT_PROGRAM_NAME, i);
     }
 
     /**
@@ -344,7 +345,7 @@ class TokenStreamRewriter
      */
     public Variant getText(string programName)
     {
-        return getText(programName, Interval.of(0,tokens_.size-1));
+        return getText(programName, Interval.of(0, tokens_.size - 1));
     }
 
     /**
@@ -380,6 +381,8 @@ class TokenStreamRewriter
 
         if (rewrites.length == 0) {
             Variant r = tokens_.getText(interval);
+            import std.stdio;
+            writefln("variant r = %s, type = %s", r, r.type);
             return r; // no instructions to execute
         }
 

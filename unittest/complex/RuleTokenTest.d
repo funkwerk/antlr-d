@@ -84,13 +84,7 @@ class ResultToken : CommonToken {
             import std.stdio;
             writefln("\ngetText: res = %s, type = %s", res, type);
         }
-        Variant r;
-        if (type != RuleTranslatorParser.DEDENT)
-			r = res;
-        debug(TokenStreamRewriter) {
-            import std.stdio;
-            writefln("\ngetText: r = %s", r);
-        }
+        Variant r = res;
         return r;
     }
 }

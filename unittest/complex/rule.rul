@@ -1,0 +1,9 @@
+# for automatic announcements
+# Version 2018-02-21
+
+rule Delay as DELAY de
+base de.Phrases
+
+if a:
+    "Information" "zu"
+    "Zug" ZugNr "nach" "Berlin"

@@ -70,24 +70,21 @@ tokens {
 
     private Token createDedent() {
         CommonToken dedent = commonToken(RuleTranslatorParser.DEDENT, "");
-        dedent.setLine(this.lastToken.getLine());
+        dedent.setLine(this.lastToken.getLine);
         return dedent;
     }
 
     private CommonToken commonToken(int type, string text) {
-        int stop = this.getCharIndex() - 1;
+        int stop = this.getCharIndex - 1;
         int start = to!int(text.length == 0 ? stop : stop - text.length + 1);
         int line = getLine;
-        int charPositionInLine = getCharPositionInLine;
         if (lastToken) {
-            charPositionInLine = lastToken.getCharPositionInLine;
-            line = lastToken.getLine;
+            line = lastToken.getLine +1;
         }
         Variant v = text;
         return tokenFactory_.create(this._tokenFactorySourcePair, type, v,
                                     DEFAULT_TOKEN_CHANNEL, start, stop,
-                                    line,
-                                    charPositionInLine
+                                    line, 0
                                     );
     }
 

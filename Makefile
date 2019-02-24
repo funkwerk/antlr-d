@@ -10,7 +10,7 @@ ifeq ($(UNAME_M),x86_64)
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
 endif
 ifeq ($(UNAME_M),i686)
-    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
+    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-i386 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w
     EXPORT_INCLUDE = $(EXPORT)/include/d
@@ -41,7 +41,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-ldshould
+UNITTEST_LIB = -L-lunit-threaded -L-ldshould -debug=TokenStreamRewriter
 
 SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)
@@ -59,7 +59,7 @@ UNITTEST_MODULES := $(subst complex.,,\
 		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
 		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES)))))))
 
-TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest -debug=TokenStreamRewriter
+TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 

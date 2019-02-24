@@ -47,7 +47,7 @@ version(unittest) {
             int i;
             foreach (t; charRange) {
                 s = cts.get(i++).to!string;
-                t.should.equal(s);
+                s.should.equal(t);
             }
             f.close;
         }
@@ -65,7 +65,7 @@ version(unittest) {
             int i;
             foreach (t; charRange) {
                 s = cts.get(i++).to!string;
-                t.should.equal(s);
+                s.should.equal(t);
             }
             f.close;
             auto parser = new RuleTranslatorParser(cts);
@@ -87,7 +87,7 @@ version(unittest) {
             int i;
             foreach (t; charRange) {
                 s = cts.get(i++).to!string;
-                t.should.equal(s);
+                s.should.equal(t);
             }
             f.close;
             auto parser = new RuleTranslatorParser(cts);

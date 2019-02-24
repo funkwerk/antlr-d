@@ -41,7 +41,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-ldshould -debug=TokenStreamRewriter
+UNITTEST_LIB = -L-lunit-threaded -L-ldshould
 
 SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)

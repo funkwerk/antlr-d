@@ -335,7 +335,7 @@ class TokenStreamRewriter
      */
     public Variant getText()
     {
-		auto i = Interval.of(0, tokens_.size - 1);
+        auto i = Interval.of(0, tokens_.size - 1);
         return getText(DEFAULT_PROGRAM_NAME, i);
     }
 
@@ -379,11 +379,8 @@ class TokenStreamRewriter
         if ( start < 0 )
             start = 0;
 
-        if (rewrites.length == 0) {
-            Variant r = tokens_.getText(interval);
-            import std.stdio;
-            writefln("variant r = %s, type = %s", r, r.type);
-            return r; // no instructions to execute
+        if (!rewrites) {
+            return tokens_.getText(interval); // no instructions to execute
         }
 
         Variant buf;
@@ -457,40 +454,40 @@ class TokenStreamRewriter
      *  overlapping replaces that are not completed nested). Inserts to
      *  same index need to be combined etc...  Here are the cases:
      *
-     *  I.i.u I.j.v								leave alone, nonoverlapping
-     *  I.i.u I.i.v								combine: Iivu
+     *  I.i.u I.j.v                             leave alone, nonoverlapping
+     *  I.i.u I.i.v                             combine: Iivu
      *
-     *  R.i-j.u R.x-y.v	| i-j in x-y			delete first R
-     *  R.i-j.u R.i-j.v							delete first R
-     *  R.i-j.u R.x-y.v	| x-y in i-j			ERROR
-     *  R.i-j.u R.x-y.v	| boundaries overlap	ERROR
+     *  R.i-j.u R.x-y.v | i-j in x-y            delete first R
+     *  R.i-j.u R.i-j.v                         delete first R
+     *  R.i-j.u R.x-y.v | x-y in i-j            ERROR
+     *  R.i-j.u R.x-y.v | boundaries overlap    ERROR
      *
      *  Delete special case of replace (text==null):
-     *  D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
+     *  D.i-j.u D.x-y.v | boundaries overlap    combine to max(min)..max(right)
      *
-     *  I.i.u R.x-y.v | i in (x+1)-y			delete I (since insert before
-     *											we're not deleting i)
-     *  I.i.u R.x-y.v | i not in (x+1)-y		leave alone, nonoverlapping
-     *  R.x-y.v I.i.u | i in x-y				ERROR
-     *  R.x-y.v I.x.u 							R.x-y.uv (combine, delete I)
-     *  R.x-y.v I.i.u | i not in x-y			leave alone, nonoverlapping
+     *  I.i.u R.x-y.v | i in (x+1)-y            delete I (since insert before
+     *                                          we're not deleting i)
+     *  I.i.u R.x-y.v | i not in (x+1)-y        leave alone, nonoverlapping
+     *  R.x-y.v I.i.u | i in x-y                ERROR
+     *  R.x-y.v I.x.u                           R.x-y.uv (combine, delete I)
+     *  R.x-y.v I.i.u | i not in x-y            leave alone, nonoverlapping
      *
      *  I.i.u = insert u before op @ index i
      *  R.x-y.u = replace x-y indexed tokens with u
      *
      *  First we need to examine replaces. For any replace op:
      *
-     * 		1. wipe out any insertions before op within that range.
-     *		2. Drop any replace op before that is contained completely within
-     *	 that range.
-     *		3. Throw exception upon boundary overlap with any previous replace.
+     *      1. wipe out any insertions before op within that range.
+     *      2. Drop any replace op before that is contained completely within
+     *   that range.
+     *      3. Throw exception upon boundary overlap with any previous replace.
      *
      *  Then we can deal with inserts:
      *
-     * 		1. for any inserts to same index, combine even if not adjacent.
-     * 		2. for any prior replace with same left boundary, combine this
-     *	 insert with replace and delete this replace.
-     * 		3. throw exception if index in same range as previous replace
+     *      1. for any inserts to same index, combine even if not adjacent.
+     *      2. for any prior replace with same left boundary, combine this
+     *   insert with replace and delete this replace.
+     *      3. throw exception if index in same range as previous replace
      *
      *  Don't actually delete; make op null in list. Easier to walk list.
      *  Later we can throw as we add to index &rarr; op map.
@@ -554,7 +551,7 @@ class TokenStreamRewriter
                 bool disjoint =
                     prevRop.lastIndex<rop.index || prevRop.index > rop.lastIndex;
                 // Delete special case of replace (text==null):
-                // D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
+                // D.i-j.u D.x-y.v  | boundaries overlap    combine to max(min)..max(right)
                 if ( prevRop.text==null && rop.text==null && !disjoint ) {
                     //System.out.println("overlapping deletes: "+prevRop+", "+rop);
                     rewrites[prevRop.instructionIndex] = null; // kill first delete
@@ -620,7 +617,7 @@ class TokenStreamRewriter
             foreach (ReplaceOp rop; prevReplaces) {
                 if ( iop.index == rop.index ) {
                     rop.text = catOpText(iop.text, rop.text);
-                    rewrites[i] = null;	// delete current insert
+                    rewrites[i] = null; // delete current insert
                     continue;
                 }
                 if ( iop.index >= rop.index && iop.index <= rop.lastIndex ) {

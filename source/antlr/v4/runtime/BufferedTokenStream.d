@@ -1,15 +1,11 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.BufferedTokenStream;
 
-import std.array;
-import std.format;
-import std.conv;
-import std.algorithm: canFind;
 import antlr.v4.runtime.IllegalStateException;
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.RuleContext;
@@ -19,6 +15,11 @@ import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
+import std.algorithm: canFind;
+import std.array;
+import std.conv;
+import std.format;
+import std.variant;
 
 /**
  * This implementation of {@link TokenStream} loads tokens from a
@@ -379,6 +380,7 @@ class BufferedTokenStream : TokenStream
 
     /**
      * Given a starting index, return the index of the previous token on
+
      * channel. Return {@code i} if {@code tokens[i]} is on channel. Return -1
      * if there are no tokens on channel between {@code i} and 0.
      *
@@ -503,7 +505,7 @@ class BufferedTokenStream : TokenStream
      * @uml
      * @override
      */
-    public override string getText()
+    public override Variant getText()
     {
         lazyInit();
         fill();
@@ -514,28 +516,33 @@ class BufferedTokenStream : TokenStream
      * @uml
      * @override
      */
-    public override string getText(Interval interval)
+    public override Variant getText(Interval interval)
     {
       	int start = interval.a;
         int stop = interval.b;
-        if (start < 0 || stop < 0) return "";
-        lazyInit();
-        if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
-
-        auto buf = appender!(string);
-        for (int i = start; i <= stop; i++) {
-            Token t = tokens[i];
-            if (t.getType == TokenConstantDefinition.EOF) break;
-            buf.put(to!string(t.getText));
+        if (start < 0 || stop < 0) {
+            Variant v;
+            return v;
         }
-        return buf.data;
+        lazyInit();
+        if (stop >= tokens.length)
+			stop = to!int(tokens.length) - 1;
+ 
+        Variant buf = tokens[start].getText; //  set type
+        for (int i = start + 1; i <= stop; i++) {
+            Token t = tokens[i];
+            if (t.getType == TokenConstantDefinition.EOF)
+                break;
+            buf ~= t.getText;
+        }
+        return buf;
     }
 
     /**
      * @uml
      * @override
      */
-    public override string getText(RuleContext ctx)
+    public override Variant getText(RuleContext ctx)
     {
         return getText(ctx.getSourceInterval());
     }
@@ -544,12 +551,13 @@ class BufferedTokenStream : TokenStream
      * @uml
      * @override
      */
-    public override string getText(Token start, Token stop)
+    public override Variant getText(Token start, Token stop)
     {
         if (start !is null && stop !is null) {
             return getText(Interval.of(start.getTokenIndex(), stop.getTokenIndex()));
         }
-       	return "";
+        Variant v = "";
+       	return v;
     }
 
     /**

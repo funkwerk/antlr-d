@@ -1,19 +1,26 @@
+/*
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.UnbufferedTokenStream;
 
-import std.format;
-import std.array;
-import std.conv;
-import std.algorithm;
-import antlr.v4.runtime.RuleContext;
-import antlr.v4.runtime.TokenStream;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.TokenSource;
-import antlr.v4.runtime.TokenConstantDefinition;
-import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.IllegalArgumentException;
 import antlr.v4.runtime.IllegalStateException;
+import antlr.v4.runtime.RuleContext;
+import antlr.v4.runtime.Token;
+import antlr.v4.runtime.TokenConstantDefinition;
+import antlr.v4.runtime.TokenSource;
+import antlr.v4.runtime.TokenStream;
+import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.WritableToken;
 import antlr.v4.runtime.misc.Interval;
+import std.algorithm;
+import std.array;
+import std.conv;
+import std.format;
+import std.variant;
 
 /**
  * TODO add class description
@@ -111,17 +118,18 @@ class UnbufferedTokenStream : TokenStream
 	return tokenSource;
     }
 
-    public string getText()
+    public Variant getText()
     {
-	return "";
+        Variant v = "";
+	return v;
     }
 
-    public string getText(RuleContext ctx)
+    public Variant getText(RuleContext ctx)
     {
 	return getText(ctx.getSourceInterval());
     }
 
-    public string getText(Token start, Token stop)
+    public Variant getText(Token start, Token stop)
     {
         return getText(Interval.of(start.getTokenIndex(), stop.getTokenIndex()));
     }
@@ -276,7 +284,7 @@ class UnbufferedTokenStream : TokenStream
         return tokenSource.getSourceName();
     }
 
-    public string getText(Interval interval)
+    public Variant getText(Interval interval)
     {
 	int bufferStartIndex = getBufferStartIndex();
         int bufferStopIndex = bufferStartIndex + to!int(tokens.length) - 1;
@@ -297,8 +305,8 @@ class UnbufferedTokenStream : TokenStream
             Token t = tokens[i];
             buf.put(to!string(t.getText));
         }
-
-        return buf.data;
+        Variant v = buf.data;
+        return v;
     }
 
     protected int getBufferStartIndex()

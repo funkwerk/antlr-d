@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  *
@@ -81,7 +81,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
         string format_info = "reportAmbiguity d=%s: ambigAlts=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
         BitSet conflictingAlts = getConflictingAlts(ambigAlts, configs);
-        string text = recognizer.getTokenStream.getText(Interval.of(startIndex, stopIndex));
+        string text = to!string(recognizer.getTokenStream.getText(Interval.of(startIndex, stopIndex)));
         string message = format(format_info, decision, conflictingAlts, text);
         recognizer.notifyErrorListeners(message);
     }
@@ -95,7 +95,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
     {
         string format_info = "reportAttemptingFullContext d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
-        string text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
+        string text = to!string(recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
         string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }
@@ -109,7 +109,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
     {
         string format_info = "reportContextSensitivity d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
-        string text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
+        string text = to!string(recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
         string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }

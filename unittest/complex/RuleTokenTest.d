@@ -149,7 +149,7 @@ public class ResultListener : RuleTranslatorBaseListener {
         case RuleTranslatorParser.EOF:
             debug(TokenStreamRewriter) {
                 import std.stdio : writeln;
-                writeln("\n+++++++++++ EOF +++++++++++++");
+                writeln("\n+++ EOF +++");
             }
             break;
         default:
@@ -195,6 +195,19 @@ basede.Phrases
     auto extractor = new ResultListener(cts);
     auto walker = new ParseTreeWalker;
     walker.walk(extractor, rootContext);
-    auto str = extractor.rewriter.getText.get!(Result[]);
-    writefln("str = %s", str);
+    auto r = extractor.rewriter.getText.get!(Result[]);
+    import std.array : appender;
+    auto buf = appender!(string);
+    foreach (i, s ; r) {
+        auto t = cts.get(to!int(i));
+        if (t.getType == RuleTranslatorParser.NEWLINE) {
+            buf.put("\n");
+        }
+        else {
+        writefln("s[%s] = %s, type = %s",i, s, t.getType);
+        buf.put(to!string(t.getText));
+        }
+    }
+    import std.stdio : write;
+    write(buf.data);
 }

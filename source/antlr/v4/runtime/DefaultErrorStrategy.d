@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -337,7 +337,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             if (e.getStartToken.getType == TokenConstantDefinition.EOF)
                 input = "<EOF>";
             else
-                input = tokens.getText(e.getStartToken, e.getOffendingToken);
+                input = to!string(tokens.getText(e.getStartToken, e.getOffendingToken));
         }
         else {
             input = "<unknown input>";

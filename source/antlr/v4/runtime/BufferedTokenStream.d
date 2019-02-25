@@ -380,7 +380,6 @@ class BufferedTokenStream : TokenStream
 
     /**
      * Given a starting index, return the index of the previous token on
-
      * channel. Return {@code i} if {@code tokens[i]} is on channel. Return -1
      * if there are no tokens on channel between {@code i} and 0.
      *
@@ -527,7 +526,7 @@ class BufferedTokenStream : TokenStream
         lazyInit();
         if (stop >= tokens.length)
 			stop = to!int(tokens.length) - 1;
- 
+
         Variant buf = tokens[start].getText; //  set type
         for (int i = start + 1; i <= stop; i++) {
             Token t = tokens[i];

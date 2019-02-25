@@ -171,9 +171,11 @@ public class ResultListener : RuleTranslatorBaseListener {
 unittest {
 
     auto expected =
-        `
-ruleDelayasDELAYde
-basede.Phrases
+        `rule Delay as DELAY de
+base de . Phrases
+if a :
+    "Information" "zu"
+    "Zug" ZugNr "nach" "Berlin"
 `;
     auto antlrInput = new ANTLRInputStream(File("unittest/complex/rule.rul", "r"));
     auto lexer = new RuleTranslatorLexer(antlrInput);
@@ -182,11 +184,6 @@ basede.Phrases
     auto ln = lexer.getGrammarFileName;
     auto cts = new CommonTokenStream(lexer);
     cts.fill;
-    foreach (i, t; cts.getTokens) {
-        auto s = cts.get(to!int(i++)).to!string;
-        import std.stdio : writefln;
-        writefln("token %s => %s", i, s);
-    }
     auto parser = new RuleTranslatorParser(cts);
     parser.tokenFactory(factory);
     // Specify entry point
@@ -196,18 +193,33 @@ basede.Phrases
     auto walker = new ParseTreeWalker;
     walker.walk(extractor, rootContext);
     auto r = extractor.rewriter.getText.get!(Result[]);
+
     import std.array : appender;
     auto buf = appender!(string);
+    auto nextOfNewline = false;
+
     foreach (i, s ; r) {
         auto t = cts.get(to!int(i));
         if (t.getType == RuleTranslatorParser.NEWLINE) {
-            buf.put("\n");
+            if (i)
+                buf.put("\n");
+            nextOfNewline = true;
+            continue;
+        }
+        else if (t.getType == RuleTranslatorParser.INDENT ||
+                 t.getType == RuleTranslatorParser.DEDENT) {
+            continue;
         }
         else {
-        writefln("s[%s] = %s, type = %s",i, s, t.getType);
-        buf.put(to!string(t.getText));
+            if (nextOfNewline) {
+                while (s.indent--)
+                    buf.put("    ");
+                buf.put(s.text);
+            }
+            else
+                buf.put(" " ~ s.text);
+            nextOfNewline = false;
         }
     }
-    import std.stdio : write;
-    write(buf.data);
+    buf.data.should.equal(expected);
 }

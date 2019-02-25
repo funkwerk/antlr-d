@@ -224,10 +224,6 @@ class TokenStreamRewriter
 
     public void replace(string programName, size_t from, size_t to, Variant text)
     {
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("replace constructor1: from = %s, to = %s, text = %s", from, to, text);
-        }
         if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
                 new
@@ -335,8 +331,7 @@ class TokenStreamRewriter
      */
     public Variant getText()
     {
-        auto i = Interval.of(0, tokens_.size - 1);
-        return getText(DEFAULT_PROGRAM_NAME, i);
+        return getText(DEFAULT_PROGRAM_NAME, Interval.of(0, tokens_.size - 1));
     }
 
     /**
@@ -441,12 +436,6 @@ class TokenStreamRewriter
                     buf ~= op.text;
             }
         }
-
-
-        debug(TokenStreamRewriter) {
-                    import std.stdio : stderr, writefln;
-                    writefln("buf = %s", buf);
-                }
         return buf;
     }
 

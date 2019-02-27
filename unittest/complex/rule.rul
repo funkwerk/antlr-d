@@ -6,4 +6,5 @@ base de.Phrases
 
 if a:
     "Information" "zu"
-    "Zug" ZugNr "nach" "Berlin"
+    "Zug" ZugNr(32)
+"Berlin"

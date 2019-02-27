@@ -11,7 +11,6 @@ import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.CharStream;
-import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenStreamRewriter : TokenStreamRewriter;
@@ -56,7 +55,7 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 
 struct Result { ushort indent; string text;}
 
-ushort indent;
+ushort indent = 1; // 0 reserved for space
 
 class ResultToken : CommonToken {
 
@@ -70,6 +69,7 @@ class ResultToken : CommonToken {
           int channel, int start, int stop) {
         super(source, type, channel, start, stop);
         Result r;
+        r.indent = 1;
         r.text = super.getText.to!string;
         res ~= r;
     }
@@ -80,10 +80,6 @@ class ResultToken : CommonToken {
     }
 
     override Variant getText() {
-        debug(TokenStreamRewriter) {
-            import std.stdio;
-            writefln("\ngetText: res = %s, type = %s", res, type);
-        }
         Variant r = res;
         return r;
     }
@@ -95,7 +91,7 @@ public class ResultListener : RuleTranslatorBaseListener {
 
     private bool nextOfNewline = false;
 
-    ushort indentText = 0;
+    ushort indentText = 1;
 
     this(TokenStream tokens)
     {
@@ -108,15 +104,23 @@ public class ResultListener : RuleTranslatorBaseListener {
     }
 
     /**
-     * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-        debug(TokenStreamRewriter) {
-            import std.stdio : writefln;
-            writefln("exitStmt ctx.start = %s, ctx.stop = %s", ctx.start, ctx.stop);
-        }
+    override public void enterFunct_stmt(RuleTranslatorParser.Funct_stmtContext ctx) {
+        Result[] newText;
+        Result r;
+        r. indent = 2;
+        r. text = `zug_function_number 3`;
+        newText ~= r;
+        r. indent = 3;
+        r. text = `"von"`;
+        newText ~= r;
+        r. indent = 2;
+        r. text = `"nach"`;
+        newText ~= r;
+        Variant v = newText;
+        rewriter.replace(ctx.start, ctx.stop, v);
     }
 
     /**
@@ -139,6 +143,8 @@ public class ResultListener : RuleTranslatorBaseListener {
             break;
         case RuleTranslatorParser.DEDENT:
             indentText--;
+            auto r = node.getText.get!(Result[]);
+            r[0].text = "";
             break;
         case RuleTranslatorParser.NEWLINE:
             nextOfNewline = true;
@@ -175,7 +181,11 @@ unittest {
 base de . Phrases
 if a :
     "Information" "zu"
-    "Zug" ZugNr "nach" "Berlin"
+    "Zug"
+    zug_function_number 3
+        "von"
+    "nach"
+"Berlin"
 `;
     auto antlrInput = new ANTLRInputStream(File("unittest/complex/rule.rul", "r"));
     auto lexer = new RuleTranslatorLexer(antlrInput);
@@ -192,34 +202,51 @@ if a :
     auto extractor = new ResultListener(cts);
     auto walker = new ParseTreeWalker;
     walker.walk(extractor, rootContext);
-    auto r = extractor.rewriter.getText.get!(Result[]);
 
     import std.array : appender;
     auto buf = appender!(string);
-    auto nextOfNewline = false;
 
-    foreach (i, s ; r) {
-        auto t = cts.get(to!int(i));
-        if (t.getType == RuleTranslatorParser.NEWLINE) {
-            if (i)
+    import std.stdio;
+
+    auto r = extractor.rewriter.getText.get!(Result[]);
+    bool firstOnLine = true;
+
+    foreach (i, el; r)
+        {
+            import std.string : strip;
+            writefln("i = %s, el = %s", i, el);
+            if (!i)
+                continue;
+
+            if (el.text == "\n") {
+                firstOnLine = true;
                 buf.put("\n");
-            nextOfNewline = true;
-            continue;
-        }
-        else if (t.getType == RuleTranslatorParser.INDENT ||
-                 t.getType == RuleTranslatorParser.DEDENT) {
-            continue;
-        }
-        else {
-            if (nextOfNewline) {
-                while (s.indent--)
-                    buf.put("    ");
-                buf.put(s.text);
+                continue;
             }
-            else
-                buf.put(" " ~ s.text);
-            nextOfNewline = false;
+
+            if (el.indent >1) {
+                buf.put("\n");
+                while (--el.indent)
+                    buf.put("    ");
+                buf.put(el.text);
+            }
+            else {
+                if (firstOnLine) {
+                    if (el.text.strip.length) {
+                        buf.put(el.text);
+                    }
+                    else {
+                        // DEDENT
+                        firstOnLine = true;
+                        continue;
+                    }
+                    firstOnLine = false;
+                }
+                else {
+                    if (el.text.strip.length)
+                        buf.put(" " ~ el.text.strip);
+                }
+            }
         }
-    }
     buf.data.should.equal(expected);
 }

@@ -6,13 +6,13 @@ UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),x86_64)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
-    DMD = ldmd2 -w -g
+    DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
 endif
 ifeq ($(UNAME_M),i686)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-i386 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
-    DMD = ldmd2 -w
+    DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/d
 endif
 # Rasperry PI Desktop (Ubuntu MATE)

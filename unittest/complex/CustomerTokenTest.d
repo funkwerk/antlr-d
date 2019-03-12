@@ -156,6 +156,7 @@ basede.Phrases
     auto factory = new ResultTokenFactory(antlrInput);
     lexer.tokenFactory(factory);
     auto ln = lexer.getGrammarFileName;
+    ln.should.equal("RuleTranslator.g4");
     auto cts = new CommonTokenStream(lexer);
     cts.fill;
     auto f = File("unittest/complex/customer_tokens.cmp");

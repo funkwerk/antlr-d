@@ -4,7 +4,7 @@ EXPORT = /usr/local
 
 UNAME_M := $(shell uname -m)
 ifeq ($(UNAME_M),x86_64)
-    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk MAVEN_OPTS="-Xmx1G" mvn
+    MVN = JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
@@ -64,7 +64,7 @@ GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
 GENERATOR = axmi2d
-ANTLR = antlr4-4.7.1
+ANTLR = antlr4-4.7.2
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/v4/test/runtime/templates
@@ -109,9 +109,9 @@ prepare_generator : | $(BUILD_DIR)
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -atn -o $(BUILD_DIR) doc/examples/Expr.g4
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-atn -o $(BUILD_DIR) doc/examples/ruleTranslator/RuleTranslator.g4
 
 .PHONY: build_xpathlexer

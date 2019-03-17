@@ -4,7 +4,7 @@ import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import RuleParserListener;
-import RuleParserParser: RuleParserParser;
+import RuleParser: RuleParser;
 
 /**
  * This class provides an empty implementation of {@link RuleParserListener},

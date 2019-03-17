@@ -861,6 +861,9 @@ public class RuleParser : Parser {
 			match(OPEN_PAREN);
 			setState(233);
 			_errHandler.sync(this);
+                        auto xx = getInterpreter.adaptivePredict(_input,10, ctx_);
+                        import std.stdio;
+                        writefln("xx = %s, input = %s, ctx = %s", xx, _input, ctx_);
 			switch ( getInterpreter.adaptivePredict(_input,10, ctx_) ) {
 			case 1:
 				{

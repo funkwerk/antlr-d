@@ -1,112 +1,95 @@
-lexer grammar RuleLexer;
+lexer grammar RuleLexerPy;
+
+@lexer::header {
+from antlr4.Token import CommonToken
+from antlr4.RuleContext import RuleContext
+from antlr4.Token import Token
+from RuleTranslatorPyParser import RuleTranslatorPyParser
+}
 
 @lexer::members {
-  import antlr.v4.runtime.CommonToken;
-  import antlr.v4.runtime.RuleContext;
-  import antlr.v4.runtime.TokenConstantDefinition;
-  import std.container : DList;
-  import std.conv;
-  import std.variant;
-  import RuleParser : RuleParser;
-  // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
-  private DList!Token tokens;
-  // The stack that keeps track of the indentation level.
-  private DList!int indents;
-  // The amount of opened braces, brackets and parenthesis.
-  private int opened = 0;
-  // The most recently produced token.
-  private Token lastToken;
-  public override void emit(Token t) {
-    super.setToken(t);
-    tokens.insertBack(t);
-  }
+# A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
+tokens:Token = []
+# The stack that keeps track of the indentation level.
+indents:int = []
+# The amount of opened braces, brackets and parenthesis.
+opened:int = 0
+# The most recently produced token.
+lastToken:Token
+def emitToken(self, t:Token):
+    super().emitToken(t)
+    self.tokens.append(t)
 
-  public override Token nextToken() {
-    // Check if the end-of-file is ahead and there are still
-    // some DEDENTS expected.
-    if (_input.LA(1) == EOF && !this.indents.empty) {
-      // Remove any trailing EOF tokens from our buffer.
-      {
-          if (tokens.back.getType == EOF) {
-                tokens.removeBack;
-          }
-      } while (!this.indents.empty)
+def nextToken(self):
+    #Check if the end-of-file is ahead and there are still some DEDENTS expected.
+    if self._input.LA(1) == Token.EOF and self.indents:
+        # Remove any trailing EOF tokens from our buffer
+        while true:
+            if self.tokens[len(self.tokens)-1].getType == Token.EOF:
+                self.tokens.pop()
+            if not self.indents:
+                break
 
-      // First emit an extra line break that serves as the end of the statement.
-      this.emit(commonToken(RuleParser.NEWLINE, "\n"));
+        # First emit an extra line break that serves as the end of the statement.
+        self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
 
-      // Now emit as much DEDENT tokens as needed.
-      while (!indents.empty) {
-        this.emit(createDedent);
-        indents.removeBack;
-      }
+        # Now emitToken as much DEDENT tokens as needed.
+        while self.indents:
+            self.emitToken(self.createDedent())
+            self.indents.pop()
 
-      // Put the EOF back on the token stream.
-      this.emit(commonToken(RuleParser.EOF, "<EOF>"));
-    }
+        # Put the EOF back on the token stream.
+        self.emitToken(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
+        
+    next:Token = super().nextToken()
 
-    Token next = super.nextToken;
+    if next.channel == Token.DEFAULT_CHANNEL:
+        # Keep track of the last token on the default channel.
+        self.lastToken = next
 
-    if (next.getChannel == TokenConstantDefinition.DEFAULT_CHANNEL) {
-      // Keep track of the last token on the default channel.
-      this.lastToken = next;
-    }
+    if not self.tokens:
+        return next
+    else:
+        res:Token = self.tokens[0];
+        self.tokens.pop(0);
+        return res
 
-    if(tokens.empty)
-        return next;
-    else {
-        auto res = tokens.front;
-        tokens.removeFront;
-        return res;
-    }
-  }
+def createDedent(self):
+    self.dedent:CommonToken = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
+    self.dedent.line = self.lastToken.line
+    self.dedent.text = " " * self.indents[0]
+    return self.dedent
 
-  private Token createDedent() {
-    CommonToken dedent = commonToken(RuleParser.DEDENT, "");
-    dedent.setLine(this.lastToken.getLine);
-    return dedent;
-  }
+def commonToken(self, type:int, text:str):
+    stop:int = self.getCharIndex() - 1
+    start:int = 0
+    if text:
+        start = stop - len(text) + 1
+    ct = CommonToken(self._tokenFactorySourcePair, type, self.DEFAULT_TOKEN_CHANNEL, start, stop)
+    return ct
 
-  private CommonToken commonToken(int type, string text) {
-    int stop = this.getCharIndex - 1;
-    int start = to!int(text.length == 0 ? stop : stop - text.length + 1);
-    int line = getLine;
-    if (lastToken) {
-        line = lastToken.getLine + 1;
-    }
-    Variant v = text;
-    return tokenFactory_.create(this._tokenFactorySourcePair, type, v,
-                                DEFAULT_TOKEN_CHANNEL, start, stop,
-                                line, 0
-                                );
-  }
+# Calculates the indentation of the provided spaces, taking the
+# following rules into account:
+#
+# "Tabs are replaced (from left to right) by one to eight spaces
+#  such that the total number of characters up to and including
+#  the replacement is a multiple of eight [...]"
 
-  // Calculates the indentation of the provided spaces, taking the
-  // following rules into account:
-  //
-  // "Tabs are replaced (from left to right) by one to eight spaces
-  //  such that the total number of characters up to and including
-  //  the replacement is a multiple of eight [...]"
+@staticmethod
+def getIndentationCount(spaces:str):
+        count:int = 0
+        for ch in spaces:
+            if ch == '\t':
+                count += 8 - (count % 8)
+                break
+            else:
+                # A normal space char.
+                count += 1;
+        return count
 
-  static int getIndentationCount(string spaces) {
-    int count = 0;
-    foreach (char ch; spaces) {
-      switch (ch) {
-        case '\t':
-          count += 8 - (count % 8);
-          break;
-        default:
-          // A normal space char.
-          count++;
-      }
-    }
-
-    return count;
-  }
-
-  bool atStartOfInput() {
-    return super.getCharPositionInLine == 0 && super.getLine == 1;
-  }
+def atStartOfInput(self):
+        return super().column == 0 and super().line == 1
+        
 }
 
 
@@ -151,42 +134,35 @@ BREAK : 'break';
 BLOCK : 'block';
 
 NEWLINE
- : ( {atStartOfInput()}?   SPACES
+ : ( {self.atStartOfInput()}?   SPACES
    | ( '\r'? '\n' | '\r' | '\f' ) SPACES?
    )
    {
-     import std.regex;
-     import std.conv : to;
-     auto s = to!string(getText);
-     string newLine = s.replaceAll(regex(r"[^\r\n\f]+"), "");
-     string spaces = s.replaceAll(regex(r"[\r\n\f]+"), "");
-     int next = _input.LA(1);
-     if (opened > 0 || next == '\r' || next == '\n' || next == '\f' ||
-         next == '#') {
-       // If we're inside a list or on a blank line, ignore all indents,
-       // dedents and line breaks.
-       skip();
-     }
-     else {
-       emit(commonToken(NEWLINE, newLine));
-       int indent = getIndentationCount(spaces);
-       int previous = indents.empty ? 0 : indents.front;
-       if (indent == previous) {
-         // skip indents of the same size as the present indent-size
-         skip();
-       }
-       else if (indent > previous) {
-         indents.insertFront(indent);
-         emit(commonToken(RuleParser.INDENT, spaces));
-       }
-       else {
-         // Possibly emit more than 1 DEDENT token.
-         while(!indents.empty() && indents.front > indent) {
-           this.emit(createDedent());
-           indents.removeFront();
-         }
-       }
-     }
+     import re
+     newLine:str = re.sub(r'[^\r\n\f]+', '',  self.text)
+     spaces:str = re.sub(r'[\r\n\f]+', '',  self.text)
+     next:str = self._input.LA(1)
+     if self.opened > 0 or next in [ord(e) for e in ['\r', '\n', '\f', '#']]:
+        #  If we are inside a list or on a blank line, ignore all indents,
+        #  dedents and line breaks.
+        self.skip()
+     else:
+         self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, newLine))
+         indent:int = self.getIndentationCount(spaces)
+         previous:int = 0
+         if self.indents:
+             previous =  self.indents[0]
+         if indent == previous:
+             # skip indents of the same size as the present indent-size
+             self.skip()
+         elif indent > previous:
+             self.indents.insert(0, indent)
+             self.emitToken(self.commonToken(RuleTranslatorPyParser.INDENT, spaces))
+         else:
+             # Possibly emit more than 1 DEDENT token.
+             while self.indents and self.indents[0] > indent:
+                 self.emitToken(self.createDedent())
+                 self.indents.pop(0)
    }
  ;
 
@@ -223,15 +199,15 @@ HEX_INTEGER
 
 DOT : '.';
 STAR : '*';
-OPEN_PAREN : '(' {opened++;};
-CLOSE_PAREN : ')' {opened--;};
+OPEN_PAREN : '(' {self.opened += 1};
+CLOSE_PAREN : ')' {self.opened -= 1};
 COMMA : ',';
 COLON : ':';
 SEMI_COLON : ';';
 POWER : '**';
 ASSIGN : '=';
-OPEN_BRACK : '[' {opened++;};
-CLOSE_BRACK : ']' {opened--;};
+OPEN_BRACK : '[' {self.opened += 1};
+CLOSE_BRACK : ']' {self.opened -= 1};
 OR_OP : '|';
 XOR : '^';
 AND_OP : '&';
@@ -242,8 +218,8 @@ MINUS : '-';
 DIV : '/';
 MOD : '%';
 NOT_OP : '~';
-OPEN_BRACE : '{' {opened++;};
-CLOSE_BRACE : '}' {opened--;};
+OPEN_BRACE : '{' {self.opened += 1};
+CLOSE_BRACE : '}' {self.opened -= 1};
 LESS_THAN : '<';
 GREATER_THAN : '>';
 EQUALS : '==';

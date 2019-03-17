@@ -1,14 +1,18 @@
-parser grammar RuleParser;
+parser grammar RuleParserPy;
 // mainly a modified python syntax
 
 options { tokenVocab=RuleLexer; }
+
+options {
+    language=Python3;
+}
 
 tokens {
     INDENT,
     DEDENT
 }
 
-@parser::members {public static bool isTTS;}
+@parser::members {isTTS = False}
 
 /*
  * parser rules for DSL

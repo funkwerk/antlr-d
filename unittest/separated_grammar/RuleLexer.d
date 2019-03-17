@@ -22,7 +22,7 @@ public class RuleLexer : Lexer {
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
     public static immutable int
-		RULE_STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
+		STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
 		AS=10,IF=11,IN=12,ELIF=13,ELSE=14,WHILE=15,FOR=16,OR=17,AND=18,NOT=19,
 		TRUE=20,FALSE=21,CONTINUE=22,BREAK=23,BLOCK=24,NEWLINE=25,NAME=26,STRING_LITERAL=27,
 		BYTES_LITERAL=28,DECIMAL_INTEGER=29,HEX_INTEGER=30,DOT=31,STAR=32,OPEN_PAREN=33,
@@ -40,7 +40,7 @@ public class RuleLexer : Lexer {
 	];
 
 	public static string[] ruleNames = [
-		"RULE_STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF","RETURN",
+		"STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF","RETURN",
 		"AS","IF","IN","ELIF","ELSE","WHILE","FOR","OR","AND","NOT","TRUE","FALSE",
 		"CONTINUE","BREAK","BLOCK","NEWLINE","NAME","STRING_LITERAL","BYTES_LITERAL",
 		"DECIMAL_INTEGER","HEX_INTEGER","DOT","STAR","OPEN_PAREN","CLOSE_PAREN",
@@ -67,9 +67,9 @@ public class RuleLexer : Lexer {
 		null,null,null,null,"'/>'"
 	];
 	private static const string[] _SYMBOLIC_NAMES = [
-		null,"RULE_STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF",
-		"RETURN","AS","IF","IN","ELIF","ELSE","WHILE","FOR","OR","AND","NOT","TRUE",
-		"FALSE","CONTINUE","BREAK","BLOCK","NEWLINE","NAME","STRING_LITERAL","BYTES_LITERAL",
+		null,"STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF","RETURN",
+		"AS","IF","IN","ELIF","ELSE","WHILE","FOR","OR","AND","NOT","TRUE","FALSE",
+		"CONTINUE","BREAK","BLOCK","NEWLINE","NAME","STRING_LITERAL","BYTES_LITERAL",
 		"DECIMAL_INTEGER","HEX_INTEGER","DOT","STAR","OPEN_PAREN","CLOSE_PAREN",
 		"COMMA","COLON","SEMI_COLON","POWER","ASSIGN","OPEN_BRACK","CLOSE_BRACK",
 		"OR_OP","XOR","AND_OP","LEFT_SHIFT","RIGHT_SHIFT","ADD","MINUS","DIV",
@@ -771,38 +771,38 @@ public class RuleLexer : Lexer {
 		"\t\x15\x02\x02\u028d\u028c\x03\x02\x02\x02\u028e\u00b3\x03\x02\x02\x02"~
 		"\u028f\u0292\x05\u00b2Y\x02\u0290\u0292\t\x16\x02\x02\u0291\u028f\x03"~
 		"\x02\x02\x02\u0291\u0290\x03\x02\x02\x02\u0292\u00b5\x03\x02\x02\x02\u0293"~
-		"\u0294\x07>\x02\x02\u0294\u0295\x05\x04\x02\x02\u0295\u0296\x03\x02\x02"~
-		"\x02\u0296\u0297\b[\n\x02\u0297\u00b7\x03\x02\x02\x02\u0298\u0299\x07"~
-		"@\x02\x02\u0299\u029a\x03\x02\x02\x02\u029a\u029b\b\\\x0b\x02\u029b\u00b9"~
-		"\x03\x02\x02\x02\u029c\u029d\x071\x02\x02\u029d\u029e\x07@\x02\x02\u029e"~
-		"\u029f\x03\x02\x02\x02\u029f\u02a0\b]\x0b\x02\u02a0\u00bb\x03\x02\x02"~
-		"\x02\u02a1\u02a2\x071\x02\x02\u02a2\u00bd\x03\x02\x02\x02\u02a3\u02a4"~
-		"\x07?\x02\x02\u02a4\u00bf\x03\x02\x02\x02\u02a5\u02a9\x07$\x02\x02\u02a6"~
-		"\u02a8\n\x17\x02\x02\u02a7\u02a6\x03\x02\x02\x02\u02a8\u02ab\x03\x02\x02"~
-		"\x02\u02a9\u02a7\x03\x02\x02\x02\u02a9\u02aa\x03\x02\x02\x02\u02aa\u02ac"~
-		"\x03\x02\x02\x02\u02ab\u02a9\x03\x02\x02\x02\u02ac\u02b6\x07$\x02\x02"~
-		"\u02ad\u02b1\x07)\x02\x02\u02ae\u02b0\n\x18\x02\x02\u02af\u02ae\x03\x02"~
-		"\x02\x02\u02b0\u02b3\x03\x02\x02\x02\u02b1\u02af\x03\x02\x02\x02\u02b1"~
-		"\u02b2\x03\x02\x02\x02\u02b2\u02b4\x03\x02\x02\x02\u02b3\u02b1\x03\x02"~
-		"\x02\x02\u02b4\u02b6\x07)\x02\x02\u02b5\u02a5\x03\x02\x02\x02\u02b5\u02ad"~
-		"\x03\x02\x02\x02\u02b6\u00c1\x03\x02\x02\x02\u02b7\u02bb\x05\u00ccf\x02"~
-		"\u02b8\u02ba\x05\u00cae\x02\u02b9\u02b8\x03\x02\x02\x02\u02ba\u02bd\x03"~
-		"\x02\x02\x02\u02bb\u02b9\x03\x02\x02\x02\u02bb\u02bc\x03\x02\x02\x02\u02bc"~
-		"\u00c3\x03\x02\x02\x02\u02bd\u02bb\x03\x02\x02\x02\u02be\u02bf\t\x19\x02"~
-		"\x02\u02bf\u02c0\x03\x02\x02\x02\u02c0\u02c1\bb\t\x02\u02c1\u00c5\x03"~
-		"\x02\x02\x02\u02c2\u02c3\t\r\x02\x02\u02c3\u00c7\x03\x02\x02\x02\u02c4"~
-		"\u02c5\t\x0b\x02\x02\u02c5\u00c9\x03\x02\x02\x02\u02c6\u02cb\x05\u00cc"~
-		"f\x02\u02c7\u02cb\t\x1a\x02\x02\u02c8\u02cb\x05\u0090H\x02\u02c9\u02cb"~
-		"\t\x1b\x02\x02\u02ca\u02c6\x03\x02\x02\x02\u02ca\u02c7\x03\x02\x02\x02"~
-		"\u02ca\u02c8\x03\x02\x02\x02\u02ca\u02c9\x03\x02\x02\x02\u02cb\u00cb\x03"~
-		"\x02\x02\x02\u02cc\u02ce\t\x1c\x02\x02\u02cd\u02cc\x03\x02\x02\x02\u02ce"~
-		"\u00cd\x03\x02\x02\x02;\x02\x03\u00d0\u00d6\u0143\u0147\u014a\u014c\u0154"~
-		"\u015c\u0160\u0167\u016b\u0171\u0177\u0179\u0180\u01d5\u01de\u01e0\u01e7"~
-		"\u01e9\u01ed\u01f6\u0203\u0209\u020d\u0215\u0222\u0228\u022d\u0233\u0238"~
-		"\u023a\u0241\u0243\u0247\u0250\u025d\u0263\u0267\u026a\u026d\u0270\u0278"~
-		"\u027e\u0283\u0286\u028a\u028d\u0291\u02a9\u02b1\u02b5\u02bb\u02ca\u02cd"~
-		"\f\x03\x1a\x02\x03\"\x03\x03#\x04\x03)\x05\x03*\x06\x035\x07\x036\b\b"~
-		"\x02\x02\x07\x03\x02\x06\x02\x02";
+		"\u0294\x07>\x02\x02\u0294\u0295\x056\x1b\x02\u0295\u0296\x03\x02\x02\x02"~
+		"\u0296\u0297\b[\n\x02\u0297\u00b7\x03\x02\x02\x02\u0298\u0299\x07@\x02"~
+		"\x02\u0299\u029a\x03\x02\x02\x02\u029a\u029b\b\\\x0b\x02\u029b\u00b9\x03"~
+		"\x02\x02\x02\u029c\u029d\x071\x02\x02\u029d\u029e\x07@\x02\x02\u029e\u029f"~
+		"\x03\x02\x02\x02\u029f\u02a0\b]\x0b\x02\u02a0\u00bb\x03\x02\x02\x02\u02a1"~
+		"\u02a2\x071\x02\x02\u02a2\u00bd\x03\x02\x02\x02\u02a3\u02a4\x07?\x02\x02"~
+		"\u02a4\u00bf\x03\x02\x02\x02\u02a5\u02a9\x07$\x02\x02\u02a6\u02a8\n\x17"~
+		"\x02\x02\u02a7\u02a6\x03\x02\x02\x02\u02a8\u02ab\x03\x02\x02\x02\u02a9"~
+		"\u02a7\x03\x02\x02\x02\u02a9\u02aa\x03\x02\x02\x02\u02aa\u02ac\x03\x02"~
+		"\x02\x02\u02ab\u02a9\x03\x02\x02\x02\u02ac\u02b6\x07$\x02\x02\u02ad\u02b1"~
+		"\x07)\x02\x02\u02ae\u02b0\n\x18\x02\x02\u02af\u02ae\x03\x02\x02\x02\u02b0"~
+		"\u02b3\x03\x02\x02\x02\u02b1\u02af\x03\x02\x02\x02\u02b1\u02b2\x03\x02"~
+		"\x02\x02\u02b2\u02b4\x03\x02\x02\x02\u02b3\u02b1\x03\x02\x02\x02\u02b4"~
+		"\u02b6\x07)\x02\x02\u02b5\u02a5\x03\x02\x02\x02\u02b5\u02ad\x03\x02\x02"~
+		"\x02\u02b6\u00c1\x03\x02\x02\x02\u02b7\u02bb\x05\u00ccf\x02\u02b8\u02ba"~
+		"\x05\u00cae\x02\u02b9\u02b8\x03\x02\x02\x02\u02ba\u02bd\x03\x02\x02\x02"~
+		"\u02bb\u02b9\x03\x02\x02\x02\u02bb\u02bc\x03\x02\x02\x02\u02bc\u00c3\x03"~
+		"\x02\x02\x02\u02bd\u02bb\x03\x02\x02\x02\u02be\u02bf\t\x19\x02\x02\u02bf"~
+		"\u02c0\x03\x02\x02\x02\u02c0\u02c1\bb\t\x02\u02c1\u00c5\x03\x02\x02\x02"~
+		"\u02c2\u02c3\t\r\x02\x02\u02c3\u00c7\x03\x02\x02\x02\u02c4\u02c5\t\x0b"~
+		"\x02\x02\u02c5\u00c9\x03\x02\x02\x02\u02c6\u02cb\x05\u00ccf\x02\u02c7"~
+		"\u02cb\t\x1a\x02\x02\u02c8\u02cb\x05\u0090H\x02\u02c9\u02cb\t\x1b\x02"~
+		"\x02\u02ca\u02c6\x03\x02\x02\x02\u02ca\u02c7\x03\x02\x02\x02\u02ca\u02c8"~
+		"\x03\x02\x02\x02\u02ca\u02c9\x03\x02\x02\x02\u02cb\u00cb\x03\x02\x02\x02"~
+		"\u02cc\u02ce\t\x1c\x02\x02\u02cd\u02cc\x03\x02\x02\x02\u02ce\u00cd\x03"~
+		"\x02\x02\x02;\x02\x03\u00d0\u00d6\u0143\u0147\u014a\u014c\u0154\u015c"~
+		"\u0160\u0167\u016b\u0171\u0177\u0179\u0180\u01d5\u01de\u01e0\u01e7\u01e9"~
+		"\u01ed\u01f6\u0203\u0209\u020d\u0215\u0222\u0228\u022d\u0233\u0238\u023a"~
+		"\u0241\u0243\u0247\u0250\u025d\u0263\u0267\u026a\u026d\u0270\u0278\u027e"~
+		"\u0283\u0286\u028a\u028d\u0291\u02a9\u02b1\u02b5\u02bb\u02ca\u02cd\f\x03"~
+		"\x1a\x02\x03\"\x03\x03#\x04\x03)\x05\x03*\x06\x035\x07\x036\b\b\x02\x02"~
+		"\x07\x03\x02\x06\x02\x02";
 	public static ATN _ATN;
 
 	static this() {

@@ -1,4 +1,4 @@
-// Generated from source/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.7.1
+// Generated from source/antlr/v4/runtime/tree/xpath/XPathLexer.g4 by ANTLR 4.7.2
 module antlr.v4.runtime.tree.xpath.XPathLexer;
 
 import antlr.v4.runtime.Lexer;
@@ -18,7 +18,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class XPathLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =

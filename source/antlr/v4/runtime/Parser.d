@@ -836,7 +836,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public bool isExpectedToken(int symbol)
     {
-        ATN atn = getInterpreter().atn;
+        ATN atn = getInterpreter.atn;
         ParserRuleContext ctx = ctx_;
         ATNState s = atn.states[getState];
         IntervalSet following = atn.nextTokens(s);
@@ -884,7 +884,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public IntervalSet getExpectedTokensWithinCurrentRule()
     {
-        ATN atn = getInterpreter().atn;
+        ATN atn = getInterpreter.atn;
         ATNState s = atn.states[getState];
         return atn.nextTokens(s);
     }
@@ -978,7 +978,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public override ParseInfo getParseInfo()
     {
-	ParserATNSimulator interp = getInterpreter();
+	ParserATNSimulator interp = getInterpreter;
         if (interp.classinfo == ProfilingATNSimulator.classinfo) {
             return new ParseInfo(cast(ProfilingATNSimulator)interp);
         }
@@ -999,7 +999,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
                 new ParserATNSimulator(this, getATN(), interp.decisionToDFA, interp.getSharedContextCache());
             setInterpreter(sim);
         }
-        getInterpreter().setPredictionMode(saveMode);
+        getInterpreter.setPredictionMode(saveMode);
     }
 
     public void setTrace(bool trace)

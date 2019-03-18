@@ -4,7 +4,7 @@ lexer grammar RuleLexerPy;
 from antlr4.Token import CommonToken
 from antlr4.RuleContext import RuleContext
 from antlr4.Token import Token
-from RuleTranslatorPyParser import RuleTranslatorPyParser
+from RuleParserPy import RuleParserPy
 }
 
 @lexer::members {
@@ -31,7 +31,7 @@ def nextToken(self):
                 break
 
         # First emit an extra line break that serves as the end of the statement.
-        self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, "\n"))
+        self.emitToken(self.commonToken(RuleParserPy.NEWLINE, "\n"))
 
         # Now emitToken as much DEDENT tokens as needed.
         while self.indents:
@@ -39,7 +39,7 @@ def nextToken(self):
             self.indents.pop()
 
         # Put the EOF back on the token stream.
-        self.emitToken(self.commonToken(RuleTranslatorPyParser.EOF, "<EOF>"))
+        self.emitToken(self.commonToken(RuleParserPy.EOF, "<EOF>"))
         
     next:Token = super().nextToken()
 
@@ -55,7 +55,7 @@ def nextToken(self):
         return res
 
 def createDedent(self):
-    self.dedent:CommonToken = self.commonToken(RuleTranslatorPyParser.DEDENT, "")
+    self.dedent:CommonToken = self.commonToken(RuleParserPy.DEDENT, "")
     self.dedent.line = self.lastToken.line
     self.dedent.text = " " * self.indents[0]
     return self.dedent
@@ -147,7 +147,7 @@ NEWLINE
         #  dedents and line breaks.
         self.skip()
      else:
-         self.emitToken(self.commonToken(RuleTranslatorPyParser.NEWLINE, newLine))
+         self.emitToken(self.commonToken(RuleParserPy.NEWLINE, newLine))
          indent:int = self.getIndentationCount(spaces)
          previous:int = 0
          if self.indents:
@@ -157,7 +157,7 @@ NEWLINE
              self.skip()
          elif indent > previous:
              self.indents.insert(0, indent)
-             self.emitToken(self.commonToken(RuleTranslatorPyParser.INDENT, spaces))
+             self.emitToken(self.commonToken(RuleParserPy.INDENT, spaces))
          else:
              # Possibly emit more than 1 DEDENT token.
              while self.indents and self.indents[0] > indent:

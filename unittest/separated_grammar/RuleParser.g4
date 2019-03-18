@@ -187,14 +187,14 @@ argument: test;
  */
  
  
-element     :   LESS_THAN Name attribute* GREATER_THAN content LESS_THAN SLASH Name GREATER_THAN
-            |   LESS_THAN Name attribute* SLASH_CLOSE
+element     :   LESS_THAN Name xml_attribute* GREATER_THAN content LESS_THAN SLASH Name GREATER_THAN
+            |   LESS_THAN Name xml_attribute* SLASH_CLOSE
             ;
 
 content     : 
-                ((element | RULE_STRING ))* ;
+                ((element | XML_STRING ))* ;
                 
-attribute   :   Name ASSIGN RULE_STRING ; // Our STRING is AttValue in spec
+xml_attribute   :   Name ASSIGN XML_STRING ; // Our STRING is AttValue in spec
 
 
 /** ``All text that is not markup constitutes the character data of

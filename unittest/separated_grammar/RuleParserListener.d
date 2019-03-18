@@ -1014,15 +1014,15 @@ public interface RuleParserListener : ParseTreeListener {
 	 */
 	void exitContent(RuleParser.ContentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link RuleParser#attribute}.
+	 * Enter a parse tree produced by {@link RuleParser#xml_attribute}.
 	 * @param ctx the parse tree
 	 */
-	void enterAttribute(RuleParser.AttributeContext ctx);
+	void enterXml_attribute(RuleParser.Xml_attributeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link RuleParser#attribute}.
+	 * Exit a parse tree produced by {@link RuleParser#xml_attribute}.
 	 * @param ctx the parse tree
 	 */
-	void exitAttribute(RuleParser.AttributeContext ctx);
+	void exitXml_attribute(RuleParser.Xml_attributeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link RuleParser#templatesBegin}.
 	 * @param ctx the parse tree

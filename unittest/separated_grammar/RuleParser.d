@@ -28,7 +28,7 @@ public class RuleParser : Parser {
 	protected PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static const int
-		RULE_STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
+		STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
 		AS=10,IF=11,IN=12,ELIF=13,ELSE=14,WHILE=15,FOR=16,OR=17,AND=18,NOT=19,
 		TRUE=20,FALSE=21,CONTINUE=22,BREAK=23,BLOCK=24,NEWLINE=25,NAME=26,STRING_LITERAL=27,
 		BYTES_LITERAL=28,DECIMAL_INTEGER=29,HEX_INTEGER=30,DOT=31,STAR=32,OPEN_PAREN=33,
@@ -59,7 +59,7 @@ public class RuleParser : Parser {
 		RULE_add = 64,RULE_minus = 65,RULE_testlist_comp = 66,RULE_trailer = 67,
 		RULE_subscriptlist = 68,RULE_subscript = 69,RULE_sliceop = 70,RULE_exprlist = 71,
 		RULE_testlist = 72,RULE_dictorsetmaker = 73,RULE_arglist = 74,RULE_argument = 75,
-		RULE_element = 76,RULE_content = 77,RULE_attribute = 78,RULE_templatesBegin = 79;
+		RULE_element = 76,RULE_content = 77,RULE_xml_attribute = 78,RULE_templatesBegin = 79;
 	public static const string[] ruleNames = [
 		"file_input","ruledef","import_stmts","rule_setting","class_name","rule_name",
 		"language","import_stmt","base_rules","funcdef","functionName","parameters",
@@ -74,7 +74,7 @@ public class RuleParser : Parser {
 		"not","comparison","comp_op","expr","xor_expr","and_expr","arith_expr",
 		"factor","atom","add","minus","testlist_comp","trailer","subscriptlist",
 		"subscript","sliceop","exprlist","testlist","dictorsetmaker","arglist",
-		"argument","element","content","attribute","templatesBegin"
+		"argument","element","content","xml_attribute","templatesBegin"
 	];
 
 	private static const string[] _LITERAL_NAMES = [
@@ -87,9 +87,9 @@ public class RuleParser : Parser {
 		null,null,null,null,"'/>'"
 	];
 	private static const string[] _SYMBOLIC_NAMES = [
-		null,"RULE_STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF",
-		"RETURN","AS","IF","IN","ELIF","ELSE","WHILE","FOR","OR","AND","NOT","TRUE",
-		"FALSE","CONTINUE","BREAK","BLOCK","NEWLINE","NAME","STRING_LITERAL","BYTES_LITERAL",
+		null,"STRING","NUMBER","INTEGER","FIRST","LAST","RULE","BASE","DEF","RETURN",
+		"AS","IF","IN","ELIF","ELSE","WHILE","FOR","OR","AND","NOT","TRUE","FALSE",
+		"CONTINUE","BREAK","BLOCK","NEWLINE","NAME","STRING_LITERAL","BYTES_LITERAL",
 		"DECIMAL_INTEGER","HEX_INTEGER","DOT","STAR","OPEN_PAREN","CLOSE_PAREN",
 		"COMMA","COLON","SEMI_COLON","POWER","ASSIGN","OPEN_BRACK","CLOSE_BRACK",
 		"OR_OP","XOR","AND_OP","LEFT_SHIFT","RIGHT_SHIFT","ADD","MINUS","DIV",
@@ -237,7 +237,7 @@ public class RuleParser : Parser {
 				}
 				break;
 			case EOF:
-			case RULE_STRING:
+			case STRING:
 			case IF:
 			case FOR:
 			case CONTINUE:
@@ -248,7 +248,7 @@ public class RuleParser : Parser {
 				setState(171);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0)) {
 					{
 					setState(170);
 					ruledef();
@@ -320,7 +320,7 @@ public class RuleParser : Parser {
 				setState(180); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -1004,7 +1004,7 @@ public class RuleParser : Parser {
 		}
 	}
 	public static class Tfpdef_stringContext : TfpdefContext {
-		public TerminalNode RULE_STRING() { return getToken(RuleParser.RULE_STRING, 0); }
+		public TerminalNode STRING() { return getToken(RuleParser.STRING, 0); }
 	        alias copyFrom = TfpdefContext.copyFrom;
 		public this(TfpdefContext ctx) { copyFrom(ctx); }
 		import RuleParserListener;
@@ -1072,7 +1072,7 @@ public class RuleParser : Parser {
 				setState(248);
 				if (!(isTTS)) throw new FailedPredicateException(this, "isTTS");
 				setState(249);
-				match(RULE_STRING);
+				match(STRING);
 				}
 				break;
 			case 4:
@@ -1138,7 +1138,7 @@ public class RuleParser : Parser {
 			setState(264);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case RULE_STRING:
+			case STRING:
 			case NAME:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -1166,7 +1166,7 @@ public class RuleParser : Parser {
 					setState(260); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0) );
+				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << IF) | (1L << FOR) | (1L << CONTINUE) | (1L << BREAK) | (1L << BLOCK) | (1L << NAME))) != 0) );
 				setState(262);
 				match(DEDENT);
 				}
@@ -1223,7 +1223,7 @@ public class RuleParser : Parser {
 			setState(269);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case RULE_STRING:
+			case STRING:
 			case NAME:
 				{
 				setState(266);
@@ -1307,7 +1307,7 @@ public class RuleParser : Parser {
 				setState(274); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( _la==RULE_STRING || _la==NAME );
+			} while ( _la==STRING || _la==NAME );
 			setState(276);
 			match(NEWLINE);
 			}
@@ -1394,7 +1394,7 @@ public class RuleParser : Parser {
 	}
 
 	public static class String_stmtContext : ParserRuleContext {
-		public TerminalNode RULE_STRING() { return getToken(RuleParser.RULE_STRING, 0); }
+		public TerminalNode STRING() { return getToken(RuleParser.STRING, 0); }
 		public this(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1420,7 +1420,7 @@ public class RuleParser : Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(283);
-			match(RULE_STRING);
+			match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3250,7 +3250,7 @@ public class RuleParser : Parser {
 					setState(435); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( _la==RULE_STRING );
+				} while ( _la==STRING );
 				setState(437);
 				match(NEWLINE);
 				}
@@ -3258,7 +3258,7 @@ public class RuleParser : Parser {
 				setState(441); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( _la==RULE_STRING );
+			} while ( _la==STRING );
 			setState(443);
 			match(DEDENT);
 			}
@@ -3569,7 +3569,7 @@ public class RuleParser : Parser {
 				not_test();
 				}
 				break;
-			case RULE_STRING:
+			case STRING:
 			case NUMBER:
 			case FIRST:
 			case LAST:
@@ -4366,7 +4366,7 @@ public class RuleParser : Parser {
 				factor();
 				}
 				break;
-			case RULE_STRING:
+			case STRING:
 			case NUMBER:
 			case FIRST:
 			case LAST:
@@ -4494,7 +4494,7 @@ public class RuleParser : Parser {
 		}
 	}
 	public static class String_eContext : AtomContext {
-		public TerminalNode RULE_STRING() { return getToken(RuleParser.RULE_STRING, 0); }
+		public TerminalNode STRING() { return getToken(RuleParser.STRING, 0); }
 	        alias copyFrom = AtomContext.copyFrom;
 		public this(AtomContext ctx) { copyFrom(ctx); }
 		import RuleParserListener;
@@ -4583,7 +4583,7 @@ public class RuleParser : Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(565);
-				match(RULE_STRING);
+				match(STRING);
 				}
 				break;
 			case 5:
@@ -4979,7 +4979,7 @@ public class RuleParser : Parser {
 				setState(604);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
 					{
 					setState(603);
 					test();
@@ -4991,7 +4991,7 @@ public class RuleParser : Parser {
 				setState(608);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
 					{
 					setState(607);
 					test();
@@ -5059,7 +5059,7 @@ public class RuleParser : Parser {
 			setState(617);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RULE_STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING) | (1L << NUMBER) | (1L << FIRST) | (1L << LAST) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << NEWLINE) | (1L << NAME) | (1L << ADD) | (1L << MINUS))) != 0)) {
 				{
 				setState(616);
 				test();
@@ -5303,7 +5303,7 @@ public class RuleParser : Parser {
 				setState(647);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
-				case RULE_STRING:
+				case STRING:
 				case NUMBER:
 				case FIRST:
 				case LAST:
@@ -5347,7 +5347,7 @@ public class RuleParser : Parser {
 						setState(656);
 						_errHandler.sync(this);
 						switch (_input.LA(1)) {
-						case RULE_STRING:
+						case STRING:
 						case NUMBER:
 						case FIRST:
 						case LAST:
@@ -5596,11 +5596,11 @@ public class RuleParser : Parser {
 			return getRuleContext!ContentContext(0);
 		}
 		public TerminalNode SLASH() { return getToken(RuleParser.SLASH, 0); }
-		public AttributeContext[] attribute() {
-			return getRuleContexts!AttributeContext;
+		public Xml_attributeContext[] xml_attribute() {
+			return getRuleContexts!Xml_attributeContext;
 		}
-		public AttributeContext attribute(int i) {
-			return getRuleContext!AttributeContext(i);
+		public Xml_attributeContext xml_attribute(int i) {
+			return getRuleContext!Xml_attributeContext(i);
 		}
 		public TerminalNode SLASH_CLOSE() { return getToken(RuleParser.SLASH_CLOSE, 0); }
 		public this(ParserRuleContext parent, int invokingState) {
@@ -5643,7 +5643,7 @@ public class RuleParser : Parser {
 					{
 					{
 					setState(694);
-					attribute();
+					xml_attribute();
 					}
 					}
 					setState(699);
@@ -5678,7 +5678,7 @@ public class RuleParser : Parser {
 					{
 					{
 					setState(709);
-					attribute();
+					xml_attribute();
 					}
 					}
 					setState(714);
@@ -5710,9 +5710,9 @@ public class RuleParser : Parser {
 		public ElementContext element(int i) {
 			return getRuleContext!ElementContext(i);
 		}
-		public TerminalNode[] RULE_STRING() { return getTokens(RuleParser.RULE_STRING); }
-		public TerminalNode RULE_STRING(int i) {
-			return getToken(RuleParser.RULE_STRING, i);
+		public TerminalNode[] XML_STRING() { return getTokens(RuleParser.XML_STRING); }
+		public TerminalNode XML_STRING(int i) {
+			return getToken(RuleParser.XML_STRING, i);
 		}
 		public this(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -5755,10 +5755,10 @@ public class RuleParser : Parser {
 						element();
 						}
 						break;
-					case RULE_STRING:
+					case XML_STRING:
 						{
 						setState(719);
-						match(RULE_STRING);
+						match(XML_STRING);
 						}
 						break;
 					default:
@@ -5784,31 +5784,31 @@ public class RuleParser : Parser {
 		return _localctx;
 	}
 
-	public static class AttributeContext : ParserRuleContext {
+	public static class Xml_attributeContext : ParserRuleContext {
 		public TerminalNode Name() { return getToken(RuleParser.Name, 0); }
 		public TerminalNode ASSIGN() { return getToken(RuleParser.ASSIGN, 0); }
-		public TerminalNode RULE_STRING() { return getToken(RuleParser.RULE_STRING, 0); }
+		public TerminalNode XML_STRING() { return getToken(RuleParser.XML_STRING, 0); }
 		public this(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		override public int getRuleIndex() { return RULE_attribute; }
+		override public int getRuleIndex() { return RULE_xml_attribute; }
 		import RuleParserListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
 		    if (cast(RuleParserListener.RuleParserListener)listener)
-		        (cast(RuleParserListener)listener).enterAttribute(this);
+		        (cast(RuleParserListener)listener).enterXml_attribute(this);
 		}
 		import RuleParserListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
 		    if (cast(RuleParserListener.RuleParserListener)listener)
-		        (cast(RuleParserListener)listener).exitAttribute(this);
+		        (cast(RuleParserListener)listener).exitXml_attribute(this);
 		}
 	}
 
-	public AttributeContext attribute() {
-		AttributeContext _localctx = new AttributeContext(ctx_, getState());
-		enterRule(_localctx, 156, RULE_attribute);
+	public Xml_attributeContext xml_attribute() {
+		Xml_attributeContext _localctx = new Xml_attributeContext(ctx_, getState());
+		enterRule(_localctx, 156, RULE_xml_attribute);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -5817,7 +5817,7 @@ public class RuleParser : Parser {
 			setState(728);
 			match(ASSIGN);
 			setState(729);
-			match(RULE_STRING);
+			match(XML_STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -6287,11 +6287,11 @@ public class RuleParser : Parser {
 		"\u02cb\x03\x02\x02\x02\u02cb\u02cd\x03\x02\x02\x02\u02cc\u02ca\x03\x02"~
 		"\x02\x02\u02cd\u02cf\x07E\x02\x02\u02ce\u02b6\x03\x02\x02\x02\u02ce\u02c5"~
 		"\x03\x02\x02\x02\u02cf\u009b\x03\x02\x02\x02\u02d0\u02d3\x05\u009aN\x02"~
-		"\u02d1\u02d3\x07\x03\x02\x02\u02d2\u02d0\x03\x02\x02\x02\u02d2\u02d1\x03"~
+		"\u02d1\u02d3\x07H\x02\x02\u02d2\u02d0\x03\x02\x02\x02\u02d2\u02d1\x03"~
 		"\x02\x02\x02\u02d3\u02d5\x03\x02\x02\x02\u02d4\u02d2\x03\x02\x02\x02\u02d5"~
 		"\u02d8\x03\x02\x02\x02\u02d6\u02d4\x03\x02\x02\x02\u02d6\u02d7\x03\x02"~
 		"\x02\x02\u02d7\u009d\x03\x02\x02\x02\u02d8\u02d6\x03\x02\x02\x02\u02d9"~
-		"\u02da\x07I\x02\x02\u02da\u02db\x07)\x02\x02\u02db\u02dc\x07\x03\x02\x02"~
+		"\u02da\x07I\x02\x02\u02da\u02db\x07)\x02\x02\u02db\u02dc\x07H\x02\x02"~
 		"\u02dc\u009f\x03\x02\x02\x02\u02dd\u02e0\x07\x1b\x02\x02\u02de\u02e0\x05"~
 		"\x14\x0b\x02\u02df\u02dd\x03\x02\x02\x02\u02df\u02de\x03\x02\x02\x02\u02e0"~
 		"\u02e3\x03\x02\x02\x02\u02e1\u02df\x03\x02\x02\x02\u02e1\u02e2\x03\x02"~
@@ -6312,6 +6312,10 @@ public class RuleParser : Parser {
 	    _decisionToDFA.length = 0;
 	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
 	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);
+                import std.stdio;
+                writefln("yyyyy _ATN.getDecisionState(i) = %s", _ATN.getDecisionState(i));
 	    }
+            import std.stdio;
+            writefln("xxxxxxxxxxx _decisionToDFA 10 = %s, s0 = %s", _decisionToDFA[10].states, _decisionToDFA[10].s0);
 	}
 }

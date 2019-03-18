@@ -55,9 +55,10 @@ EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 
 UNITTEST_FILES := $(shell grep -l -r unittest $(SRC_DIR) $(UNITTEST_DIR)/**/*.d)
 
-UNITTEST_MODULES := $(subst complex.,,\
+UNITTEST_MODULES := $(subst separated_grammar.,,\
+		$(subst complex.,,\
 		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
-		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES)))))))
+		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES))))))))
 
 TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/
@@ -116,7 +117,7 @@ build_examples : prepare_generator
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.1-complete.jar	\
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.2-complete.jar	\
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY: build_library

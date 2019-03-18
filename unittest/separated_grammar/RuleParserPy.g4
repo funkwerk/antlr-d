@@ -1,18 +1,16 @@
 parser grammar RuleParserPy;
 // mainly a modified python syntax
 
-options { tokenVocab=RuleLexer; }
+options { tokenVocab=RuleLexerPy;
+        language=Python3; }
 
-options {
-    language=Python3;
-}
 
 tokens {
     INDENT,
     DEDENT
 }
 
-@parser::members {isTTS = False}
+@parser::header {isTTS = True}
 
 /*
  * parser rules for DSL
@@ -99,7 +97,7 @@ condition_and_suite :
            condition COLON suite;
 
 condition:  open_paren test close_paren reduced_comperator atom  # condition_with_value
-           | not? open_paren test close_paren     # condition_without_value
+           | not_? open_paren test close_paren     # condition_without_value
            | {isTTS}? test                        # condition_only
            ;
 open_paren  : OPEN_PAREN;
@@ -127,8 +125,8 @@ test: and_test (NEWLINE? or_e and_test)*;
 or_e: OR;
 and_test: not_test (NEWLINE? and_e not_test)*;
 and_e: AND;
-not_test: not not_test | comparison;
-not: NOT;
+not_test: not_ not_test | comparison;
+not_: NOT;
 comparison: expr (NEWLINE? comp_op expr)*;
 
 comp_op: LESS_THAN      # less_than
@@ -191,14 +189,14 @@ argument: test;
  */
  
  
-element     :   LESS_THAN Name attribute* GREATER_THAN content LESS_THAN SLASH Name GREATER_THAN
-            |   LESS_THAN Name attribute* SLASH_CLOSE
+element     :   LESS_THAN Name xml_attribute* GREATER_THAN content LESS_THAN SLASH Name GREATER_THAN
+            |   LESS_THAN Name xml_attribute* SLASH_CLOSE
             ;
 
 content     : 
-                ((element | RULE_STRING ))* ;
+                ((element | XML_STRING ))* ;
                 
-attribute   :   Name ASSIGN RULE_STRING ; // Our STRING is AttValue in spec
+xml_attribute   :   Name ASSIGN XML_STRING ; // Our STRING is AttValue in spec
 
 
 /** ``All text that is not markup constitutes the character data of

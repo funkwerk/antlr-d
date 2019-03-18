@@ -1169,13 +1169,13 @@ public class RuleParserBaseListener : RuleParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void enterAttribute(RuleParser.AttributeContext ctx) { }
+	override public void enterXml_attribute(RuleParser.Xml_attributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	override public void exitAttribute(RuleParser.AttributeContext ctx) { }
+	override public void exitXml_attribute(RuleParser.Xml_attributeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

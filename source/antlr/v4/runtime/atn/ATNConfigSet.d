@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -82,7 +82,7 @@ class ATNConfigSet
                 hashCode = 31 * hashCode + o.semanticContext.toHash;
             return hashCode;
         }
-        
+
         public static bool opEquals(Object aObj, Object bObj)
         {
             if (aObj is null || bObj is null)
@@ -308,10 +308,14 @@ class ATNConfigSet
 	if (readonly_) throw new IllegalStateException("This set is readonly");
         if (configLookup.isEmpty) return;
         foreach (ref ATNConfig config; configs) {
-            //			int before = PredictionContext.getAllContextNodes(config.context).size();
+            debug(ATNConfigSet)
+                auto before = PredictionContext.getAllContextNodes(config.context).length;
             config.context = interpreter.getCachedContext(config.context);
-            //			int after = PredictionContext.getAllContextNodes(config.context).size();
-            //			System.out.println("configs "+before+"->"+after);
+            debug(ATNConfigSet) {
+                auto after = PredictionContext.getAllContextNodes(config.context).length;
+                import std.stdio;
+                writefln("ATNConfigSet: configs %s -> %s", before, after);
+            }
         }
     }
 
@@ -349,7 +353,7 @@ class ATNConfigSet
             hasSemanticContext == other.hasSemanticContext &&
             dipsIntoOuterContext == other.dipsIntoOuterContext;
     }
-    
+
         public static bool equals(Object aObj, Object bObj)
         {
             if (aObj is null || bObj is null)
@@ -367,7 +371,7 @@ class ATNConfigSet
                 && a.alt == b.alt
                 && a.semanticContext.opEquals(b.semanticContext);
         }
- 
+
     /**
      * @uml
      * @override

@@ -4,7 +4,6 @@ import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenStream;
-import antlr.v4.runtime.DiagnosticErrorListener;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.tree.ParseTreeWalker;
@@ -38,11 +37,10 @@ unittest {
     }
 
     auto parser = new RuleParser(cts);
-    parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
     parser.isTTS = true; // tts mode
     // Specify entry point
     auto rootContext = parser.file_input;
-    // //parser.numberOfSyntaxErrors.should.equal(0);
+    parser.numberOfSyntaxErrors.should.equal(0);
     // auto templateWalker = new ParseTreeWalker;
     // //auto templatesListener = new TemplatesListener;
     // auto templatesListener = new TTSListener;

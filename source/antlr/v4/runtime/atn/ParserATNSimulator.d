@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -657,7 +657,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         // pairs if preds found for conflicting alts
         BitSet altsToCollectPredsFrom = getConflictingAltsOrUniqueAlt(dfaState.configs);
         SemanticContext[] altToPred = getPredsForAmbigAlts(altsToCollectPredsFrom, dfaState.configs, nalts);
-        if ( altToPred!=null ) {
+        if ( altToPred !is null ) {
             dfaState.predicates = getPredicatePredictions(altsToCollectPredsFrom, altToPred);
             dfaState.prediction = ATN.INVALID_ALT_NUMBER; // make sure we use preds
         }
@@ -1206,10 +1206,11 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     }
 
     /**
-     *  pairs that win. A {@code NONE} predicate indicates an alt containing an
-     *  unpredicated config which behaves as "always true." If !complete
-     *  then we stop at the first predicate that evaluates to true. This
-     *  includes pairs with null predicates.
+     * Look through a list of predicate/alt pairs, returning alts for the
+     * pairs that win. A {@code NONE} predicate indicates an alt containing an
+     * unpredicated config which behaves as "always true." If !complete
+     * then we stop at the first predicate that evaluates to true. This
+     * includes pairs with null predicates.
      */
     protected BitSet evalSemanticContext(PredPrediction[] predPredictions, ParserRuleContext outerContext,
                                          bool complete)
@@ -1749,7 +1750,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             return D;
         }
         debug
-            writefln("adding new dfa: D = %s, dfa.states = %s, \n(D in dfa.states) = %s", D, dfa.states, D in dfa.states);
+            writefln("adding new dfa: D = %s, dfa.states = %s,\n(D in dfa.states) = %s", D, dfa.states, D in dfa.states);
         if (D in dfa.states)
             return dfa.states[D];
         D.stateNumber = to!int(dfa.states.length);

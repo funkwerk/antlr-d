@@ -811,8 +811,6 @@ public class RuleLexer : Lexer {
 	    _decisionToDFA.length = 0;
 	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
 	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);
-                import std.stdio;
-                writefln("zzzzzzz _ATN.getDecisionState(i) = %s", _ATN.getDecisionState(i));
 	    }
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -493,11 +493,12 @@ class PredictionMode
     public static BitSet[ATNState] getStateToAltMap(ATNConfigSet configs)
     {
 	BitSet[ATNState] m;
+        BitSet *alts;
         foreach (ATNConfig c; configs.configs) {
-            BitSet alts;
             if (!(c.state in m)){
-                alts.clear;
-                m[c.state] = alts;
+                alts = new BitSet();
+                alts.set(0, false); // need to init BitSet
+                m[c.state] = *alts;
             }
             alts.set(c.alt, true);
         }

@@ -20,8 +20,12 @@
 	},
 	{
             "name": "unittest",
-            "sourcePaths": ["unittest/complex", "unittest/simple"],
-            "importPaths": ["unittest/complex", "unittest/simple"],
+            "sourcePaths": ["unittest/complex",
+                            "unittest/simple",
+                            "unittest/separated_grammar"],
+            "importPaths": ["unittest/complex",
+                            "unittest/simple",
+                            "unittest/separated_grammar"],
 	    "targetType": "executable",
 	    "dependencies": {
                 "dshould": "~>0.1",

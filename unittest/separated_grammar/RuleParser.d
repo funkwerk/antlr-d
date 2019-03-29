@@ -861,9 +861,6 @@ public class RuleParser : Parser {
 			match(OPEN_PAREN);
 			setState(233);
 			_errHandler.sync(this);
-                        auto xx = getInterpreter.adaptivePredict(_input,10, ctx_);
-                        import std.stdio;
-                        writefln("xx = %s, input = %s, ctx = %s", xx, _input, ctx_);
 			switch ( getInterpreter.adaptivePredict(_input,10, ctx_) ) {
 			case 1:
 				{
@@ -6312,10 +6309,6 @@ public class RuleParser : Parser {
 	    _decisionToDFA.length = 0;
 	    for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {
 	        _decisionToDFA ~= new DFA(_ATN.getDecisionState(i), i);
-                import std.stdio;
-                writefln("yyyyy _ATN.getDecisionState(i) = %s", _ATN.getDecisionState(i));
 	    }
-            import std.stdio;
-            writefln("xxxxxxxxxxx _decisionToDFA 10 = %s, s0 = %s", _decisionToDFA[10].states, _decisionToDFA[10].s0);
 	}
 }

@@ -9,9 +9,9 @@ import antlr.v4.runtime.atn.SemanticContext;
 class PredPrediction
 {
 
-    public static SemanticContext pred;
+    public SemanticContext pred;
 
-    public static int alt;
+    public int alt;
 
     public this(SemanticContext pred, int alt)
     {

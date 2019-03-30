@@ -3,17 +3,20 @@
 EXPORT = /usr/local
 
 UNAME_M := $(shell uname -m)
+
 ifeq ($(UNAME_M),x86_64)
     MVN = JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
+    EXECUTABLE = x86-64
 endif
 ifeq ($(UNAME_M),i686)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-i386 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/d
+    EXECUTABLE = 80386
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
 ifeq ($(UNAME_M),armv7l)
@@ -72,6 +75,11 @@ TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/
 
 # required to detect model changes
 _dummy := $(shell mkdir -p $(BUILD_DIR)/$(MODEL_DIR))
+
+# required to detect system changes
+ifneq ($(shell file -e elf $(BUILD_DIR)/TestRunner | grep -o $(EXECUTABLE)),$(EXECUTABLE))
+   _dummy := $(shell rm -rf $(BUILD_DIR)/TestRunner)
+endif
 
 .PHONY : all
 all : generate unittest

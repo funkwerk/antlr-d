@@ -12,6 +12,7 @@ import dshould.thrown;
 import RuleLexer;
 import RuleParser;
 import RuleWriter;
+import RuleParserBaseListener;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import std.conv;
@@ -41,11 +42,10 @@ unittest {
     // Specify entry point
     auto rootContext = parser.file_input;
     parser.numberOfSyntaxErrors.should.equal(0);
-    // auto templateWalker = new ParseTreeWalker;
-    // //auto templatesListener = new TemplatesListener;
-    // auto templatesListener = new TTSListener;
-    // auto writer = new RuleWriter;
-    // templatesListener.writer = writer;
-    // templateWalker.walk(templatesListener, rootContext);
+    auto templateWalker = new ParseTreeWalker;
+    auto templatesListener = new RuleParserBaseListener;
+    auto writer = new RuleWriter;
+    //templatesListener.writer = writer;
+    templateWalker.walk(templatesListener, rootContext);
     // //writefln("edT = %s", templatesListener.externalDefinedTemplates);
 }

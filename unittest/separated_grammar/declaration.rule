@@ -1,0 +1,4 @@
+rule Delay as DELAY de
+
+function1("second")
+function2("third") function3("fourth")

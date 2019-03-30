@@ -43,7 +43,7 @@ $7z = program  "7z" "C:\Program Files\7-Zip\7z.exe"
 $BUILD_DIR = "build"
 
 $ANTLR_DIR = "antlr4"
-$ANTLR = "antlr4-4.7.1"
+$ANTLR = "antlr4-4.7.2"
 $TARGET = "$BUILD_DIR/$ANTLR/tool/resources/org/antlr/v4/tool/templates/codegen/D/"
 $TEST_TEMPLATE_DIR = "$BUILD_DIR/$ANTLR/runtime-testsuite/resources/org/antlr/v4/test/runtime/templates"
 
@@ -78,12 +78,12 @@ $rules = @{
     build_examples    = {
         require $JAVA
 
-        if (!(Test-Path "$BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.1-complete.jar")) {
+        if (!(Test-Path "$BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.2-complete.jar")) {
             Invoke-Command $rules.prepare_generator
         }
 
-        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.1-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/Expr.g4"
-        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.1-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/ruleTranslator/RuleTranslator.g4"
+        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.2-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/Expr.g4"
+        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.7.2-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/ruleTranslator/RuleTranslator.g4"
     }
 
     docs              = {

@@ -24,7 +24,6 @@ import std.variant;
  * Useful for rewriting out a buffered input token stream after doing some
  * augmentation or other manipulations on it.
  *
- * <p>
  * You can insert stuff, replace, and delete chunks. Note that the operations
  * are done lazily--only if you convert the buffer to a {@link String} with
  * {@link TokenStream#getText()}. This is very efficient because you are not
@@ -33,68 +32,64 @@ import std.variant;
  * check to see if there is an operation at the current index. If so, the
  * operation is done and then normal {@link String} rendering continues on the
  * buffer. This is like having multiple Turing machine instruction streams
- * (programs) operating on a single input tape. :)</p>
+ * (programs) operating on a single input tape.
  *
- * <p>
  * This rewriter makes no modifications to the token stream. It does not ask the
  * stream to fill itself up nor does it advance the input cursor. The token
  * stream {@link TokenStream#index()} will return the same value before and
- * after any {@link #getText()} call.</p>
+ * after any {@link #getText()} call.
  *
- * <p>
  * The rewriter only works on tokens that you have in the buffer and ignores the
  * current input cursor. If you are buffering tokens on-demand, calling
  * {@link #getText()} halfway through the input will only do rewrites for those
- * tokens in the first half of the file.</p>
+ * tokens in the first half of the file.
  *
- * <p>
  * Since the operations are done lazily at {@link #getText}-time, operations do
  * not screw up the token index values. That is, an insert operation at token
  * index {@code i} does not change the index values for tokens
- * {@code i}+1..n-1.</p>
+ * {@code i}+1..n-1.
  *
- * <p>
  * Because operations never actually alter the buffer, you may always get the
  * original token stream back without undoing anything. Since the instructions
  * are queued up, you can easily simulate transactions and roll back any changes
- * if there is an error just by removing instructions. For example,</p>
+ * if there is an error just by removing instructions. For example,
  *
- * <pre>
+ * Examples:
+ * ---
  * CharStream input = new ANTLRFileStream("input");
  * TLexer lex = new TLexer(input);
  * CommonTokenStream tokens = new CommonTokenStream(lex);
  * T parser = new T(tokens);
  * TokenStreamRewriter rewriter = new TokenStreamRewriter(tokens);
  * parser.startRule();
- * </pre>
+ * ---
  *
- * <p>
- * Then in the rules, you can execute (assuming rewriter is visible):</p>
+ * Then in the rules, you can execute (assuming rewriter is visible):
  *
- * <pre>
+ * Examples:
+ * ---
  * Token t,u;
  * ...
  * rewriter.insertAfter(t, "text to put after t");}
  * rewriter.insertAfter(u, "text after u");}
  * System.out.println(rewriter.getText());
- * </pre>
+ * ---
  *
- * <p>
  * You can also have multiple "instruction streams" and get multiple rewrites
  * from a single pass over the input. Just name the instruction streams and use
  * that name again when printing the buffer. This could be useful for generating
- * a C file and also its header file--all from the same buffer:</p>
+ * a C file and also its header file--all from the same buffer:
  *
- * <pre>
+ * Examples:
+ * ---
  * rewriter.insertAfter("pass1", t, "text to put after t");}
  * rewriter.insertAfter("pass2", u, "text after u");}
  * System.out.println(rewriter.getText("pass1"));
  * System.out.println(rewriter.getText("pass2"));
- * </pre>
+ * ---
  *
- * <p>
  * If you don't use named rewrite streams, a "default" stream is used as the
- * first example shows.</p>
+ * first example shows.
  */
 class TokenStreamRewriter
 {
@@ -440,42 +435,45 @@ class TokenStreamRewriter
     }
 
     /**
-     *  overlapping replaces that are not completed nested). Inserts to
-     *  same index need to be combined etc...  Here are the cases:
+     * We need to combine operations and report invalid operations (like
+     * overlapping replaces that are not completed nested). Inserts to
+     * same index need to be combined etc.
      *
-     *  I.i.u I.j.v                             leave alone, nonoverlapping
+     * Here are the cases:
+     *
+     *  I.i.u I.j.v                             leave alone, nonoverlapping<br>
      *  I.i.u I.i.v                             combine: Iivu
      *
-     *  R.i-j.u R.x-y.v | i-j in x-y            delete first R
-     *  R.i-j.u R.i-j.v                         delete first R
-     *  R.i-j.u R.x-y.v | x-y in i-j            ERROR
+     *  R.i-j.u R.x-y.v | i-j in x-y            delete first R<br>
+     *  R.i-j.u R.i-j.v                         delete first R<br>
+     *  R.i-j.u R.x-y.v | x-y in i-j            ERROR<br>
      *  R.i-j.u R.x-y.v | boundaries overlap    ERROR
      *
-     *  Delete special case of replace (text==null):
+     *  Delete special case of replace (text==null):<br>
      *  D.i-j.u D.x-y.v | boundaries overlap    combine to max(min)..max(right)
      *
-     *  I.i.u R.x-y.v | i in (x+1)-y            delete I (since insert before
-     *                                          we're not deleting i)
-     *  I.i.u R.x-y.v | i not in (x+1)-y        leave alone, nonoverlapping
-     *  R.x-y.v I.i.u | i in x-y                ERROR
-     *  R.x-y.v I.x.u                           R.x-y.uv (combine, delete I)
+     *  I.i.u R.x-y.v | i in (x+1)-y            delete I (since insert before<br>
+     *                                          we're not deleting i)<br>
+     *  I.i.u R.x-y.v | i not in (x+1)-y        leave alone, nonoverlapping<br>
+     *  R.x-y.v I.i.u | i in x-y                ERROR<br>
+     *  R.x-y.v I.x.u                           R.x-y.uv (combine, delete I)<br>
      *  R.x-y.v I.i.u | i not in x-y            leave alone, nonoverlapping
      *
-     *  I.i.u = insert u before op @ index i
+     *  I.i.u = insert u before op @ index i<br>
      *  R.x-y.u = replace x-y indexed tokens with u
      *
      *  First we need to examine replaces. For any replace op:
      *
-     *      1. wipe out any insertions before op within that range.
+     *      1. wipe out any insertions before op within that range.<br>
      *      2. Drop any replace op before that is contained completely within
-     *   that range.
+     *   that range.<br>
      *      3. Throw exception upon boundary overlap with any previous replace.
      *
      *  Then we can deal with inserts:
      *
-     *      1. for any inserts to same index, combine even if not adjacent.
+     *      1. for any inserts to same index, combine even if not adjacent.<br>
      *      2. for any prior replace with same left boundary, combine this
-     *   insert with replace and delete this replace.
+     *   insert with replace and delete this replace.<br>
      *      3. throw exception if index in same range as previous replace
      *
      *  Don't actually delete; make op null in list. Easier to walk list.
@@ -486,7 +484,8 @@ class TokenStreamRewriter
      *  add tokens in front of a method body '{' and then delete the method
      *  body, I think the stuff before the '{' you added should disappear too.
      *
-     *  Return a map from token index to operation.
+     *  Return:
+     *  a map from token index to operation.
      */
     protected RewriteOperation[size_t] reduceToSingleOperationPerIndex(RewriteOperation[] rewrites)
     {

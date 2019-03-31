@@ -44,8 +44,9 @@ interface TokenStream : IntStream
      * of the stream. Unlike {@code seek()}, this method does not adjust
      * {@code index} to point to a non-ignored symbol.</p>
      *
-     *  @throws IllegalArgumentException if {code index} is less than 0
-     *  @throws UnsupportedOperationException if the stream does not support
+     * Throws:
+     * - IllegalArgumentException if {code index} is less than 0<br>
+     * - UnsupportedOperationException if the stream does not support
      *  retrieving the token at the specified index
      */
     public Token get(int index);
@@ -58,7 +59,7 @@ interface TokenStream : IntStream
 
     /**
      * Return the text of all tokens within the specified {@code interval}. This
-     * method behaves like the following code (including potential exceptions
+     * method behaves like the following code (including potential exceptions)
      * for violating preconditions of {@link #get}, but may be optimized by the
      * specific implementation.
      *
@@ -75,7 +76,8 @@ interface TokenStream : IntStream
      *  @return The text of all tokens within the specified interval in this
      * stream.
      *
-     *  @throws NullPointerException if {@code interval} is {@code null}
+     *  Throws:
+     *  NullPointerException if {@code interval} is {@code null}
      */
     public Variant getText(Interval interval);
 

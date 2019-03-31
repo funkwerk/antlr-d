@@ -427,29 +427,27 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     /**
      * There are some key conditions we're looking for after computing a new
      * set of ATN configs (proposed DFA state):
-     *       * if the set is empty, there is no viable alternative for current symbol
-     *       * does the state uniquely predict an alternative?
-     *       * does the state have a conflict that would prevent us from
+     *  <br>- if the set is empty, there is no viable alternative for current symbol
+     *  <br>-  does the state uniquely predict an alternative?
+     *  <br>-  does the state have a conflict that would prevent us from
      *         putting it on the work list?
-     *
-     * We also have some key operations to do:
-     *       * add an edge from previous DFA state to potentially new DFA state, D,
+     * <br><br>We also have some key operations to do:
+     *  <br>- add an edge from previous DFA state to potentially new DFA state, D,
      *         upon current symbol but only if adding to work list, which means in all
      *         cases except no viable alternative (and possibly non-greedy decisions?)
-     *       * collecting predicates and adding semantic context to DFA accept states
-     *       * adding rule context to context-sensitive DFA accept states
-     *       * consuming an input symbol
-     *       * reporting a conflict
-     *       * reporting an ambiguity
-     *       * reporting a context sensitivity
-     *       * reporting insufficient predicates
-     *
-     * cover these cases:
-     *    dead end
-     *    single alt
-     *    single alt + preds
-     *    conflict
-     *    conflict + preds
+     *  <br>-  collecting predicates and adding semantic context to DFA accept states
+     *  <br>-  adding rule context to context-sensitive DFA accept states
+     *  <br>-  consuming an input symbol
+     *  <br>-  reporting a conflict
+     *  <br>-  reporting an ambiguity
+     *  <br>-  reporting a context sensitivity
+     *  <br>-  reporting insufficient predicates
+     * <br><br>cover these cases:
+     *  <br>- dead end
+     *  <br>- single alt
+     *  <br>- single alt + preds
+     *  <br>- conflict
+     *  <br>- conflict + preds
      */
     protected int execATN(DFA dfa, DFAState s0, TokenStream input, int startIndex, ParserRuleContext outerContext)
     {
@@ -580,7 +578,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     public DFAState getExistingTargetState(DFAState previousD, int t)
     {
         DFAState[] edges = previousD.edges;
-        if (edges == null || t + 1 < 0 || t + 1 >= edges.length) {
+        if (edges is null || t + 1 < 0 || t + 1 >= edges.length) {
             return null;
         }
         return edges[t + 1];
@@ -950,7 +948,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         ATNConfigSet result = new ATNConfigSet(configs.fullCtx);
         foreach (ATNConfig config; configs.configs) {
-            if (config.state.classinfo == RuleStopState.classinfo) {
+            if (cast(RuleStopState)config.state) {
                 result.add(config, mergeCache);
                 continue;
             }
@@ -1112,7 +1110,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     {
 	IntervalSet alts = new IntervalSet();
         foreach (ATNConfig c; configs.configs) {
-            if ( c.getOuterContextDepth() > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
+            if ( c.getOuterContextDepth() > 0 || (cast(RuleStopState)c.state && c.context.hasEmptyPath) ) {
                 alts.add(c.alt);
             }
         }
@@ -1171,7 +1169,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     {
 	IntervalSet alts = new IntervalSet();
         foreach (ATNConfig c; configs.configs) {
-            if (c.getOuterContextDepth > 0 || (c.state.classinfo == RuleStopState.classinfo && c.context.hasEmptyPath()) ) {
+            if (c.getOuterContextDepth > 0 || (cast(RuleStopState)c.state && c.context.hasEmptyPath) ) {
                 alts.add(c.alt);
             }
         }
@@ -1263,9 +1261,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
-	debug {
-            writefln("\nclosureCheckingStopState: closure(%s)", config.toString(parser, true));
-        }
         if (cast(RuleStopState)config.state) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
@@ -1279,9 +1274,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                         }
                         else {
                             // we have no context info, just chase follow links (if greedy)
-                            debug
-                                writefln("1FALLING off rule %s",
-                                         getRuleName(config.state.ruleIndex));
                             closure_(config, configs, closureBusy, collectPredicates,
                                      fullCtx, depth, treatEofAsEpsilon);
                         }

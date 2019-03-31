@@ -89,7 +89,7 @@ generate: $(MODELS_R)
 
 $(BUILD_DIR)/TimeTable : $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES)
 	@echo $(EXAMPLE_TIMETABLE_FILES)
-	$(DMD) -cov -g $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/TimeTable
+	$(DMD) -cov $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES) -of$(BUILD_DIR)/TimeTable
 
 $(BUILD_DIR)/XMI : $(EXAMPLE_XML_FILES) $(EXAMPLE_MODULE_FILES)
 	@echo $(EXAMPLE_XML_FILES)
@@ -132,7 +132,7 @@ build_xpathlexer : prepare_generator
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -g -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+	$(DMD) -shared -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
 .PHONY: install
 install: $(BUILD_DIR)/libantlr-d.so.4.7

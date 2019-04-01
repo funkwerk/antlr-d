@@ -49,7 +49,7 @@ class PredictionMode
      * <p>Assuming combined SLL+LL parsing, an SLL configuration set with only
      * conflicting subsets should fall back to full LL, even if the
      * configuration sets don't resolve to the same alternative (e.g.
-     * {@code {1,2}} and {@code {3,4}}. If there is at least one non-conflicting
+     * {@code {1,2}} and {@code {3,4}}). If there is at least one non-conflicting
      * configuration, SLL could continue with the hopes that more lookahead will
      * resolve via one of those non-conflicting configurations.</p>
      *

@@ -1,32 +1,7 @@
 /*
- * [The "BSD license"]
- * Copyright (c) 2013 Terence Parr
- * Copyright (c) 2013 Sam Harwell
- * Copyright (c) 2017 Egbert Voigt
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
@@ -63,74 +38,71 @@ import antlr.v4.runtime.tree.pattern.RuleTagToken;
 import antlr.v4.runtime.misc.ParseCancellationException;
 
 /**
- * @uml
  * A tree pattern matching mechanism for ANTLR {@link ParseTree}s.
  *
- * <p>Patterns are strings of source input text with special tags representing
- * token or rule references such as:</p>
+ * Patterns are strings of source input text with special tags representing
+ * token or rule references such as:
  *
  * <p>{@code <ID> = <expr>;}</p>
  *
- * <p>Given a pattern start rule such as {@code statement}, this object constructs
+ * Given a pattern start rule such as {@code statement}, this object constructs
  * a {@link ParseTree} with placeholders for the {@code ID} and {@code expr}
  * subtree. Then the {@link #match} routines can compare an actual
  * {@link ParseTree} from a parse with this pattern. Tag {@code <ID>} matches
  * any {@code ID} token and tag {@code <expr>} references the result of the
- * {@code expr} rule (generally an instance of {@code ExprContext}.</p>
+ * {@code expr} rule (generally an instance of {@code ExprContext}).
  *
- * <p>Pattern {@code x = 0;} is a similar pattern that matches the same pattern
+ * Pattern {@code x = 0;} is a similar pattern that matches the same pattern
  * except that it requires the identifier to be {@code x} and the expression to
- * be {@code 0}.</p>
+ * be {@code 0}.
  *
- * <p>The {@link #matches} routines return {@code true} or {@code false} based
+ * The {@link #matches} routines return {@code true} or {@code false} based
  * upon a match for the tree rooted at the parameter sent in. The
  * {@link #match} routines return a {@link ParseTreeMatch} object that
  * contains the parse tree, the parse tree pattern, and a map from tag name to
  * matched nodes (more below). A subtree that fails to match, returns with
  * {@link ParseTreeMatch#mismatchedNode} set to the first tree node that did not
- * match.</p>
+ * match.
  *
- * <p>For efficiency, you can compile a tree pattern in string form to a
- * {@link ParseTreePattern} object.</p>
+ * For efficiency, you can compile a tree pattern in string form to a
+ * {@link ParseTreePattern} object.
  *
- * <p>See {@code TestParseTreeMatcher} for lots of examples.
+ * See {@code TestParseTreeMatcher} for lots of examples.
  * {@link ParseTreePattern} has two static helper methods:
  * {@link ParseTreePattern#findAll} and {@link ParseTreePattern#match} that
  * are easy to use but not super efficient because they create new
  * {@link ParseTreePatternMatcher} objects each time and have to compile the
- * pattern in string form before using it.</p>
+ * pattern in string form before using it.
  *
- * <p>The lexer and parser that you pass into the {@link ParseTreePatternMatcher}
+ * The lexer and parser that you pass into the {@link ParseTreePatternMatcher}
  * constructor are used to parse the pattern in string form. The lexer converts
  * the {@code <ID> = <expr>;} into a sequence of four tokens (assuming lexer
  * throws out whitespace or puts it on a hidden channel). Be aware that the
  * input stream is reset for the lexer (but not the parser; a
  * {@link ParserInterpreter} is created to parse the input.). Any user-defined
  * fields you have put into the lexer might get changed when this mechanism asks
- * it to scan the pattern string.</p>
+ * it to scan the pattern string.
  *
- * <p>Normally a parser does not accept token {@code <expr>} as a valid
+ * Normally a parser does not accept token {@code <expr>} as a valid
  * {@code expr} but, from the parser passed in, we create a special version of
  * the underlying grammar representation (an {@link ATN}) that allows imaginary
  * tokens representing rules ({@code <expr>}) to match entire rules. We call
- * these <em>bypass alternatives</em>.</p>
+ * these <em>bypass alternatives</em>.
  *
- * <p>Delimiters are {@code <} and {@code >}, with {@code \} as the escape string
+ * Delimiters are {@code <} and {@code >}, with {@code \} as the escape string
  * by default, but you can set them to whatever you want using
  * {@link #setDelimiters}. You must escape both start and stop strings
- * {@code \<} and {@code \>}.</p>
+ * {@code \<} and {@code \>}.
  */
 class ParseTreePatternMatcher
 {
 
     /**
-     * @uml
      * This is the backing field for {@link #getLexer()}.
      */
     private Lexer lexer;
 
     /**
-     * @uml
      * This is the backing field for {@link #getParser()}.
      */
     private Parser parser;
@@ -140,13 +112,11 @@ class ParseTreePatternMatcher
     protected string stop = ">";
 
     /**
-     * @uml
      * e.g., \< and \> must escape BOTH!
      */
     protected string escape = "\\";
 
     /**
-     * @uml
      * Constructs a {@link ParseTreePatternMatcher} or from a {@link Lexer} and
      * {@link Parser} object. The lexer input stream is altered for tokenizing
      * the tree patterns. The parser is used as a convenient mechanism to get
@@ -159,7 +129,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Set the delimiters used for marking rule and token tags within concrete
      * syntax used by the tree pattern parser.
      *
@@ -186,7 +155,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Does {@code pattern} matched as rule {@code patternRuleIndex} match {@code tree}?
      */
     public bool matches(ParseTree tree, string pattern, int patternRuleIndex)
@@ -196,7 +164,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Does {@code pattern} matched as rule patternRuleIndex match tree? Pass in a
      * compiled pattern instead of a string representation of a tree pattern.
      */
@@ -208,7 +175,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Compare {@code pattern} matched as rule {@code patternRuleIndex} against
      * {@code tree} and return a {@link ParseTreeMatch} object that contains the
      * matched elements, or the node at which the match failed.
@@ -220,7 +186,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Compare {@code pattern} matched against {@code tree} and return a
      * {@link ParseTreeMatch} object that contains the matched elements, or thenode at which the match failed. Pass in a compiled pattern instead of a
      * string representation of a tree pattern.
@@ -233,7 +198,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * For repeated use of a tree pattern, compile it to a
      * {@link ParseTreePattern} using this method.
      */
@@ -273,7 +237,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Used to convert the tree pattern string into a series of tokens. The
      * input stream is reset.
      */
@@ -283,7 +246,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Used to collect to the grammar file name, token names, rule names for
      * used to parse the pattern into a parse tree.
      */
@@ -293,7 +255,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Recursively walk {@code tree} against {@code patternTree}, filling
      * {@code match.}{@link ParseTreeMatch#labels labels}.
      *
@@ -456,7 +417,6 @@ class ParseTreePatternMatcher
     }
 
     /**
-     * @uml
      * Split {@code <ID> = <e:expr> ;} into 4 chunks for tokenizing by {@link #tokenize}.
      */
     public Chunk[] split(string pattern)

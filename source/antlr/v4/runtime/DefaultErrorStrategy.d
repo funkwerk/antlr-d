@@ -475,7 +475,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      *
      * <p><strong>EXAMPLE</strong></p>
      *
-     * <p>For example, Input {@code i=(3;} is clearly missing the {@code ')'}. When
+     * <p>For example, Input {@code i=(3;} is clearly missing the {@code '$(RPAREN)'}. When
      * the parser returns from the nested call to {@code expr}, it will have
      * call chain:</p>
      *
@@ -483,7 +483,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      * stat &rarr; expr &rarr; atom
      * </pre>
      *
-     * and it will be trying to match the {@code ')'} at this point in the
+     * and it will be trying to match the {@code '$(RPAREN)'} at this point in the
      * derivation:
      *
      * <pre>
@@ -491,9 +491,9 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      *                    ^
      * </pre>
      *
-     * The attempt to match {@code ')'} will fail when it sees {@code ';'} and
+     * The attempt to match {@code '$(RPAREN)'} will fail when it sees {@code ';'} and
      * call {@link #recoverInline}. To recover, it sees that {@code LA(1)==';'}
-     * is in the set of tokens that can follow the {@code ')'} token reference
+     * is in the set of tokens that can follow the {@code '$(RPAREN)'} token reference
      * in rule {@code atom}. It can assume that you forgot the {@code ')'}.
      */
     public Token recoverInline(Parser recognizer)
@@ -731,7 +731,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      *  context-sensitive follow sets:
      *
      *  FOLLOW(b1_in_a) = FIRST(']') = ']'
-     *  FOLLOW(b2_in_a) = FIRST(')') = ')'
+     *  FOLLOW(b2_in_a) = FIRST('$(RPAREN)') = '$(RPAREN)'
      *  FOLLOW(c_in_b) = FIRST('^') = '^'
      *
      *  Upon erroneous input "[]", the call chain is
@@ -745,8 +745,8 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      *    1          ']'                     b
      *    2          '^'                     c
      *
-     *  Notice that ')' is not included, because b would have to have
-     *  been called from a different context in rule a for ')' to be
+     *  Notice that '$(RPAREN)' is not included, because b would have to have
+     *  been called from a different context in rule a for '$(RPAREN)' to be
      *  included.
      *
      *  For error recovery, we cannot consider FOLLOW(c)

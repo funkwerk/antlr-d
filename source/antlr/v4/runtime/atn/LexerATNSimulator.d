@@ -554,17 +554,16 @@ class LexerATNSimulator : ATNSimulator
     }
 
     /**
-     * @uml
      * Evaluate a predicate specified in the lexer.
      *
-     * <p>If {@code speculative} is {@code true}, this method was called before
+     * If {@code speculative} is {@code true}, this method was called before
      * {@link #consume} for the matched character. This method should call
      * {@link #consume} before evaluating the predicate to ensure position
      * sensitive values, including {@link Lexer#getText}, {@link Lexer#getLine},
      * and {@link Lexer#getCharPositionInLine}, properly reflect the current
      * lexer state. This method should restore {@code input} and the simulator
      * to the original state before returning (i.e. undo the actions made by the
-     * call to {@link #consume}.</p>
+     * call to {@link #consume}).
      *
      *  @param input The input stream.
      *  @param ruleIndex The rule containing the predicate.

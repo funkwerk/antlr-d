@@ -23,6 +23,7 @@ ifeq ($(UNAME_M),armv7l)
     MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
     DMD = ldmd2 -w -link-defaultlib-shared
     EXPORT_INCLUDE = $(EXPORT)/import
+    EXECUTABLE = ARM
 endif
 
 SHELL = bash

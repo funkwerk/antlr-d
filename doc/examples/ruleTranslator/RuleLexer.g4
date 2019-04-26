@@ -6,7 +6,8 @@ lexer grammar RuleLexer;
   import antlr.v4.runtime.TokenConstantDefinition;
   import std.container : DList;
   import std.conv;
-  import RuleTranslatorParser : RuleTranslatorParser;
+  import std.variant;
+  import RuleParser : RuleParser;
   // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
   private DList!Token tokens;
   // The stack that keeps track of the indentation level.
@@ -27,26 +28,26 @@ lexer grammar RuleLexer;
       // Remove any trailing EOF tokens from our buffer.
       {
           if (tokens.back.getType == EOF) {
-                tokens.removeBack();
+                tokens.removeBack;
           }
       } while (!this.indents.empty)
 
       // First emit an extra line break that serves as the end of the statement.
-      this.emit(commonToken(RuleTranslatorParser.NEWLINE, "\n"));
+      this.emit(commonToken(RuleParser.NEWLINE, "\n"));
 
       // Now emit as much DEDENT tokens as needed.
       while (!indents.empty) {
-        this.emit(createDedent());
+        this.emit(createDedent);
         indents.removeBack;
       }
 
       // Put the EOF back on the token stream.
-      this.emit(commonToken(RuleTranslatorParser.EOF, "<EOF>"));
+      this.emit(commonToken(RuleParser.EOF, "<EOF>"));
     }
 
     Token next = super.nextToken;
 
-    if (next.getChannel() == TokenConstantDefinition.DEFAULT_CHANNEL) {
+    if (next.getChannel == TokenConstantDefinition.DEFAULT_CHANNEL) {
       // Keep track of the last token on the default channel.
       this.lastToken = next;
     }
@@ -55,22 +56,29 @@ lexer grammar RuleLexer;
         return next;
     else {
         auto res = tokens.front;
-        tokens.removeFront();
+        tokens.removeFront;
         return res;
     }
   }
 
   private Token createDedent() {
-    CommonToken dedent = commonToken(RuleTranslatorParser.DEDENT, "");
-    dedent.setLine(this.lastToken.getLine());
+    CommonToken dedent = commonToken(RuleParser.DEDENT, "");
+    dedent.setLine(this.lastToken.getLine);
     return dedent;
   }
 
   private CommonToken commonToken(int type, string text) {
-    int stop = this.getCharIndex() - 1;
+    int stop = this.getCharIndex - 1;
     int start = to!int(text.length == 0 ? stop : stop - text.length + 1);
-    return new CommonToken(this._tokenFactorySourcePair, type,
-                           DEFAULT_TOKEN_CHANNEL, start, stop);
+    int line = getLine;
+    if (lastToken) {
+        line = lastToken.getLine + 1;
+    }
+    Variant v = text;
+    return tokenFactory_.create(this._tokenFactorySourcePair, type, v,
+                                DEFAULT_TOKEN_CHANNEL, start, stop,
+                                line, 0
+                                );
   }
 
   // Calculates the indentation of the provided spaces, taking the
@@ -97,15 +105,31 @@ lexer grammar RuleLexer;
   }
 
   bool atStartOfInput() {
-    return super.getCharPositionInLine() == 0 && super.getLine() == 1;
+    return super.getCharPositionInLine == 0 && super.getLine == 1;
   }
 }
+
 
 /*************
  * lexer rules
  *************/
+    
+// Default "mode": Everything OUTSIDE of a XML-tag
 
-STRING
+// XML lexer derived from ANTLR v4 ref guide book example
+
+XML_COMMENT :   '<!--' .*? '-->' ;
+CDATA       :   '<![CDATA[' .*? ']]>' ;
+/** Scarf all DTD stuff, Entity Declarations like <!ENTITY ...>,
+ *  and Notation Declarations <!NOTATION ...>
+ */
+DTD         :   '<!' .*? '>'            -> skip ;
+EntityRef   :   '&' Name ';' ;
+CharRef     :   '&#' DIGIT+ ';'
+            |   '&#x' HEXDIGIT+ ';'
+            ;
+
+RULE_STRING
  : STRING_LITERAL
  | BYTES_LITERAL
  ;
@@ -147,8 +171,10 @@ NEWLINE
    )
    {
      import std.regex;
-     string newLine = getText.replaceAll(regex(r"[^\r\n\f]+"), "");
-     string spaces = getText.replaceAll(regex(r"[\r\n\f]+"), "");
+     import std.conv : to;
+     auto s = to!string(getText);
+     string newLine = s.replaceAll(regex(r"[^\r\n\f]+"), "");
+     string spaces = s.replaceAll(regex(r"[\r\n\f]+"), "");
      int next = _input.LA(1);
      if (opened > 0 || next == '\r' || next == '\n' || next == '\f' ||
          next == '#') {
@@ -166,7 +192,7 @@ NEWLINE
        }
        else if (indent > previous) {
          indents.insertFront(indent);
-         emit(commonToken(RuleTranslatorParser.INDENT, spaces));
+         emit(commonToken(RuleParser.INDENT, spaces));
        }
        else {
          // Possibly emit more than 1 DEDENT token.
@@ -926,3 +952,42 @@ fragment ID_CONTINUE
  | [\uFF10-\uFF19]
  | '\uFF3F'
  ;
+
+
+// ----------------- Everything INSIDE of a tag ---------------------
+mode INSIDE;
+
+CLOSE       :   '>'                     -> popMode ;
+//SPECIAL_CLOSE:  '?>'                    -> popMode ; // close <?xml...?>
+SLASH_CLOSE :   '/>'                    -> popMode ;
+SLASH       :   '/' ;
+XML_EQUALS      :   '=' ;
+STRING      :   '"' ~[<"]* '"'
+            |   '\'' ~[<']* '\''
+            ;
+Name        :   NameStartChar NameChar* ;
+S           :   [ \t\r\n]               -> skip ;
+
+fragment
+HEXDIGIT    :   [a-fA-F0-9] ;
+
+fragment
+XML_DIGIT       :   [0-9] ;
+
+fragment
+NameChar    :   NameStartChar
+            |   '-' | '_' | '.' | DIGIT
+            |   '\u00B7'
+            |   '\u0300'..'\u036F'
+            |   '\u203F'..'\u2040'
+            ;
+
+fragment
+NameStartChar
+            :   [:a-zA-Z]
+            |   '\u2070'..'\u218F'
+            |   '\u2C00'..'\u2FEF'
+            |   '\u3001'..'\uD7FF'
+            |   '\uF900'..'\uFDCF'
+            |   '\uFDF0'..'\uFFFD'
+            ;

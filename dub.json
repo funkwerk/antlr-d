@@ -29,7 +29,7 @@
         "targetType": "executable",
         "dependencies": {
                 "dshould": "~>0.1",
-        "unit-threaded": "~>0.8"
+        "unit-threaded": "~>0.9"
         },
         "preBuildCommands": [
         "dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"

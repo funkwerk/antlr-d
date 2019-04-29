@@ -1766,12 +1766,13 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                      dfa.decision, configs,
                      parser.getTokenStream().getText(interval));
         }
-        if (parser !is null) parser.getErrorListenerDispatch().reportAttemptingFullContext(parser,
-                                                                                           dfa,
-                                                                                           startIndex,
-                                                                                           stopIndex,
-                                                                                           conflictingAlts,
-                                                                                           configs);
+        if (parser)
+            parser.getErrorListenerDispatch().reportAttemptingFullContext(parser,
+                                                                          dfa,
+                                                                          startIndex,
+                                                                          stopIndex,
+                                                                          conflictingAlts,
+                                                                          configs);
     }
 
     protected void reportContextSensitivity(DFA dfa, int prediction, ATNConfigSet configs,

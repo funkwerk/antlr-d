@@ -122,7 +122,9 @@ build_examples : prepare_generator
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -atn -o $(BUILD_DIR) doc/examples/Expr.g4
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
-		-atn -o $(BUILD_DIR) doc/examples/ruleTranslator/RuleTranslator.g4
+		-Dlanguage=D -atn -o $(BUILD_DIR)\
+		doc/examples/ruleTranslator/RuleLexer.g4 \
+		doc/examples/ruleTranslator/RuleParser.g4
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator

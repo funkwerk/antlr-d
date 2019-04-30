@@ -33,8 +33,8 @@ public class DTarget extends Target {
 		"if", "implements", "import", "instanceof", "in", "int", "interface",
 		"long", "native", "new", "null", "out", "package", "private", "protected",
 		"public", "return", "short", "static", "super", "switch",
-		"synchronized", "this", "throw", "throws", "transient", "true", "try",
-		"void", "volatile", "while"
+		"synchronized", "template", "this", "throw", "throws", "transient",
+                "true", "try", "void", "volatile", "while"
 	};
 
 	/** Avoid grammar symbols in this set to prevent conflicts in gen'd code. */

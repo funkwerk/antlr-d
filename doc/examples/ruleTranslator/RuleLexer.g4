@@ -113,7 +113,7 @@ lexer grammar RuleLexer;
 /*************
  * lexer rules
  *************/
-    
+
 // Default "mode": Everything OUTSIDE of a XML-tag
 
 // XML lexer derived from ANTLR v4 ref guide book example

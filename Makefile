@@ -5,14 +5,12 @@ EXPORT = /usr/local
 UNAME_M := $(shell uname -m)
 
 ifeq ($(UNAME_M),x86_64)
-    MVN = JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
     EXECUTABLE = x86-64
 endif
 ifeq ($(UNAME_M),i686)
-    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-i386 MAVEN_OPTS="-Xmx1G" mvn
     RDMD = rdmd
     DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/d
@@ -20,12 +18,12 @@ ifeq ($(UNAME_M),i686)
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
 ifeq ($(UNAME_M),armv7l)
-    MVN = JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf MAVEN_OPTS="-Xmx1G" mvn
     DMD = ldmd2 -w -link-defaultlib-shared
     EXPORT_INCLUDE = $(EXPORT)/import
     EXECUTABLE = ARM
 endif
 
+MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
 
@@ -123,8 +121,16 @@ build_examples : prepare_generator
 		-Dlanguage=D -atn -o $(BUILD_DIR) doc/examples/Expr.g4
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -atn -o $(BUILD_DIR)\
-		doc/examples/ruleTranslator/RuleLexer.g4 \
+		doc/examples/ruleTranslator/RuleLexer.g4
+	cp $(BUILD_DIR)/doc/examples/ruleTranslator/RuleLexer.tokens \
+		doc/examples/ruleTranslator/
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
+		-Dlanguage=D -o $(BUILD_DIR)\
 		doc/examples/ruleTranslator/RuleParser.g4
+	cp $(BUILD_DIR)/doc/examples/ruleTranslator/Rule*.d \
+		doc/examples/ruleTranslator/
+	cp $(BUILD_DIR)/doc/examples/ruleTranslator/Rule*.tokens \
+		doc/examples/ruleTranslator/
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator

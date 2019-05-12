@@ -13,6 +13,7 @@ import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.atn.StateNames;
 import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import std.conv;
 import std.variant;
@@ -71,7 +72,7 @@ class TerminalNodeImpl : TerminalNode
         return 0;
     }
 
-    public V accept(V, U)(ParseTreeVisitor!U visitor)
+    public Variant accept(ParseTreeVisitor visitor)
     {
         return visitor.visitTerminal(this);
     }

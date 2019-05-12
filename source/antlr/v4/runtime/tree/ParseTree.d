@@ -6,6 +6,7 @@
 
 module antlr.v4.runtime.tree.ParseTree;
 
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.InterfaceRecognizer;
 import antlr.v4.runtime.RuleContext : RuleContext;
 import antlr.v4.runtime.tree.SyntaxTree;
@@ -39,7 +40,7 @@ interface ParseTree : SyntaxTree
     /**
      * The {@link ParseTreeVisitor} needs a double dispatch method.
      */
-    public T accept(T)(ParseTreeVisitor!U visitor);
+    public Variant accept(ParseTreeVisitor visitor);
 
     public Variant getText();
 

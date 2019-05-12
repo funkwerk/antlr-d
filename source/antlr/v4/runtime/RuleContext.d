@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -13,6 +13,7 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.misc;
 import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.Trees;
 import std.array;
@@ -91,7 +92,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public int depth()
     {
-	int n = 0;
+        int n = 0;
         RuleContext p = this;
         while (p) {
             p = p.parent;
@@ -188,7 +189,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
         return 0;
     }
 
-    public U accept(U)(ParseTreeVisitor!U visitor)
+    public Variant accept(ParseTreeVisitor visitor)
     {
         return visitor.visitChildren(this);
     }
@@ -245,7 +246,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public string toString(string[] ruleNames, RuleContext stop)
     {
-	auto buf = appender!(string);
+        auto buf = appender!(string);
         RuleContext p = this;
         buf.put("[");
         while (p !is null && p != stop) {
@@ -260,7 +261,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
                 buf.put(ruleName);
             }
             if (p.parent !is null && (ruleNames.length || !p.parent.isEmpty)) {
-                                buf.put(" ");
+                buf.put(" ");
             }
             p = p.parent;
         }

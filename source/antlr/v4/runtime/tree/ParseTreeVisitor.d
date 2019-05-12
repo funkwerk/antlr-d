@@ -11,6 +11,7 @@ import antlr.v4.runtime.tree.RuleNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ErrorNode;
 import std.variant : Variant;
+
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
  * visitors implement this interface and the {@code XVisitor} interface for

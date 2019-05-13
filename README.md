@@ -33,8 +33,8 @@ Now call
 
     java -jar -Dlanguage=D build/antlr4-4.7.2/tool/target/antlr4-4.7.2-complete.jar Expr.g4
 
-and the correspondig Lexer, Parser and Listener D-Source files are generated. To make visitors add the
-the option -visitor
+and the correspondig Lexer, Parser and Listener D-Source files are generated. Use the
+the _-visitor_ option in cli
 
     java -jar -visitor -Dlanguage=D build/antlr4-4.7.2/tool/target/antlr4-4.7.2-complete.jar Expr.g4
 

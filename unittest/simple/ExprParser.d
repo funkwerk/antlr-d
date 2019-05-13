@@ -1,4 +1,4 @@
-// Generated from doc/examples/Expr.g4 by ANTLR 4.7.1
+// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -22,24 +22,24 @@ import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.TerminalNode;
 
 public class ExprParser : Parser {
-	static this() { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+	static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static DFA[] _decisionToDFA;
 	protected PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static const int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, NEWLINE=7, INT=8;
+		T__0=1,T__1=2,T__2=3,T__3=4,T__4=5,T__5=6,NEWLINE=7,INT=8;
 	public static const int
-		RULE_prog = 0, RULE_expr = 1;
+		RULE_prog = 0,RULE_expr = 1;
 	public static const string[] ruleNames = [
-		"prog", "expr"
+		"prog","expr"
 	];
 
 	private static const string[] _LITERAL_NAMES = [
-		null, "'*'", "'/'", "'+'", "'-'", "'('", "')'"
+		null,"'*'","'/'","'+'","'-'","'('","')'"
 	];
 	private static const string[] _SYMBOLIC_NAMES = [
-		null, null, null, null, null, null, null, "NEWLINE", "INT"
+		null,null,null,null,null,null,null,"NEWLINE","INT"
 	];
 	public static Vocabulary VOCABULARY;
 
@@ -87,6 +87,7 @@ public class ExprParser : Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN, _decisionToDFA, _sharedContextCache);
 	}
+
 	public static class ProgContext : ParserRuleContext {
 		public ExprContext[] expr() {
 			return getRuleContexts!ExprContext;
@@ -105,12 +106,19 @@ public class ExprParser : Parser {
 		import ExprListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
-			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).enterProg(this);
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterProg(this);
 		}
 		import ExprListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
-			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).exitProg(this);
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitProg(this);
+		}
+		override
+		public T accept(T)(ParseTreeVisitor visitor) {
+			if (visitor.classinfo == ExprVisitor.classinfo) return (cast(ExprVisitor!T)visitor).visitProg(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -165,12 +173,19 @@ public class ExprParser : Parser {
 		import ExprListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
-			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).enterExpr(this);
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterExpr(this);
 		}
 		import ExprListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
-			if (listener.classinfo == ExprListener.ExprListener.classinfo) (cast(ExprListener)listener).exitExpr(this);
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitExpr(this);
+		}
+		override
+		public T accept(T)(ParseTreeVisitor visitor) {
+			if (visitor.classinfo == ExprVisitor.classinfo) return (cast(ExprVisitor!T)visitor).visitExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -266,7 +281,7 @@ public class ExprParser : Parser {
 						expr(4);
 						}
 						break;
-					        default: assert(0);
+					        default: {}
 					}
 					} 
 				}

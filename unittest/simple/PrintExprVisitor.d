@@ -10,7 +10,7 @@ import ExprParser : ExprParser;
  * which can be extended to create a visitor which only needs to handle a subset
  * of the available methods.
  *
- * @param Variant The return type of the visit operation. Use {@link void} for
+ * @param T The return type of the visit operation. Use {@link void} for
  * operations with no return type.
  */
 public class PrintExprVisitor : ExprBaseVisitor {
@@ -21,15 +21,14 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitProg(ExprParser.ProgContext ctx) {
-        return visitChildren(ctx);
-    }
+        return Variant(1);
+        // return visitChildren(ctx);
+         }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    override public Variant visitExpr(ExprParser.ExprContext ctx) {
-        return visitChildren(ctx);
-    }
+    override public Variant visitExpr(ExprParser.ExprContext ctx) { return visitChildren(ctx); }
 }

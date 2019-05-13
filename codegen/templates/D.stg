@@ -44,7 +44,10 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
+import std.variant : Variant;
+import <file.grammarName>Visitor : <file.grammarName>Visitor;
 
 <parser>
 >>
@@ -819,8 +822,9 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
 
 VisitorDispatchMethod(method) ::= <<
 override
-public T accept(T)(ParseTreeVisitor visitor) {
-	if (visitor.classinfo == <parser.grammarName>Visitor.classinfo) return (cast(<parser.grammarName>Visitor!T)visitor).visit<struct.derivedFromName; format="cap">(this);
+public Variant accept(ParseTreeVisitor visitor) {
+    if (cast(<parser.grammarName>Visitor)visitor)
+        return (cast(<parser.grammarName>Visitor)visitor).visit<struct.derivedFromName; format="cap">(this);
 	else return visitor.visitChildren(this);
 }
 >>

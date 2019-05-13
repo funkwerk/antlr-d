@@ -117,7 +117,7 @@ prepare_generator : | $(BUILD_DIR)
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar -no-listener \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -visitor -o $(BUILD_DIR) doc/examples/simple_expression/Expr.g4
 	cp $(BUILD_DIR)/doc/examples/simple_expression/*.d doc/examples/simple_expression
 	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \

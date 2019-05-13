@@ -36,7 +36,7 @@ Now call
 and the correspondig Lexer, Parser and Listener D-Source files are generated. To make visitors add the
 the option -visitor
 
-    java -jar -visitor -no-listener -Dlanguage=D build/antlr4-4.7.2/tool/target/antlr4-4.7.2-complete.jar Expr.g4
+    java -jar -visitor -Dlanguage=D build/antlr4-4.7.2/tool/target/antlr4-4.7.2-complete.jar Expr.g4
 
 and additional ExprVisitor.d and ExprBaseVisitor.d sources will be created.
 

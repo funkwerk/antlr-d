@@ -1,41 +1,22 @@
 /*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import antlr.v4.runtime.tree.ParseTreeVisitor;
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.RuleNode;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.ErrorNode;
+import std.variant : Variant;
 
 /**
  * TODO add class description
  */
-abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
+abstract class AbstractParseTreeVisitor : ParseTreeVisitor
 {
 
     /**
@@ -45,7 +26,7 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      *  <p>The default implementation calls {@link ParseTree#accept} on the
      *  specified tree.</p>
      */
-    public T visit(ParseTree tree)
+    public Variant visit(ParseTree tree)
     {
         return tree.accept(this);
     }
@@ -67,9 +48,9 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      * method to behave properly in respect to the specific algorithm in use.</p>
      * @override
      */
-    public override T visitChildren(RuleNode node)
+    public override Variant visitChildren(RuleNode node)
     {
-        T result = defaultResult();
+        Variant result = defaultResult();
         int n = node.getChildCount();
         for (int i=0; i<n; i++) {
             if (!shouldVisitNextChild(node, result)) {
@@ -77,7 +58,7 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
             }
 
             ParseTree c = node.getChild(i);
-            T childResult = c.accept(this);
+            Variant childResult = c.accept(this);
             result = aggregateResult(result, childResult);
         }
 
@@ -92,7 +73,7 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      * {@link #defaultResult defaultResult}.</p>
      * @override
      */
-    public override T visitTerminal(TerminalNode node)
+    public override Variant visitTerminal(TerminalNode node)
     {
         return defaultResult();
     }
@@ -105,7 +86,7 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      * {@link #defaultResult defaultResult}.</p>
      * @override
      */
-    public override T visitErrorNode(ErrorNode node)
+    public override Variant visitErrorNode(ErrorNode node)
     {
         return defaultResult();
     }
@@ -122,9 +103,9 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      *
      *  @return The default value returned by visitor methods.
      */
-    private T defaultResult()
+    private Variant defaultResult()
     {
-        return null;
+        return Variant(null);
     }
 
     /**
@@ -147,8 +128,9 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      *
      *  @return The updated aggregate result.
      */
-    private T aggregateResult(T aggregate, T nextResult)
+    private Variant aggregateResult(Variant aggregate, Variant nextResult)
     {
+        return nextResult;
     }
 
     /**
@@ -176,8 +158,9 @@ abstract class AbstractParseTreeVisitor(T) : ParseTreeVisitor!T
      *  {@code false} to stop visiting children and immediately return the
      *  current aggregate result from {@link #visitChildren}.
      */
-    private bool shouldVisitNextChild(RuleNode node, T currentResult)
+    private bool shouldVisitNextChild(RuleNode node, Variant currentResult)
     {
+        return true;
     }
 
 }

@@ -6,6 +6,12 @@
 
 module antlr.v4.runtime.tree.ParseTreeVisitor;
 
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.RuleNode;
+import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.ErrorNode;
+import std.variant : Variant;
+
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
  * visitors implement this interface and the {@code XVisitor} interface for
@@ -14,7 +20,7 @@ module antlr.v4.runtime.tree.ParseTreeVisitor;
  *  @param <T> The return type of the visit operation. Use {@link Void} for
  *  operations with no return type.
  */
-interface ParseTreeVisitor(T)
+interface ParseTreeVisitor
 {
 
     /**
@@ -23,7 +29,7 @@ interface ParseTreeVisitor(T)
      *  @param tree The {@link ParseTree} to visit.
      *  @return The result of visiting the parse tree.
      */
-    public T visit(ParseTree tree);
+    public Variant visit(ParseTree tree);
 
     /**
      * Visit the children of a node, and return a user-defined result of the
@@ -32,7 +38,7 @@ interface ParseTreeVisitor(T)
      *  @param node The {@link RuleNode} whose children should be visited.
      *  @return The result of visiting the children of the node.
      */
-    public T visitChildren(RuleNode node);
+    public Variant visitChildren(RuleNode node);
 
     /**
      * Visit a terminal node, and return a user-defined result of the operation.
@@ -40,7 +46,7 @@ interface ParseTreeVisitor(T)
      *  @param node The {@link TerminalNode} to visit.
      *  @return The result of visiting the node.
      */
-    public T visitTerminal(TerminalNode node);
+    public Variant visitTerminal(TerminalNode node);
 
     /**
      * Visit an error node, and return a user-defined result of the operation.
@@ -48,6 +54,6 @@ interface ParseTreeVisitor(T)
      *  @param node The {@link ErrorNode} to visit.
      *  @return The result of visiting the node.
      */
-    public T visitErrorNode(ErrorNode node);
+    public Variant visitErrorNode(ErrorNode node);
 
 }

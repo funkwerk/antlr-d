@@ -1,4 +1,4 @@
-// Generated from doc/examples/Expr.g4 by ANTLR 4.7.1
+// Generated from Expr.g4 by ANTLR 4.7.2
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -16,13 +16,13 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class ExprLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
     public static immutable int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, NEWLINE=7, INT=8;
+		T__0=1,T__1=2,T__2=3,T__3=4,T__4=5,T__5=6,NEWLINE=7,INT=8;
     public static string[] channelNames = [
         "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
     ];
@@ -31,14 +31,14 @@ public class ExprLexer : Lexer {
 	];
 
 	public static string[] ruleNames = [
-		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "NEWLINE", "INT"
+		"T__0","T__1","T__2","T__3","T__4","T__5","NEWLINE","INT"
 	];
 
 	private static const string[] _LITERAL_NAMES = [
-		null, "'*'", "'/'", "'+'", "'-'", "'('", "')'"
+		null,"'/'","'*'","'-'","'+'","'('","')'"
 	];
 	private static const string[] _SYMBOLIC_NAMES = [
-		null, null, null, null, null, null, null, "NEWLINE", "INT"
+		null,null,null,null,null,null,null,"NEWLINE","INT"
 	];
 	public static Vocabulary VOCABULARY;
 
@@ -106,9 +106,9 @@ public class ExprLexer : Lexer {
 		"\x02\x02\x02\x02\x0f\x03\x02\x02\x02\x02\x11\x03\x02\x02\x02\x03\x13\x03"~
 		"\x02\x02\x02\x05\x15\x03\x02\x02\x02\x07\x17\x03\x02\x02\x02\t\x19\x03"~
 		"\x02\x02\x02\x0b\x1b\x03\x02\x02\x02\r\x1d\x03\x02\x02\x02\x0f \x03\x02"~
-		"\x02\x02\x11%\x03\x02\x02\x02\x13\x14\x07,\x02\x02\x14\x04\x03\x02\x02"~
-		"\x02\x15\x16\x071\x02\x02\x16\x06\x03\x02\x02\x02\x17\x18\x07-\x02\x02"~
-		"\x18\b\x03\x02\x02\x02\x19\x1a\x07/\x02\x02\x1a\n\x03\x02\x02\x02\x1b"~
+		"\x02\x02\x11%\x03\x02\x02\x02\x13\x14\x071\x02\x02\x14\x04\x03\x02\x02"~
+		"\x02\x15\x16\x07,\x02\x02\x16\x06\x03\x02\x02\x02\x17\x18\x07/\x02\x02"~
+		"\x18\b\x03\x02\x02\x02\x19\x1a\x07-\x02\x02\x1a\n\x03\x02\x02\x02\x1b"~
 		"\x1c\x07*\x02\x02\x1c\f\x03\x02\x02\x02\x1d\x1e\x07+\x02\x02\x1e\x0e\x03"~
 		"\x02\x02\x02\x1f!\t\x02\x02\x02 \x1f\x03\x02\x02\x02!\"\x03\x02\x02\x02"~
 		"\" \x03\x02\x02\x02\"#\x03\x02\x02\x02#\x10\x03\x02\x02\x02$&\t\x03\x02"~

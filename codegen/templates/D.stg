@@ -44,6 +44,7 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 
 <parser>
@@ -154,15 +155,17 @@ package <file.genPackage>;
 <endif>
 <header>
 import antlr.v4.runtime.tree.ParseTreeVisitor;
+import std.variant : Variant;
+import <file.grammarName>Parser : <file.grammarName>Parser;
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link <file.parserName>}.
  *
- * @param T The return type of the visit operation. Use {@link void} for
+ * @param Variant The return type of the visit operation. Use {@link void} for
  * operations with no return type.
  */
-public interface <file.grammarName>Visitor(T) : ParseTreeVisitor!T {
+public interface <file.grammarName>Visitor : ParseTreeVisitor {
 	<file.visitorNames:{lname |
 /**
 <if(file.visitorLabelRuleNames.(lname))>
@@ -174,7 +177,7 @@ public interface <file.grammarName>Visitor(T) : ParseTreeVisitor!T {
  * @param ctx the parse tree
  * @return the visitor result
  */
-T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
+public Variant visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
 }
 >>
 
@@ -185,16 +188,19 @@ package <file.genPackage>;
 <endif>
 <header>
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+import std.variant : Variant;
+import <file.grammarName>Visitor;
+import <file.grammarName>Parser : <file.grammarName>Parser;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Visitor},
  * which can be extended to create a visitor which only needs to handle a subset
  * of the available methods.
  *
- * @param T The return type of the visit operation. Use {@link void} for
+ * @param Variant The return type of the visit operation. Use {@link void} for
  * operations with no return type.
  */
-public class <file.grammarName>BaseVisitor(T) : AbstractParseTreeVisitor!T, <file.grammarName>Visitor!T {
+public class <file.grammarName>BaseVisitor : AbstractParseTreeVisitor, <file.grammarName>Visitor {
 	<file.visitorNames:{lname |
 /**
  * {@inheritDoc\}
@@ -202,7 +208,7 @@ public class <file.grammarName>BaseVisitor(T) : AbstractParseTreeVisitor!T, <fil
  * \<p>The default implementation returns the result of calling
  * {@link #visitChildren\} on {@code ctx\}.\</p>
  */
-override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
+override public Variant visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
 }
 >>
 
@@ -814,9 +820,13 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
 
 VisitorDispatchMethod(method) ::= <<
 override
-public T accept(T)(ParseTreeVisitor visitor) {
-	if (visitor.classinfo == <parser.grammarName>Visitor.classinfo) return (cast(<parser.grammarName>Visitor!T)visitor).visit<struct.derivedFromName; format="cap">(this);
-	else return visitor.visitChildren(this);
+public Variant accept(ParseTreeVisitor visitor) {
+    import std.variant : Variant;
+    import <file.grammarName>Visitor : <file.grammarName>Visitor;
+    if (cast(<parser.grammarName>Visitor)visitor)
+        return (cast(<parser.grammarName>Visitor)visitor).visit<struct.derivedFromName; format="cap">(this);
+    else
+        return visitor.visitChildren(this);
 }
 >>
 

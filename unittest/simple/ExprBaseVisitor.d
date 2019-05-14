@@ -1,4 +1,4 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
+// Generated from Expr.g4 by ANTLR 4.7.2
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import std.variant : Variant;
 import ExprVisitor;
@@ -26,5 +26,40 @@ public class ExprBaseVisitor : AbstractParseTreeVisitor, ExprVisitor {
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	override public Variant visitExpr(ExprParser.ExprContext ctx) { return visitChildren(ctx); }
+	override public Variant visitDiv(ExprParser.DivContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	override public Variant visitAdd(ExprParser.AddContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	override public Variant visitSub(ExprParser.SubContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	override public Variant visitMul(ExprParser.MulContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	override public Variant visitBracketExpr(ExprParser.BracketExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	override public Variant visitInt(ExprParser.IntContext ctx) { return visitChildren(ctx); }
 }

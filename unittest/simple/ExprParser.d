@@ -1,4 +1,4 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
+// Generated from Expr.g4 by ANTLR 4.7.2
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -19,7 +19,10 @@ import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
+import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
+import std.variant : Variant;
+import ExprVisitor : ExprVisitor;
 
 public class ExprParser : Parser {
 	static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
@@ -36,7 +39,7 @@ public class ExprParser : Parser {
 	];
 
 	private static const string[] _LITERAL_NAMES = [
-		null,"'*'","'/'","'+'","'-'","'('","')'"
+		null,"'/'","'*'","'-'","'+'","'('","')'"
 	];
 	private static const string[] _SYMBOLIC_NAMES = [
 		null,null,null,null,null,null,null,"NEWLINE","INT"
@@ -116,8 +119,9 @@ public class ExprParser : Parser {
 		        (cast(ExprListener)listener).exitProg(this);
 		}
 		override
-		public T accept(T)(ParseTreeVisitor visitor) {
-			if (visitor.classinfo == ExprVisitor.classinfo) return (cast(ExprVisitor!T)visitor).visitProg(this);
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitProg(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -159,32 +163,174 @@ public class ExprParser : Parser {
 	}
 
 	public static class ExprContext : ParserRuleContext {
-		public TerminalNode INT() { return getToken(ExprParser.INT, 0); }
+		public this(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		override public int getRuleIndex() { return RULE_expr; }
+	 
+		public this() { }
+	        alias copyFrom = ParserRuleContext.copyFrom;
+		public void copyFrom(ExprContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class DivContext : ExprContext {
 		public ExprContext[] expr() {
 			return getRuleContexts!ExprContext;
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext!ExprContext(i);
 		}
-		public this(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		override public int getRuleIndex() { return RULE_expr; }
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
 		import ExprListener;
 		override
 		public void enterRule(ParseTreeListener listener) {
 		    if (cast(ExprListener.ExprListener)listener)
-		        (cast(ExprListener)listener).enterExpr(this);
+		        (cast(ExprListener)listener).enterDiv(this);
 		}
 		import ExprListener;
 		override
 		public void exitRule(ParseTreeListener listener) {
 		    if (cast(ExprListener.ExprListener)listener)
-		        (cast(ExprListener)listener).exitExpr(this);
+		        (cast(ExprListener)listener).exitDiv(this);
 		}
 		override
-		public T accept(T)(ParseTreeVisitor visitor) {
-			if (visitor.classinfo == ExprVisitor.classinfo) return (cast(ExprVisitor!T)visitor).visitExpr(this);
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitDiv(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AddContext : ExprContext {
+		public ExprContext[] expr() {
+			return getRuleContexts!ExprContext;
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext!ExprContext(i);
+		}
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
+		import ExprListener;
+		override
+		public void enterRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterAdd(this);
+		}
+		import ExprListener;
+		override
+		public void exitRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitAdd(this);
+		}
+		override
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitAdd(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class SubContext : ExprContext {
+		public ExprContext[] expr() {
+			return getRuleContexts!ExprContext;
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext!ExprContext(i);
+		}
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
+		import ExprListener;
+		override
+		public void enterRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterSub(this);
+		}
+		import ExprListener;
+		override
+		public void exitRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitSub(this);
+		}
+		override
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitSub(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class MulContext : ExprContext {
+		public ExprContext[] expr() {
+			return getRuleContexts!ExprContext;
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext!ExprContext(i);
+		}
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
+		import ExprListener;
+		override
+		public void enterRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterMul(this);
+		}
+		import ExprListener;
+		override
+		public void exitRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitMul(this);
+		}
+		override
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitMul(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BracketExprContext : ExprContext {
+		public ExprContext expr() {
+			return getRuleContext!ExprContext(0);
+		}
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
+		import ExprListener;
+		override
+		public void enterRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterBracketExpr(this);
+		}
+		import ExprListener;
+		override
+		public void exitRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitBracketExpr(this);
+		}
+		override
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitBracketExpr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IntContext : ExprContext {
+		public TerminalNode INT() { return getToken(ExprParser.INT, 0); }
+	        alias copyFrom = ExprContext.copyFrom;
+		public this(ExprContext ctx) { copyFrom(ctx); }
+		import ExprListener;
+		override
+		public void enterRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).enterInt(this);
+		}
+		import ExprListener;
+		override
+		public void exitRule(ParseTreeListener listener) {
+		    if (cast(ExprListener.ExprListener)listener)
+		        (cast(ExprListener)listener).exitInt(this);
+		}
+		override
+		public Variant accept(ParseTreeVisitor visitor) {
+		    if (cast(ExprVisitor)visitor)
+		        return (cast(ExprVisitor)visitor).visitInt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -200,7 +346,6 @@ public class ExprParser : Parser {
 		ExprContext _prevctx = _localctx;
 		int _startState = 2;
 		enterRecursionRule(_localctx, 2, RULE_expr, _p);
-		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -210,12 +355,19 @@ public class ExprParser : Parser {
 			switch (_input.LA(1)) {
 			case INT:
 				{
+				_localctx = new IntContext(_localctx);
+				ctx_ = _localctx;
+				_prevctx = _localctx;
+
 				setState(13);
 				match(INT);
 				}
 				break;
 			case T__4:
 				{
+				_localctx = new BracketExprContext(_localctx);
+				ctx_ = _localctx;
+				_prevctx = _localctx;
 				setState(14);
 				match(T__4);
 				setState(15);
@@ -228,7 +380,7 @@ public class ExprParser : Parser {
 				throw new NoViableAltException(this);
 			}
 			ctx_.stop = _input.LT(-1);
-			setState(28);
+			setState(34);
 			_errHandler.sync(this);
 			_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
 			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
@@ -236,48 +388,54 @@ public class ExprParser : Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(26);
+					setState(32);
 					_errHandler.sync(this);
 					switch ( getInterpreter.adaptivePredict(_input,2, ctx_) ) {
 					case 1:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new DivContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(20);
-						if (!(precpred(ctx_, 4))) throw new FailedPredicateException(this, "precpred(ctx_, 4)");
+						if (!(precpred(ctx_, 6))) throw new FailedPredicateException(this, "precpred(ctx_, 6)");
 						setState(21);
-						_la = _input.LA(1);
-						if ( !(_la==T__0 || _la==T__1) ) {
-						_errHandler.recoverInline(this);
-						}
-						else {
-						    if (_input.LA(1) == TokenConstantDefinition.EOF)
-						        matchedEOF = true;
-						    _errHandler.reportMatch(this);
-						    consume();
-						}
+						match(T__0);
 						setState(22);
-						expr(5);
+						expr(7);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ExprContext(_parentctx, _parentState);
+						_localctx = new MulContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(23);
-						if (!(precpred(ctx_, 3))) throw new FailedPredicateException(this, "precpred(ctx_, 3)");
+						if (!(precpred(ctx_, 5))) throw new FailedPredicateException(this, "precpred(ctx_, 5)");
 						setState(24);
-						_la = _input.LA(1);
-						if ( !(_la==T__2 || _la==T__3) ) {
-						_errHandler.recoverInline(this);
-						}
-						else {
-						    if (_input.LA(1) == TokenConstantDefinition.EOF)
-						        matchedEOF = true;
-						    _errHandler.reportMatch(this);
-						    consume();
-						}
+						match(T__1);
 						setState(25);
+						expr(6);
+						}
+						break;
+					case 3:
+						{
+						_localctx = new SubContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(26);
+						if (!(precpred(ctx_, 4))) throw new FailedPredicateException(this, "precpred(ctx_, 4)");
+						setState(27);
+						match(T__2);
+						setState(28);
+						expr(5);
+						}
+						break;
+					case 4:
+						{
+						_localctx = new AddContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(29);
+						if (!(precpred(ctx_, 3))) throw new FailedPredicateException(this, "precpred(ctx_, 3)");
+						setState(30);
+						match(T__3);
+						setState(31);
 						expr(4);
 						}
 						break;
@@ -285,7 +443,7 @@ public class ExprParser : Parser {
 					}
 					} 
 				}
-				setState(30);
+				setState(36);
 				_errHandler.sync(this);
 				_alt = getInterpreter.adaptivePredict(_input,3, ctx_);
 			}
@@ -314,8 +472,12 @@ public class ExprParser : Parser {
 	private bool expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(ctx_, 4);
+			return precpred(ctx_, 6);
 		case 1:
+			return precpred(ctx_, 5);
+		case 2:
+			return precpred(ctx_, 4);
+		case 3:
 			return precpred(ctx_, 3);
 	        default: {}
 		}
@@ -323,23 +485,25 @@ public class ExprParser : Parser {
 	}
 
 	public static immutable wstring _serializedATN =
-		"\x03\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\x03\n\"\x04\x02\t"~
+		"\x03\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\x03\n(\x04\x02\t"~
 		"\x02\x04\x03\t\x03\x03\x02\x03\x02\x03\x02\x07\x02\n\n\x02\f\x02\x0e\x02"~
 		"\r\x0b\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03\x15"~
-		"\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03\x1d\n\x03"~
-		"\f\x03\x0e\x03 \x0b\x03\x03\x03\x02\x03\x04\x04\x02\x04\x02\x04\x03\x02"~
-		"\x03\x04\x03\x02\x05\x06\x02#\x02\x0b\x03\x02\x02\x02\x04\x14\x03\x02"~
-		"\x02\x02\x06\x07\x05\x04\x03\x02\x07\b\x07\t\x02\x02\b\n\x03\x02\x02\x02"~
-		"\t\x06\x03\x02\x02\x02\n\r\x03\x02\x02\x02\x0b\t\x03\x02\x02\x02\x0b\f"~
-		"\x03\x02\x02\x02\f\x03\x03\x02\x02\x02\r\x0b\x03\x02\x02\x02\x0e\x0f\b"~
-		"\x03\x01\x02\x0f\x15\x07\n\x02\x02\x10\x11\x07\x07\x02\x02\x11\x12\x05"~
-		"\x04\x03\x02\x12\x13\x07\b\x02\x02\x13\x15\x03\x02\x02\x02\x14\x0e\x03"~
-		"\x02\x02\x02\x14\x10\x03\x02\x02\x02\x15\x1e\x03\x02\x02\x02\x16\x17\f"~
-		"\x06\x02\x02\x17\x18\t\x02\x02\x02\x18\x1d\x05\x04\x03\x07\x19\x1a\f\x05"~
-		"\x02\x02\x1a\x1b\t\x03\x02\x02\x1b\x1d\x05\x04\x03\x06\x1c\x16\x03\x02"~
-		"\x02\x02\x1c\x19\x03\x02\x02\x02\x1d \x03\x02\x02\x02\x1e\x1c\x03\x02"~
-		"\x02\x02\x1e\x1f\x03\x02\x02\x02\x1f\x05\x03\x02\x02\x02 \x1e\x03\x02"~
-		"\x02\x02\x06\x0b\x14\x1c\x1e";
+		"\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03"~
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03#\n\x03\f\x03\x0e\x03&\x0b\x03"~
+		"\x03\x03\x02\x03\x04\x04\x02\x04\x02\x02\x02+\x02\x0b\x03\x02\x02\x02"~
+		"\x04\x14\x03\x02\x02\x02\x06\x07\x05\x04\x03\x02\x07\b\x07\t\x02\x02\b"~
+		"\n\x03\x02\x02\x02\t\x06\x03\x02\x02\x02\n\r\x03\x02\x02\x02\x0b\t\x03"~
+		"\x02\x02\x02\x0b\f\x03\x02\x02\x02\f\x03\x03\x02\x02\x02\r\x0b\x03\x02"~
+		"\x02\x02\x0e\x0f\b\x03\x01\x02\x0f\x15\x07\n\x02\x02\x10\x11\x07\x07\x02"~
+		"\x02\x11\x12\x05\x04\x03\x02\x12\x13\x07\b\x02\x02\x13\x15\x03\x02\x02"~
+		"\x02\x14\x0e\x03\x02\x02\x02\x14\x10\x03\x02\x02\x02\x15$\x03\x02\x02"~
+		"\x02\x16\x17\f\b\x02\x02\x17\x18\x07\x03\x02\x02\x18#\x05\x04\x03\t\x19"~
+		"\x1a\f\x07\x02\x02\x1a\x1b\x07\x04\x02\x02\x1b#\x05\x04\x03\b\x1c\x1d"~
+		"\f\x06\x02\x02\x1d\x1e\x07\x05\x02\x02\x1e#\x05\x04\x03\x07\x1f \f\x05"~
+		"\x02\x02 !\x07\x06\x02\x02!#\x05\x04\x03\x06\"\x16\x03\x02\x02\x02\"\x19"~
+		"\x03\x02\x02\x02\"\x1c\x03\x02\x02\x02\"\x1f\x03\x02\x02\x02#&\x03\x02"~
+		"\x02\x02$\"\x03\x02\x02\x02$%\x03\x02\x02\x02%\x05\x03\x02\x02\x02&$\x03"~
+		"\x02\x02\x02\x06\x0b\x14\"$";
 	public static ATN _ATN;
 
 	static this() {

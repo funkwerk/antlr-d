@@ -21,7 +21,20 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitProg(ExprParser.ProgContext ctx) {
-        return visitChildren(ctx);
+        auto res = visit(ctx.children[0]).get!(int);
+        return Variant(res);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    override public Variant visitDiv(ExprParser.DivContext ctx) {
+        auto res = visit(ctx.children[0]).get!(int) /
+            visit(ctx.children[2]).get!(int);
+        return Variant(res);
     }
     /**
      * {@inheritDoc}
@@ -29,7 +42,48 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * <p>The default implementation returns the result of calling
      * {@link #visitChildren} on {@code ctx}.</p>
      */
-    override public Variant visitExpr(ExprParser.ExprContext ctx) {
-        return visitChildren(ctx);
+    override public Variant visitAdd(ExprParser.AddContext ctx) {
+        auto res = visit(ctx.children[0]).get!(int) +
+            visit(ctx.children[2]).get!(int);
+        return Variant(res);
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    override public Variant visitSub(ExprParser.SubContext ctx) {
+        auto res = visit(ctx.children[0]).get!(int) -
+            visit(ctx.children[2]).get!(int);
+        return Variant(res);
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    override public Variant visitMul(ExprParser.MulContext ctx) {
+        auto res = visit(ctx.children[0]).get!(int) *
+            visit(ctx.children[2]).get!(int);
+        return Variant(res);
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation returns the result of calling
+     * {@link #visitChildren} on {@code ctx}.</p>
+     */
+    override public Variant visitBracketExpr(ExprParser.BracketExprContext ctx) {
+        auto res = visit(ctx.children[1]).get!(int);
+        return Variant(res);
+    }
+    /**
+     * The terminal element: interger number
+     */
+    override public Variant visitInt(ExprParser.IntContext ctx) {
+        import std.conv;
+        return Variant(to!int(ctx.getText.get!(string)));
     }
 }

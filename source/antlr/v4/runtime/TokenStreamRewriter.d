@@ -16,8 +16,8 @@ import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.misc.Interval;
 import std.algorithm.comparison;
-import std.format;
 import std.conv;
+import std.format;
 import std.variant;
 
 /**
@@ -402,10 +402,7 @@ class TokenStreamRewriter
                 // no operation at that index, just dump token
                 if (t.getType != TokenConstantDefinition.EOF) {
                     Variant Null;
-                    if (buf is Null)
-                        buf = t.getText;
-                    else
-                        buf ~= t.getText;
+                    buf is Null ? buf = t.getText : (buf ~= t.getText);
                 }
                 i++; // move to next token
             }

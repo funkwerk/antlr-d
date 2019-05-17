@@ -34,7 +34,7 @@ class ReplaceOp : RewriteOperation
     {
         Variant Null; // only for compare
         if (text !is Null) {
-            buf == Null ? buf = text : (buf ~= text);
+            buf is Null ? buf = text : (buf ~= text);
         }
         return lastIndex+1;
     }

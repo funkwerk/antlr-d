@@ -23,25 +23,44 @@ version(unittest) {
     import std.variant;
     import unit_threaded;
 
-    public class InsertTestListenerReplace : RuleTranslatorBaseListener {
+    public class InsertAt0TestListenerReplace : RuleTranslatorBaseListener {
 
         TokenStreamRewriter rewriter;
+        Token currentToken;
 
         this(TokenStream tokens)
         {
             rewriter = new TokenStreamRewriter(tokens);
         }
-        /**
-         * <p>The default implementation does nothing.</p>
-         */
+
         override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            writefln("enterFile");
+            currentToken = ctx.start;
         }
-        /**
-         * {@inheritDoc}
-         *
-         * <p>The default implementation does nothing.</p>
-         */
+
+        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
+            debug(TokenStreamRewriter) {
+                import std.stdio : writefln;
+                writefln("exitStmt ctx.start = %s", ctx.start);
+            }
+            Variant parameter = "alpha";
+            rewriter.replace(currentToken, ctx.stop, parameter);
+        }
+    }
+
+        public class InsertTestListenerReplace : RuleTranslatorBaseListener {
+
+        TokenStreamRewriter rewriter;
+        Token currentToken;
+
+        this(TokenStream tokens)
+        {
+            rewriter = new TokenStreamRewriter(tokens);
+        }
+
+        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
+            currentToken = ctx.start;
+        }
+
         override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
             debug(TokenStreamRewriter) {
                 import std.stdio : writefln;
@@ -229,6 +248,7 @@ alpha"Information zu"beta
             str.should.equal(expected);
         }
     }
+
     @Tags("TokenStreamRewriter")
         @("deleteT")
         unittest {
@@ -269,4 +289,42 @@ basede.Phrases
             auto str = extractor.rewriter.getText.get!(string);
             str.should.equal(expected);
         }
+    
+        @Tags("TokenStreamRewriter")
+        @("replaceAt0")
+        unittest {
+            auto input =
+                `# Text definition DEFAS
+# for automatic announcements
+# Version 2018-02-21
+
+rule Delay as DELAY de
+base de.Phrases
+
+"Information zu"
+`
+                ;
+
+            auto expected = "alpha";
+
+            auto antlrInput = new ANTLRInputStream(input);
+            auto lexer = new RuleTranslatorLexer(antlrInput);
+            auto cts = new CommonTokenStream(lexer);
+            cts.fill;
+            auto tokens = cts.getTokens;
+            foreach (i, t; tokens) {
+                writefln("token %s: %s", i, t);
+            }
+            cts.getNumberOfOnChannelTokens.should.equal(15);
+            auto parser = new RuleTranslatorParser(cts);
+            // Specify entry point
+            auto rootContext = parser.file_input;
+            parser.numberOfSyntaxErrors.should.equal(0);
+            auto extractor = new InsertAt0TestListenerReplace(cts);
+            auto walker = new ParseTreeWalker;
+            walker.walk(extractor, rootContext);
+            auto str = extractor.rewriter.getText.get!(string);
+            str.should.equal(expected);
+        }
+
 }

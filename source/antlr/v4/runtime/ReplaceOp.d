@@ -32,9 +32,9 @@ class ReplaceOp : RewriteOperation
      */
     public override size_t execute(ref Variant buf)
     {
-        Variant Null;
+        Variant Null; // only for compare
         if (text !is Null) {
-            buf ~= text;
+            buf == Null ? buf = text : (buf ~= text);
         }
         return lastIndex+1;
     }

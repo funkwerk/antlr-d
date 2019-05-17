@@ -395,15 +395,9 @@ class TokenStreamRewriter
             RewriteOperation op;
             if (i in indexToOp)
                 op = indexToOp[i];
-            debug(TokenStreamRewriter) {
-                import std.stdio : stderr, writefln;
-                writefln("indexToOp = %s", indexToOp);
-            }
+
             indexToOp.remove(i); // remove so any left have index size-1
-            debug(TokenStreamRewriter) {
-                import std.stdio : stderr, writefln;
-                writefln("indexToOp end = %s", indexToOp);
-            }
+
             if (!op) {
                 // no operation at that index, just dump token
                 if (t.getType != TokenConstantDefinition.EOF) {

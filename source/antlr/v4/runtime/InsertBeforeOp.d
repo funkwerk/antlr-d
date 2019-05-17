@@ -28,7 +28,7 @@ class InsertBeforeOp : RewriteOperation
      */
     public override size_t execute(ref Variant buf)
     {
-        buf ~= text;
+        buf == Null ? buf = text : (buf ~= text);
         if (tokens.get(to!int(index)).getType != TokenConstantDefinition.EOF)
             {
                 buf ~= tokens.get(to!int(index)).getText;

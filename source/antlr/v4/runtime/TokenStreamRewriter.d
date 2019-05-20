@@ -532,7 +532,10 @@ class TokenStreamRewriter
                 // Delete special case of replace (text==null):
                 // D.i-j.u D.x-y.v  | boundaries overlap    combine to max(min)..max(right)
                 if ( prevRop.text==null && rop.text==null && !disjoint ) {
-                    //System.out.println("overlapping deletes: "+prevRop+", "+rop);
+                    debug(TokenStreamRewriter) {
+                        import std.stdio : writefln;
+                        writefln("overlapping deletes: %s, %s", prevRop, rop);
+                    }
                     rewrites[prevRop.instructionIndex] = null; // kill first delete
                     rop.index = min(prevRop.index, rop.index);
                     rop.lastIndex = max(prevRop.lastIndex, rop.lastIndex);
@@ -566,7 +569,7 @@ class TokenStreamRewriter
             InsertBeforeOp[] prevInserts = getKindOfOps!(InsertBeforeOp)(rewrites, i);
             foreach (InsertBeforeOp prevIop; prevInserts) {
                 debug(TokenStreamRewriter) {
-                    import std.stdio : stderr, writefln;
+                    import std.stdio : writefln;
                     writefln("prevIop = %s", prevIop);
                 }
                 if (prevIop.index == iop.index) {

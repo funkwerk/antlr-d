@@ -16,7 +16,7 @@
             "sourcePaths": ["source"],
             "targetName": "antlr-d",
             "targetPath": "lib",
-            "targetType": "library",
+            "targetType": "library"
     },
     {
             "name": "unittest",
@@ -36,5 +36,5 @@
         ],
         "mainSourceFile": "bin/ut.d"
     }
-    ],
+    ]
 }

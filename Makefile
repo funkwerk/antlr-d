@@ -6,7 +6,7 @@ UNAME_M := $(shell uname -m)
 
 ifeq ($(UNAME_M),x86_64)
     RDMD = rdmd
-    DMD = ldmd2 -w -O
+    DMD = ldmd2 -link-defaultlib-shared -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/dmd
     EXECUTABLE = x86-64
 endif

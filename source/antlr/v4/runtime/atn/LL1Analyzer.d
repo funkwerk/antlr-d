@@ -22,7 +22,6 @@ import antlr.v4.runtime.atn.Transition;
 import antlr.v4.runtime.atn.WildcardTransition;
 import antlr.v4.runtime.misc.IntervalSet;
 import std.container.array;
-import std.container.rbtree;
 import std.conv;
 import std.stdio;
 

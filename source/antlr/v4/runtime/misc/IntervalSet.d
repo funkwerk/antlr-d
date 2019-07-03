@@ -525,7 +525,7 @@ class IntervalSet : IntSet
 
     public RedBlackTree!int toSet()
     {
-        auto s = new RedBlackTree!int();
+        auto s = redBlackTree!int();
         foreach (Interval I; intervals_) {
             int a = I.a;
             int b = I.b;

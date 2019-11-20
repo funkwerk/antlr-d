@@ -333,7 +333,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
     {
 	TokenStream tokens = recognizer.getInputStream();
         string input;
-        if (tokens !is null) {
+        if (tokens) {
             if (e.getStartToken.getType == TokenConstantDefinition.EOF)
                 input = "<EOF>";
             else
@@ -689,7 +689,6 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected string escapeWSAndQuote(string s)
     {
-        //		if ( s==null ) return s;
         s = s.replace("\n","\\n");
         s = s.replace("\r","\\r");
         s = s.replace("\t","\\t");

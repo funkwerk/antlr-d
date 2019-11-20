@@ -1,4 +1,4 @@
-﻿# Antlr4DTarget
+# Antlr4DTarget
 The D runtime library for ANTLR 4, mainly an adaption of original Java runtime library.
 
 This Software is under development but tested on different grammars of [ANTLR
@@ -17,7 +17,7 @@ version 4.7.2](http://www.antlr.org/) yet.
 ## Example
 Put the
 
-    grammar Expr;		
+    grammar Expr;
     prog:	(expr NEWLINE)* ;
     expr:	expr ('*'|'/') expr
         |	expr ('+'|'-') expr

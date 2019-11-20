@@ -109,7 +109,6 @@ lexer grammar RuleLexer;
   }
 }
 
-
 /*************
  * lexer rules
  *************/
@@ -128,6 +127,9 @@ EntityRef   :   '&' Name ';' ;
 CharRef     :   '&#' DIGIT+ ';'
             |   '&#x' HEXDIGIT+ ';'
             ;
+
+OPEN        :   NEWLINE '<' NAME        -> pushMode(INSIDE) ;
+OPEN_END    :   NEWLINE? '</' NAME      -> pushMode(INSIDE) ;
 
 RULE_STRING
  : STRING_LITERAL
@@ -149,7 +151,6 @@ BASE : 'base';
 DEF : 'def';
 RETURN : 'return';
 AS : 'as';
-
 IF : 'if';
 IN : 'in';
 ELIF : 'elif';
@@ -953,15 +954,15 @@ fragment ID_CONTINUE
  | '\uFF3F'
  ;
 
-
 // ----------------- Everything INSIDE of a tag ---------------------
 mode INSIDE;
 
 CLOSE       :   '>'                     -> popMode ;
-//SPECIAL_CLOSE:  '?>'                    -> popMode ; // close <?xml...?>
+//SPECIAL_CLOSE:  '?>'                  -> popMode ; // close <?xml...?>
 SLASH_CLOSE :   '/>'                    -> popMode ;
 SLASH       :   '/' ;
-XML_EQUALS      :   '=' ;
+AT          :   '@';
+XML_EQUALS  :   '=' ;
 STRING      :   '"' ~[<"]* '"'
             |   '\'' ~[<']* '\''
             ;

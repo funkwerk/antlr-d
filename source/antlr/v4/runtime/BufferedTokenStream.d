@@ -517,24 +517,24 @@ class BufferedTokenStream : TokenStream
      */
     public override Variant getText(Interval interval)
     {
+        import std.array : join;
       	int start = interval.a;
         int stop = interval.b;
         if (start < 0 || stop < 0) {
             Variant v;
             return v;
         }
-        lazyInit();
+        fill();
         if (stop >= tokens.length)
-			stop = to!int(tokens.length) - 1;
+            stop = to!int(tokens.length) - 1;
 
-        Variant buf = tokens[start].getText; //  set type
-        for (int i = start + 1; i <= stop; i++) {
-            Token t = tokens[i];
+        string[] buf;
+        foreach (t; tokens[start..stop+1]) {
             if (t.getType == TokenConstantDefinition.EOF)
                 break;
-            buf ~= t.getText;
+            buf ~= t.getText.get!string;
         }
-        return buf;
+        return Variant(buf.join(" "));
     }
 
     /**

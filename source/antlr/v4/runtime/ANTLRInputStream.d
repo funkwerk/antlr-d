@@ -79,13 +79,13 @@ class ANTLRInputStream : CharStream
 
     public void load(File r, int size, int readChunkSize)
     {
-        debug(ANTLRInput)
+        debug (ANTLRInputStream)
             writefln("load %1$s in chunks of %2$s", size, readChunkSize);
         name = r.name;
         data = to!(char[])(name.readText);
         // set the actual size of the data available;
         n = to!int(data.length);
-        debug(ANTLRInput)
+        debug (ANTLRInputStreamStream)
             writefln("n= $s", n);
     }
 
@@ -131,13 +131,13 @@ class ANTLRInputStream : CharStream
             }
         }
         if (( p + i - 1) >= n) {
-            debug(ANTLRInput) {
+            debug (ANTLRInputStream) {
                 import std.stdio;
                 writefln("char LA(%s)=EOF; p=%s", i, p);
             }
             return IntStreamConstant.EOF;
         }
-        debug(ANTLRInput) {
+        debug (ANTLRInputStream) {
                 import std.stdio;
                 writefln("LA(%s); p=%s n=%s data.length=%s", i, p, n, data.length);
                 writefln("char LA(%s)=%s; p=%s", i, data[p+i-1], p);
@@ -216,10 +216,11 @@ class ANTLRInputStream : CharStream
         if (stop >= n)
             stop = n-1;
         if (start >= n) return "";
-        //		System.err.println("data: "+Arrays.toString(data)+", n="+n+
-        //						   ", start="+start+
-        //						   ", stop="+stop);
-        return to!string(data[start..stop+1]);
+        debug (ANTLRInputStream) {
+            writefln("data: %s, n=%s, start=%s, stop=%s",
+                     data[start..stop+1], n, start, stop);
+        }
+        return data[start..stop+1].idup();
     }
 
     /**

@@ -35,7 +35,28 @@ base_rules : NAME;
 
 //
 funcdef: DEF functionName
-          parameters ':' suite;
+          parameters ':' (suite | xml_templates);
+
+xml_templates : xml_template+;
+
+xml_template : xml_tag
+      | xml_tag NAME* xml_tag;
+
+xml_tag : (xml_open xml_attr* xml_close);
+
+xml_open: OPEN | OPEN_END;
+
+xml_attr : xml_attr_name xml_attr_equals xml_string;
+
+xml_attr_name: xml_ref? Name;
+
+xml_ref : AT;
+
+xml_attr_equals: XML_EQUALS;
+
+xml_string: STRING;
+
+xml_close : CLOSE | SLASH_CLOSE;
 
 functionName: NAME;
 
@@ -61,7 +82,9 @@ small_stmt: (
 
 string_stmt: RULE_STRING;
 
-funct_stmt: funct_name funct_parameters (dot_e funct_stmt)*;
+funct_stmt: funct_name funct_parameters
+   |  {isTTS}? funct_name funct_parameters (dot_e funct_stmt)*
+;
 funct_name: NAME;
 dot_e : DOT;
 funct_parameters: parameters;
@@ -186,7 +209,6 @@ argument: test;
  * parser rules for XML
  */
 
-
 element     :   LESS_THAN Name attribute* GREATER_THAN content LESS_THAN SLASH Name GREATER_THAN
             |   LESS_THAN Name attribute* SLASH_CLOSE
             ;
@@ -195,7 +217,6 @@ content     :
                 ((element | RULE_STRING ))* ;
 
 attribute   :   Name ASSIGN RULE_STRING ; // Our STRING is AttValue in spec
-
 
 /** ``All text that is not markup constitutes the character data of
  *  the document.''

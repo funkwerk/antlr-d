@@ -1,24 +1,22 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
+DMD = ldmd2 -link-defaultlib-shared -w -O
 
 UNAME_M := $(shell uname -m)
 
 ifeq ($(UNAME_M),x86_64)
     RDMD = rdmd
-    DMD = ldmd2 -link-defaultlib-shared -w -O
-    EXPORT_INCLUDE = $(EXPORT)/include/dmd
+    EXPORT_INCLUDE = $(EXPORT)/include/d
     EXECUTABLE = x86-64
 endif
 ifeq ($(UNAME_M),i686)
     RDMD = rdmd
-    DMD = ldmd2 -w -O
     EXPORT_INCLUDE = $(EXPORT)/include/d
     EXECUTABLE = 80386
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
 ifeq ($(UNAME_M),armv7l)
-    DMD = ldmd2 -w -link-defaultlib-shared
     EXPORT_INCLUDE = $(EXPORT)/import
     EXECUTABLE = ARM
 endif

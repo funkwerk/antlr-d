@@ -134,14 +134,15 @@ build_examples : prepare_generator
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.2-complete.jar	\
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.2-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY: build_library
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -fPIC $(SOURCE_FILES) -od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+	$(DMD) -shared -fPIC -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
+		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
 .PHONY: install
 install: $(BUILD_DIR)/libantlr-d.so.4.7
@@ -150,7 +151,8 @@ install: $(BUILD_DIR)/libantlr-d.so.4.7
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
-	cp -R source/antlr $(EXPORT_INCLUDE)
+	@rm -rf $(EXPORT_INCLUDE)/antlr
+	@mv -f $(BUILD_DIR)/di/$(SRC_DIR)/antlr $(EXPORT_INCLUDE)
 
 .PHONY: docs
  docs:

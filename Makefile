@@ -26,6 +26,7 @@ MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
 
+SRC_DIR = source
 BUILD_DIR = build
 EXPORT_LIB = $(EXPORT)/lib
 
@@ -33,13 +34,11 @@ MODEL_DIR = model
 MODELS := $(shell find $(MODEL_DIR) -name "*.zargo")
 MODELS_R := $(patsubst %, $(BUILD_DIR)/%, $(patsubst %.zargo, %.receipt, $(MODELS)))
 
-SRC_DIR = source
 SRC_DIR_DOT = $(subst /,.,$(SRC_DIR))
 SRC_ROOT = $(SRC_DIR)/antlr/v4/runtime
 SRC := $(shell find $(SRC_ROOT) -name "*.d")
 XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 
-BUILD_DIR = build
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
 UNITTEST_LIB = -L-lunit-threaded -L-ldshould
@@ -84,6 +83,7 @@ all : generate unittest
 
 .PHONY: generate
 generate: $(MODELS_R)
+	echo $(MODELS_R)
 
 $(BUILD_DIR)/TimeTable : $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES)
 	@echo $(EXAMPLE_TIMETABLE_FILES)
@@ -144,6 +144,16 @@ $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
 	$(DMD) -shared -fPIC -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
 		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
+# some D source files must replace di files
+EXPORT_D_FILES_NAMES = misc/MurmurHash.di \
+                 atn/AbstractConfigHashSet.di \
+                 atn/PredictionContext.di
+EXPORT_D_FILES := $(patsubst %.di, $(SRC_DIR)/antlr/v4/runtime/%.d,\
+                  $(EXPORT_D_FILES_NAMES))
+NO_EXPORT_DI_FILES := $(patsubst %.di, \
+                  $(EXPORT_INCLUDE)/antlr/v4/runtime/%.di,\
+                  $(EXPORT_D_FILES_NAMES))
+
 .PHONY: install
 install: $(BUILD_DIR)/libantlr-d.so.4.7
 	cp $(BUILD_DIR)/libantlr-d.so.4.7 $(EXPORT_LIB)
@@ -151,8 +161,12 @@ install: $(BUILD_DIR)/libantlr-d.so.4.7
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
-	@rm -rf $(EXPORT_INCLUDE)/antlr
-	@mv -f $(BUILD_DIR)/di/$(SRC_DIR)/antlr $(EXPORT_INCLUDE)
+	@rm -rf $(EXPORT_INCLUDE)/antlr/*
+	$(MKDIR_P) $(EXPORT_INCLUDE)/antlr
+	cp -r $(BUILD_DIR)/di/source/antlr $(EXPORT_INCLUDE)
+	$(foreach file, $(EXPORT_D_FILES), \
+	 cp $(file) $(subst source,, $(EXPORT_INCLUDE)$(file));)
+	rm $(NO_EXPORT_DI_FILES)
 
 .PHONY: docs
  docs:

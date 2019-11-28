@@ -214,7 +214,7 @@ class ATNConfigSet
      */
     public bool add(ATNConfig config, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-	if (readonly_)
+    if (readonly_)
             throw new IllegalStateException("This set is readonly");
 
         if (config.semanticContext != SemanticContext.NONE) {
@@ -289,7 +289,7 @@ class ATNConfigSet
 
     public SemanticContext[] getPredicates()
     {
-	SemanticContext[] preds;
+    SemanticContext[] preds;
         foreach (ATNConfig c; configs) {
             if (c.semanticContext != SemanticContext.NONE) {
                 preds ~= c.semanticContext;
@@ -305,7 +305,7 @@ class ATNConfigSet
 
     public void optimizeConfigs(InterfaceATNSimulator interpreter)
     {
-	if (readonly_) throw new IllegalStateException("This set is readonly");
+    if (readonly_) throw new IllegalStateException("This set is readonly");
         if (configLookup.isEmpty) return;
         foreach (ref ATNConfig config; configs) {
             debug(ATNConfigSet)
@@ -321,7 +321,7 @@ class ATNConfigSet
 
     public bool addAll(ATNConfig[] coll)
     {
-	foreach (ATNConfig c; coll) add(c);
+    foreach (ATNConfig c; coll) add(c);
         return false;
     }
 
@@ -332,7 +332,7 @@ class ATNConfigSet
     public override bool opEquals(Object o)
     {
 
-	if (o is this) {
+    if (o is this) {
             return true;
         }
         else {
@@ -396,7 +396,7 @@ class ATNConfigSet
 
     public bool isEmpty()
     {
-	return !configs.length;
+    return !configs.length;
     }
 
     public bool contains(ATNConfig o)
@@ -437,7 +437,7 @@ class ATNConfigSet
      */
     public override string toString()
     {
-	auto buf = appender!string;
+    auto buf = appender!string;
         buf.put(to!string(elements));
         if (hasSemanticContext) buf.put(format(",hasSemanticContext=%s", hasSemanticContext));
         if (uniqueAlt != 0) // ATN.INVALID_ALT_NUMBER
@@ -457,10 +457,12 @@ class ATNConfigSet
 
 version(unittest) {
     import dshould : be, equal, not, should;
+    import std.typecons : tuple;
     import unit_threaded;
+
     @Tags("atnConfigSet")
-	@("atnConfigSetTest")
-	unittest {
+    @("atnConfigSetTest")
+    unittest {
             ATNConfigSet atnConfigSet = new ATNConfigSet;
             atnConfigSet.should.not.be(null);
             atnConfigSet.readonly.should.equal(false);

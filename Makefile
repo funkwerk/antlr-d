@@ -83,7 +83,6 @@ all : generate unittest
 
 .PHONY: generate
 generate: $(MODELS_R)
-	echo $(MODELS_R)
 
 $(BUILD_DIR)/TimeTable : $(EXAMPLE_TIMETABLE_FILES) $(EXAMPLE_MODULE_FILES)
 	@echo $(EXAMPLE_TIMETABLE_FILES)

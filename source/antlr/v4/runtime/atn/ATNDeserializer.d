@@ -188,7 +188,7 @@ class ATNDeserializer
             }
         readEdges(atn, sets);
         readDecisions(atn);
-	readLexerActions(atn);
+    readLexerActions(atn);
         markPrecedenceDecisions(atn);
         if (deserializationOptions.verifyATN) {
             verifyATN(atn);
@@ -329,7 +329,7 @@ class ATNDeserializer
     protected Transition edgeFactory(ATN atn, int type, int src, int trg, int arg1, int arg2,
                                      int arg3, IntervalSet[] sets)
     {
-	ATNState target = atn.states[trg];
+    ATNState target = atn.states[trg];
         with(TransitionStates) {
             switch (type) {
             case EPSILON : return new EpsilonTransition(target);
@@ -395,7 +395,7 @@ class ATNDeserializer
 
     protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
     {
-      	switch (type) {
+        switch (type) {
         case LexerActionType.CHANNEL:
             return new LexerChannelAction(data1);
 
@@ -710,7 +710,7 @@ class ATNDeserializer
 
     private void optimizeATN(ATN atn)
     {
-	while (true)
+    while (true)
             {
                 int optimizationCount = 0;
                 optimizationCount += inlineSetRules(atn);
@@ -1253,7 +1253,9 @@ class ATNDeserializer
 
 version(unittest) {
     import dshould : be, equal, not, should;
+    import std.typecons : tuple;
     import unit_threaded;
+
     @Tags("des11")
     @("testEncodingATNDeserialize")
     unittest {

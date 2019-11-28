@@ -203,6 +203,7 @@ class DFA
 
 version(unittest) {
     import dshould : equal, not, be, should;
+    import std.typecons : tuple;
     import unit_threaded;
 
     @Tags("DFA")

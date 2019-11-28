@@ -142,6 +142,7 @@ class ArrayPredictionContext : PredictionContext
 
 version(unittest) {
     import dshould : be, equal, not, should;
+    import std.typecons : tuple;
     import unit_threaded;
 
     class Test {

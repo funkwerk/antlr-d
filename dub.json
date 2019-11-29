@@ -28,8 +28,8 @@
                             "unittest/separated_grammar"],
         "targetType": "executable",
         "dependencies": {
-                "dshould": "~>0.1",
-        "unit-threaded": "~>0.9"
+                "dshould": ">=1.1.0",
+                "unit-threaded": ">=0.10.4"
         },
         "preBuildCommands": [
         "dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"

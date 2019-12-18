@@ -140,8 +140,9 @@ build_xpathlexer : prepare_generator
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -fPIC -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
+	$(DMD) -shared -fPIC $(SOURCE_FILES) \
 		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+	$(DMD) -o- -H -op $(SOURCE_FILES) -Hd=$(BUILD_DIR)/di
 
 # some D source files must replace di files
 EXPORT_D_FILES_NAMES = misc/MurmurHash.di \
@@ -178,6 +179,7 @@ clean :
 	rm -rf $(SRC_ROOT)/*\.d_orig $(SRC_ROOT)/*\.d~
 	rm -rf model/DRuntime*.zargo~
 	rm -rf $(BUILD_DIR)/*.lst
+	rm -rf $(BUILD_DIR)/TestRunner
 
 .PHONY : clobber
 clobber :

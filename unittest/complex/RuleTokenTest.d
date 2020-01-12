@@ -214,7 +214,6 @@ if a :
     foreach (i, el; r)
         {
             import std.string : strip;
-            writefln("i = %s, el = %s", i, el);
             if (!i)
                 continue;
 

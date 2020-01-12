@@ -80,8 +80,6 @@ class ResultToken : CommonToken {
     }
 
     override Variant getText() {
-        import std.stdio;
-        writefln("\ngetText: super.getText = %s", super.getText);
         return super.getText;
     }
 }

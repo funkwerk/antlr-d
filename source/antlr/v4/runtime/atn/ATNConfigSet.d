@@ -223,14 +223,12 @@ class ATNConfigSet
         if (config.getOuterContextDepth > 0) {
             dipsIntoOuterContext = true;
         }
-        // import std.stdio;
-        // writefln("x2x2 config = %s, configs = %s", config, configs);
+
         ATNConfig existing = configLookup.getOrAdd(config);
 
         if (existing is config) { // we added this new one
             cachedHashCode = -1;
             configs ~= config;  // track order here
-            // writefln("x2x2 111111111111 config = %s, configs = %s", config.context, configs);
             return true;
         }
 

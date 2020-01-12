@@ -79,12 +79,6 @@ version(unittest) {
         {
             rewriter = new TokenStreamRewriter(tokens);
         }
-        /**
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            writefln("enterFile");
-        }
 
         /**
          * {@inheritDoc}
@@ -111,12 +105,6 @@ version(unittest) {
         }
 
         /**
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            writefln("enterFile");
-        }
-        /**
          * {@inheritDoc}
          *
          * <p>The default implementation does nothing.</p>
@@ -136,12 +124,7 @@ version(unittest) {
         {
             rewriter = new TokenStreamRewriter(tokens);
         }
-        /**
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            writefln("enterFile");
-        }
+
         /**
          * {@inheritDoc}struct Result { ushort indent; string text;}
          *
@@ -182,9 +165,6 @@ gamma`;
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
             auto tokens = cts.getTokens;
-            foreach (i, t; tokens) {
-                writefln("token %s: %s", i, t);
-            }
             cts.getNumberOfOnChannelTokens.should.equal(15);
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
@@ -233,9 +213,6 @@ alpha"Information zu"beta
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
             auto tokens = cts.getTokens;
-            foreach (i, t; tokens) {
-                writefln("token %s: %s", i, t);
-            }
             cts.getNumberOfOnChannelTokens.should.equal(15);
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
@@ -275,9 +252,6 @@ basede.Phrases
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
             auto tokens = cts.getTokens;
-            foreach (i, t; tokens) {
-                writefln("token %s: %s", i, t);
-            }
             cts.getNumberOfOnChannelTokens.should.equal(15);
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point
@@ -312,9 +286,6 @@ base de.Phrases
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
             auto tokens = cts.getTokens;
-            foreach (i, t; tokens) {
-                writefln("token %s: %s", i, t);
-            }
             cts.getNumberOfOnChannelTokens.should.equal(15);
             auto parser = new RuleTranslatorParser(cts);
             // Specify entry point

@@ -35,14 +35,7 @@ public class IBAListener : RuleTranslatorBaseListener {
         result.s = header;
         values.put(ctx, result);
     }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    override public void exitFile_input(RuleTranslatorParser.File_inputContext ctx) {
-        writefln(values.get(ctx).s);
-    }
+
     /**
      * {@inheritDoc}
      *

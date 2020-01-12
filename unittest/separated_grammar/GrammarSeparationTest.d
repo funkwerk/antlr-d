@@ -34,7 +34,6 @@ unittest {
     int i;
     foreach (t; cts.getTokens) {
         s = cts.get(i++).to!string;
-        writeln(s);
     }
 
     auto parser = new RuleParser(cts);

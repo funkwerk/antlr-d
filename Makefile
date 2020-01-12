@@ -1,8 +1,7 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
-
-DMD = ldmd2 -link-defaultlib-shared -w -O
+DMD_EXE = ldc2
 
 UNAME_M := $(shell uname -m)
 
@@ -10,18 +9,22 @@ ifeq ($(UNAME_M),x86_64)
     RDMD = rdmd
     EXPORT_INCLUDE = $(EXPORT)/include/d
     EXECUTABLE = x86-64
+    TESTRUNNER_OPT =
 endif
 ifeq ($(UNAME_M),i686)
     RDMD = rdmd
     EXPORT_INCLUDE = $(EXPORT)/include/d
     EXECUTABLE = 80386
+    TESTRUNNER_OPT = -s
 endif
 # Rasperry PI Desktop (Ubuntu MATE)
 ifeq ($(UNAME_M),armv7l)
     EXPORT_INCLUDE = $(EXPORT)/import/d
     EXECUTABLE = ARM
+    TESTRUNNER_OPT =
 endif
 
+DMD = $(DMD_EXE) -link-defaultlib-shared -w -O
 MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
@@ -98,7 +101,7 @@ $(BUILD_DIR)/TestRunner : $(MODULE_FILES)
 
 .PHONY : unittest
 unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)
-	-$(BUILD_DIR)/TestRunner
+	-$(BUILD_DIR)/TestRunner $(TESTRUNNER_OPT)
 	@mv ./*.lst $(BUILD_DIR)
 
 .PHONY : prepare_generator
@@ -140,7 +143,7 @@ build_xpathlexer : prepare_generator
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -fPIC -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
+	$(DMD) -shared -relocation-model=pic -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
 		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
 # some D source files must replace di files

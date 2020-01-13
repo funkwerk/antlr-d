@@ -18,7 +18,6 @@ version(unittest) {
     import dshould : be, equal, not, should;
     import dshould.thrown;
     import std.conv : to;
-    import std.stdio : File, writefln;
     import std.file;
     import std.variant;
     import unit_threaded;
@@ -91,28 +90,6 @@ version(unittest) {
                 writefln("exitStmt ctx.start = %s", ctx.start);
             }
             rewriter.deleteT(ctx.start, ctx.stop);
-        }
-    }
-
-    public class InsertTestListenerResult : RuleTranslatorBaseListener {
-
-        struct Result { ushort indent; string text;}
-        TokenStreamRewriter rewriter;
-
-        this(TokenStream tokens)
-        {
-            rewriter = new TokenStreamRewriter(tokens);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            //auto str = "alpha";
-            //rewriter.insertAfter(ctx.start, "beta");
-            //rewriter.insertBefore(ctx.start, str);
         }
     }
 
@@ -263,7 +240,7 @@ basede.Phrases
             auto str = extractor.rewriter.getText.get!(string);
             str.should.equal(expected);
         }
-    
+
         @Tags("TokenStreamRewriter")
         @("replaceAt0")
         unittest {

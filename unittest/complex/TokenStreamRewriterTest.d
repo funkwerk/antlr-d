@@ -16,128 +16,103 @@ version(unittest) {
     import antlr.v4.runtime.atn.ParserATNSimulator;
     import antlr.v4.runtime.tree.ParseTreeWalker;
     import dshould : be, equal, not, should;
+    import std.array : join;
     import dshould.thrown;
     import std.conv : to;
     import std.file;
     import std.variant;
     import unit_threaded;
 
-    public class InsertAt0TestListenerReplace : RuleTranslatorBaseListener {
+    auto input = [
+        `# Text definition DEFAS`,
+        `# for automatic announcements`,
+        `# Version 2018-02-21`,
 
-        TokenStreamRewriter rewriter;
-        Token currentToken;
+        `rule Delay as DELAY de`,
+        `base de.Phrases`,
 
-        this(TokenStream tokens)
+        `"Information zu"` ~ "\n"
+        ];
+
+    string toString (in string[] source)
+    {
+        return source.join("\n");
+    }
+
+    string getInput ()
+    {
+        return(toString(input));
+    }
+
+
+    @Tags("TokenStreamRewriter") @("replaceAll")
+        unittest
         {
-            rewriter = new TokenStreamRewriter(tokens);
-        }
+            class ReplaceAll : RuleTranslatorBaseListener
+            {
 
-        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            currentToken = ctx.start;
-        }
+                TokenStreamRewriter rewriter;
+                Token firstToken;
 
-        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            debug(TokenStreamRewriter) {
-                import std.stdio : writefln;
-                writefln("exitStmt ctx.start = %s", ctx.start);
+                this(TokenStream tokens)
+                    {
+                        rewriter = new TokenStreamRewriter(tokens);
+                    }
+
+                override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx)
+                    {
+                        firstToken = ctx.start;
+                    }
+
+                override public void exitStmt(RuleTranslatorParser.StmtContext ctx)
+                    {
+                        Variant parameter = "alpha";
+                        rewriter.replace(firstToken, ctx.stop, parameter);
+                    }
             }
-            Variant parameter = "alpha";
-            rewriter.replace(currentToken, ctx.stop, parameter);
-        }
-    }
 
-        public class InsertTestListenerReplace : RuleTranslatorBaseListener {
+            auto expected = "alpha";
 
-        TokenStreamRewriter rewriter;
-        Token currentToken;
-
-        this(TokenStream tokens)
-        {
-            rewriter = new TokenStreamRewriter(tokens);
-        }
-
-        override public void enterFile_input(RuleTranslatorParser.File_inputContext ctx) {
-            currentToken = ctx.start;
-        }
-
-        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            debug(TokenStreamRewriter) {
-                import std.stdio : writefln;
-                writefln("exitStmt ctx.start = %s", ctx.start);
-            }
-            Variant parameter = "gamma";
-            rewriter.replace(ctx.start, ctx.stop, parameter);
-        }
-    }
-
-    public class InsertTestListenerDelete : RuleTranslatorBaseListener {
-
-        TokenStreamRewriter rewriter;
-
-        this(TokenStream tokens)
-        {
-            rewriter = new TokenStreamRewriter(tokens);
+            auto antlrInput = new ANTLRInputStream(getInput);
+            auto lexer = new RuleTranslatorLexer(antlrInput);
+            auto cts = new CommonTokenStream(lexer);
+            cts.fill;
+            auto parser = new RuleTranslatorParser(cts);
+            // Specify entry point
+            auto rootContext = parser.file_input;
+            parser.numberOfSyntaxErrors.should.equal(0);
+            auto extractor = new ReplaceAll(cts);
+            auto walker = new ParseTreeWalker;
+            walker.walk(extractor, rootContext);
+            auto str = extractor.rewriter.getText.get!(string);
+            str.should.equal(expected);
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            debug(TokenStreamRewriter) {
-                import std.stdio : writefln;
-                writefln("exitStmt ctx.start = %s", ctx.start);
-            }
-            rewriter.deleteT(ctx.start, ctx.stop);
-        }
-    }
 
-    public class InsertTestListener : RuleTranslatorBaseListener {
-
-        TokenStreamRewriter rewriter;
-
-        this(TokenStream tokens)
-        {
-            rewriter = new TokenStreamRewriter(tokens);
-        }
-
-        /**
-         * {@inheritDoc}struct Result { ushort indent; string text;}
-         *
-         * <p>The default implementation does nothing.</p>
-         */
-        override public void exitStmt(RuleTranslatorParser.StmtContext ctx) {
-            Variant str_a = "alpha";
-            Variant str_b = "beta";
-            rewriter.insertBefore(ctx.start, str_a);
-            rewriter.insertAfter(ctx.start, str_b);
-        }
-    }
-
-    class Test {
-        @Tags("TokenStreamRewriter")
-        @("replace_and_delete")
+    @Tags("TokenStreamRewriter") @("replace_and_delete")
         unittest {
-            auto input =
-                `# Text definition DEFAS
-# for automatic announcements
-# Version 2018-02-21
+            class InsertTestListenerReplace : RuleTranslatorBaseListener
+            {
+                TokenStreamRewriter rewriter;
 
-rule Delay as DELAY de
-base de.Phrases
+                this(TokenStream tokens)
+                    {
+                        rewriter = new TokenStreamRewriter(tokens);
+                    }
 
-"Information zu"
-`
-                ;
+                override public void exitStmt(RuleTranslatorParser.StmtContext ctx)
+                    {
+                        rewriter.replace(ctx.start, ctx.stop, Variant("gamma"));
+                    }
+            }
 
-            auto expected =
-                `
-ruleDelayasDELAYde
-basede.Phrases
-gamma`;
+            auto expected = [
+                "\nruleDelayasDELAYde",
+                `basede.Phrases`,
+                "gamma"
+                ];
 
-            auto antlrInput = new ANTLRInputStream(input);
+            auto antlrInput = new ANTLRInputStream(getInput);
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
@@ -151,80 +126,42 @@ gamma`;
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
             auto str = extractor.rewriter.getText.get!(string);
-            str.should.equal(expected);
+
+            str.should.equal(toString(expected));
             extractor.rewriter.deleteProgram;
             str = extractor.rewriter.getText.get!(string);
-            expected =
-                `
-ruleDelayasDELAYde
-basede.Phrases
-"Information zu"
-`;
-            str.should.equal(expected);
+            expected = [
+                "\nruleDelayasDELAYde",
+                `basede.Phrases`,
+                `"Information zu"` ~ "\n"
+                ];
+            str.should.equal(toString(expected));
         }
 
-        @Tags("TokenStreamRewriter")
-        @("insert after and before")
-        unittest {
-            auto input =
-                `# Text definition DEFAS
-# for automatic announcements
-# Version 2018-02-21
+    @Tags("TokenStreamRewriter") @("deleteT")
+        unittest
+        {
+            class InsertTestListenerDelete : RuleTranslatorBaseListener
+            {
+                TokenStreamRewriter rewriter;
 
-rule Delay as DELAY de
-base de.Phrases
+                this(TokenStream tokens)
+                    {
+                        rewriter = new TokenStreamRewriter(tokens);
+                    }
 
-"Information zu"
-`
-                ;
+                override public void exitStmt(RuleTranslatorParser.StmtContext ctx)
+                    {
+                        rewriter.deleteT(ctx.start, ctx.stop);
+                    }
+            }
 
-            auto expected =
-                `
-ruleDelayasDELAYde
-basede.Phrases
-alpha"Information zu"beta
-`;
+            auto expected = [
+                "\nruleDelayasDELAYde",
+                "basede.Phrases\n"
+                ];
 
-            auto antlrInput = new ANTLRInputStream(input);
-            auto lexer = new RuleTranslatorLexer(antlrInput);
-            auto cts = new CommonTokenStream(lexer);
-            cts.fill;
-            auto tokens = cts.getTokens;
-            cts.getNumberOfOnChannelTokens.should.equal(15);
-            auto parser = new RuleTranslatorParser(cts);
-            // Specify entry point
-            auto rootContext = parser.file_input;
-            parser.numberOfSyntaxErrors.should.equal(0);
-            auto extractor = new InsertTestListener(cts);
-            auto walker = new ParseTreeWalker;
-            walker.walk(extractor, rootContext);
-            auto str = extractor.rewriter.getText.get!(string);
-            str.should.equal(expected);
-        }
-    }
-
-    @Tags("TokenStreamRewriter")
-        @("deleteT")
-        unittest {
-            auto input =
-                `# Text definition DEFAS
-# for automatic announcements
-# Version 2018-02-21
-
-rule Delay as DELAY de
-base de.Phrases
-
-"Information zu"
-`
-                ;
-
-            auto expected =
-                `
-ruleDelayasDELAYde
-basede.Phrases
-`;
-
-            auto antlrInput = new ANTLRInputStream(input);
+            auto antlrInput = new ANTLRInputStream(getInput);
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
@@ -238,27 +175,37 @@ basede.Phrases
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
             auto str = extractor.rewriter.getText.get!(string);
-            str.should.equal(expected);
+            str.should.equal(toString(expected));
         }
 
-        @Tags("TokenStreamRewriter")
-        @("replaceAt0")
-        unittest {
-            auto input =
-                `# Text definition DEFAS
-# for automatic announcements
-# Version 2018-02-21
+    @Tags("TokenStreamRewriter") @("insert after and before")
+        unittest
+        {
+            class InsertTestListener : RuleTranslatorBaseListener
+            {
+                TokenStreamRewriter rewriter;
 
-rule Delay as DELAY de
-base de.Phrases
+                this(TokenStream tokens)
+                    {
+                        rewriter = new TokenStreamRewriter(tokens);
+                    }
 
-"Information zu"
-`
-                ;
+                override public void exitStmt(RuleTranslatorParser.StmtContext ctx)
+                    {
+                        Variant str_a = "alpha";
+                        Variant str_b = "beta";
+                        rewriter.insertBefore(ctx.start, str_a);
+                        rewriter.insertAfter(ctx.start, str_b);
+                    }
+            }
 
-            auto expected = "alpha";
+            auto expected = [
+                "\nruleDelayasDELAYde",
+                `basede.Phrases`,
+                `alpha"Information zu"beta` ~"\n",
+                ];
 
-            auto antlrInput = new ANTLRInputStream(input);
+            auto antlrInput = new ANTLRInputStream(getInput);
             auto lexer = new RuleTranslatorLexer(antlrInput);
             auto cts = new CommonTokenStream(lexer);
             cts.fill;
@@ -268,11 +215,11 @@ base de.Phrases
             // Specify entry point
             auto rootContext = parser.file_input;
             parser.numberOfSyntaxErrors.should.equal(0);
-            auto extractor = new InsertAt0TestListenerReplace(cts);
+            auto extractor = new InsertTestListener(cts);
             auto walker = new ParseTreeWalker;
             walker.walk(extractor, rootContext);
             auto str = extractor.rewriter.getText.get!(string);
-            str.should.equal(expected);
+            str.should.equal(toString(expected));
         }
 
 }

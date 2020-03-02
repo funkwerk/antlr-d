@@ -72,6 +72,7 @@ ANTLR = antlr4-4.7.2
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/v4/test/runtime/templates
+TEST_TARGET_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/test/org/antlr/v4/test/runtime/d
 
 # required to detect model changes
 _dummy := $(shell mkdir -p $(BUILD_DIR)/$(MODEL_DIR))
@@ -114,6 +115,9 @@ prepare_generator : | $(BUILD_DIR)
 	mkdir -p $(TEST_TEMPLATE_DIR)
 	cp test/D.test.stg \
 		$(TEST_TEMPLATE_DIR)
+	mkdir -p $(TEST_TARGET_DIR)
+	cp test/d/*.java \
+		$(TEST_TARGET_DIR)
 	cd $(BUILD_DIR)/$(ANTLR) && $(MVN) -DskipTests install
 
 .PHONY : build_examples

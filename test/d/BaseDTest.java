@@ -593,6 +593,7 @@ public class BaseDTest implements RuntimeTestSupport {
     public String execModule(String fileName) {
         String runtimePath = locateRuntime();
         String includePath = runtimePath + "/runtime/src";
+        System.out.println("runtimePath -> " + runtimePath + "\nincludePath -> "+ includePath);
         String binPath = new File(new File(tmpdir), "a.out").getAbsolutePath();
         String inputPath = new File(new File(tmpdir), "input").getAbsolutePath();
 
@@ -621,7 +622,7 @@ public class BaseDTest implements RuntimeTestSupport {
         String libExtension = (getOS().equals("mac")) ? "dylib" : "so";
         try {
             String command[] = { "ln", "-s", runtimePath + "/dist/libantlr4-runtime." + libExtension };
-            if (runCommand(command, tmpdir, "sym linking C++ runtime", true) == null)
+            if (runCommand(command, tmpdir, "sym linking D runtime", true) == null)
                 return null;
         }
         catch (Exception e) {
@@ -672,7 +673,7 @@ public class BaseDTest implements RuntimeTestSupport {
 
     protected String locateRuntime() {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        final URL runtimeURL = loader.getResource("Cpp");
+        final URL runtimeURL = loader.getResource("D");
         if (runtimeURL == null) {
             throw new RuntimeException("Cannot find runtime");
         }
@@ -894,32 +895,31 @@ public class BaseDTest implements RuntimeTestSupport {
         outputFileST.add("listenerName", listenerName);
         outputFileST.add("visitorName", visitorName);
         outputFileST.add("parserStartRuleName", parserStartRuleName);
-        writeFile(tmpdir, "Test.cpp", outputFileST.render());
+        writeFile(tmpdir, "Test.d", outputFileST.render());
     }
 
     protected void writeLexerTestFile(String lexerName, boolean showDFA) {
         ST outputFileST = new ST(
-            "#include \\<iostream>\n"
+            "import std.stdio;\n"
                 + "\n"
-                + "#include \"antlr4-runtime.h\"\n"
-                + "#include \"<lexerName>.h\"\n"
+                + "import antlr.v4.runtime.Token;\n"
+                + "import antlr.v4.runtime.ANTLRInputStream;\n"
+                + "import antlr.v4.runtime.CommonTokenStream;\n"
+                + "import <lexerName>;\n"
                 + "\n"
-                + "#include \"support/StringUtils.h\"\n"
-                + "\n"
-                + "using namespace antlr4;\n"
-                + "\n"
-                + "int main(int argc, const char* argv[]) {\n"
-                + "  ANTLRFileStream input(argv[1]);\n"
-                + "  <lexerName> lexer(&input);\n"
-                + "  CommonTokenStream tokens(&lexer);\n"
+                + "int main(string[] args) {\n"
+                + "  auto antlrInput =\n"
+                + "      new ANTLRInputStream(File(args[1]));\n"
+                + "  auto lexer = new <lexerName>(antlrInput);\n"
+                + "  auto tokens = new CommonTokenStream(lexer);\n"
                 + "  tokens.fill();\n"
-                + "  for (auto token : tokens.getTokens())\n"
-                + "    std::cout \\<\\< token->toString() \\<\\< std::endl;\n"
+                + "  for (token; tokens.getTokens)\n"
+                + "    writefln(\"%s\", token);\n"
                 + (showDFA ? "  std::cout \\<\\< lexer.getInterpreter\\<atn::LexerATNSimulator>()->getDFA(Lexer::DEFAULT_MODE).toLexerString();\n" : "\n")
                 + "  return 0;\n"
                 + "}\n");
         outputFileST.add("lexerName", lexerName);
-        writeFile(tmpdir, "Test.cpp", outputFileST.render());
+        writeFile(tmpdir, "Test.d", outputFileST.render());
     }
 
     public void writeRecognizer(String parserName, String lexerName,

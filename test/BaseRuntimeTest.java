@@ -84,6 +84,7 @@ public abstract class BaseRuntimeTest {
     protected RuntimeTestDescriptor descriptor;
 
     public BaseRuntimeTest(RuntimeTestDescriptor descriptor, RuntimeTestSupport delegate) {
+        System.out.println("Test-name: "+descriptor.getTestName()+ "   Test-type: " + descriptor.getTestType());
         this.descriptor = descriptor;
         this.delegate = delegate;
     }
@@ -112,7 +113,7 @@ public abstract class BaseRuntimeTest {
 
     @Test
     public void testOne() throws Exception {
-        // System.out.println(delegate.getTmpDir());
+        System.out.println("TmpDir -> " + delegate.getTmpDir());
         if ( descriptor.ignore(descriptor.getTarget()) ) {
             System.out.printf("Ignore "+descriptor);
             return;
@@ -169,7 +170,6 @@ public abstract class BaseRuntimeTest {
 
     public void testLexer(RuntimeTestDescriptor descriptor) throws Exception {
         mkdir(delegate.getTmpDir());
-
         Pair<String, String> pair = descriptor.getGrammar();
 
         ClassLoader cloader = getClass().getClassLoader();
@@ -196,7 +196,6 @@ public abstract class BaseRuntimeTest {
         g.importTemplates(targetTemplates);
         ST grammarST = new ST(g, grammar);
         grammar = grammarST.render();
-
         String found = delegate.execLexer(grammarName+".g4", grammar, grammarName, descriptor.getInput(), descriptor.showDFA());
         assertCorrectOutput(descriptor, delegate, found);
     }

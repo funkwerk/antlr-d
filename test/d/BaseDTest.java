@@ -642,8 +642,11 @@ public class BaseDTest implements RuntimeTestSupport {
             ProcessBuilder builder = new ProcessBuilder(binPath, inputPath, "-v");
             builder.directory(new File(tmpdir));
             Map<String, String> env = builder.environment();
-            env.put("LD_PRELOAD", runtimePath + "/dist/libantlr4-runtime." + libExtension);
+            System.err.println("##################run the newly minted binary env -> "+env);
+            env.put("LD_PRELOAD", runtimePath + "/lib/libantlr-d." + libExtension);
+                        System.err.println("##################run the newly minted binary env -> "+env);
             String output = runProcess(builder, "running test binary", false);
+            System.err.println("##################run the newly minted binary output -> "+output);
             if ( output.length()==0 ) {
                 output = null;
             }

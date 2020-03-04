@@ -72,10 +72,10 @@ ANTLR = antlr4-4.7.2
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
-TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/v4/test/runtimeTEST_DIR/templates
+TEST_TEMPLATE_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/resources/org/antlr/v4/test/runtime/templates
 TEST_DIR = $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/test/org/antlr/v4/test/runtime
 TEST_TARGET_DIR = $(TEST_DIR)/d
-TEST_D_DIR = $(BUILD_DIR)/$(ANTLR)/runtime/D/runtime
+TEST_D_DIR = $(BUILD_DIR)/$(ANTLR)/runtime/D
 
 # required to detect model changes
 _dummy := $(shell mkdir -p $(BUILD_DIR)/$(MODEL_DIR))
@@ -114,7 +114,8 @@ prepare_generator : | $(BUILD_DIR)
 	cp codegen/DTarget.java $(BUILD_DIR)/$(ANTLR)/tool/src/org/antlr/v4/codegen/target
 	mkdir -p $(TEST_D_DIR)
 	cp -r source $(TEST_D_DIR)/
-	cp -r Makefile dub.json $(TEST_D_DIR)/
+	cp Makefile $(TEST_D_DIR)/
+	cp test-dub.json $(TEST_D_DIR)/dub.json
 	mkdir -p $(TARGET)
 	cp -r codegen/templates/*.stg \
 		$(TARGET)

@@ -506,7 +506,7 @@ public class BaseDTest implements RuntimeTestSupport {
     }
 
     private String runProcess(ProcessBuilder builder, String description, boolean showStderr) throws Exception {
-//      System.out.println("BUILDER: "+builder.command());
+      System.out.println("BUILDER: "+builder.command());
         Process process = builder.start();
         StreamVacuum stdoutVacuum = new StreamVacuum(process.getInputStream());
         StreamVacuum stderrVacuum = new StreamVacuum(process.getErrorStream());
@@ -534,38 +534,29 @@ public class BaseDTest implements RuntimeTestSupport {
     }
 
     private String runCommand(String command[], String workPath, String description, boolean showStderr) throws Exception {
+        System.out.println("\nrunCommand command -> " + Arrays.toString(command) + "\nworkPath -> " + workPath);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(new File(workPath));
 
         return runProcess(builder, description, showStderr);
     }
 
-    // TODO: add a buildRuntimeOnWindows variant.
     private boolean buildRuntime() {
         String runtimePath = locateRuntime();
         System.out.println("Building ANTLR4 D runtime (if necessary) at "+ runtimePath);
 
         try {
-            String command[] = { "cmake", ".", /*"-DCMAKE_CXX_COMPILER=clang++",*/ "-DCMAKE_BUILD_TYPE=release" };
-            if (runCommand(command, runtimePath, "antlr runtime cmake", false) == null) {
+            String command[] = { "dub", "--build=release" };
+            if (runCommand(command, runtimePath, "can't compile antlr d runtime", false) == null) {
                 return false;
             }
-        }
-        catch (Exception e) {
-            System.err.println("can't configure antlr d runtime cmake file");
-        }
-
-        try {
-            String command[] = { "make", "-j", "8" }; // Assuming a reasonable amount of available CPU cores.
-            if (runCommand(command, runtimePath, "building antlr runtime", true) == null)
-                return false;
         }
         catch (Exception e) {
             System.err.println("can't compile antlr d runtime");
             e.printStackTrace(System.err);
             try {
                 String command[] = { "ls", "-la" };
-                    String output = runCommand(command, runtimePath + "/dist/", "printing library folder content", true);
+                    String output = runCommand(command, runtimePath + "/lib/", "printing library folder content", true);
                 System.out.println(output);
             }
             catch (Exception e2) {
@@ -573,6 +564,7 @@ public class BaseDTest implements RuntimeTestSupport {
                 e2.printStackTrace(System.err);
             }
         }
+
 
 /* for debugging
         try {
@@ -592,7 +584,7 @@ public class BaseDTest implements RuntimeTestSupport {
 
     public String execModule(String fileName) {
         String runtimePath = locateRuntime();
-        String includePath = runtimePath + "/runtime/src";
+        String includePath = runtimePath + "/source";
         System.out.println("runtimePath -> " + runtimePath + "\nincludePath -> "+ includePath);
         String binPath = new File(new File(tmpdir), "a.out").getAbsolutePath();
         String inputPath = new File(new File(tmpdir), "input").getAbsolutePath();
@@ -621,18 +613,18 @@ public class BaseDTest implements RuntimeTestSupport {
         // Create symlink to the runtime. Currently only used on OSX.
         String libExtension = (getOS().equals("mac")) ? "dylib" : "so";
         try {
-            String command[] = { "ln", "-s", runtimePath + "/dist/libantlr4-runtime." + libExtension };
+            String command[] = { "ln", "-s", runtimePath + "/lib/libantlr-d." + libExtension };
             if (runCommand(command, tmpdir, "sym linking D runtime", true) == null)
                 return null;
         }
         catch (Exception e) {
-            System.err.println("can't create link to " + runtimePath + "/dist/libantlr4-runtime." + libExtension);
+            System.err.println("can't create link to " + runtimePath + "/lib/libantlr-d." + libExtension);
             e.printStackTrace(System.err);
             return null;
         }
 
         try {
-            List<String> command2 = new ArrayList<String>(Arrays.asList("clang++", "-std=c++11", "-I", includePath, "-L.", "-lantlr4-runtime", "-o", "a.out"));
+            List<String> command2 = new ArrayList<String>(Arrays.asList("ldc2", "-I", includePath, "-L-lantlr-d", "-of", "a.out"));
             command2.addAll(allCppFiles(tmpdir));
             if (runCommand(command2.toArray(new String[0]), tmpdir, "building test binary", true) == null) {
                 return null;
@@ -647,7 +639,7 @@ public class BaseDTest implements RuntimeTestSupport {
         // Now run the newly minted binary. Reset the error output, as we could have got compiler warnings which are not relevant here.
         this.stderrDuringParse = null;
         try {
-            ProcessBuilder builder = new ProcessBuilder(binPath, inputPath);
+            ProcessBuilder builder = new ProcessBuilder(binPath, inputPath, "-v");
             builder.directory(new File(tmpdir));
             Map<String, String> env = builder.environment();
             env.put("LD_PRELOAD", runtimePath + "/dist/libantlr4-runtime." + libExtension);
@@ -913,7 +905,7 @@ public class BaseDTest implements RuntimeTestSupport {
                 + "  auto lexer = new <lexerName>(antlrInput);\n"
                 + "  auto tokens = new CommonTokenStream(lexer);\n"
                 + "  tokens.fill();\n"
-                + "  for (token; tokens.getTokens)\n"
+                + "  foreach (token; tokens.getTokens)\n"
                 + "    writefln(\"%s\", token);\n"
                 + (showDFA ? "  std::cout \\<\\< lexer.getInterpreter\\<atn::LexerATNSimulator>()->getDFA(Lexer::DEFAULT_MODE).toLexerString();\n" : "\n")
                 + "  return 0;\n"

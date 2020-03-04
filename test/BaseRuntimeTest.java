@@ -188,7 +188,6 @@ public abstract class BaseRuntimeTest {
                 writeFile(delegate.getTmpDir(), spair.a+".g4", grammarST.render());
             }
         }
-
         String grammarName = pair.a;
         String grammar = pair.b;
         STGroup g = new STGroup('<', '>');

@@ -548,7 +548,7 @@ class ATNDeserializer
 
     private void readRules(ATN atn)
     {
-        //     // RULES
+        // RULES
         int nrules = readInt;
         if ( atn.grammarType == ATNType.LEXER ) {
             atn.ruleToTokenType = new int[nrules];

@@ -970,10 +970,11 @@ SerializedATN(model) ::= <<
 private static immutable int _serializedATNSegments = <length(model.segments)>;
 <model.segments:{segment|private static immutable wstring _serializedATNSegment<i0> =
 	"<segment; wrap={"~<\n><\t>"}>";}; separator="\n">
-public static immutable wstring _serializedATN = Utils.join(
-	new string[] {
+import std.array : join;
+public static immutable wstring _serializedATN = join(
+	[
 		<model.segments:{segment | _serializedATNSegment<i0>}; separator=",\n">
-	},
+	],
 	""
 );
 <else>

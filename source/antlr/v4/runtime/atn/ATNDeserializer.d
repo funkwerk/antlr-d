@@ -496,7 +496,7 @@ class ATNDeserializer
             }
 
             int ruleIndex = readInt;
-            if (ruleIndex == char.max) {
+            if (ruleIndex == wchar.max) {
                 ruleIndex = -1;
             }
             debug(deserializer)

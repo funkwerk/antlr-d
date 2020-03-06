@@ -132,7 +132,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void reset()
     {
-	// wack Lexer state variables
+    // wack Lexer state variables
         if (_input !is null) {
             _input.seek(0); // rewind the input
         }
@@ -155,7 +155,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token nextToken()
     {
-	if (_input is null) {
+    if (_input is null) {
             throw new IllegalStateException("nextToken requires a non-null input stream.");
         }
         // Mark start location in char stream so unbuffered streams are
@@ -189,7 +189,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                         ttype = getInterpreter.match(_input, _mode);
                     }
                     catch (LexerNoViableAltException e) {
-                        notifyListeners(e);		// report error
+                        notifyListeners(e);     // report error
                         recover(e);
                         ttype = SKIP;
                     }
@@ -401,7 +401,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void setChannel(int channel)
     {
-	_channel = channel;
+    _channel = channel;
     }
 
     public int getChannel()
@@ -437,7 +437,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token[] getAllTokens()
     {
-	Token[] tokens;
+    Token[] tokens;
         Token t = nextToken();
         while (t.getType() != TokenConstantDefinition.EOF) {
             tokens ~= t;
@@ -448,7 +448,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void recover(LexerNoViableAltException e)
     {
-	if (_input.LA(1) != IntStreamConstant.EOF) {
+    if (_input.LA(1) != IntStreamConstant.EOF) {
             // skip a char and try again
             getInterpreter().consume(_input);
         }
@@ -474,7 +474,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public string getErrorDisplay(int c)
     {
-        string s = to!string(c);
+        string s;
         switch ( c ) {
         case TokenConstantDefinition.EOF :
             s = "<EOF>";
@@ -488,7 +488,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
         case '\r' :
             s = "\\r";
             break;
-        default: break;
+        default:
+            s ~= cast(wchar)c;
+            break;
         }
         return s;
     }
@@ -507,7 +509,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public void recover(RecognitionException re)
     {
-	//System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
+    //System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
         //re.printStackTrace();
         // TODO: Do we lose character or line position information?
         _input.consume();

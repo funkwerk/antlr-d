@@ -403,6 +403,8 @@ class LexerATNSimulator : ATNSimulator
     protected bool closure(CharStream input, LexerATNConfig config, ATNConfigSet configs,
                            bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
     {
+        debug(LexerATNSimulator)
+            writefln("closure(\"%s\")", config);
         if (cast(RuleStopState)config.state) {
             debug(LexerATNSimulator)  {
                 if (recog !is null) {

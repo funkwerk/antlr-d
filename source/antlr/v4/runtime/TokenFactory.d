@@ -28,7 +28,7 @@ interface TokenFactory(Symbol)
      * are wiped to -1 in the text override is set in the CommonToken.
      */
     public Symbol create(TokenFactorySourcePair source, int type, Variant text, int channel,
-        int start, int stop, int line, int charPositionInLine);
+        size_t start, size_t stop, int line, int charPositionInLine);
 
     /**
      * Generically useful

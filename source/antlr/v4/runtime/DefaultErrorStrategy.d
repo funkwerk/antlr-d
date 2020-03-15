@@ -108,7 +108,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void endErrorCondition(Parser recognizer)
     {
-	errorRecoveryMode = false;
+    errorRecoveryMode = false;
         lastErrorStates = null;
         lastErrorIndex = -1;
     }
@@ -120,7 +120,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public void reportMatch(Parser recognizer)
     {
-	endErrorCondition(recognizer);
+    endErrorCondition(recognizer);
     }
 
     /**
@@ -144,7 +144,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public void reportError(Parser recognizer, RecognitionException e)
     {
-	// if we've already reported an error and have not matched a token
+    // if we've already reported an error and have not matched a token
         // yet successfully, don't report any errors.
         if (inErrorRecoveryMode(recognizer)) {
             debug(DefaultErrorStrategy)
@@ -203,7 +203,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
                 }
                 recognizer.consume;
             }
-        lastErrorIndex = recognizer.getInputStream.index;
+        lastErrorIndex = to!int(recognizer.getInputStream.index);
         if (!lastErrorStates)
             lastErrorStates = new IntervalSet;
         lastErrorStates.add(recognizer.getState);
@@ -259,7 +259,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public void sync(Parser recognizer)
     {
-	ATNState s = recognizer.getInterpreter.atn.states[recognizer.getState];
+    ATNState s = recognizer.getInterpreter.atn.states[recognizer.getState];
         debug(ErrorHandling)
             {
                 writefln("sync @ %s=%s", s.stateNumber, s.classinfo);
@@ -280,7 +280,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             return;
         }
 
-	if (nextTokens.contains(TokenConstantDefinition.EPSILON)) {
+    if (nextTokens.contains(TokenConstantDefinition.EPSILON)) {
             if (nextTokensContext is null) {
                 // It's possible the next token won't match; information tracked
                 // by sync is restricted for performance.
@@ -331,7 +331,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void reportNoViableAlternative(Parser recognizer, NoViableAltException e)
     {
-	TokenStream tokens = recognizer.getInputStream();
+    TokenStream tokens = recognizer.getInputStream();
         string input;
         if (tokens) {
             if (e.getStartToken.getType == TokenConstantDefinition.EOF)
@@ -374,7 +374,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void reportFailedPredicate(Parser recognizer, FailedPredicateException e)
     {
-	string ruleName = recognizer.getRuleNames[recognizer.ctx.getRuleIndex()];
+    string ruleName = recognizer.getRuleNames[recognizer.ctx.getRuleIndex()];
         string msg = "rule " ~ ruleName ~ " " ~ e.msg;
         recognizer.notifyErrorListeners(e.getOffendingToken, msg, e);
     }
@@ -399,7 +399,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void reportUnwantedToken(Parser recognizer)
     {
-	if (inErrorRecoveryMode(recognizer)) {
+    if (inErrorRecoveryMode(recognizer)) {
             return;
         }
 
@@ -432,7 +432,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void reportMissingToken(Parser recognizer)
     {
-	if (inErrorRecoveryMode(recognizer)) {
+    if (inErrorRecoveryMode(recognizer)) {
             return;
         }
 
@@ -498,7 +498,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     public Token recoverInline(Parser recognizer)
     {
-	// SINGLE TOKEN DELETION
+    // SINGLE TOKEN DELETION
         Token matchedSymbol = singleTokenDeletion(recognizer);
         if (matchedSymbol !is null) {
             // we have deleted the extra token.
@@ -541,7 +541,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected bool singleTokenInsertion(Parser recognizer)
     {
-	int currentSymbolType = recognizer.getInputStream().LA(1);
+    int currentSymbolType = recognizer.getInputStream().LA(1);
         // if current token is consistent with what could come after current
         // ATN state, then we know we're missing a token; error recovery
         // is free to conjure up and insert the missing token
@@ -581,7 +581,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected Token singleTokenDeletion(Parser recognizer)
     {
-	int nextTokenType = recognizer.getInputStream().LA(2);
+    int nextTokenType = recognizer.getInputStream().LA(2);
         IntervalSet expecting = getExpectedTokens(recognizer);
         if ( expecting.contains(nextTokenType) ) {
             reportUnwantedToken(recognizer);
@@ -622,7 +622,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected Token getMissingSymbol(Parser recognizer)
     {
-	Token currentSymbol = recognizer.getCurrentToken();
+    Token currentSymbol = recognizer.getCurrentToken();
         IntervalSet expecting = getExpectedTokens(recognizer);
         int expectedTokenType = TokenConstantDefinition.INVALID_TYPE;
         if (!expecting.isNil) {
@@ -650,7 +650,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected IntervalSet getExpectedTokens(Parser recognizer)
     {
-	return recognizer.getExpectedTokens;
+    return recognizer.getExpectedTokens;
     }
 
     /**
@@ -664,7 +664,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected string getTokenErrorDisplay(Token t)
     {
-	if (t is null) return "<no token>";
+    if (t is null) return "<no token>";
         string s = getSymbolText(t);
         if (s is null) {
             if (getSymbolType(t) == TokenConstantDefinition.EOF) {
@@ -684,7 +684,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
 
     protected int getSymbolType(Token symbol)
     {
-	return symbol.getType();
+    return symbol.getType();
     }
 
     protected string escapeWSAndQuote(string s)
@@ -790,7 +790,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected IntervalSet getErrorRecoverySet(Parser recognizer)
     {
-	ATN atn = recognizer.getInterpreter().atn;
+    ATN atn = recognizer.getInterpreter().atn;
         RuleContext ctx = recognizer.ctx;
         IntervalSet recoverSet = new IntervalSet();
         while (ctx !is null && ctx.invokingState >= 0) {
@@ -802,7 +802,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             ctx = ctx.parent;
         }
         recoverSet.remove(TokenConstantDefinition.EPSILON);
-        //		System.out.println("recover set "+recoverSet.toString(recognizer.getTokenNames()));
+        //      System.out.println("recover set "+recoverSet.toString(recognizer.getTokenNames()));
         return recoverSet;
     }
 
@@ -811,7 +811,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void consumeUntil(Parser recognizer, IntervalSet set)
     {
-	//stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
+    //stderr.writefln("consumeUntil(%s)", set.toString(recognizer.getTokenNames()));
         int ttype = recognizer.getInputStream().LA(1);
         while (ttype != TokenConstantDefinition.EOF && !set.contains(ttype) ) {
             debug(ErrorHandling)

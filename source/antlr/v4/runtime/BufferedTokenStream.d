@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -20,6 +20,7 @@ import std.array;
 import std.conv;
 import std.format;
 import std.variant;
+import std.algorithm;
 
 /**
  * This implementation of {@link TokenStream} loads tokens from a
@@ -61,7 +62,9 @@ class BufferedTokenStream : TokenStream
      * @uml
      * @read
      */
-    private int index_ = -1;
+    private size_t index_;
+
+    private bool first_token = true;
 
     /**
      * Indicates whether the {@link Token#EOF} token has been fetched from
@@ -112,15 +115,15 @@ class BufferedTokenStream : TokenStream
         seek(0);
     }
 
-    public void seek(int index)
+    public void seek(size_t index)
     {
         lazyInit;
         index_ = adjustSeekIndex(index);
     }
 
-    public int size()
+    public size_t size()
     {
-        return to!int(tokens.length);
+        return tokens.length;
     }
 
     public void consume()
@@ -158,16 +161,16 @@ class BufferedTokenStream : TokenStream
      *    {@code false}.
      * @see #get(int i)
      */
-    protected bool sync(int i)
+    protected bool sync(size_t i)
     in
     {
         assert (i >= 0);
     }
     do
     {
-            int n = i - to!int(tokens.length) + 1; // how many more elements we need?
+            auto n = i - tokens.length + 1; // how many more elements we need?
             if ( n > 0 ) {
-                int fetched = fetch(n);
+                auto fetched = fetch(n);
                 return fetched >= n;
             }
             return true;
@@ -178,7 +181,7 @@ class BufferedTokenStream : TokenStream
      *
      *  @return The actual number of elements added to the buffer.
      */
-    protected int fetch(int n)
+    protected int fetch(size_t n)
     {
         if (fetchedEOF) {
             return 0;
@@ -194,14 +197,14 @@ class BufferedTokenStream : TokenStream
                 return i + 1;
             }
         }
-        return n;
+        return to!int(n);
     }
 
     /**
      * @uml
      * @override
      */
-    public override Token get(int i)
+    public override Token get(size_t i)
     in
     {
         assert( i >= 0 && i < tokens.length, format("token index %1$s out of range 0..%2$s", i, tokens.length-1));
@@ -216,7 +219,7 @@ class BufferedTokenStream : TokenStream
      */
     public Token[] get(int start, int stop)
     {
-	if (start < 0 || stop < 0 ) return null;
+    if (start < 0 || stop < 0 ) return null;
         lazyInit;
         Token[] subset;
         if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
@@ -229,7 +232,7 @@ class BufferedTokenStream : TokenStream
         return subset;
     }
 
-    public int LA(int i)
+    public dchar LA(int i)
     {
         return LT(i).getType();
     }
@@ -252,7 +255,7 @@ class BufferedTokenStream : TokenStream
             return null;
         if (k < 0)
             return LB(-k);
-        int i = index_ + k - 1;
+        auto i = index_ + k - 1;
         sync(i);
         if ( i >= tokens.length ) { // return EOF token
             // EOF must be last token
@@ -274,15 +277,16 @@ class BufferedTokenStream : TokenStream
      *  @param i The target token index.
      *  @return The adjusted target token index.
      */
-    protected int adjustSeekIndex(int i)
+    protected size_t adjustSeekIndex(size_t i)
     {
         return i;
     }
 
     protected void lazyInit()
     {
-        if (index_ == -1) {
+        if (first_token) {
             setup;
+            first_token = false;
         }
     }
 
@@ -299,7 +303,7 @@ class BufferedTokenStream : TokenStream
     {
         this.tokenSource = tokenSource;
         tokens.length = 0;
-        index_ = -1;
+        first_token = true;
     }
 
     public Token[] getTokens()
@@ -317,7 +321,7 @@ class BufferedTokenStream : TokenStream
      * the token type BitSet.  Return null if no tokens were found.  This
      * method looks at both on and off channel tokens.
      */
-    public Token[] getTokens(int start, int stop, int[] types)
+    public Token[] getTokens(size_t start, size_t stop, int[] types)
     in
     {
         lazyInit();
@@ -332,7 +336,7 @@ class BufferedTokenStream : TokenStream
 
             // list = tokens[start:stop]:{T t, t.getType() in types}
             Token[] filteredTokens;
-            for (int i=start; i<=stop; i++) {
+            for (auto i = start; i<=stop; i++) {
                 Token t = tokens[i];
                 if (types is null || types.canFind(t.getType()) ) {
                     filteredTokens ~= t;
@@ -344,11 +348,11 @@ class BufferedTokenStream : TokenStream
             return filteredTokens;
     }
 
-    public Token[] getTokens(int start, int stop, int ttype)
+    public Token[] getTokens(size_t start, size_t stop, int ttype)
     {
         int[] s;
         s ~= ttype;
-        return getTokens(start,stop, s);
+        return getTokens(start, stop, s);
     }
 
     /**
@@ -357,9 +361,9 @@ class BufferedTokenStream : TokenStream
      * the EOF token if there are no tokens on channel between {@code i} and
      * EOF.
      */
-    protected int nextTokenOnChannel(int i, int channel)
+    protected size_t nextTokenOnChannel(size_t i, int channel)
     {
-	sync(i);
+        sync(i);
         if (i >= size) {
             return size - 1;
         }
@@ -388,9 +392,9 @@ class BufferedTokenStream : TokenStream
      * index is returned. This is due to the fact that the EOF token is treated
      * as though it were on every channel.</p>
      */
-    protected int previousTokenOnChannel(int i, int channel)
+    protected size_t previousTokenOnChannel(size_t i, int channel)
     {
-	sync(i);
+        sync(i);
         if (i >= size) {
             // the EOF token is on every channel
             return size() - 1;
@@ -410,7 +414,7 @@ class BufferedTokenStream : TokenStream
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
      */
-    public Token[] getHiddenTokensToRight(int tokenIndex, int channel)
+    public Token[] getHiddenTokensToRight(size_t tokenIndex, int channel)
     in
     {
         lazyInit();
@@ -418,10 +422,10 @@ class BufferedTokenStream : TokenStream
     }
     do
     {
-            int nextOnChannel =
+            auto nextOnChannel =
                 nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
-            int to;
-            int from = tokenIndex+1;
+            size_t to;
+            auto from = tokenIndex + 1;
             // if none onchannel to right, nextOnChannel=-1 so set to = last token
             if ( nextOnChannel == -1 ) to = size()-1;
             else to = nextOnChannel;
@@ -456,12 +460,12 @@ class BufferedTokenStream : TokenStream
                 // obviously no tokens can appear before the first token
                 return null;
             }
-            int prevOnChannel =
+            auto prevOnChannel =
                 previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
             if ( prevOnChannel == tokenIndex - 1 ) return null;
             // if none onchannel to left, prevOnChannel=-1 then from=0
-            int from = prevOnChannel+1;
-            int to = tokenIndex-1;
+            auto from = prevOnChannel+1;
+            auto to = tokenIndex-1;
             return filterForChannel(from, to, channel);
     }
 
@@ -478,10 +482,10 @@ class BufferedTokenStream : TokenStream
      * Collect all hidden tokens (any off-default channel) to the left of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      */
-    public Token[] filterForChannel(int from, int to, int channel)
+    public Token[] filterForChannel(size_t from, size_t to, int channel)
     {
         Token[] hidden;
-        for (int i=from; i<=to; i++) {
+        for (auto i=from; i<=to; i++) {
             Token t = tokens[i];
             if (channel == -1) {
                 if (t.getChannel != Lexer.DEFAULT_TOKEN_CHANNEL) hidden ~= t;
@@ -508,7 +512,7 @@ class BufferedTokenStream : TokenStream
     {
         lazyInit();
         fill();
-        return getText(Interval.of(0,size()-1));
+        return getText(Interval.of(0, to!int(size) - 1));
     }
 
     /**
@@ -518,7 +522,7 @@ class BufferedTokenStream : TokenStream
     public override Variant getText(Interval interval)
     {
         import std.array : join;
-      	int start = interval.a;
+        int start = interval.a;
         int stop = interval.b;
         if (start < 0 || stop < 0) {
             Variant v;
@@ -553,10 +557,10 @@ class BufferedTokenStream : TokenStream
     public override Variant getText(Token start, Token stop)
     {
         if (start !is null && stop !is null) {
-            return getText(Interval.of(start.getTokenIndex(), stop.getTokenIndex()));
+            return getText(Interval.of(to!int(start.getTokenIndex()), to!int(stop.getTokenIndex())));
         }
         Variant v = "";
-       	return v;
+        return v;
     }
 
     /**
@@ -574,7 +578,7 @@ class BufferedTokenStream : TokenStream
         }
     }
 
-    public final int index()
+    public final size_t index()
     {
         return this.index_;
     }

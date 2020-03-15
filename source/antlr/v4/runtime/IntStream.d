@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.IntStream;
 
 /**
@@ -12,11 +18,11 @@ interface IntStream
      *
      * <ul>
      *   <li><strong>Forward movement:</strong> The value of {@link #index index()}
-     * 	before calling this method is less than the value of {@code index()}
-     * 	after calling this method.</li>
+     *  before calling this method is less than the value of {@code index()}
+     *  after calling this method.</li>
      *   <li><strong>Ordered lookahead:</strong> The value of {@code LA(1)} before
-     * 	calling this method becomes the value of {@code LA(-1)} after calling
-     * 	this method.</li>
+     *  calling this method becomes the value of {@code LA(-1)} after calling
+     *  this method.</li>
      * </ul>
      *
      * Note that calling this method does not guarantee that {@code index()} is
@@ -64,7 +70,7 @@ interface IntStream
      *  @throws UnsupportedOperationException if the stream does not support
      * retrieving the value of the specified symbol
      */
-    public int LA(int i);
+    public dchar LA(int i);
 
     /**
      * A mark provides a guarantee that {@link #seek seek()} operations will be
@@ -136,7 +142,7 @@ interface IntStream
      * {@link IntStream initializing method} has occurred after this stream was
      * constructed.</p>
      */
-    public int index();
+    public size_t index();
 
     /**
      * Set the input cursor to the position indicated by {@code index}. If the
@@ -165,7 +171,7 @@ interface IntStream
      *  @throws IllegalArgumentException if {@code index} is less than 0
      *  @throws UnsupportedOperationException if the stream does not support
      */
-    public void seek(int index);
+    public void seek(size_t index);
 
     /**
      * Returns the total number of symbols in the stream, including a single EOF
@@ -173,7 +179,7 @@ interface IntStream
      *
      *  @throws UnsupportedOperationException if the size of the stream is unknown.
      */
-    public int size();
+    public size_t size();
 
     /**
      * Gets the name of the underlying symbol source. This method returns a

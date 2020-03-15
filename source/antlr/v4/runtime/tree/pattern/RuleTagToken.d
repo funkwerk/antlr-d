@@ -74,7 +74,7 @@ class RuleTagToken : Token
      */
     public this(string ruleName, int bypassTokenType, string label)
     {
-	if (ruleName is null || ruleName.length == 0) {
+    if (ruleName is null || ruleName.length == 0) {
             throw new IllegalArgumentException("ruleName cannot be null or empty.");
         }
         this.ruleName = ruleName;
@@ -164,7 +164,16 @@ class RuleTagToken : Token
      * @uml
      * @override
      */
-    public override int getTokenIndex()
+    public override size_t getTokenIndex()
+    {
+        return to!size_t(-1);
+    }
+
+    /**
+     * @uml
+     * @override
+     */
+    public override size_t startIndex()
     {
         return -1;
     }
@@ -173,16 +182,7 @@ class RuleTagToken : Token
      * @uml
      * @override
      */
-    public override int startIndex()
-    {
-        return -1;
-    }
-
-    /**
-     * @uml
-     * @override
-     */
-    public override int stopIndex()
+    public override size_t stopIndex()
     {
         return -1;
     }

@@ -42,7 +42,7 @@ import antlr.v4.runtime.misc.MurmurHash;
 class LexerIndexedCustomAction : LexerAction
 {
 
-    private int offset;
+    private size_t offset;
 
     private LexerAction action;
 
@@ -60,9 +60,9 @@ class LexerIndexedCustomAction : LexerAction
      *  @param action The lexer action to execute at a particular offset in the
      * input {@link CharStream}.
      */
-    public this(int offset, LexerAction action)
+    public this(size_t offset, LexerAction action)
     {
-	this.offset = offset;
+    this.offset = offset;
         this.action = action;
     }
 
@@ -75,7 +75,7 @@ class LexerIndexedCustomAction : LexerAction
      *  @return The location in the input {@link CharStream} at which the lexer
      * action should be executed.
      */
-    public int getOffset()
+    public size_t getOffset()
     {
         return offset;
     }
@@ -110,7 +110,7 @@ class LexerIndexedCustomAction : LexerAction
      */
     public bool isPositionDependent()
     {
-	return true;
+    return true;
     }
 
     /**

@@ -79,7 +79,7 @@ class CommonTokenStream : BufferedTokenStream
      * @uml
      * @override
      */
-    protected override int adjustSeekIndex(int i)
+    protected override size_t adjustSeekIndex(size_t i)
     {
         return nextTokenOnChannel(i, channel);
     }
@@ -92,7 +92,7 @@ class CommonTokenStream : BufferedTokenStream
     {
         if (k == 0 || (index - k) < 0 ) return null;
 
-        int i = index;
+        auto i = index;
         int n = 1;
         // find k good tokens looking backwards
         while (n <= k && i > 0) {
@@ -115,7 +115,7 @@ class CommonTokenStream : BufferedTokenStream
         lazyInit();
         if (k == 0 ) return null;
         if (k < 0) return LB(-k);
-        int i = index;
+        auto i = index;
         int n = 1; // we know tokens[p] is a good one
         // find k good tokens
         while (n < k) {

@@ -78,7 +78,7 @@ class CommonToken : WritableToken
      * This is the backing field for {@link #getTokenIndex} and
      * {@link #setTokenIndex}.
      */
-    protected int index = -1;
+    protected size_t index;
 
     /**
      * This is the backing field for {@link #getStartIndex} and
@@ -87,7 +87,7 @@ class CommonToken : WritableToken
      * @read
      * @write
      */
-    protected int startIndex_;
+    protected size_t startIndex_;
 
     /**
      * This is the backing field for {@link #getStopIndex} and
@@ -96,7 +96,7 @@ class CommonToken : WritableToken
      * @read
      * @write
      */
-    protected int stopIndex_;
+    protected size_t stopIndex_;
 
     /**
      * Constructs a new {@link CommonToken} with the specified token type.
@@ -105,13 +105,13 @@ class CommonToken : WritableToken
      */
     public this(int type)
     {
-	this.type = type;
+        this.type = type;
         this.source = EMPTY_SOURCE;
     }
 
-    public this(TokenFactorySourcePair source, int type, int channel, int start, int stop)
+    public this(TokenFactorySourcePair source, int type, int channel, size_t start, size_t stop)
     {
-	this.source = source;
+    this.source = source;
         this.type = type;
         this.channel = channel;
         this.startIndex_ = start;
@@ -131,7 +131,7 @@ class CommonToken : WritableToken
      */
     public this(int type, Variant text)
     {
-	this.type = type;
+    this.type = type;
         this.channel = TokenConstantDefinition.DEFAULT_CHANNEL;
         this.text = text;
         this.source = EMPTY_SOURCE;
@@ -139,7 +139,7 @@ class CommonToken : WritableToken
 
     /**
      * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
-     * 	 *
+     *   *
      * <p>
      * If {@code oldToken} is also a {@link CommonToken} instance, the newly
      * constructed token will share a reference to the {@link #text} field and
@@ -152,7 +152,7 @@ class CommonToken : WritableToken
      */
     public this(Token oldToken)
     {
-	type = oldToken.getType;
+    type = oldToken.getType;
         line = oldToken.getLine;
         index = oldToken.getTokenIndex;
         charPositionInLine = oldToken.getCharPositionInLine;
@@ -190,15 +190,15 @@ class CommonToken : WritableToken
     public override Variant getText()
     {
         Variant Null;
-	if (text !is Null) {
+    if (text !is Null) {
             return text;
         }
 
         CharStream input = getInputStream;
         if (input is null) return Null;
-        int n = input.size;
+        auto n = input.size;
         if (startIndex_ < n && stopIndex_ < n) {
-            Variant v = input.getText(Interval.of(startIndex_, stopIndex_));
+            Variant v = input.getText(Interval.of(to!int(startIndex_), to!int(stopIndex_)));
             return v;
         }
         else {
@@ -277,7 +277,7 @@ class CommonToken : WritableToken
      * @uml
      * @override
      */
-    public override int getTokenIndex()
+    public override size_t getTokenIndex()
     {
         return index;
     }
@@ -286,7 +286,7 @@ class CommonToken : WritableToken
      * @uml
      * @override
      */
-    public override void setTokenIndex(int index)
+    public override void setTokenIndex(size_t index)
     {
         this.index = index;
     }
@@ -334,22 +334,22 @@ class CommonToken : WritableToken
             ~ to!string(getCharPositionInLine) ~ "]";
     }
 
-    public final int startIndex()
+    public final size_t startIndex()
     {
         return this.startIndex_;
     }
 
-    public final void startIndex(int startIndex)
+    public final void startIndex(size_t startIndex)
     {
         this.startIndex_ = startIndex;
     }
 
-    public final int stopIndex()
+    public final size_t stopIndex()
     {
         return this.stopIndex_;
     }
 
-    public final void stopIndex(int stopIndex)
+    public final void stopIndex(size_t stopIndex)
     {
         this.stopIndex_ = stopIndex;
     }

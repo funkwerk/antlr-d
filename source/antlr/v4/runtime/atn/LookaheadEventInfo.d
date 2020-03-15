@@ -63,8 +63,8 @@ class LookaheadEventInfo : DecisionEventInfo
      * prediction; otherwise, {@code false} if the current lookahead is part of
      * an SLL prediction
      */
-    public this(int decision, ATNConfigSet configs, int predictedAlt, TokenStream input, int startIndex,
-                int stopIndex, bool fullCtx)
+    public this(int decision, ATNConfigSet configs, int predictedAlt, TokenStream input, size_t startIndex,
+                size_t stopIndex, bool fullCtx)
     {
 	super(decision, configs, input, startIndex, stopIndex, fullCtx);
         this.predictedAlt = predictedAlt;

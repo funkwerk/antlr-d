@@ -71,7 +71,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportAmbiguity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public override void reportAmbiguity(InterfaceParser recognizer, DFA dfa, size_t startIndex, size_t stopIndex,
                                          bool exact, BitSet ambigAlts, ATNConfigSet configs)
     {
 	if (exactOnly && !exact) {
@@ -90,8 +90,8 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, int startIndex,
-                                                     int stopIndex, BitSet conflictingAlts, ATNConfigSet configs)
+    public override void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, size_t startIndex,
+                                                     size_t stopIndex, BitSet conflictingAlts, ATNConfigSet configs)
     {
         string format_info = "reportAttemptingFullContext d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
@@ -104,8 +104,8 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
      * @uml
      * @override
      */
-    public override void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, int startIndex,
-                                                  int stopIndex, int prediction, ATNConfigSet configs)
+    public override void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, size_t startIndex,
+                                                  size_t stopIndex, int prediction, ATNConfigSet configs)
     {
         string format_info = "reportContextSensitivity d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);

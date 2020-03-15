@@ -109,9 +109,9 @@ class LexerActionExecutor
      *  @return A {@link LexerActionExecutor} which stores input stream offsets
      * for all position-dependent lexer actions.
      */
-    public LexerActionExecutor fixOffsetBeforeMatch(int offset)
+    public LexerActionExecutor fixOffsetBeforeMatch(size_t offset)
     {
-	LexerAction[] updatedLexerActions = null;
+    LexerAction[] updatedLexerActions = null;
         for (int i = 0; i < lexerActions.length; i++) {
             if (lexerActions[i].isPositionDependent() && !(lexerActions[i].classinfo == LexerIndexedCustomAction.classinfo)) {
                 if (updatedLexerActions is null) {
@@ -153,14 +153,14 @@ class LexerActionExecutor
      * {@link IntStream#seek} to set the {@code input} position to the beginning
      * of the token.
      */
-    public void execute(InterfaceLexer lexer, CharStream input, int startIndex)
+    public void execute(InterfaceLexer lexer, CharStream input, size_t startIndex)
     {
         bool requiresSeek = false;
-        int stopIndex = input.index;
+        auto stopIndex = input.index;
         try {
             foreach (LexerAction lexerAction; lexerActions) {
                 if (cast(LexerIndexedCustomAction)lexerAction) {
-                    int offset = (cast(LexerIndexedCustomAction)lexerAction).getOffset;
+                    auto offset = (cast(LexerIndexedCustomAction)lexerAction).getOffset;
                     input.seek(startIndex + offset);
                     lexerAction = (cast(LexerIndexedCustomAction)lexerAction).getAction;
                     requiresSeek = (startIndex + offset) != stopIndex;
@@ -189,7 +189,7 @@ class LexerActionExecutor
      */
     public override size_t toHash() @safe nothrow
     {
-	return this.hashCode_;
+    return this.hashCode_;
     }
 
     /**

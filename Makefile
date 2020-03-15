@@ -24,7 +24,7 @@ ifeq ($(UNAME_M),armv7l)
     TESTRUNNER_OPT =
 endif
 
-DMD = $(DMD_EXE) -link-defaultlib-shared -w -O
+DMD = $(DMD_EXE) -link-defaultlib-shared -w
 MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
@@ -156,9 +156,8 @@ build_xpathlexer : prepare_generator
 build_library: $(BUILD_DIR)/libantlr-d.so.4.7
 
 $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
-	$(DMD) -shared -relocation-model=pic -H -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
+	$(DMD) -shared -relocation-model=pic -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
 		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
-	$(DMD) -o- -H -op $(SOURCE_FILES) -Hd=$(BUILD_DIR)/di
 
 
 # some D source files must replace di files
@@ -180,10 +179,8 @@ install: $(BUILD_DIR)/libantlr-d.so.4.7
 	ldconfig
 	@rm -rf $(EXPORT_INCLUDE)/antlr/*
 	$(MKDIR_P) $(EXPORT_INCLUDE)/antlr
-	cp -r $(BUILD_DIR)/di/source/antlr $(EXPORT_INCLUDE)
-	$(foreach file, $(EXPORT_D_FILES), \
-	 cp $(file) $(subst source,, $(EXPORT_INCLUDE)$(file));)
-	rm $(NO_EXPORT_DI_FILES)
+
+	cp -r $(SRC_DIR)/antlr $(EXPORT_INCLUDE)
 
 .PHONY: docs
  docs:

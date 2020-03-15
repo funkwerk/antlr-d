@@ -8,6 +8,7 @@ module antlr.v4.runtime.CommonTokenFactory;
 
 import std.typecons;
 import std.variant;
+import std.conv;
 import antlr.v4.runtime.TokenFactory;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CharStream;
@@ -82,7 +83,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
     }
 
     public CommonToken create(TokenFactorySourcePair source, int type, Variant text, int channel,
-        int start, int stop, int line, int charPositionInLine)
+        size_t start, size_t stop, int line, int charPositionInLine)
     {
         CommonToken t = new CommonToken(source, type, channel, start, stop);
         t.setLine(line);
@@ -92,7 +93,7 @@ class CommonTokenFactory : TokenFactory!CommonToken
             t.setText(text);
         }
         else if (copyText && source.b !is null ) {
-            Variant v = source.b.getText(Interval.of(start,stop));
+            Variant v = source.b.getText(Interval.of(to!int(start), to!int(stop)));
             t.setText(v);
         }
         return t;

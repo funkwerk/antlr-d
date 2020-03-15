@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -14,7 +14,9 @@ import std.algorithm;
 import std.conv;
 import std.file;
 import std.format;
+import std.range;
 import std.stdio;
+import std.utf;
 
 /**
  * Vacuum all input from a {@link Reader}/{@link InputStream} and then treat it
@@ -25,25 +27,20 @@ import std.stdio;
  */
 class ANTLRInputStream : CharStream
 {
-
-    public static int READ_BUFFER_SIZE = 1024;
-
-    public static int INITIAL_BUFFER_SIZE = 1024;;
-
     /**
-     * The data being scanned
+     * The UTF-8 data being scanned
      */
     protected char[] data;
 
     /**
-     * How many characters are actually in the buffer
+     * How many UCS code_points are actually in the buffer
      */
-    protected int n;
+    protected size_t cp_in_buffer;
 
     /**
-     * 0..n-1 index into string of next char
+     * index of next UTF-8 character
      */
-    protected int p = 0;
+    protected size_t index_of_next_char = 0;
 
     /**
      * What is name or source of this char stream?
@@ -59,34 +56,33 @@ class ANTLRInputStream : CharStream
      */
     public this(string input)
     {
-        this.data = input.to!(char []);
-        this.n = to!int(input.length);
+        data = input.to!(char []);
+        cp_in_buffer = data.toUCSindex(data.length);
     }
 
     /**
      * This is the preferred constructor for strings as no data is copied
      */
-    public this(char[] data, int numberOfActualCharsInArray)
+    public this(char[] data, size_t numberOfActualCharsInArray)
     {
-        this.data = data;
-        this.n = numberOfActualCharsInArray;
+        this.data = data.to!(char []);
+        cp_in_buffer = data.toUCSindex(data.length);
     }
 
     public this(File r)
     {
-        load(r, INITIAL_BUFFER_SIZE, READ_BUFFER_SIZE);
+        load(r);
     }
 
-    public void load(File r, int size, int readChunkSize)
+    public void load(File r)
     {
-        debug (ANTLRInputStream)
-            writefln("load %1$s in chunks of %2$s", size, readChunkSize);
         name = r.name;
         data = to!(char[])(name.readText);
         // set the actual size of the data available;
-        n = to!int(data.length);
+        cp_in_buffer = data.toUCSindex(data.length);
         debug (ANTLRInputStreamStream)
-            writefln("n= $s", n);
+            writefln("name = %s; cp_in_buffer = $s",
+                     name, cp_in_buffer);
     }
 
     /**
@@ -96,7 +92,7 @@ class ANTLRInputStream : CharStream
      */
     public void reset()
     {
-        p = 0;
+        index_of_next_char = 0;
     }
 
     /**
@@ -105,47 +101,58 @@ class ANTLRInputStream : CharStream
      */
     public override void consume()
     {
-	if (p >= n) {
+        if (index_of_next_char >= cp_in_buffer) {
             assert (LA(1) == IntStreamConstant.EOF, "cannot consume EOF");
         }
-        //System.out.println("prev p="+p+", c="+(char)data[p]);
-        if (p < n) {
-            p++;
-            //System.out.println("p moves to "+p+" (c='"+(char)data[p]+"')");
+
+        debug (ANTLRInputStream)
+            {
+                import std.stdio;
+                writefln("consume; prev index_of_next_char= %s, data[index_of_next_character] = %s",
+                         index_of_next_char,
+                         front(data[data.toUTFindex(index_of_next_char) .. $]));
+            }
+
+        if (index_of_next_char < cp_in_buffer) {
+            index_of_next_char++;
         }
     }
 
     /**
+     * UTF-8 coded character mapped to UTF-32
      * @uml
      * @override
      */
-    public override int LA(int i)
+    public override dchar LA(int i)
     {
+        import std.conv;
+        debug (ANTLRInputStream)
+            {
+                import std.stdio;
+                writefln("LA(%s); index_of_next_char=%s cp_in_buffer=%s; data.length=%s",
+                         i, index_of_next_char, cp_in_buffer, data.length);
+            }
         if (i == 0) {
-            return 0; // undefined
+            return to!dchar(0); // undefined
         }
         if (i < 0) {
-            i++; // e.g., translate LA(-1) to use offset i=0; then data[p+0-1]
-            if ((p + i - 1) < 0) {
-                return IntStreamConstant.EOF; // invalid; no char before first char
+            i++; // e.g., translate LA(-1) to use offset i=0; then data[index_of_next_character+0-1]
+            if ((index_of_next_char + i - 1) < 0) {
+                return to!dchar(IntStreamConstant.EOF); // invalid; no char before first char
             }
         }
-        if (( p + i - 1) >= n) {
+        if (( index_of_next_char + i - 1) >= cp_in_buffer) {
             debug (ANTLRInputStream) {
                 import std.stdio;
-                writefln("char LA(%s)=EOF; p=%s", i, p);
+                writefln("LA; char LA(%s)=EOF; index_of_next_chara=%s", i, index_of_next_char);
             }
-            return IntStreamConstant.EOF;
+            return to!dchar(IntStreamConstant.EOF);
         }
-        debug (ANTLRInputStream) {
-                import std.stdio;
-                writefln("LA(%s); p=%s n=%s data.length=%s", i, p, n, data.length);
-                writefln("char LA(%s)=%s; p=%s", i, data[p+i-1], p);
-            }
-        return data[p+i-1];
+        return front(data[data.toUTFindex(index_of_next_char + i - 1) .. $]);
     }
 
-    public int LT(int i)
+
+    public dchar LT(int i)
     {
         return LA(i);
     }
@@ -154,18 +161,18 @@ class ANTLRInputStream : CharStream
      * @uml
      * @override
      */
-    public override int index()
+    public override size_t index()
     {
-        return p;
+        return index_of_next_char;
     }
 
     /**
      * @uml
      * @override
      */
-    public override int size()
+    public override size_t size()
     {
-        return n;
+        return cp_in_buffer;
     }
 
     /**
@@ -187,20 +194,21 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * consume() ahead until p==index; can't just set p=index as we must
-     * update line and charPositionInLine. If we seek backwards, just set p
+     * consume() ahead until index_of_next_character==index; can't just set index_of_next_character=index as we must
+     * update line and charPositionInLine. If we seek backwards, just set index_of_next_character
      * @uml
      * @override
      */
-    public override void seek(int index)
+    public override void seek(size_t index)
     {
-	if (index <= p) {
-            p = index; // just jump; don't update stream state (line, ...)
+    if (index <= index_of_next_char) {
+            index_of_next_char= index; // just jump; don't update stream state (line, ...)
             return;
         }
-        // seek forward, consume until p hits index or n (whichever comes first)
-        index = min(index, n);
-        while (p < index) {
+        // seek forward, consume until next code point hits index or cp_in_buffer
+        // (whichever comes first)
+        index = min(index, cp_in_buffer);
+        while (index_of_next_char < index) {
             consume();
         }
     }
@@ -213,14 +221,17 @@ class ANTLRInputStream : CharStream
     {
         int start = interval.a;
         int stop = interval.b;
-        if (stop >= n)
-            stop = n-1;
-        if (start >= n) return "";
+        if (stop >= cp_in_buffer)
+            stop = to!int(cp_in_buffer)-1;
+        if (start >= cp_in_buffer) return "";
+
         debug (ANTLRInputStream) {
-            writefln("data: %s, n=%s, start=%s, stop=%s",
-                     data[start..stop+1], n, start, stop);
+            writefln("data: %s, cp_in_buffer=%s, start=%s, stop=%s",
+                     data[start..stop+1].front, cp_in_buffer, start, stop);
         }
-        return data[start..stop+1].idup();
+
+        //return data[data.toUTFindex(start)..data.toUTFindex(stop+1)].idup();
+        return to!string(data[data.toUTFindex(start)..data.toUTFindex(stop+1)]);
     }
 
     /**

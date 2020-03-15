@@ -180,7 +180,7 @@ class ParserRuleContext : RuleContext
 
     public ErrorNode addErrorNode(Token badToken)
     {
-	ErrorNodeImpl t = new ErrorNodeImpl(badToken);
+    ErrorNodeImpl t = new ErrorNodeImpl(badToken);
         addChild(t);
         t.parent = this;
         return t;
@@ -226,7 +226,7 @@ class ParserRuleContext : RuleContext
 
     public TerminalNode getToken(int ttype, int i)
     {
-	if (children is null || i < 0 || i >= children.length) {
+    if (children is null || i < 0 || i >= children.length) {
             return null;
         }
 
@@ -249,7 +249,7 @@ class ParserRuleContext : RuleContext
     public TerminalNode[] getTokens(int ttype)
     {
         TerminalNode[] emptyList;
-	if (children is null) {
+    if (children is null) {
             return emptyList;
         }
 
@@ -317,9 +317,9 @@ class ParserRuleContext : RuleContext
             return cast(Interval)Interval.INVALID;
         }
         if (stop is null || stop.getTokenIndex()<start.getTokenIndex()) {
-            return Interval.of(start.getTokenIndex(), start.getTokenIndex()-1); // empty
+            return Interval.of(to!int(start.getTokenIndex), to!int(start.getTokenIndex)-1); // empty
         }
-        return Interval.of(start.getTokenIndex(), stop.getTokenIndex());
+        return Interval.of(to!int(start.getTokenIndex), to!int(stop.getTokenIndex));
     }
 
     /**

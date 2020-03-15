@@ -49,7 +49,7 @@ interface TokenStream : IntStream
      * - UnsupportedOperationException if the stream does not support
      *  retrieving the token at the specified index
      */
-    public Token get(int index);
+    public Token get(size_t index);
 
     /**
      * Gets the underlying {@link TokenSource} which provides tokens for this

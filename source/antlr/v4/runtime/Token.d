@@ -56,11 +56,11 @@ interface Token
      * Return -1 to indicate that this token was conjured up since
      * it doesn't have a valid index.
      */
-    public int getTokenIndex();
+    public size_t getTokenIndex();
 
-    public int startIndex();
+    public size_t startIndex();
 
-    public int stopIndex();
+    public size_t stopIndex();
 
     /**
      * Gets the {@link TokenSource} which created this token.

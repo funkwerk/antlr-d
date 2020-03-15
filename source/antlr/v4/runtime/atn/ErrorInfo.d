@@ -63,7 +63,7 @@ class ErrorInfo : DecisionEventInfo
      *  prediction; otherwise, {@code false} if the syntax error was identified
      *  during SLL prediction
      */
-    public this(int decision, ATNConfigSet configs, TokenStream input, int startIndex, int stopIndex,
+    public this(int decision, ATNConfigSet configs, TokenStream input, size_t startIndex, size_t stopIndex,
         bool fullCtx)
     {
         super(decision, configs, input, startIndex, stopIndex, fullCtx);

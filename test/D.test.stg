@@ -157,7 +157,7 @@ public PositionAdjustingLexerATNSimulator getInterpreter() {
 
 private static bool isIdentifierChar(char c) {
     import std.ascii;
-    return isAlpha(c) || c == '_';
+    return isAlphaNum(c) || c == '_';
 }
 
 protected static class PositionAdjustingLexerATNSimulator : LexerATNSimulator {

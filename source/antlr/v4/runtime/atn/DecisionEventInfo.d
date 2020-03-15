@@ -68,9 +68,9 @@ class DecisionEventInfo
      */
     public TokenStream input;
 
-    public int startIndex;
+    public size_t startIndex;
 
-    public int stopIndex;
+    public size_t stopIndex;
 
     /**
      * {@code true} if the current event occurred during LL prediction;
@@ -78,7 +78,7 @@ class DecisionEventInfo
      */
     public bool fullCtx;
 
-    public this(int decision, ATNConfigSet configs, TokenStream input, int startIndex, int stopIndex,
+    public this(int decision, ATNConfigSet configs, TokenStream input, size_t startIndex, size_t stopIndex,
         bool fullCtx)
     {
         this.decision = decision;

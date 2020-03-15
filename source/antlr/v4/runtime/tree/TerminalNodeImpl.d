@@ -62,8 +62,8 @@ class TerminalNodeImpl : TerminalNode
     {
         if (symbol is null)
             return cast(Interval)Interval.INVALID;
-        int tokenIndex = symbol.getTokenIndex();
-        return new Interval(tokenIndex, tokenIndex);
+        auto tokenIndex = symbol.getTokenIndex();
+        return new Interval(to!int(tokenIndex), to!int(tokenIndex));
 
     }
 

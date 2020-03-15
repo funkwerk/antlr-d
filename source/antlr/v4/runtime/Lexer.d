@@ -86,7 +86,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      * Needed, for example, to get the text for current token.  Set at
      * the start of nextToken.
      */
-    public int _tokenStartCharIndex = -1;
+    public size_t _tokenStartCharIndex;
 
     /**
      * The line on which the first character of the token resides
@@ -178,9 +178,10 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
                     _type = TokenConstantDefinition.INVALID_TYPE;
                     debug(Lexer) {
                         import std.stdio;
-                        writefln("nextToken line = %s at %s in mode %s at index %s",
+                        writefln("nextToken line = %s at %s: %s in mode %s at index %s",
                                  _tokenStartLine,
-                                 cast(char)_input.LA(1),
+                                 _tokenStartCharPositionInLine,
+                                 _input.LA(1),
                                  _mode,
                                  _input.index);
                     }
@@ -348,7 +349,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     /**
      * What is the index of the current character of lookahead?
      */
-    public int getCharIndex()
+    public size_t getCharIndex()
     {
         return _input.index();
     }
@@ -456,7 +457,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void notifyListeners(LexerNoViableAltException e)
     {
-        string text = _input.getText(Interval.of(_tokenStartCharIndex, _input.index()));
+        string text = _input.getText(Interval.of(to!int(_tokenStartCharIndex), to!int(_input.index)));
         string msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
 
         ANTLRErrorListener!(int, LexerATNSimulator) listener = getErrorListenerDispatch();

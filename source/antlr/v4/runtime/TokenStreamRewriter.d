@@ -167,7 +167,7 @@ class TokenStreamRewriter
         insertAfter(programName, t.getTokenIndex, text);
     }
 
-    public void insertAfter(string programName, int index, Variant text)
+    public void insertAfter(string programName, size_t index, Variant text)
     {
         // to insert after, just insert before next index (even if past end)
         RewriteOperation op = new InsertAfterOp(index, text);
@@ -326,7 +326,7 @@ class TokenStreamRewriter
      */
     public Variant getText()
     {
-        return getText(DEFAULT_PROGRAM_NAME, Interval.of(0, tokens_.size - 1));
+        return getText(DEFAULT_PROGRAM_NAME, Interval.of(0, to!int(tokens_.size) - 1));
     }
 
     /**
@@ -335,7 +335,7 @@ class TokenStreamRewriter
      */
     public Variant getText(string programName)
     {
-        return getText(programName, Interval.of(0, tokens_.size - 1));
+        return getText(programName, Interval.of(0, to!int(tokens_.size) - 1));
     }
 
     /**
@@ -364,8 +364,8 @@ class TokenStreamRewriter
         int stop = interval.b;
 
         // ensure start/end are in range
-        if ( stop > tokens_.size-1 )
-            stop = tokens_.size-1;
+        if ( stop > to!int(tokens_.size) - 1 )
+            stop = to!int(tokens_.size) - 1;
         if ( start < 0 )
             start = 0;
 

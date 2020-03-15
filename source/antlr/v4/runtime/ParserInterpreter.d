@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -139,7 +139,7 @@ class ParserInterpreter : Parser
     public this(string grammarFileName, Vocabulary vocabulary, string[] ruleNames, ATN atn,
         TokenStream input)
     {
-	super(input);
+    super(input);
         this.grammarFileName = grammarFileName;
         this.atn = atn;
         for (int i = 0; i < tokenNames.length; i++) {
@@ -224,7 +224,7 @@ class ParserInterpreter : Parser
      */
     public ParserRuleContext parse(int startRuleIndex)
     {
-	RuleStartState startRuleStartState = atn.ruleToStartState[startRuleIndex];
+    RuleStartState startRuleStartState = atn.ruleToStartState[startRuleIndex];
         rootContext = createInterpreterRuleContext(null, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
         if (startRuleStartState.isLeftRecursiveRule) {
             enterRecursionRule(rootContext, startRuleStartState.stateNumber, startRuleIndex, 0);
@@ -288,7 +288,7 @@ class ParserInterpreter : Parser
 
     protected void visitState(ATNState p)
     {
-        //		System.out.println("visitState "+p.stateNumber);
+        //      System.out.println("visitState "+p.stateNumber);
         int predictedAlt = 1;
         if (p.classinfo == DecisionState.classinfo) {
             predictedAlt = visitDecisionState(cast(DecisionState) p);
@@ -364,7 +364,7 @@ class ParserInterpreter : Parser
 
     protected int visitDecisionState(DecisionState p)
     {
-	int predictedAlt = 1;
+    int predictedAlt = 1;
         if (p.getNumberOfTransitions() > 1) {
             getErrorHandler.sync(this);
             int decision = p.decision;
@@ -456,7 +456,7 @@ class ParserInterpreter : Parser
     protected void recover(RecognitionException e)
     {
         TokenFactorySourcePair tokenFactorySourcePair;
-	int i = _input.index();
+        auto i = _input.index();
         getErrorHandler.recover(this, e);
         if ( _input.index()==i ) {
             // no input consumed, better add an error node

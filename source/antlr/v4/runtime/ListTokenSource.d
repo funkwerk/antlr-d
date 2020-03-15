@@ -103,46 +103,46 @@ class ListTokenSource : TokenSource
 
     public int getCharPositionInLine()
     {
-	if (i < tokens.length) {
+    if (i < tokens.length) {
             return tokens[i].getCharPositionInLine();
         }
-		else if (eofToken !is null) {
-			return eofToken.getCharPositionInLine();
-		}
-		else if (tokens.length > 0) {
-			// have to calculate the result from the line/column of the previous
-			// token, along with the text of the token.
-			Token lastToken = tokens[$ - 1];
-			auto tokenText = lastToken.getText();
+        else if (eofToken !is null) {
+            return eofToken.getCharPositionInLine();
+        }
+        else if (tokens.length > 0) {
+            // have to calculate the result from the line/column of the previous
+            // token, along with the text of the token.
+            Token lastToken = tokens[$ - 1];
+            auto tokenText = lastToken.getText();
                         Variant Null;
-			if (tokenText !is Null) {
+            if (tokenText !is Null) {
                             auto lastNewLine = (to!string(tokenText)).lastIndexOf('\n');
-				if (lastNewLine >= 0) {
+                if (lastNewLine >= 0) {
                                     return to!int((tokenText.length) - lastNewLine - 1);
-				}
-			}
+                }
+            }
 
-			return lastToken.getCharPositionInLine() + lastToken.stopIndex - lastToken.startIndex + 1;
-		}
+            return to!int(lastToken.getCharPositionInLine + lastToken.stopIndex - lastToken.startIndex) + 1;
+        }
 
-		// only reach this if tokens is empty, meaning EOF occurs at the first
-		// position in the input
-		return 0;
+        // only reach this if tokens is empty, meaning EOF occurs at the first
+        // position in the input
+        return 0;
     }
 
     public Token nextToken()
     {
-	if (i >= tokens.length) {
+    if (i >= tokens.length) {
             if (eofToken is null) {
-                int start = -1;
+                size_t start = to!size_t(-1);
                 if (tokens.length > 0) {
-                    int previousStop = tokens[$ - 1].stopIndex;
+                    auto previousStop = tokens[$ - 1].stopIndex;
                     if (previousStop != -1) {
                         start = previousStop + 1;
                     }
                 }
 
-                int stop = max(-1, start - 1);
+                auto stop = max(-1, start - 1);
                 TokenFactorySourcePair tfsp = tuple(this, getInputStream());
                 Variant v = "EOF";
                 eofToken = _factory.create(tfsp, TokenConstantDefinition.EOF, v, TokenConstantDefinition.DEFAULT_CHANNEL, start, stop, getLine(), getCharPositionInLine());
@@ -161,7 +161,7 @@ class ListTokenSource : TokenSource
 
     public int getLine()
     {
-	if (i < tokens.length) {
+    if (i < tokens.length) {
             return tokens[i].getLine();
         }
         else if (eofToken !is null) {
@@ -193,7 +193,7 @@ class ListTokenSource : TokenSource
 
     public CharStream getInputStream()
     {
-	if (i < tokens.length) {
+    if (i < tokens.length) {
             return tokens[i].getInputStream();
         }
         else if (eofToken !is null) {

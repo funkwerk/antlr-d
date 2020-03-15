@@ -61,6 +61,7 @@ import std.conv;
 import std.format;
 import std.stdio;
 import std.uuid;
+import std.utf;
 
 /**
  * TODO add class description
@@ -171,37 +172,37 @@ class ATNDeserializer
         return false;
     }
 
-    public ATN deserialize(wstring input_data)
-    {
-        reset(input_data);
-        checkVersion;
-        checkUUID;
-        ATN atn = readATN;
-        readStates(atn);
-        readRules(atn);
-        readModes(atn);
-        IntervalSet[] sets;
-        readSets(sets, atn, &readInt);
-        if (isFeatureSupported(ADDED_UNICODE_SMP, uuid))
+    public ATN deserialize(in wstring input_data)
+        {
+            reset(input_data);
+            checkVersion;
+            checkUUID;
+            ATN atn = readATN;
+            readStates(atn);
+            readRules(atn);
+            readModes(atn);
+            IntervalSet[] sets;
+            readSets(sets, atn, &readInt);
+            if (isFeatureSupported(ADDED_UNICODE_SMP, uuid))
             {
                 readSets(sets, atn, &readInt32);
             }
-        readEdges(atn, sets);
-        readDecisions(atn);
-    readLexerActions(atn);
-        markPrecedenceDecisions(atn);
-        if (deserializationOptions.verifyATN) {
-            verifyATN(atn);
+            readEdges(atn, sets);
+            readDecisions(atn);
+            readLexerActions(atn);
+            markPrecedenceDecisions(atn);
+            if (deserializationOptions.verifyATN) {
+                verifyATN(atn);
+            }
+            if (deserializationOptions.generateRuleBypassTransitions && atn.grammarType == ATNType.PARSER) {
+                generateRuleBypassTransitions(atn);
+            }
+            if (deserializationOptions.optimize) {
+                optimizeATN(atn);
+            }
+            identifyTailCalls(atn);
+            return atn;
         }
-        if (deserializationOptions.generateRuleBypassTransitions && atn.grammarType == ATNType.PARSER) {
-            generateRuleBypassTransitions(atn);
-        }
-        if (deserializationOptions.optimize) {
-            optimizeATN(atn);
-        }
-        identifyTailCalls(atn);
-        return atn;
-    }
 
     /**
      * @uml
@@ -367,92 +368,91 @@ class ATNDeserializer
     }
 
     protected ATNState stateFactory(int type, int ruleIndex)
-    {
-        ATNState s;
-        with(StateNames) {
+        {
+            ATNState s;
+            with(StateNames) {
+                switch (type) {
+                case INVALID: return null;
+                case BASIC : s = new BasicState(); break;
+                case RULE_START : s = new RuleStartState(); break;
+                case BLOCK_START : s = new BasicBlockStartState(); break;
+                case PLUS_BLOCK_START : s = new PlusBlockStartState(); break;
+                case STAR_BLOCK_START : s = new StarBlockStartState(); break;
+                case TOKEN_START : s = new TokensStartState(); break;
+                case RULE_STOP : s = new RuleStopState(); break;
+                case BLOCK_END : s = new BlockEndState(); break;
+                case STAR_LOOP_BACK : s = new StarLoopbackState(); break;
+                case STAR_LOOP_ENTRY : s = new StarLoopEntryState(); break;
+                case PLUS_LOOP_BACK : s = new PlusLoopbackState(); break;
+                case LOOP_END : s = new LoopEndState(); break;
+                default :
+                    string message = format("The specified state type %d is not valid.", type);
+                    throw new IllegalArgumentException(message);
+                }
+            }
+            s.ruleIndex = ruleIndex;
+            return s;
+        }
+
+    protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
+        {
             switch (type) {
-            case INVALID: return null;
-            case BASIC : s = new BasicState(); break;
-            case RULE_START : s = new RuleStartState(); break;
-            case BLOCK_START : s = new BasicBlockStartState(); break;
-            case PLUS_BLOCK_START : s = new PlusBlockStartState(); break;
-            case STAR_BLOCK_START : s = new StarBlockStartState(); break;
-            case TOKEN_START : s = new TokensStartState(); break;
-            case RULE_STOP : s = new RuleStopState(); break;
-            case BLOCK_END : s = new BlockEndState(); break;
-            case STAR_LOOP_BACK : s = new StarLoopbackState(); break;
-            case STAR_LOOP_ENTRY : s = new StarLoopEntryState(); break;
-            case PLUS_LOOP_BACK : s = new PlusLoopbackState(); break;
-            case LOOP_END : s = new LoopEndState(); break;
-            default :
-                string message = format("The specified state type %d is not valid.", type);
+            case LexerActionType.CHANNEL:
+                return new LexerChannelAction(data1);
+
+            case LexerActionType.CUSTOM:
+                return new LexerCustomAction(data1, data2);
+
+            case LexerActionType.MODE:
+                return new LexerModeAction(data1);
+
+            case LexerActionType.MORE:
+                return cast(LexerAction)LexerMoreAction.instance;
+
+            case LexerActionType.POP_MODE:
+                return cast(LexerAction)LexerPopModeAction.instance;
+
+            case LexerActionType.PUSH_MODE:
+                return new LexerPushModeAction(data1);
+
+            case LexerActionType.SKIP:
+                return cast(LexerAction)LexerSkipAction.instance;
+
+            case LexerActionType.TYPE:
+                return new LexerTypeAction(data1);
+
+            default:
+                string message = format("The specified lexer action type %d is not valid.", type);
                 throw new IllegalArgumentException(message);
             }
         }
-        s.ruleIndex = ruleIndex;
-        return s;
-    }
 
-    protected LexerAction lexerActionFactory(LexerActionType type, int data1, int data2)
-    {
-        switch (type) {
-        case LexerActionType.CHANNEL:
-            return new LexerChannelAction(data1);
+    private void reset(in immutable wstring atn)
+        {
+            wchar el;
+            data.length = 0;
 
-        case LexerActionType.CUSTOM:
-            return new LexerCustomAction(data1, data2);
-
-        case LexerActionType.MODE:
-            return new LexerModeAction(data1);
-
-        case LexerActionType.MORE:
-            return cast(LexerAction)LexerMoreAction.instance;
-
-        case LexerActionType.POP_MODE:
-            return cast(LexerAction)LexerPopModeAction.instance;
-
-        case LexerActionType.PUSH_MODE:
-            return new LexerPushModeAction(data1);
-
-        case LexerActionType.SKIP:
-            return cast(LexerAction)LexerSkipAction.instance;
-
-        case LexerActionType.TYPE:
-            return new LexerTypeAction(data1);
-
-        default:
-            string message = format("The specified lexer action type %d is not valid.", type);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    private void reset(const wstring data)
-    {
-        wchar el;
-        for(int i; i < data.length; i++) {
-            el =  data[i];
-            if (el == '[') {
-                if (i+7 >= data.length) {
-                    this.data ~=to!int('[') - 2;
+            for(int i; i < atn.length; i++) {
+                el =  atn[i];
+                if (el == '[') {
+                    if (i+7 >= atn.length) {
+                        data ~=to!int('[') - 2;
+                        continue;
+                    }
+                    if (atn[i+7] != ']') {
+                        data ~=to!int('[') - 2;
+                        continue;
+                    }
+                    data ~= parseOct(atn, i) -2;
+                    i += 7;
                     continue;
                 }
-                if (data[i+7] != ']') {
-                    this.data ~=to!int('[') - 2;
-                    continue;
-                }
-                this.data ~= parseOct(data, i) -2;
-                i += 7;
-                continue;
+                data ~= (el - 2) & 0xffff;
             }
-            if (el < 2)
-                this.data ~= -1;
-            else
-                this.data ~= el - 2;
+            // don't adjust the first value since that's the version number
+            data[0] = atn[0];
+            p = 0;
         }
-        // don't adjust the first value since that's the version number
-        this.data[0] = data[0];
-        p = 0;
-    }
 
     private void checkVersion()
     {
@@ -729,7 +729,7 @@ class ATNDeserializer
             }
     }
 
-    public int parseOct(wstring data, int p)
+    public int parseOct(in wstring data, in int p)
     {
         int res = 0;
         for (auto i = p + 1; i < p + 7; i++) {

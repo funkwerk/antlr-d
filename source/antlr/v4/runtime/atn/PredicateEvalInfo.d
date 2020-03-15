@@ -86,7 +86,7 @@ class PredicateEvalInfo : DecisionEventInfo
      *  @see ParserATNSimulator#evalSemanticContext(SemanticContext, ParserRuleContext, int, boolean)
      *  @see SemanticContext#eval(Recognizer, RuleContext)
      */
-    public this(int decision, TokenStream input, int startIndex, int stopIndex, SemanticContext semctx,
+    public this(int decision, TokenStream input, size_t startIndex, size_t stopIndex, SemanticContext semctx,
                 bool evalResult, int predictedAlt, bool fullCtx)
     {
         super(decision, new ATNConfigSet(), input, startIndex, stopIndex, fullCtx);

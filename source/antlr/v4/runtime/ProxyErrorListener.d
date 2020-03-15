@@ -67,7 +67,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
         }
     }
 
-    public void reportAmbiguity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact, BitSet ambigAlts,
+    public void reportAmbiguity(InterfaceParser recognizer, DFA dfa, size_t startIndex, size_t stopIndex, bool exact, BitSet ambigAlts,
         ATNConfigSet configs)
     {
 	foreach (listener; delegates) {
@@ -75,7 +75,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
         }
     }
 
-    public void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportAttemptingFullContext(InterfaceParser recognizer, DFA dfa, size_t startIndex, size_t stopIndex,
         BitSet conflictingAlts, ATNConfigSet configs)
     {
 	foreach (listener; delegates) {
@@ -83,7 +83,7 @@ class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
         }
     }
 
-    public void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, int startIndex, int stopIndex,
+    public void reportContextSensitivity(InterfaceParser recognizer, DFA dfa, size_t startIndex, size_t stopIndex,
         int prediction, ATNConfigSet configs)
     {
 	foreach (listener; delegates) {

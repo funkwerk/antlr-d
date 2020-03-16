@@ -223,7 +223,7 @@ class BufferedTokenStream : TokenStream
         lazyInit;
         Token[] subset;
         if (stop >= tokens.length) stop = to!int(tokens.length) - 1;
-        for (int i = start; i <= stop; i++) {
+        for (auto i = start; i <= stop; i++) {
             Token t = tokens[i];
             if (t.getType == TokenConstantDefinition.EOF)
                 break;
@@ -455,18 +455,17 @@ class BufferedTokenStream : TokenStream
     }
     do
     {
-
-            if (tokenIndex == 0) {
-                // obviously no tokens can appear before the first token
-                return null;
-            }
-            auto prevOnChannel =
-                previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
-            if ( prevOnChannel == tokenIndex - 1 ) return null;
-            // if none onchannel to left, prevOnChannel=-1 then from=0
-            auto from = prevOnChannel+1;
-            auto to = tokenIndex-1;
-            return filterForChannel(from, to, channel);
+        if (tokenIndex == 0) {
+            // obviously no tokens can appear before the first token
+            return null;
+        }
+        auto prevOnChannel =
+            previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+        if ( prevOnChannel == tokenIndex - 1 ) return null;
+        // if none onchannel to left, prevOnChannel=-1 then from=0
+        auto from = prevOnChannel+1;
+        auto to = tokenIndex-1;
+        return filterForChannel(from, to, channel);
     }
 
     /**
@@ -571,7 +570,7 @@ class BufferedTokenStream : TokenStream
         lazyInit();
         const int blockSize = 1000;
         while (true) {
-            int fetched = fetch(blockSize);
+            auto fetched = fetch(blockSize);
             if (fetched < blockSize) {
                 return;
             }

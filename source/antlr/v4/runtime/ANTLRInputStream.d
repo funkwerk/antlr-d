@@ -27,6 +27,7 @@ import std.utf;
  */
 class ANTLRInputStream : CharStream
 {
+
     /**
      * The UTF-8 data being scanned
      */
@@ -150,7 +151,6 @@ class ANTLRInputStream : CharStream
         }
         return front(data[data.toUTFindex(index_of_next_char + i - 1) .. $]);
     }
-
 
     public dchar LT(int i)
     {

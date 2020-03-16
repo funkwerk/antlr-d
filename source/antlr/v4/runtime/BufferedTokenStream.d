@@ -181,7 +181,7 @@ class BufferedTokenStream : TokenStream
      *
      *  @return The actual number of elements added to the buffer.
      */
-    protected int fetch(size_t n)
+    protected size_t fetch(size_t n)
     {
         if (fetchedEOF) {
             return 0;
@@ -197,7 +197,7 @@ class BufferedTokenStream : TokenStream
                 return i + 1;
             }
         }
-        return to!int(n);
+        return n;
     }
 
     /**
@@ -217,7 +217,7 @@ class BufferedTokenStream : TokenStream
     /**
      * Get all tokens from start..stop inclusively
      */
-    public Token[] get(int start, int stop)
+    public Token[] get(size_t start, size_t stop)
     {
     if (start < 0 || stop < 0 ) return null;
         lazyInit;
@@ -311,7 +311,7 @@ class BufferedTokenStream : TokenStream
         return tokens;
     }
 
-    public Token[] getTokens(int start, int stop)
+    public Token[] getTokens(size_t start, size_t stop)
     {
         return getTokens(start, stop, null);
     }
@@ -437,7 +437,7 @@ class BufferedTokenStream : TokenStream
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL
      * of EOF.
      */
-    public Token[] getHiddenTokensToRight(int tokenIndex)
+    public Token[] getHiddenTokensToRight(size_t tokenIndex)
     {
         return getHiddenTokensToRight(tokenIndex, -1);
     }
@@ -447,7 +447,7 @@ class BufferedTokenStream : TokenStream
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
      */
-    public Token[] getHiddenTokensToLeft(int tokenIndex, int channel)
+    public Token[] getHiddenTokensToLeft(size_t tokenIndex, int channel)
     in
     {
         lazyInit();
@@ -473,7 +473,7 @@ class BufferedTokenStream : TokenStream
      * Collect all hidden tokens (any off-default channel) to the left of
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      */
-    public Token[] getHiddenTokensToLeft(int tokenIndex)
+    public Token[] getHiddenTokensToLeft(size_t tokenIndex)
     {
         return getHiddenTokensToLeft(tokenIndex, -1);
     }

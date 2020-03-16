@@ -17,13 +17,13 @@ import antlr.v4.runtime.ParserRuleContext;
 class InterpreterRuleContext : ParserRuleContext
 {
 
-    protected int ruleIndex = -1;
+    protected size_t ruleIndex;
 
     public this()
     {
     }
 
-    public this(ParserRuleContext parent, int invokingStateNumber, int ruleIndex)
+    public this(ParserRuleContext parent, int invokingStateNumber, size_t ruleIndex)
     {
         super(parent, invokingStateNumber);
         this.ruleIndex = ruleIndex;
@@ -35,7 +35,7 @@ class InterpreterRuleContext : ParserRuleContext
      */
     public override int getRuleIndex()
     {
-	return ruleIndex;
+    return ruleIndex;
     }
 
 }

@@ -37,7 +37,7 @@ class ResultTokenFactory : CommonTokenFactory {
 
     override
     ResultToken create(TokenFactorySourcePair source, int type,
-                       Variant text, int channel, int start, int stop,
+                       Variant text, int channel, size_t start, size_t stop,
                        int line, int charPositionInLine ) {
         auto t = new  ResultToken(source, type, channel,
                                   start, stop);
@@ -66,7 +66,7 @@ class ResultToken : CommonToken {
     }
 
     this( TokenFactorySourcePair source, int type,
-          int channel, int start, int stop) {
+          int channel, size_t start, size_t stop) {
         super(source, type, channel, start, stop);
         Result r;
         r.indent = 1;

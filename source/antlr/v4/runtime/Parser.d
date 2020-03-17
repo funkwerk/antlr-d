@@ -245,7 +245,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public Token match(int ttype)
     {
-	Token t = getCurrentToken;
+        Token t = getCurrentToken;
 
         debug(Parser) {
             import std.stdio;
@@ -291,7 +291,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public Token matchWildcard()
     {
-	Token t = getCurrentToken();
+        Token t = getCurrentToken();
         if (t.getType() > 0) {
             _errHandler.reportMatch(this);
             consume();
@@ -584,7 +584,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public Token getCurrentToken()
     {
-	return _input.LT(1);
+        return _input.LT(1);
     }
 
     /**
@@ -693,7 +693,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void enterOuterAlt(ParserRuleContext localctx, int altNum)
     {
-	localctx.setAltNumber(altNum);
+        localctx.setAltNumber(altNum);
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree
         if (_buildParseTrees && ctx_ != localctx) {
@@ -730,7 +730,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public void enterRecursionRule(ParserRuleContext localctx, int ruleIndex)
     {
-	enterRecursionRule(localctx, getATN().ruleToStartState[ruleIndex].stateNumber, ruleIndex, 0);
+        enterRecursionRule(localctx, getATN().ruleToStartState[ruleIndex].stateNumber, ruleIndex, 0);
     }
 
     public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex,
@@ -750,9 +750,9 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      * Like {@link #enterRule} but for recursive rules.
      * Make the current context the child of the incoming localctx.
      */
-    public void pushNewRecursionContext(ParserRuleContext localctx, int state, int ruleIndex)
+    public void pushNewRecursionContext(ParserRuleContext localctx, int state, size_t ruleIndex)
     {
-	ParserRuleContext previous = ctx_;
+        ParserRuleContext previous = ctx_;
         previous.parent = localctx;
         previous.invokingState = state;
         previous.stop = _input.LT(-1);
@@ -770,7 +770,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void unrollRecursionContexts(ParserRuleContext _parentctx)
     {
-	_precedenceStack.pop();
+        _precedenceStack.pop();
         ctx_.stop = _input.LT(-1);
         ParserRuleContext retctx = ctx_; // save current ctx (return value)
 
@@ -815,7 +815,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public bool inContext(string context)
     {
-	// TODO: useful in parser?
+    // TODO: useful in parser?
         return false;
     }
 
@@ -866,7 +866,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public bool isMatchedEOF()
     {
-	return matchedEOF;
+        return matchedEOF;
     }
 
     /**
@@ -916,16 +916,16 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public string[] getRuleInvocationStack()
     {
-	return getRuleInvocationStack(ctx_);
+        return getRuleInvocationStack(ctx_);
     }
 
     public string[] getRuleInvocationStack(RuleContext p)
     {
-	string[] ruleNames = getRuleNames();
+        string[] ruleNames = getRuleNames();
         string[] stack;
         while (p) {
             // compute what follows who invoked us
-            int ruleIndex = p.getRuleIndex();
+            auto ruleIndex = p.getRuleIndex();
             if (ruleIndex < 0)
                 stack ~= "n/a";
             else
@@ -978,7 +978,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
      */
     public override ParseInfo getParseInfo()
     {
-	ParserATNSimulator interp = getInterpreter;
+        ParserATNSimulator interp = getInterpreter;
         if (interp.classinfo == ProfilingATNSimulator.classinfo) {
             return new ParseInfo(cast(ProfilingATNSimulator)interp);
         }
@@ -1004,7 +1004,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
 
     public void setTrace(bool trace)
     {
-	if (!trace) {
+        if (!trace) {
             removeParseListener(_tracer);
             _tracer = null;
         }

@@ -1,6 +1,7 @@
 module antlr.v4.runtime.InterpreterRuleContext;
 
 import antlr.v4.runtime.ParserRuleContext;
+import std.conv;
 
 /**
  * This class extends {@link ParserRuleContext} by allowing the value of
@@ -33,9 +34,9 @@ class InterpreterRuleContext : ParserRuleContext
      * @uml
      * @override
      */
-    public override int getRuleIndex()
+    public override size_t getRuleIndex()
     {
-    return ruleIndex;
+        return ruleIndex;
     }
 
 }

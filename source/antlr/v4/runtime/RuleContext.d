@@ -150,9 +150,9 @@ class RuleContext : RuleNode, InterfaceRuleContext
         return v;
     }
 
-    public int getRuleIndex()
+    public size_t getRuleIndex()
     {
-        return -1;
+        return to!size_t(-1);
     }
 
     /**
@@ -256,7 +256,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
                 }
             }
             else {
-                int ruleIndex = p.getRuleIndex;
+                auto ruleIndex = p.getRuleIndex;
                 string ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.length ? ruleNames[ruleIndex] : to!string(ruleIndex);
                 buf.put(ruleName);
             }

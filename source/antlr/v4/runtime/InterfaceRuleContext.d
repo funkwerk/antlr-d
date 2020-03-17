@@ -8,7 +8,7 @@ import antlr.v4.runtime.RuleContext;
 interface InterfaceRuleContext
 {
 
-    public int getRuleIndex();
+    public size_t getRuleIndex();
 
     public RuleContext getParent();
 

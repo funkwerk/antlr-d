@@ -386,7 +386,7 @@ class ParserInterpreter : Parser
      * Provide simple "factory" for InterpreterRuleContext's.
      */
     protected InterpreterRuleContext createInterpreterRuleContext(ParserRuleContext parent,
-        int invokingStateNumber, int ruleIndex)
+        int invokingStateNumber, size_t ruleIndex)
     {
         return new InterpreterRuleContext(parent, invokingStateNumber, ruleIndex);
     }

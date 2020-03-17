@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -26,7 +26,6 @@ import antlr.v4.runtime.misc.Interval;
 import antlr.v4.runtime.misc.Predicate;
 
 /**
- * TODO add class description
  * @uml
  * A set of utility routines useful for all kinds of ANTLR trees
  */
@@ -71,16 +70,16 @@ class Trees
         string s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
         if ( t.getChildCount()==0 ) return s;
         auto buf = appender!(string);
-		buf.put("(");
-		s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
-		buf.put(s);
-		buf.put(' ');
-		for (int i = 0; i<t.getChildCount(); i++) {
-			if ( i>0 ) buf.put(' ');
-			buf.put(toStringTree(t.getChild(i), ruleNames));
-		}
-		buf.put(")");
-		return buf.data;
+        buf.put("(");
+        s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
+        buf.put(s);
+        buf.put(' ');
+        for (int i = 0; i<t.getChildCount(); i++) {
+            if ( i>0 ) buf.put(' ');
+            buf.put(toStringTree(t.getChild(i), ruleNames));
+        }
+        buf.put(")");
+        return buf.data;
     }
 
     public static string getNodeText(Tree t, InterfaceRecognizer recog)
@@ -93,9 +92,9 @@ class Trees
 
     public static string getNodeText(Tree t, string[] ruleNames)
     {
-	if (ruleNames) {
+        if (ruleNames) {
             if (t.classinfo == RuleContext.classinfo) {
-                int ruleIndex = (cast(RuleContext)t).getRuleContext().getRuleIndex();
+                auto ruleIndex = (cast(RuleContext)t).getRuleContext().getRuleIndex();
                 string ruleName = ruleNames[ruleIndex];
                 int altNumber = (cast(RuleContext) t).getAltNumber();
                 if (altNumber != ATN.INVALID_ALT_NUMBER) {
@@ -143,7 +142,7 @@ class Trees
     public static Tree[] getAncestors(Tree t)
     {
         Tree[] emptyTrees;
-	if (t.getParent() is null) return emptyTrees;
+        if (t.getParent() is null) return emptyTrees;
         Tree[] ancestors;
         t = t.getParent();
         while (t !is null) {
@@ -161,12 +160,12 @@ class Trees
     public static bool isAncestorOf(Tree t, Tree u)
     {
         if (t is null || u is null || t.getParent() is null) return false;
-		Tree p = u.getParent();
-		while (p !is null) {
-			if (t is p) return true;
-			p = p.getParent();
-		}
-		return false;
+        Tree p = u.getParent();
+        while (p !is null) {
+            if (t is p) return true;
+            p = p.getParent();
+        }
+        return false;
     }
 
     public static ParseTree[] findAllTokenNodes(ParseTree t, int ttype)
@@ -188,7 +187,7 @@ class Trees
 
     public static void _findAllNodes(ParseTree t, int index, bool findTokens, ParseTree[] nodes)
     {
-	// check this node (the root) first
+        // check this node (the root) first
         if ( findTokens && t.classinfo == TerminalNode.classinfo) {
             TerminalNode tnode = cast(TerminalNode)t;
             if (tnode.getSymbol().getType() == index) nodes ~= t;
@@ -232,7 +231,7 @@ class Trees
     public static ParserRuleContext getRootOfSubtreeEnclosingRegion(ParseTree t, int startTokenIndex,
         int stopTokenIndex)
     {
-	int n = t.getChildCount();
+        int n = t.getChildCount();
         for (int i = 0; i<n; i++) {
             ParseTree child = t.getChild(i);
             ParserRuleContext r = getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);

@@ -77,7 +77,7 @@ class DFAState
      * {@link #requiresFullContext} is {@code false} since full context prediction evaluates predicates
      * on-the-fly. If this is not null, then {@link #prediction} is
      * {@link ATN#INVALID_ALT_NUMBER}.
-     * 	 *
+     *   *
      * <p>We only use these for non-{@link #requiresFullContext} but conflicting states. That
      * means we know from the context (it's $ or we don't dip into outer
      * context) that it's an ambiguity not a conflict.</p>
@@ -124,7 +124,7 @@ class DFAState
      */
     public override size_t toHash() @safe nothrow
     {
-	size_t hash = MurmurHash.initialize(7);
+    size_t hash = MurmurHash.initialize(7);
         hash = MurmurHash.update(hash, configs.toHash());
         hash = MurmurHash.finish(hash, 1);
         return hash;
@@ -147,7 +147,7 @@ class DFAState
      */
     public override bool opEquals(Object o)
     {
-        //if (o is null) return false;
+        // compare set of ATN configurations in this set with other
         if (this is o) {
             return true;
         }

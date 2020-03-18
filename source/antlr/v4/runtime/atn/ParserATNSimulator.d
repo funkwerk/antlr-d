@@ -1698,13 +1698,13 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     protected DFAState addDFAEdge(ref DFA dfa, DFAState from, size_t t, DFAState to)
     {
         debug {
-            writefln("\nEDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(t));
+            writefln("\nEDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(cast(int)t));
         }
         if (to is null) {
             return null;
         }
         to = addDFAState(dfa, to); // used existing if possible not incoming
-        if (from is null || t < -1 || t > atn.maxTokenType) {
+        if (from is null || cast(int)t < -1 || t > atn.maxTokenType) {
             return to;
         }
         synchronized (from) {

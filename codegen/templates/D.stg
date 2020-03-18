@@ -785,7 +785,7 @@ public static class <struct.name> : <if(contextSuperClass)><contextSuperClass><e
         super(parent, invokingState);
         <struct.ctorAttrs:{a | this.<a.name> = <a.name>;}; separator="\n">
     }
-    override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
+    override public size_t getRuleIndex() { return RULE_<struct.derivedFromName>; }
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
     public this() { }
         alias copyFrom = ParserRuleContext.copyFrom;

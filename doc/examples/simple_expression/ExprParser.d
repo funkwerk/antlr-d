@@ -103,7 +103,7 @@ public class ExprParser : Parser {
         public this(ParserRuleContext parent, int invokingState) {
             super(parent, invokingState);
         }
-        override public int getRuleIndex() { return RULE_prog; }
+        override public size_t getRuleIndex() { return RULE_prog; }
         import ExprListener;
         override
         public void enterRule(ParseTreeListener listener) {
@@ -167,7 +167,7 @@ public class ExprParser : Parser {
         public this(ParserRuleContext parent, int invokingState) {
             super(parent, invokingState);
         }
-        override public int getRuleIndex() { return RULE_expr; }
+        override public size_t getRuleIndex() { return RULE_expr; }
      
         public this() { }
             alias copyFrom = ParserRuleContext.copyFrom;

@@ -68,8 +68,8 @@ lexer grammar RuleLexer;
   }
 
   private CommonToken commonToken(int type, string text) {
-    int stop = this.getCharIndex - 1;
-    int start = to!int(text.length == 0 ? stop : stop - text.length + 1);
+    auto stop = this.getCharIndex - 1;
+    auto start = to!int(text.length == 0 ? stop : stop - text.length + 1);
     int line = getLine;
     if (lastToken) {
         line = lastToken.getLine + 1;

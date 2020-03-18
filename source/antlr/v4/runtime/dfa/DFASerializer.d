@@ -69,11 +69,12 @@ class DFASerializer
         auto buf = appender!string;
         DFAState[] states = dfa.getStates;
         foreach (DFAState s; states) {
-            size_t n = 0;
-            if (s.edges !is null) n = s.edges.length;
-            for (int i=0; i<n; i++) {
+            uint n = 0;
+            if (s.edges !is null)
+                n = to!uint(s.edges.length);
+            for (uint i = 0; i < n; i++) {
                 DFAState t = s.edges[i];
-                if (t !is null && t.stateNumber != int.max) {
+                if (t !is null && t.stateNumber != uint.max) {
                     buf.put(getStateString(s));
                     string label = getEdgeLabel(i);
                     buf.put("-");

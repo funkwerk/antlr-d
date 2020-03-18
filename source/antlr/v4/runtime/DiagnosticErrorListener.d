@@ -81,7 +81,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
         string format_info = "reportAmbiguity d=%s: ambigAlts=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
         BitSet conflictingAlts = getConflictingAlts(ambigAlts, configs);
-        string text = to!string(recognizer.getTokenStream.getText(Interval.of(startIndex, stopIndex)));
+        string text = to!string(recognizer.getTokenStream.getText(Interval.of(to!int(startIndex), to!int(stopIndex))));
         string message = format(format_info, decision, conflictingAlts, text);
         recognizer.notifyErrorListeners(message);
     }
@@ -95,7 +95,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
     {
         string format_info = "reportAttemptingFullContext d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
-        string text = to!string(recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
+        string text = to!string(recognizer.getTokenStream().getText(Interval.of(to!int(startIndex), to!int(stopIndex))));
         string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }
@@ -109,7 +109,7 @@ class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
     {
         string format_info = "reportContextSensitivity d=%s, input='%s'";
         string decision = getDecisionDescription(recognizer, dfa);
-        string text = to!string(recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex)));
+        string text = to!string(recognizer.getTokenStream().getText(Interval.of(to!int(startIndex), to!int(stopIndex))));
         string message = format(format_info, decision, text);
         recognizer.notifyErrorListeners(message);
     }

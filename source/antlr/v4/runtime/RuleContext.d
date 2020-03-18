@@ -152,7 +152,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
     public size_t getRuleIndex()
     {
-        return to!size_t(-1);
+        return size_t.max;
     }
 
     /**
@@ -315,7 +315,7 @@ version(unittest) {
                     super(parent, invokingState);
                 }
 
-                override public int getRuleIndex()
+                override public size_t getRuleIndex()
                 {
                     return invokingState;
                 }
@@ -323,7 +323,8 @@ version(unittest) {
             auto rcp = new RuleContext(null, 1);
             auto rc = new RuleContext(rcp, 0);
             rc.should.not.be(null);
-            rc.toString(["A1", "B1"]).should.equal("[-1 -1]");
+            rc.toString(["A1", "B1"]).should.equal("[" ~ to!string(size_t.max)
+             ~ " " ~ to!string(size_t.max) ~ "]");
 
             rcp = new RuleContextT(null, 1);
             rc = new RuleContextT(rcp, 0);

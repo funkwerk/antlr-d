@@ -393,6 +393,19 @@ class ParserInterpreter : Parser
 
     protected void visitRuleStopState(ATNState p)
     {
+        RuleStartState ruleStartState = atn.ruleToStartState[p.ruleIndex];
+        if (ruleStartState.isLeftRecursiveRule) {
+            ParentContextPair parentContext = _parentContextStack.back;
+            _parentContextStack.removeBack;
+            unrollRecursionContexts(parentContext.a);
+            setState(parentContext.b);
+        }
+        else {
+            exitRule;
+        }
+
+        RuleTransition ruleTransition = cast(RuleTransition)atn.states[getState].transition(0);
+        setState(ruleTransition.followState.stateNumber);
     }
 
     /**

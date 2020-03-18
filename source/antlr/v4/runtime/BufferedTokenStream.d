@@ -168,12 +168,12 @@ class BufferedTokenStream : TokenStream
     }
     do
     {
-            auto n = i - tokens.length + 1; // how many more elements we need?
-            if ( n > 0 ) {
-                auto fetched = fetch(n);
-                return fetched >= n;
-            }
-            return true;
+        auto n = cast(int)i - cast(int)tokens.length + 1; // how many more elements we need?
+        if ( n > 0 ) {
+            auto fetched = fetch(n);
+            return fetched >= n;
+        }
+        return true;
     }
 
     /**

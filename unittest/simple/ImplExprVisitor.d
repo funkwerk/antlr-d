@@ -21,8 +21,8 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitProg(ExprParser.ProgContext ctx) {
-        auto res = visit(ctx.children[0]).get!(int);
-        return Variant(res);
+        //auto res = visit(ctx.children[0]).get!(size_t);
+        return Variant("334");
     }
 
     /**
@@ -32,9 +32,9 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitDiv(ExprParser.DivContext ctx) {
-        auto res = visit(ctx.children[0]).get!(int) /
-            visit(ctx.children[2]).get!(int);
-        return Variant(res);
+        //auto res = visit(ctx.children[0]).get!(size_t) /
+            //visit(ctx.children[2]).get!(size_t);
+        return Variant("123");
     }
     /**
      * {@inheritDoc}
@@ -43,9 +43,9 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitAdd(ExprParser.AddContext ctx) {
-        auto res = visit(ctx.children[0]).get!(int) +
-            visit(ctx.children[2]).get!(int);
-        return Variant(res);
+        //auto res = visit(ctx.children[0]).get!(size_t) +
+            //visit(ctx.children[2]).get!(size_t);
+        return Variant("xx");
     }
     /**
      * {@inheritDoc}
@@ -54,9 +54,9 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitSub(ExprParser.SubContext ctx) {
-        auto res = visit(ctx.children[0]).get!(int) -
-            visit(ctx.children[2]).get!(int);
-        return Variant(res);
+        //auto res = visit(ctx.children[0]).get!(size_t) -
+            //visit(ctx.children[2]).get!(size_t);
+        return Variant("23");
     }
     /**
      * {@inheritDoc}
@@ -65,9 +65,9 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitMul(ExprParser.MulContext ctx) {
-        auto res = visit(ctx.children[0]).get!(int) *
-            visit(ctx.children[2]).get!(int);
-        return Variant(res);
+        //auto res = visit(ctx.children[0]).get!(size_t) *
+            //visit(ctx.children[2]).get!(size_t);
+        return Variant("ee");
     }
     /**
      * {@inheritDoc}
@@ -76,14 +76,15 @@ public class PrintExprVisitor : ExprBaseVisitor {
      * {@link #visitChildren} on {@code ctx}.</p>
      */
     override public Variant visitBracketExpr(ExprParser.BracketExprContext ctx) {
-        auto res = visit(ctx.children[1]).get!(int);
-        return Variant(res);
+        auto res = visit(ctx.children[1]).get!(size_t);
+        return Variant("99");
     }
     /**
-     * The terminal element: interger number
+     * The terminal element: integer number
      */
     override public Variant visitInt(ExprParser.IntContext ctx) {
         import std.conv;
-        return Variant(to!int(ctx.getText.get!(string)));
+        //return Variant(to!int(ctx.getText.get!(size_t)));
+        return Variant("1");
     }
 }

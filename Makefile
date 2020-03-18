@@ -1,7 +1,7 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
-DMD_EXE = ldc2 -g
+DMD_EXE = ldc2
 
 UNAME_M := $(shell uname -m)
 
@@ -24,7 +24,7 @@ ifeq ($(UNAME_M),armv7l)
     TESTRUNNER_OPT =
 endif
 
-DMD = $(DMD_EXE) -link-defaultlib-shared -w
+DMD = $(DMD_EXE) -link-defaultlib-shared -w -O
 MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
@@ -58,10 +58,11 @@ EXAMPLE_XML_FILES := $(shell find $(EXAMPLE_XML_DIR) -name "*.d")
 
 UNITTEST_FILES := $(shell grep -l -r unittest $(SRC_DIR) $(UNITTEST_DIR)/**/*.d)
 
-UNITTEST_MODULES := $(subst separated_grammar.,,\
+UNITTEST_MODULES := $(subst unicode.,,\
+		$(subst separated_grammar.,,\
 		$(subst complex.,,\
 		$(subst simple.,,$(subst unittest.,,$(subst $(SRC_DIR_DOT).,,$(subst /,.,\
-		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES))))))))
+		$(patsubst %.d,%$(NEWLINE),$(UNITTEST_FILES)))))))))
 
 TEST_FLAGS = -cov -Isource -J$(BUILD_DIR) -unittest
 GENERATOR = $(BUILD_DIR)/generator/

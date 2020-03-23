@@ -323,7 +323,7 @@ class CommonToken : WritableToken
             channelStr=",channel=" ~ to!string(channel);
         }
         auto txt = getText.get!(string);
-        if (txt) {
+        if (txt.length > 0) {
             txt = txt.replace("\n","\\n");
             txt = txt.replace("\r","\\r");
             txt = txt.replace("\t","\\t");

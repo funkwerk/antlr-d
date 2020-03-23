@@ -109,13 +109,20 @@ class ANTLRInputStream : CharStream
         debug (ANTLRInputStream)
             {
                 import std.stdio;
-                writefln("consume; prev index_of_next_char= %s, data[index_of_next_character] = %s",
+                writefln!"consume; prev index_of_next_char= %s, data[index_of_next_character] = %s"(
                          index_of_next_char,
                          front(data[data.toUTFindex(index_of_next_char) .. $]));
             }
 
         if (index_of_next_char < cp_in_buffer) {
             index_of_next_char++;
+
+            debug (ANTLRInputStream)
+            {
+                import std.stdio;
+                writefln!"p moves to %s (c='%s')"(index_of_next_char, cast(char)data[index_of_next_char]);
+            }
+
         }
     }
 
@@ -221,13 +228,13 @@ class ANTLRInputStream : CharStream
     {
         int start = interval.a;
         int stop = interval.b;
-        if (stop >= cp_in_buffer)
+        if (stop >= to!int(cp_in_buffer))
             stop = to!int(cp_in_buffer)-1;
-        if (start >= cp_in_buffer) return "";
+        if (start >= to!int(cp_in_buffer)) return "";
 
         debug (ANTLRInputStream) {
-            writefln("data: %s, cp_in_buffer=%s, start=%s, stop=%s",
-                     data[start..stop+1].front, cp_in_buffer, start, stop);
+            writefln!"data: start=%s, stop=%s, string = %s"(
+                     start, stop, data[data.toUTFindex(start)..data.toUTFindex(stop+1)]);
         }
 
         //return data[data.toUTFindex(start)..data.toUTFindex(stop+1)].idup();

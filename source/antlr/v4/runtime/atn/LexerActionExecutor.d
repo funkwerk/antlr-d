@@ -111,9 +111,11 @@ class LexerActionExecutor
      */
     public LexerActionExecutor fixOffsetBeforeMatch(size_t offset)
     {
-    LexerAction[] updatedLexerActions = null;
-        for (int i = 0; i < lexerActions.length; i++) {
-            if (lexerActions[i].isPositionDependent() && !(lexerActions[i].classinfo == LexerIndexedCustomAction.classinfo)) {
+        LexerAction[] updatedLexerActions;
+
+        for (size_t i = 0; i < lexerActions.length; i++)
+        {
+            if (lexerActions[i].isPositionDependent && !(cast(LexerIndexedCustomAction)lexerActions[i])) {
                 if (updatedLexerActions is null) {
                     updatedLexerActions = lexerActions.dup();
                 }
@@ -122,7 +124,7 @@ class LexerActionExecutor
             }
         }
 
-        if (updatedLexerActions is null) {
+        if (!updatedLexerActions) {
             return this;
         }
 

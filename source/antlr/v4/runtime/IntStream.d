@@ -135,7 +135,7 @@ interface IntStream
     public void release(int marker);
 
     /**
-     * eturn the index into the stream of the input symbol referred to by
+     * Return the index into the stream of the input symbol referred to by
      * {@code LA(1)}.
      *
      * <p>The behavior of this method is unspecified if no call to an

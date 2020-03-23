@@ -62,9 +62,9 @@ class BufferedTokenStream : TokenStream
      * @uml
      * @read
      */
-    private size_t index_;
+    private size_t index_ = size_t.max;
 
-    private bool first_token = true;
+    //private bool first_token = true;
 
     /**
      * Indicates whether the {@link Token#EOF} token has been fetched from
@@ -129,11 +129,11 @@ class BufferedTokenStream : TokenStream
     public void consume()
     {
         bool skipEofCheck;
-        if (index_ >= 0) {
+        if (cast(int)index_ >= 0) {
             if (fetchedEOF) {
                 // the last token in tokens is EOF. skip check if p indexes any
                 // fetched token except the last.
-                skipEofCheck = index_ < tokens.length - 1;
+                skipEofCheck = cast(int)index_ < cast(int)tokens.length - 1;
             }
             else {
                 // no EOF token in tokens. skip check if p indexes a fetched token.
@@ -239,7 +239,7 @@ class BufferedTokenStream : TokenStream
 
     public Token LB(int k)
     {
-        if ((index_ - k) < 0)
+        if ((cast(int)index_ - k) < 0)
             return null;
         return tokens[index_ - k];
     }
@@ -255,7 +255,7 @@ class BufferedTokenStream : TokenStream
             return null;
         if (k < 0)
             return LB(-k);
-        auto i = index_ + k - 1;
+        auto i = cast(int)index_ + k - 1;
         sync(i);
         if ( i >= tokens.length ) { // return EOF token
             // EOF must be last token
@@ -284,9 +284,8 @@ class BufferedTokenStream : TokenStream
 
     protected void lazyInit()
     {
-        if (first_token) {
+        if (index_ == size_t.max) {
             setup;
-            first_token = false;
         }
     }
 
@@ -303,7 +302,8 @@ class BufferedTokenStream : TokenStream
     {
         this.tokenSource = tokenSource;
         tokens.length = 0;
-        first_token = true;
+        index_ = size_t.max;
+        fetchedEOF = false;
     }
 
     public Token[] getTokens()

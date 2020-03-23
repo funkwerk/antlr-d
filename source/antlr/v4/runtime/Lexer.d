@@ -155,9 +155,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
      */
     public Token nextToken()
     {
-    if (_input is null) {
-            throw new IllegalStateException("nextToken requires a non-null input stream.");
-        }
+        if (_input is null) {
+                throw new IllegalStateException("nextToken requires a non-null input stream.");
+            }
         // Mark start location in char stream so unbuffered streams are
         // guaranteed at least have text of current token
         int tokenStartMarker = _input.mark();

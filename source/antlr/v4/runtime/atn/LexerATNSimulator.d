@@ -700,7 +700,7 @@ class LexerATNSimulator : ATNSimulator
     public string getText(CharStream input)
     {
         // index is first lookahead char, don't include.
-        return input.getText(Interval.of(startIndex, to!int(input.index())-1));
+        return input.getText(Interval.of(startIndex, to!int(input.index) - 1));
     }
 
     public int getLine()

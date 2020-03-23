@@ -1,7 +1,7 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
-DMD_EXE = ldc2
+DMD_EXE = ldc2 -g
 
 UNAME_M := $(shell uname -m)
 
@@ -24,7 +24,7 @@ ifeq ($(UNAME_M),armv7l)
     TESTRUNNER_OPT =
 endif
 
-DMD = $(DMD_EXE) -link-defaultlib-shared -w -O
+DMD = $(DMD_EXE) -link-defaultlib-shared -w
 MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p

@@ -892,7 +892,7 @@ public class BaseDTest implements RuntimeTestSupport {
 
     protected void writeLexerTestFile(String lexerName, boolean showDFA) {
         ST outputFileST = new ST(
-            "import std.stdio;\n"
+            "import std.stdio : File, writefln;\n"
                 + "\n"
                 + "import antlr.v4.runtime.Token;\n"
                 + "import antlr.v4.runtime.ANTLRInputStream;\n"
@@ -906,7 +906,7 @@ public class BaseDTest implements RuntimeTestSupport {
                 + "  auto tokens = new CommonTokenStream(lexer);\n"
                 + "  tokens.fill();\n"
                 + "  foreach (token; tokens.getTokens)\n"
-                + "    writefln(\"%s\", token);\n"
+                + "    writefln!\"%s\"(token);\n"
                 + (showDFA ? "  std::cout \\<\\< lexer.getInterpreter\\<atn::LexerATNSimulator>()->getDFA(Lexer::DEFAULT_MODE).toLexerString();\n" : "\n")
                 + "  return 0;\n"
                 + "}\n");

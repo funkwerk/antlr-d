@@ -124,15 +124,17 @@ public Token emit() {
 }
 
 private bool handleAcceptPositionForIdentifier() {
-    string tokenText = getText.get!(string);
+    import std.conv : to;
+    auto tokenText = getText.get!(string);
     int identifierLength = 0;
     while (identifierLength \< tokenText.length && isIdentifierChar(tokenText[identifierLength])) {
         identifierLength++;
     }
 
     if (getInputStream().index() > _tokenStartCharIndex + identifierLength) {
-        int offset = identifierLength - 1;
-        getInterpreter().resetAcceptPosition(getInputStream(), _tokenStartCharIndex + offset, _tokenStartLine, _tokenStartCharPositionInLine + offset);
+        auto offset = identifierLength - 1;
+        getInterpreter().resetAcceptPosition(getInputStream(), _tokenStartCharIndex + offset, _tokenStartLine,
+                                             to!int(_tokenStartCharPositionInLine + offset));
         return true;
     }
 
@@ -140,10 +142,11 @@ private bool handleAcceptPositionForIdentifier() {
 }
 
 private bool handleAcceptPositionForKeyword(string keyword) {
+    import std.conv : to;
     if (getInputStream().index() > _tokenStartCharIndex + keyword.length) {
-        import std.conv;
         auto offset = to!int(keyword.length) - 1;
-        getInterpreter.resetAcceptPosition(getInputStream(), _tokenStartCharIndex + offset, _tokenStartLine, _tokenStartCharPositionInLine + offset);
+        getInterpreter.resetAcceptPosition(getInputStream(), _tokenStartCharIndex + offset, _tokenStartLine,
+                                           to!int(_tokenStartCharPositionInLine + offset));
         return true;
     }
 
@@ -169,7 +172,8 @@ protected static class PositionAdjustingLexerATNSimulator : LexerATNSimulator {
         super(recog, atn, decisionToDFA, sharedContextCache);
     }
 
-    protected void resetAcceptPosition(CharStream input, int index, int line, int charPositionInLine) {
+    protected void resetAcceptPosition(CharStream input, size_t index, int line,
+                                       int charPositionInLine) {
         input.seek(index);
         this.line = line;
         this.charPositionInLine = charPositionInLine;

@@ -190,7 +190,8 @@ class CommonToken : WritableToken
     public override Variant getText()
     {
         Variant Null;
-    if (text !is Null) {
+        if (text !is Null)
+        {
             return text;
         }
 
@@ -315,11 +316,13 @@ class CommonToken : WritableToken
      */
     public override string toString()
     {
+        import std.format : format;
+
         string channelStr = "";
         if (channel > 0) {
             channelStr=",channel=" ~ to!string(channel);
         }
-        string txt = to!string(getText);
+        auto txt = getText.get!(string);
         if (txt) {
             txt = txt.replace("\n","\\n");
             txt = txt.replace("\r","\\r");
@@ -328,10 +331,8 @@ class CommonToken : WritableToken
         else {
             txt = "<no text>";
         }
-        return "[@" ~ to!string(getTokenIndex) ~ "," ~ to!string(startIndex_) ~ ":"
-            ~ to!string(stopIndex_) ~ "='" ~ txt ~ "',<" ~ to!string(type)
-            ~ ">" ~ channelStr ~ "," ~ to!string(line) ~ ":"
-            ~ to!string(getCharPositionInLine) ~ "]";
+        return format!"[@%s,%s:%s='%s',<%s>%s,%s:%s]"(getTokenIndex, cast(int)startIndex_,
+            cast(int)stopIndex_, txt, type, channelStr, line, getCharPositionInLine);
     }
 
     public final size_t startIndex()

@@ -64,8 +64,6 @@ class BufferedTokenStream : TokenStream
      */
     private size_t index_ = size_t.max;
 
-    //private bool first_token = true;
-
     /**
      * Indicates whether the {@link Token#EOF} token has been fetched from
      * {@link #tokenSource} and added to {@link #tokens}. This field improves
@@ -234,7 +232,7 @@ class BufferedTokenStream : TokenStream
 
     public dchar LA(int i)
     {
-        return LT(i).getType();
+        return LT(i).getType;
     }
 
     public Token LB(int k)

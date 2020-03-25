@@ -22,7 +22,8 @@ class LexerDFASerializer : DFASerializer
      */
     public override string getEdgeLabel(int i)
     {
-	return "'" ~ to!string(i) ~ "'";
+        import std.format : format;
+        return format!"'%s'"(cast(char)i);
     }
 
 }

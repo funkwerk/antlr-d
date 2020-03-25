@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -189,14 +189,14 @@ class DFA
         }
 
         DFASerializer serializer = new DFASerializer(this, vocabulary);
-        return serializer.toString();
+        return serializer.toString;
     }
 
     public string toLexerString()
     {
         if (s0  is null) return "";
         DFASerializer serializer = new LexerDFASerializer(this);
-        return serializer.toString();
+        return serializer.toString;
     }
 
 }

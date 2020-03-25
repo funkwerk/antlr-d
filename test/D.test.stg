@@ -58,7 +58,7 @@ Text() ::= "this.getText.get!(string)"
 
 ValEquals(a,b) ::= <%<a>==<b>%>
 
-TextEquals(a) ::= <%this.getText.get!(string).equals("<a>")%>
+TextEquals(a) ::= <%this.getText.get!(string) == "<a>"%>
 
 PlusText(a) ::= <%"<a>" ~ this.getText.get!(string)%>
 

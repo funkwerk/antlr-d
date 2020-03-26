@@ -1,7 +1,7 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
-DMD_EXE = ldc2 -g
+DMD_EXE = ldc2
 
 UNAME_M := $(shell uname -m)
 
@@ -24,7 +24,7 @@ ifeq ($(UNAME_M),armv7l)
     TESTRUNNER_OPT =
 endif
 
-DMD = $(DMD_EXE) -link-defaultlib-shared -w
+DMD = $(DMD_EXE) -link-defaultlib-shared -w -O
 MVN = MAVEN_OPTS="-Xmx1G" mvn
 SHELL = bash
 MKDIR_P = mkdir -p
@@ -44,7 +44,7 @@ XPATH_LEXER_SRC := $(shell find $(SRC_ROOT) -name "*.g4")
 
 ANTLR_DIR = antlr4
 UNITTEST_DIR = unittest
-UNITTEST_LIB = -L-lunit-threaded -L-ldshould
+UNITTEST_LIB = -L-lunit-threaded -L-ldshould -L-lprettyprint
 
 SOURCE_FILES := $(shell find $(SRC_ROOT) -name "*.d")
 MODULE_FILES := $(shell find $(UNITTEST_DIR) -name "*.d") $(SOURCE_FILES)

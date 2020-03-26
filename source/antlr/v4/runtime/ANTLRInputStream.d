@@ -11,7 +11,7 @@ import antlr.v4.runtime.IntStream;
 import antlr.v4.runtime.IntStreamConstant;
 import antlr.v4.runtime.misc.Interval;
 import std.algorithm;
-import std.conv;
+import std.conv : to;
 import std.file;
 import std.format;
 import std.range;
@@ -82,7 +82,7 @@ class ANTLRInputStream : CharStream
         // set the actual size of the data available;
         cp_in_buffer = data.toUCSindex(data.length);
         debug (ANTLRInputStreamStream)
-            writefln("name = %s; cp_in_buffer = $s",
+            writefln!"name = %s; cp_in_buffer = $s"(
                      name, cp_in_buffer);
     }
 
@@ -107,20 +107,23 @@ class ANTLRInputStream : CharStream
         }
 
         debug (ANTLRInputStream)
-            {
-                import std.stdio;
-                writefln!"consume; prev index_of_next_char= %s, data[index_of_next_character] = %s"(
-                         index_of_next_char,
-                         front(data[data.toUTFindex(index_of_next_char) .. $]));
-            }
+        {
+            import std.stdio;
+            writefln!"consume; prev index_of_next_char= %s, data[index_of_next_character] = %s"(
+                     index_of_next_char,
+                     front(data[data.toUTFindex(index_of_next_char) .. $]));
+        }
 
-        if (index_of_next_char < cp_in_buffer) {
+        if (index_of_next_char < cp_in_buffer)
+        {
             index_of_next_char++;
 
             debug (ANTLRInputStream)
             {
                 import std.stdio;
-                writefln!"p moves to %s (c='%s')"(index_of_next_char, cast(char)data[index_of_next_char]);
+                writefln!"p moves to %s (c='%s')"(
+                         index_of_next_char,
+                         cast(char)data[index_of_next_char]);
             }
 
         }
@@ -133,27 +136,20 @@ class ANTLRInputStream : CharStream
      */
     public override dchar LA(int i)
     {
-        import std.conv;
-        debug (ANTLRInputStream)
-            {
-                import std.stdio;
-                writefln("LA(%s); index_of_next_char=%s cp_in_buffer=%s; data.length=%s",
-                         i, index_of_next_char, cp_in_buffer, data.length);
-            }
-        if (i == 0) {
+        if (i == 0)
+        {
             return to!dchar(0); // undefined
         }
-        if (i < 0) {
+        if (i < 0)
+        {
             i++; // e.g., translate LA(-1) to use offset i=0; then data[index_of_next_character+0-1]
-            if ((index_of_next_char + i - 1) < 0) {
+            if ((index_of_next_char + i - 1) < 0)
+            {
                 return to!dchar(IntStreamConstant.EOF); // invalid; no char before first char
             }
         }
-        if (( index_of_next_char + i - 1) >= cp_in_buffer) {
-            debug (ANTLRInputStream) {
-                import std.stdio;
-                writefln("LA; char LA(%s)=EOF; index_of_next_chara=%s", i, index_of_next_char);
-            }
+        if (( index_of_next_char + i - 1) >= cp_in_buffer)
+        {
             return to!dchar(IntStreamConstant.EOF);
         }
         return front(data[data.toUTFindex(index_of_next_char + i - 1) .. $]);
@@ -201,21 +197,25 @@ class ANTLRInputStream : CharStream
     }
 
     /**
-     * consume() ahead until index_of_next_character==index; can't just set index_of_next_character=index as we must
-     * update line and charPositionInLine. If we seek backwards, just set index_of_next_character
+     * consume() ahead until index_of_next_character==index;
+     * can't just set index_of_next_character=index as we must
+     * update line and charPositionInLine. If we seek backwards,
+     * just set index_of_next_character
      * @uml
      * @override
      */
     public override void seek(size_t index)
     {
-    if (index <= index_of_next_char) {
+        if (index <= index_of_next_char)
+        {
             index_of_next_char= index; // just jump; don't update stream state (line, ...)
             return;
         }
         // seek forward, consume until next code point hits index or cp_in_buffer
         // (whichever comes first)
         index = min(index, cp_in_buffer);
-        while (index_of_next_char < index) {
+        while (index_of_next_char < index)
+        {
             consume();
         }
     }
@@ -232,12 +232,13 @@ class ANTLRInputStream : CharStream
             stop = to!int(cp_in_buffer)-1;
         if (start >= to!int(cp_in_buffer)) return "";
 
-        debug (ANTLRInputStream) {
+        debug (ANTLRInputStream)
+        {
             writefln!"data: start=%s, stop=%s, string = %s"(
-                     start, stop, data[data.toUTFindex(start)..data.toUTFindex(stop+1)]);
+                     start, stop,
+                     data[data.toUTFindex(start)..data.toUTFindex(stop+1)]);
         }
 
-        //return data[data.toUTFindex(start)..data.toUTFindex(stop+1)].idup();
         return to!string(data[data.toUTFindex(start)..data.toUTFindex(stop+1)]);
     }
 
@@ -247,7 +248,8 @@ class ANTLRInputStream : CharStream
      */
     public override string getSourceName()
     {
-        if (!name) {
+        if (!name)
+        {
             return IntStreamConstant.UNKNOWN_SOURCE_NAME;
         }
         return name;

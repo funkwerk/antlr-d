@@ -14,7 +14,11 @@ import antlr.v4.runtime.tree.ParseTree;
 class ParseTreeWalker
 {
 
-    public static immutable ParseTreeWalker DEFAULT = new ParseTreeWalker;
+    public static immutable ParseTreeWalker DEFAULT;
+
+    public static this()
+    {
+    }
 
     public void walk(ParseTreeListener listener, ParseTree t)
     {

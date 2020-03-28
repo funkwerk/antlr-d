@@ -116,9 +116,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitProg(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitProg(this);
@@ -196,9 +196,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitDiv(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitDiv(this);
@@ -227,9 +227,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitAdd(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitAdd(this);
@@ -258,9 +258,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitSub(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitSub(this);
@@ -289,9 +289,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitMul(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitMul(this);
@@ -317,9 +317,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitBracketExpr(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitBracketExpr(this);
@@ -343,9 +343,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitInt(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitInt(this);

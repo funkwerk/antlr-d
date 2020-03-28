@@ -819,9 +819,9 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
 >>
 
 VisitorDispatchMethod(method) ::= <<
+import std.variant : Variant;
 override
 public Variant accept(ParseTreeVisitor visitor) {
-    import std.variant : Variant;
     import <file.grammarName>Visitor : <file.grammarName>Visitor;
     if (cast(<parser.grammarName>Visitor)visitor)
         return (cast(<parser.grammarName>Visitor)visitor).visit<struct.derivedFromName; format="cap">(this);

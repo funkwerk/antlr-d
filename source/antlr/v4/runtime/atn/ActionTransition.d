@@ -13,7 +13,12 @@ class ActionTransition : Transition
 
     public int ruleIndex;
 
-    public int actionIndex;
+    /**
+     * @uml
+     * @read
+     * @write
+     */
+    private int actionIndex_;
 
     /**
      * @uml
@@ -68,6 +73,16 @@ class ActionTransition : Transition
     public override string toString()
     {
         return "action_" ~ to!string(ruleIndex) ~ ":" ~ to!string(actionIndex);
+    }
+
+    public final int actionIndex()
+    {
+        return this.actionIndex_;
+    }
+
+    public final void actionIndex(int actionIndex)
+    {
+        this.actionIndex_ = actionIndex;
     }
 
 }

@@ -160,7 +160,7 @@ class CommonToken : WritableToken
         startIndex_ = oldToken.startIndex;
         stopIndex_ = oldToken.stopIndex;
 
-        if (oldToken.classinfo == CommonToken.classinfo) {
+        if (cast(CommonToken)oldToken) {
             text = (cast(CommonToken)oldToken).text;
             source = (cast(CommonToken)oldToken).source;
         }

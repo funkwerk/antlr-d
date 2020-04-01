@@ -443,7 +443,10 @@ class ATNDeserializer
                 i += 7;
                 continue;
             }
-            data ~= (el - 2) & 0xffff;
+            if (el >1)
+                data ~= (el - 2) & 0xffff;
+            else
+                data ~= (el - 3) & 0xffff;
         }
         // don't adjust the first value since that's the version number
         data[0] = atn[0];

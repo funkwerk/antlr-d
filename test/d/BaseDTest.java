@@ -839,9 +839,10 @@ public class BaseDTest implements RuntimeTestSupport {
                 + "import antlr.v4.runtime.Token;\n"
                 + "import antlr.v4.runtime.ANTLRInputStream;\n"
                 + "import antlr.v4.runtime.CommonTokenStream;\n"
+                + "import antlr.v4.runtime.DiagnosticErrorListener;\n"
                 + "import antlr.v4.runtime.Lexer;\n"
                 + "import antlr.v4.runtime.ParserRuleContext;\n"
-                + "import antlr.v4.runtime.atn.LexerATNSimulator;\n"
+                + "import antlr.v4.runtime.atn.ParserATNSimulator;\n"
                 + "import antlr.v4.runtime.tree.ParseTree;\n"
                 + "import antlr.v4.runtime.tree.ParseTreeListener;\n"
                 + "import antlr.v4.runtime.tree.TerminalNode;\n"
@@ -886,8 +887,8 @@ public class BaseDTest implements RuntimeTestSupport {
 
         String stSource = "  auto parser = new <parserName>(tokens);\n";
         if(debug) {
-            stSource += "  DiagnosticErrorListener errorListener;\n";
-            stSource += "  parser.addErrorListener(&errorListener);\n";
+            stSource += "  auto errorListener = new DiagnosticErrorListener!(Token, ParserATNSimulator)();\n";
+            stSource += "  parser.addErrorListener(errorListener);\n";
         }
         if(trace)
             stSource += "  parser.setTrace(true);\n";

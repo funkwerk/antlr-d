@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -120,7 +120,7 @@ class PredictionMode
      */
     public static bool hasSLLConflictTerminatingPrediction(PredictionModeConst mode, ATNConfigSet configs)
     {
-	/* Configs in rule stop states indicate reaching the end of the decision
+        /* Configs in rule stop states indicate reaching the end of the decision
          * rule (local context) or end of start rule (full context). If all
          * configs meet this condition, then none of the configurations is able
          * to match additional input so we terminate prediction.
@@ -168,8 +168,9 @@ class PredictionMode
      */
     public static bool hasConfigInRuleStopState(ATNConfigSet configs)
     {
-	foreach (ATNConfig c; configs.configs) {
-            if (c.state.classinfo == RuleStopState.classinfo) {
+        foreach (ATNConfig c; configs.configs)
+        {
+            if (cast(RuleStopState)c.state) {
                 return true;
             }
         }
@@ -188,8 +189,8 @@ class PredictionMode
      */
     public static bool allConfigsInRuleStopStates(ATNConfigSet configs)
     {
-	foreach (ATNConfig config; configs.configs) {
-            if (config.state.classinfo != RuleStopState.classinfo) {
+        foreach (ATNConfig config; configs.configs) {
+            if (! cast(RuleStopState)config.state) {
                 return false;
             }
         }
@@ -339,7 +340,7 @@ class PredictionMode
      */
     public static int resolvesToJustOneViableAlt(BitSet[] altsets)
     {
-	return getSingleViableAlt(altsets);
+        return getSingleViableAlt(altsets);
     }
 
     /**
@@ -352,7 +353,7 @@ class PredictionMode
      */
     public static bool allSubsetsConflict(BitSet[] altsets)
     {
-	return !hasNonConflictingAltSet(altsets);
+        return !hasNonConflictingAltSet(altsets);
     }
 
     /**
@@ -365,7 +366,8 @@ class PredictionMode
      */
     public static bool hasNonConflictingAltSet(BitSet[] altsets)
     {
-	foreach (BitSet alts; altsets) {
+        foreach (BitSet alts; altsets)
+        {
             if (alts.cardinality == 1) {
                 return true;
             }
@@ -383,7 +385,7 @@ class PredictionMode
      */
     public static bool hasConflictingAltSet(BitSet[] altsets)
     {
-	foreach (BitSet alts; altsets) {
+        foreach (BitSet alts; altsets) {
             if (alts.cardinality >1) {
                 return true;
             }
@@ -419,7 +421,7 @@ class PredictionMode
      */
     public static int getUniqueAlt(BitSet[] altsets)
     {
-	BitSet all = getAlts(altsets);
+        BitSet all = getAlts(altsets);
         if (all.cardinality == 1)
             return all.nextSetBit(0);
         return ATN.INVALID_ALT_NUMBER;
@@ -435,7 +437,7 @@ class PredictionMode
      */
     public static BitSet getAlts(BitSet[] altsets)
     {
-	BitSet all;
+        BitSet all;
         foreach (BitSet alts; altsets) {
             all = all.or(alts);
         }
@@ -444,7 +446,7 @@ class PredictionMode
 
     public static BitSet getAlts(ATNConfigSet configs)
     {
-	BitSet *alts;
+        BitSet *alts;
         alts = new BitSet;
         foreach (ATNConfig config; configs.configs) {
             alts.set(config.alt, true);
@@ -463,7 +465,7 @@ class PredictionMode
      */
     public static BitSet[] getConflictingAltSubsets(ATNConfigSet configs)
     {
-	AltAndContextMap configToAlts;
+        AltAndContextMap configToAlts;
         BitSet *alts;
 
         foreach (ATNConfig c; configs.configs) {
@@ -492,22 +494,25 @@ class PredictionMode
      */
     public static BitSet[ATNState] getStateToAltMap(ATNConfigSet configs)
     {
-	BitSet[ATNState] m;
-        BitSet *alts;
+        BitSet[ATNState] m;
         foreach (ATNConfig c; configs.configs) {
-            if (!(c.state in m)){
-                alts = new BitSet();
-                alts.set(0, false); // need to init BitSet
-                m[c.state] = *alts;
+            if (!(c.state in m))
+            {
+                BitSet alts;
+                alts.set(c.alt, true);
+                m[c.state] = alts;
             }
-            alts.set(c.alt, true);
+            else
+            {
+                m[c.state].set(c.alt, true);
+            }
         }
         return m;
     }
 
     public static bool hasStateAssociatedWithOneAlt(ATNConfigSet configs)
     {
-	BitSet[ATNState] x = getStateToAltMap(configs);
+        BitSet[ATNState] x = getStateToAltMap(configs);
         foreach (alts; x.values) {
             if (alts.cardinality == 1)
                 return true;
@@ -517,7 +522,7 @@ class PredictionMode
 
     public static int getSingleViableAlt(BitSet[] altsets)
     {
-	BitSet viableAlts;
+        BitSet viableAlts;
         foreach (BitSet alts; altsets) {
             int minAlt = alts.nextSetBit(0);
             viableAlts.set(minAlt, true);

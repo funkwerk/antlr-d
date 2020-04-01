@@ -94,7 +94,7 @@ version(unittest) {
             parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
             // Specify entry point
             auto rootContext = parser.file_input;
-            parser.numberOfSyntaxErrors.should.equal(1);
+            parser.numberOfSyntaxErrors.should.equal(2);
         }
 
     }

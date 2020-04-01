@@ -379,14 +379,14 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
 
             if (s0 is null) {
-                if ( outerContext is null )
+                if (outerContext is null)
                     outerContext = ParserRuleContext.EMPTY;
                 debug(ParserATNSimulator) {
                     writefln("predictATN decision = %1$s"~
-                             " exec LA(1)==%2$s"~
-                             ", outerContext=%3$s",
-                             dfa.decision, getLookaheadName(input),
-                             outerContext);
+                        " exec LA(1)==%2$s"~
+                        ", outerContext=%3$s",
+                            dfa.decision, getLookaheadName(input),
+                             outerContext.toString(parser));
                 }
 
                 bool fullCtx = false;
@@ -417,7 +417,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             return alt;
         }
         finally {
-            mergeCache = null; // wack cache after each prediction
+            this.mergeCache = new typeof(this.mergeCache); // wack cache after each prediction
             _dfa = null;
             input.seek(to!int(index));
             input.release(to!int(m));
@@ -451,7 +451,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     protected int execATN(DFA dfa, DFAState s0, TokenStream input, size_t startIndex, ParserRuleContext outerContext)
     {
-    debug {
+    debug(ParserATNSimulator) {
             writefln("execATN decision %1$s"~
                      " exec LA(1)==%2$s line %3$s:%4$s",
                      dfa.decision,
@@ -496,7 +496,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 // IF PREDS, MIGHT RESOLVE TO SINGLE ALT => SLL (or syntax error)
                 BitSet conflictingAlts = D.configs.conflictingAlts;
                 if (D.predicates != null) {
-                    debug
+                    debug(ParserATNSimulator)
                         writeln("DFA state has preds in DFA sim LL failover");
                     size_t conflictIndex = input.index();
                     if (conflictIndex != startIndex) {
@@ -505,7 +505,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
                     conflictingAlts = evalSemanticContext(D.predicates, outerContext, true);
                     if (conflictingAlts.cardinality ==1) {
-                        debug
+                        debug(ParserATNSimulator)
                             writeln("Full LL avoided");
                         return conflictingAlts.nextSetBit(0);
                     }
@@ -518,7 +518,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 }
 
                 debug(dfa_debug)
-                    writefln("ctx sensitive state %1$ in %2$s",
+                    writefln!"ctx sensitive state %1$s in %2$s"(
                              outerContext, D);
                 bool fullCtx = true;
                 ATNConfigSet s0_closure =
@@ -607,7 +607,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         DFAState D = new DFAState(reach);
         int predictedAlt = getUniqueAlt(reach);
 
-        debug {
+        debug(ParserATNSimulator) {
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
             writefln("SLL altSubSets=%1$s"~
                      ", configs=%2$s"~
@@ -674,7 +674,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     protected int execATNWithFullContext(DFA dfa, DFAState D, ATNConfigSet s0, TokenStream input,
                                          size_t startIndex, ParserRuleContext outerContext)
     {
-    debug {
+    debug(ParserATNSimulator) {
             writefln("execATNWithFullContext %s", s0);
         }
         bool fullCtx = true;
@@ -709,7 +709,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
 
             BitSet[] altSubSets = PredictionMode.getConflictingAltSubsets(reach);
-            debug {
+            debug(ParserATNSimulator) {
                 writefln("LL altSubSets=%1$s, PredictionMode.getUniqueAlt(altSubSets)" ~
                          ", resolvesToJustOneViableAlt=%3$s",
                          altSubSets,
@@ -796,7 +796,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public ATNConfigSet computeReachSet(ATNConfigSet closure, int t, bool fullCtx)
     {
-        debug
+        debug(ParserATNSimulator)
             writefln("in computeReachSet, starting closure: %s", closure);
 
         if (mergeCache is null) {
@@ -819,7 +819,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
         // First figure out where we can reach on input t
         foreach (c; closure.configs) {
-            debug
+            debug(ParserATNSimulator)
                 writefln("testing %1$s at %2$s", getTokenName(t), c.toString);
 
             if (cast(RuleStopState)c.state) {
@@ -1261,6 +1261,12 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     protected void closureCheckingStopState(ATNConfig config, ATNConfigSet configs, ref ATNConfig[] closureBusy,
                                             bool collectPredicates, bool fullCtx, int depth, bool treatEofAsEpsilon)
     {
+        debug(ParserATNSimulator)
+        {
+            import std.stdio : writefln;
+            writefln!"closure(%s)"( config);
+        }
+
         if (cast(RuleStopState)config.state) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
@@ -1304,7 +1310,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
             else {
                 // else if we have no context info, just chase follow links (if greedy)
-                debug
+                debug(ParserATNSimulator)
                     writefln("FALLING off rule %s",
                              getRuleName(config.state.ruleIndex));
             }
@@ -1438,20 +1444,20 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     protected ATNConfig actionTransition(ATNConfig config, ActionTransition t)
     {
-        debug writefln("ACTION edge %1$s:%2$s", t.ruleIndex, t.actionIndex);
+        debug(ParserATNSimulator)
+            writefln!"ACTION edge %1$s:%2$s"(t.ruleIndex, t.actionIndex);
         return new ATNConfig(config, t.target);
     }
 
     public ATNConfig precedenceTransition(ATNConfig config, PrecedencePredicateTransition pt,
                                           bool collectPredicates, bool inContext, bool fullCtx)
     {
-        debug {
+        debug(ParserATNSimulator) {
             writefln("PRED (collectPredicates=%1$s) %2$s" ~
                      ">=_p, ctx dependent=true", collectPredicates,  pt.precedence);
             if ( parser !is null ) {
-                writefln("context surrounding pred is %s",
+                writefln!"context surrounding pred is %s"(
                          parser.getRuleInvocationStack);
-                //parser.classinfo);
             }
         }
 
@@ -1481,7 +1487,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
 
         debug
-            writefln("config from pred transition=%s", c);
+            writefln!"precedenceTransition: config from pred transition=%s"(c);
         return c;
 
     }
@@ -1489,7 +1495,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     protected ATNConfig predTransition(ATNConfig config, PredicateTransition pt, bool collectPredicates,
                                        bool inContext, bool fullCtx)
     {
-        debug {
+        debug(ParserATNSimulator) {
             writefln("PRED (collectPredicates=%1$s) %2$s:%3$s, ctx dependent=%4$s",
                      collectPredicates, pt.ruleIndex,
                      pt.predIndex, pt.isCtxDependent);
@@ -1526,7 +1532,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             c = new ATNConfig(config, pt.target);
         }
 
-        debug writefln("config from pred transition=",c);
+        debug
+            writefln!"config from pred transition=%s"(c);
         return c;
     }
 
@@ -1697,7 +1704,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     protected DFAState addDFAEdge(ref DFA dfa, DFAState from, size_t t, DFAState to)
     {
-        debug {
+        debug(ParserATNSimulator) {
             writefln("\nEDGE %1$s -> %2$s upon %3$s", from, to, getTokenName(cast(int)t));
         }
         if (to is null) {
@@ -1714,8 +1721,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             from.edges[t+1] = to; // connect
         }
 
-        debug {
-            writefln("end dfa.decision = %s, dfa.states = %s", dfa.decision, dfa.states);
+        debug(ParserATNSimulator) {
+            writefln!"DFA =\n%s, dfa.states = %s"(dfa.decision, dfa.states);
         }
 
         return to;
@@ -1741,8 +1748,6 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
     if (D == ERROR) {
             return D;
         }
-        debug
-            writefln("adding new dfa: D = %s, dfa.states = %s,\n(D in dfa.states) = %s", D, dfa.states, D in dfa.states);
         if (D in dfa.states)
             return dfa.states[D];
         D.stateNumber = to!int(dfa.states.length);
@@ -1751,15 +1756,16 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             D.configs.readonly(true);
         }
         dfa.states[D] =  D;
-        debug
-            writefln("adding new DFA state end: D = %1$s, dfa.states = %2$s", D, dfa.states);
+        debug(ParserATNSimulator)
+            writefln!"adding new DFA state: %1$s"(D);
         return D;
     }
 
     protected void reportAttemptingFullContext(DFA dfa, BitSet conflictingAlts, ATNConfigSet configs,
                                                size_t startIndex, size_t stopIndex)
     {
-        debug(retry_debug) {
+        debug(retry_debug)
+        {
             import antlr.v4.runtime.misc.Interval;
             Interval interval = Interval.of(startIndex, stopIndex);
             writefln("reportAttemptingFullContext decision=%1$s:%2$s, input=%3$s",

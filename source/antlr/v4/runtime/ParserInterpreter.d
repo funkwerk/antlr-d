@@ -290,8 +290,8 @@ class ParserInterpreter : Parser
     {
         //      System.out.println("visitState "+p.stateNumber);
         int predictedAlt = 1;
-        if (p.classinfo == DecisionState.classinfo) {
-            predictedAlt = visitDecisionState(cast(DecisionState) p);
+        if (cast(DecisionState)p) {
+            predictedAlt = visitDecisionState(cast(DecisionState)p);
         }
 
         Transition transition = p.transition(predictedAlt - 1);
@@ -299,7 +299,7 @@ class ParserInterpreter : Parser
         case TransitionStates.EPSILON:
             if ( p.getStateType()== StateNames.STAR_LOOP_ENTRY &&
                  (cast(StarLoopEntryState)p).isPrecedenceDecision &&
-                 !(transition.target.classinfo == LoopEndState.classinfo))
+                 !cast(LoopEndState)transition.target)
                 {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
@@ -473,7 +473,7 @@ class ParserInterpreter : Parser
         getErrorHandler.recover(this, e);
         if ( _input.index()==i ) {
             // no input consumed, better add an error node
-            if (e.classinfo == InputMismatchException.classinfo) {
+            if (cast(InputMismatchException)e) {
                 InputMismatchException ime = cast(InputMismatchException)e;
                 Token tok = e.getOffendingToken();
                 int expectedTokenType = ime.getExpectedTokens().getMinElement(); // get any element

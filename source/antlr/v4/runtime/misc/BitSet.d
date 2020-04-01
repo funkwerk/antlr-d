@@ -1,14 +1,15 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
 module antlr.v4.runtime.misc.BitSet;
 
+import std.algorithm;
 import std.bitmanip;
 import std.conv;
-import std.algorithm;
+import std.format : format;
 
 /**
  * This struct implements a vector of bits that grows as needed. Each component
@@ -83,8 +84,20 @@ struct BitSet
 
     public string toString()
     {
-        import std.format : format;
-        return format("%b", bitSet);
+        if (bitSet.length)
+        {
+            string res;
+            foreach (j, b; bitSet)
+            {
+                if (b == true)
+                {
+                    res ~= to!string(j) ~ ", ";
+                }
+            }
+            return format!"{%s}"(res[0 .. $-2]);
+        }
+        else
+            return "{}";
     }
 
     /**

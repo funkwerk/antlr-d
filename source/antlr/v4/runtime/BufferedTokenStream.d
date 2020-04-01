@@ -529,13 +529,13 @@ class BufferedTokenStream : TokenStream
         if (stop >= tokens.length)
             stop = to!int(tokens.length) - 1;
 
-        string[] buf;
+        string buf;
         foreach (t; tokens[start..stop+1]) {
             if (t.getType == TokenConstantDefinition.EOF)
                 break;
             buf ~= t.getText.get!string;
         }
-        return Variant(buf.join(" "));
+        return Variant(buf);
     }
 
     /**

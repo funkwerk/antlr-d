@@ -24,7 +24,8 @@ ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 package <file.genPackage>;
 <endif>
 <namedActions.header>
-import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.PredictionModeConst;
@@ -250,7 +251,7 @@ public class <parser.name> : <superClass; null="Parser"> {
     public wstring getSerializedATN() { return _serializedATN; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     <namedActions.members>
     <parser:(ctor)()>
@@ -561,7 +562,7 @@ StarBlock(choice, alts, sync, iteration) ::= <<
 setState(<choice.stateNumber>);
 _errHandler.sync(this);
 _alt = getInterpreter.adaptivePredict(_input,<choice.decision>, ctx_);
-while ( _alt!=<choice.exitAlt> && _alt!=ATN.INVALID_ALT_NUMBER ) {
+while ( _alt!=<choice.exitAlt> && _alt!=ATNType.INVALID_ALT_NUMBER ) {
     if ( _alt==1<if(!choice.ast.greedy)>+1<endif> ) {
         <iteration>
         <alts> <! should only be one !>
@@ -896,7 +897,8 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
-import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
@@ -959,7 +961,7 @@ public class <lexer.name> : <superClass; null="Lexer"> {
     public string[] getModeNames() { return modeNames; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     <dumpActions(lexer, "", actionFuncs, sempredFuncs)>
     <atn>
@@ -981,7 +983,7 @@ public static immutable wstring _serializedATN =
 public static immutable wstring _serializedATN =
     "<model.serialized; wrap={"~<\n><\t>"}>";
 <endif>
-public static ATN _ATN;
+public static ATNType _ATN;
 
 static this() {
     auto atnDeserializer = new ATNDeserializer;

@@ -64,7 +64,7 @@ PlusText(a) ::= <%"<a>" ~ this.getText.get!(string)%>
 
 InputText() ::= "this._input.getText.get!(string)"
 
-LTEquals(i, v) ::= <%this._input.LT(<i>).getText.get!(string).equals(<v>)%>
+LTEquals(i, v) ::= <%this._input.LT(<i>).getText.get!(string) == <v>%>
 
 LANotEquals(i, v) ::= <%this._input.LA(<i>)!=<v>%>
 

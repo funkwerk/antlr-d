@@ -1,6 +1,6 @@
 writeln(s) ::= <<import std.stdio : writeln; writeln(<s>);>>
 write(s) ::= <<import std.stdio : write; write(<s>);>>
-writeList(s) ::= <<import std.stdio : writeln; writeln(<s; separator="+">);>>
+writeList(s) ::= <<import std.stdio : writeln; writeln(<s; separator="~">);>>
 
 False() ::= "false"
 
@@ -288,7 +288,8 @@ Declare_foo() ::= <<
 Invoke_foo() ::= "foo();"
 
 Declare_pred() ::= <<bool pred(bool v) {
-    writeln("eval="+v);
+    import std.stdio : writefln;
+    writefln!"eval=%s"(v);
     return v;
 }
 >>

@@ -32,6 +32,7 @@ import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
@@ -705,13 +706,13 @@ SetAttr(s,rhsChunks) ::= "<ctx(s)>.<s.name> = <rhsChunks>;"
 TokenLabelType() ::= "<file.TokenLabelType; null={Token}>"
 InputSymbolType() ::= "<file.InputSymbolType; null={Token}>"
 
-TokenPropertyRef_text(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getText():null)"
-TokenPropertyRef_type(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getType():0)"
-TokenPropertyRef_line(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getLine():0)"
-TokenPropertyRef_pos(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getCharPositionInLine():0)"
-TokenPropertyRef_channel(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getChannel():0)"
-TokenPropertyRef_index(t) ::= "(<ctx(t)>.<t.label>!=null?<ctx(t)>.<t.label>.getTokenIndex():0)"
-TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label>!=null?Integer.valueOf(<ctx(t)>.<t.label>.getText()):0)"
+TokenPropertyRef_text(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getText.get!string : null)"
+TokenPropertyRef_type(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getType :0)"
+TokenPropertyRef_line(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getLine : 0)"
+TokenPropertyRef_pos(t) ::= "(<ctx(t)>.<t.label> != null ? <ctx(t)>.<t.label>.getCharPositionInLine: 0)"
+TokenPropertyRef_channel(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getChannel : 0)"
+TokenPropertyRef_index(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getTokenIndex: 0)"
+TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> !is null ? Integer.valueOf(<ctx(t)>.<t.label>.getText()) : 0)"
 
 RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label>!=null?(<ctx(r)>.<r.label>.start):null)"
 RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>!=null?(<ctx(r)>.<r.label>.stop):null)"

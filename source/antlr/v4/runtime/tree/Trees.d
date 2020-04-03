@@ -57,7 +57,7 @@ class Trees
     {
         string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
         string[] ruleNamesList = ruleNames !is null ? ruleNames : null;
-        return t.toStringTree ~ to!string(ruleNamesList);
+        return toStringTree(t, ruleNamesList);
     }
 
     /**
@@ -93,19 +93,19 @@ class Trees
     public static string getNodeText(Tree t, string[] ruleNames)
     {
         if (ruleNames) {
-            if (t.classinfo == RuleContext.classinfo) {
+            if (cast(RuleContext)t) {
                 auto ruleIndex = (cast(RuleContext)t).getRuleContext().getRuleIndex();
                 string ruleName = ruleNames[ruleIndex];
-                int altNumber = (cast(RuleContext) t).getAltNumber();
+                int altNumber = (cast(RuleContext)t).getAltNumber();
                 if (altNumber != ATN.INVALID_ALT_NUMBER) {
                     return ruleName ~ ":" ~ to!string(altNumber);
                 }
                 return ruleName;
             }
-            else if (t.classinfo == ErrorNode.classinfo) {
+            else if (cast(ErrorNode)t) {
                 return "..."; // t.toString();
             }
-            else if (t.classinfo == TerminalNode.classinfo) {
+            else if (cast(TerminalNode)t) {
                 Token symbol = (cast(TerminalNode)t).getSymbol();
                 if (symbol !is null) {
                     string s = to!string(symbol.getText);
@@ -115,7 +115,7 @@ class Trees
         }
         // no recog for rule names
         Object payload = t.getPayload();
-        if (payload.classinfo == Token.classinfo) {
+        if (cast(Token)payload) {
             return to!string((cast(Token)payload).getText);
         }
         return t.getPayload().toString();

@@ -770,7 +770,7 @@ LexerRuleContext() ::= "RuleContext"
  */
 RuleContextNameSuffix() ::= "Context"
 
-ImplicitTokenLabel(tokenName) ::= "<tokenName>"
+ImplicitTokenLabel(tokenName) ::= "_<tokenName>"
 ImplicitRuleLabel(ruleName)   ::= "<ruleName>"
 ImplicitSetLabel(id)          ::= "_tset<id>"
 ListLabelName(label)          ::= "<label>"

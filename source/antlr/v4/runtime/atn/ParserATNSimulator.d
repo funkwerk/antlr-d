@@ -1486,7 +1486,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             c = new ATNConfig(config, pt.target);
         }
 
-        debug
+        debug(ParserATNSimulator)
             writefln!"precedenceTransition: config from pred transition=%s"(c);
         return c;
 
@@ -1532,7 +1532,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             c = new ATNConfig(config, pt.target);
         }
 
-        debug
+        debug(ParserATNSimulator)
             writefln!"config from pred transition=%s"(c);
         return c;
     }

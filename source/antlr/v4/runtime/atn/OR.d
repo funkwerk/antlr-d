@@ -29,10 +29,27 @@ class OR : Operator
     public this(SemanticContext a, SemanticContext b)
     {
         SemanticContext[] operands;
-        if (cast(OR)a) operands ~= (cast(OR)a).opnds;
-        else operands ~= a;
-        if (cast(OR)b) operands ~= (cast(OR)b).opnds;
-        else operands ~= b;
+        if (cast(OR)a)
+            operands ~= (cast(OR)a).opnds;
+        else
+            operands ~= a;
+        if (cast(OR)b)
+            operands ~= (cast(OR)b).opnds;
+        else
+        {
+            auto foundEl = false;
+            foreach (el; operands)
+            {
+                auto bHash = b.toHash;
+                if (el.toHash == bHash)
+                {
+                    foundEl = true;
+                    break;
+                }
+            }
+            if (!foundEl)
+                operands ~= b;
+        }
 
         SemanticContext.PrecedencePredicate[] precedencePredicates =
             filterPrecedencePredicates(operands);
@@ -137,7 +154,7 @@ class OR : Operator
      */
     public override string toString()
     {
-        return to!string(map!(n => n.toString)(opnds).joiner(" || "));
+        return to!string(map!(n => n.toString)(opnds).joiner("||"));
     }
 
 }

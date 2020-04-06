@@ -125,6 +125,8 @@ prepare_generator : | $(BUILD_DIR)
 		$(TEST_TEMPLATE_DIR)
 	cp test/BaseRuntimeTest.java \
 		$(TEST_DIR)
+	cp test/descriptor/SemPredEvalParserDescriptors.java \
+	    $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/test/org/antlr/v4/test/runtime/descriptors/
 	mkdir -p $(TEST_TARGET_DIR)
 	cp test/d/*.java \
 		$(TEST_TARGET_DIR)

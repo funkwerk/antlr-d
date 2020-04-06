@@ -714,9 +714,9 @@ TokenPropertyRef_channel(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.labe
 TokenPropertyRef_index(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getTokenIndex: 0)"
 TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> !is null ? Integer.valueOf(<ctx(t)>.<t.label>.getText()) : 0)"
 
-RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label>!=null?(<ctx(r)>.<r.label>.start):null)"
-RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>!=null?(<ctx(r)>.<r.label>.stop):null)"
-RulePropertyRef_text(r)  ::= "(<ctx(r)>.<r.label>!=null?_input.getText(<ctx(r)>.<r.label>.start,<ctx(r)>.<r.label>.stop):null)"
+RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label>?(<ctx(r)>.<r.label>.start).getText.get!string:null)"
+RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>?(<ctx(r)>.<r.label>.stop).getText.get!string:null)"
+RulePropertyRef_text(r)  ::= "(<ctx(r)>.<r.label>?_input.getText(<ctx(r)>.<r.label>.start,<ctx(r)>.<r.label>.stop).get!string:null)"
 RulePropertyRef_ctx(r)   ::= "<ctx(r)>.<r.label>"
 RulePropertyRef_parser(r)    ::= "this"
 
@@ -771,7 +771,7 @@ LexerRuleContext() ::= "RuleContext"
 RuleContextNameSuffix() ::= "Context"
 
 ImplicitTokenLabel(tokenName) ::= "_<tokenName>"
-ImplicitRuleLabel(ruleName)   ::= "<ruleName>"
+ImplicitRuleLabel(ruleName)   ::= "_<ruleName>"
 ImplicitSetLabel(id)          ::= "_tset<id>"
 ListLabelName(label)          ::= "<label>"
 
@@ -878,7 +878,7 @@ _prevctx = _localctx;
 >>
 
 recRuleSetPrevCtx() ::= <<
-if ( _parseListeners!=null ) triggerExitRuleEvent();
+if (_parseListeners) triggerExitRuleEvent();
 _prevctx = _localctx;
 >>
 

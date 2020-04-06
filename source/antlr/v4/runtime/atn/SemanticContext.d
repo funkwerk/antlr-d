@@ -315,8 +315,10 @@ class SemanticContext
 
     public static SemanticContext and(SemanticContext a, SemanticContext b)
     {
-	if (a is null || a == NONE ) return b;
-        if (b is null || b == NONE ) return a;
+        if (a is null || a == NONE )
+            return b;
+        if (b is null || b == NONE )
+            return a;
         AND result = new AND(a, b);
         if (result.opnds.length == 1) {
             return result.opnds[0];
@@ -326,8 +328,10 @@ class SemanticContext
 
     public static SemanticContext or(SemanticContext a, SemanticContext b)
     {
-	if (a is null ) return b;
-        if (b is null ) return a;
+        if (a is null )
+            return b;
+        if (b is null )
+            return a;
         if (a == NONE || b == NONE ) return NONE;
         OR result = new OR(a, b);
         if (result.opnds.length == 1) {
@@ -338,9 +342,9 @@ class SemanticContext
 
     public PrecedencePredicate[] filterPrecedencePredicates(SemanticContext[] collection)
     {
-	PrecedencePredicate[] result;
+        PrecedencePredicate[] result;
         foreach (context; collection) {
-            if (context.classinfo == PrecedencePredicate.classinfo) {
+            if (cast(PrecedencePredicate)context) {
                 result ~= cast(PrecedencePredicate)context;
             }
         }

@@ -30,10 +30,27 @@ class AND : Operator
     public this(SemanticContext a, SemanticContext b)
     {
         SemanticContext[] operands;
-        if (cast(AND)a) operands ~= (cast(AND)a).opnds;
-        else operands ~= a;
-        if (cast(AND)b) operands ~= (cast(AND)b).opnds;
-        else operands ~= b;
+        if (cast(AND)a)
+            operands ~= (cast(AND)a).opnds;
+        else
+            operands ~= a;
+        if (cast(AND)b)
+            operands ~= (cast(AND)b).opnds;
+        else
+        {
+            auto foundEl = false;
+            foreach (el; operands)
+            {
+                auto bHash = b.toHash;
+                if (el.toHash == bHash)
+                {
+                    foundEl = true;
+                    break;
+                }
+            }
+            if (!foundEl)
+                operands ~= b;
+        }
 
         SemanticContext.PrecedencePredicate[] precedencePredicates =
             filterPrecedencePredicates(operands);
@@ -142,7 +159,7 @@ class AND : Operator
      */
     public override string toString()
     {
-        return to!string(map!(n => n.toString)(opnds).joiner(" && "));
+        return to!string(map!(n => n.toString)(opnds).joiner("&&"));
     }
 
 }

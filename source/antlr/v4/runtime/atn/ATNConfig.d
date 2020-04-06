@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -128,7 +128,7 @@ class ATNConfig
 
     public this(ATNConfig c, SemanticContext semanticContext)
     {
-	this(c, c.state, c.context, semanticContext);
+        this(c, c.state, c.context, semanticContext);
     }
 
     public this(ATNConfig c, ATNState state, PredictionContext context)
@@ -181,7 +181,7 @@ class ATNConfig
      */
     public override bool opEquals(Object o)
     {
-        if (o.classinfo != ATNConfig.classinfo) {
+        if (!cast(ATNConfig)o) {
             return false;
         }
         return this.opEquals(cast(ATNConfig)o);
@@ -215,10 +215,10 @@ class ATNConfig
     public string toString(InterfaceRecognizer recog, bool showAlt)
     {
         auto buf = appender!string;
-        //		if ( state.ruleIndex>=0 ) {
-        //			if ( recog!=null ) buf.append(recog.getRuleNames()[state.ruleIndex]+":");
-        //			else buf.append(state.ruleIndex+":");
-        //		}
+        //      if ( state.ruleIndex>=0 ) {
+        //          if ( recog!=null ) buf.append(recog.getRuleNames()[state.ruleIndex]+":");
+        //          else buf.append(state.ruleIndex+":");
+        //      }
         buf.put('(');
         buf.put(state.toString);
         if ( showAlt ) {
@@ -230,7 +230,7 @@ class ATNConfig
             buf.put(context.toString());
             buf.put("]");
         }
-        if (semanticContext !is null && semanticContext != SemanticContext.NONE ) {
+        if (semanticContext && semanticContext != SemanticContext.NONE ) {
             buf.put(",");
             buf.put(semanticContext.toString);
         }

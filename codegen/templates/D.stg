@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -36,6 +36,7 @@ import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -289,20 +290,19 @@ public static Vocabulary VOCABULARY;
 /**
  * @deprecated Use {@link #VOCABULARY} instead.
  */
-public static string[] tokenNames;
+public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
 static this() {
     VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-    string[_SYMBOLIC_NAMES.length] tokenNames;
     for (int i = 0; i \< tokenNames.length; i++) {
         tokenNames[i] = VOCABULARY.getLiteralName(i);
             if (tokenNames[i] is null) {
                 tokenNames[i] = VOCABULARY.getSymbolicName(i);
         }
-
-            if (tokenNames[i] is null) {
-                tokenNames[i] = "\<INVALID>";
-            }
+        if (tokenNames[i] is null)
+        {
+            tokenNames[i] = "\<INVALID>";
+        }
     }
 }
 
@@ -715,7 +715,7 @@ TokenPropertyRef_index(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>
 TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> !is null ? Integer.valueOf(<ctx(t)>.<t.label>.getText()) : 0)"
 
 RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label>?(<ctx(r)>.<r.label>.start).getText.get!string:null)"
-RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>?(<ctx(r)>.<r.label>.stop).getText.get!string:null)"
+RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>?(cast(CommonToken)(<ctx(r)>.<r.label>.stop)).toString:null)"
 RulePropertyRef_text(r)  ::= "(<ctx(r)>.<r.label>?_input.getText(<ctx(r)>.<r.label>.start,<ctx(r)>.<r.label>.stop).get!string:null)"
 RulePropertyRef_ctx(r)   ::= "<ctx(r)>.<r.label>"
 RulePropertyRef_parser(r)    ::= "this"

@@ -1,6 +1,16 @@
-writeln(s) ::= <<import std.stdio : writeln; writeln(<s>);>>
+writeln(s) ::= <<
+import std.stdio : writeln;
+import std.conv : to;
+writeln(<s>);
+>>
+
 write(s) ::= <<import std.stdio : write; write(<s>);>>
-writeList(s) ::= <<import std.stdio : writeln; writeln(<s; separator="~">);>>
+
+writeList(s) ::= <<
+import std.stdio : writeln;
+import std.conv : to;
+writeln(<s; separator="~">);
+>>
 
 False() ::= "false"
 
@@ -12,7 +22,7 @@ Assert(s) ::= <<assert(<s>);>>
 
 Cast(t,v) ::= "(cast(<t>)<v>)"
 
-Append(a,b) ::= "<a> ~ <b>"
+Append(a,b) ::= "<a> ~ to!string(<b>)"
 
 Concat(a,b) ::= "<a><b>"
 
@@ -72,7 +82,7 @@ TokenStartColumnEquals(i) ::= <%this._tokenStartCharPositionInLine==<i>%>
 
 ImportListener(X) ::= ""
 
-GetExpectedTokenNames() ::= "this.getExpectedTokens().toString(this.tokenNames)"
+GetExpectedTokenNames() ::= "getExpectedTokens.toString(VOCABULARY)"
 
 RuleInvocationStack() ::= "getRuleInvocationStack()"
 
@@ -276,13 +286,17 @@ public static class LeafListener extends TBaseListener {
 DeclareContextListGettersFunction() ::= <<
 void foo() {
     SContext s = null;
-    List\<? extends AContext> a = s.a();
-    List\<? extends BContext> b = s.b();
+    AContext[] a = s.a();
+    BContext[] b = s.b();
 }
 >>
 
 Declare_foo() ::= <<
-    public void foo() {import std.stdio : writeln;writeln("foo");}
+    public void foo()
+    {
+        import std.stdio : writeln;
+        writeln("foo");
+    }
 >>
 
 Invoke_foo() ::= "foo();"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -78,7 +78,7 @@ class CommonToken : WritableToken
      * This is the backing field for {@link #getTokenIndex} and
      * {@link #setTokenIndex}.
      */
-    protected size_t index;
+    protected size_t index = size_t.max;
 
     /**
      * This is the backing field for {@link #getStartIndex} and
@@ -331,8 +331,12 @@ class CommonToken : WritableToken
         else {
             txt = "<no text>";
         }
-        return format!"[@%s,%s:%s='%s',<%s>%s,%s:%s]"(getTokenIndex, cast(int)startIndex_,
-            cast(int)stopIndex_, txt, type, channelStr, line, getCharPositionInLine);
+        return format!"[@%s,%s:%s='%s',<%s>%s,%s:%s]"(cast(int)getTokenIndex,
+            cast(int)startIndex_,
+            cast(int)stopIndex_,
+            txt, type, channelStr,
+            line, getCharPositionInLine
+            );
     }
 
     public final size_t startIndex()

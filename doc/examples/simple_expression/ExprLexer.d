@@ -8,7 +8,8 @@ import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
-import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
@@ -93,7 +94,7 @@ public class ExprLexer : Lexer {
     public string[] getModeNames() { return modeNames; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     public static immutable wstring _serializedATN =
         "\x03\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\x02\n)\b\x01"~
@@ -116,7 +117,7 @@ public class ExprLexer : Lexer {
     	"\x02\x02\x02\"#\x03\x02\x02\x02#\x10\x03\x02\x02\x02$&\t\x03\x02\x02"~
     	"%$\x03\x02\x02\x02&\'\x03\x02\x02\x02\'%\x03\x02\x02\x02\'(\x03\x02"~
     	"\x02\x02(\x12\x03\x02\x02\x02\x05\x02\"\'\x02";
-    public static ATN _ATN;
+    public static ATNType _ATN;
 
     static this() {
         auto atnDeserializer = new ATNDeserializer;

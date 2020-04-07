@@ -1,10 +1,13 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
-import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
@@ -82,7 +85,7 @@ public class ExprParser : Parser {
     public wstring getSerializedATN() { return _serializedATN; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     public this(TokenStream input) {
         super(input);
@@ -402,7 +405,7 @@ public class ExprParser : Parser {
             setState(34);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,3, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     if ( _parseListeners!=null ) triggerExitRuleEvent();
                     _prevctx = _localctx;
@@ -524,7 +527,7 @@ public class ExprParser : Parser {
     	"\x02\"\x1c\x03\x02\x02\x02\"\x1f\x03\x02\x02\x02#&\x03\x02\x02\x02"~
     	"$\"\x03\x02\x02\x02$%\x03\x02\x02\x02%\x05\x03\x02\x02\x02&$\x03\x02"~
     	"\x02\x02\x06\x0b\x14\"$";
-    public static ATN _ATN;
+    public static ATNType _ATN;
 
     static this() {
         auto atnDeserializer = new ATNDeserializer;

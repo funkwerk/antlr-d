@@ -3,6 +3,7 @@ The D runtime library for ANTLR 4, mainly an adaption of original Java runtime l
 
 This Software is under development but tested on different grammars of [ANTLR
 version 4.7.2](http://www.antlr.org/) yet.
+This D version of ANTLR 4 supports UTF-8 character streams.
 ## Install
 1. Download or clone the package
 2. Change directory to the root of the package and call __dub__.
@@ -42,4 +43,4 @@ and additional ExprVisitor.d and ExprBaseVisitor.d sources will be created.
 
 
 ## Restrictions
-- UTF-16 support not finished
+- ANTLR based tests not finished

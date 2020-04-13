@@ -112,7 +112,7 @@ class CommonTokenStream : BufferedTokenStream
     {
         debug
             writefln("enter LT(%s) on channel = %s, p = %s", k, channel, index);
-        lazyInit();
+        lazyInit;
         if (k == 0 ) return null;
         if (k < 0) return LB(-k);
         auto i = index;
@@ -137,7 +137,7 @@ class CommonTokenStream : BufferedTokenStream
     public int getNumberOfOnChannelTokens()
     {
         int n = 0;
-        fill();
+        fill;
         foreach (t; tokens) {
             if (t.getChannel == channel)
                 n++;

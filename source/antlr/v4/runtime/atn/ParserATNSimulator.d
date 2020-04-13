@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -378,8 +378,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
                 s0 = dfa.s0;
             }
 
-            if (s0 is null) {
-                if (outerContext is null)
+            if (!s0) {
+                if (!outerContext)
                     outerContext = ParserRuleContext.EMPTY;
                 debug(ParserATNSimulator) {
                     writefln("predictATN decision = %1$s"~
@@ -1074,7 +1074,7 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
             }
         }
         if (nPredAlts == 0) altToPred = null;
-        debug
+        debug(ParserATNSimulator)
             writefln("getPredsForAmbigAlts result %s", to!string(altToPred));
         return altToPred;
     }
@@ -1533,14 +1533,17 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
         }
 
         debug(ParserATNSimulator)
+        {
             writefln!"config from pred transition=%s"(c);
+        }
         return c;
     }
 
     public ATNConfig ruleTransition(ATNConfig config, RuleTransition t)
     {
-        debug {
-            writefln("CALL rule %1$s, ctx=%2$s", getRuleName(t.target.ruleIndex), config.context);
+        debug(ParserATNSimulator)
+        {
+            writefln!"CALL rule %1$s, ctx=%2$s"(getRuleName(t.target.ruleIndex), config.context);
         }
         ATNState returnState = t.followState;
         PredictionContext newContext =
@@ -1745,9 +1748,8 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
      */
     protected DFAState addDFAState(ref DFA dfa, DFAState D)
     {
-    if (D == ERROR) {
+        if (D == ERROR)
             return D;
-        }
         if (D in dfa.states)
             return dfa.states[D];
         D.stateNumber = to!int(dfa.states.length);
@@ -1819,9 +1821,12 @@ class ParserATNSimulator : ATNSimulator, InterfaceParserATNSimulator
 
     public Parser getParser()
     {
-    return parser;
+        return parser;
     }
 
+    /**
+     * TODO implementation missing
+     */
     protected bool canDropLoopEntryEdgeInLeftRecursiveRule(ATNConfig config)
     {
         auto TURN_OFF_LR_LOOP_ENTRY_BRANCH_OPT = true;

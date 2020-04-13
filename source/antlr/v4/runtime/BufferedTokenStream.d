@@ -507,8 +507,8 @@ class BufferedTokenStream : TokenStream
      */
     public override Variant getText()
     {
-        lazyInit();
-        fill();
+        lazyInit;
+        fill;
         return getText(Interval.of(0, to!int(size) - 1));
     }
 
@@ -525,7 +525,7 @@ class BufferedTokenStream : TokenStream
             Variant v;
             return v;
         }
-        fill();
+        fill;
         if (stop >= tokens.length)
             stop = to!int(tokens.length) - 1;
 
@@ -565,7 +565,7 @@ class BufferedTokenStream : TokenStream
      */
     public void fill()
     {
-        lazyInit();
+        lazyInit;
         const int blockSize = 1000;
         while (true) {
             auto fetched = fetch(blockSize);

@@ -9,6 +9,7 @@ module antlr.v4.runtime.atn.ATNSimulator;
 import antlr.v4.runtime.UnsupportedOperationException;
 import antlr.v4.runtime.atn.ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
+import antlr.v4.runtime.atn.ATNConfigSet;
 import antlr.v4.runtime.atn.InterfaceATNSimulator;
 import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.PredictionContextCache;
@@ -63,6 +64,8 @@ abstract class ATNSimulator : InterfaceATNSimulator
     {
         SERIALIZED_VERSION = ATNDeserializer.SERIALIZED_VERSION;
         SERIALIZED_UUID = ATNDeserializer.SERIALIZED_UUID;
+        ERROR = new DFAState(new ATNConfigSet());
+        ERROR.stateNumber = int.max;
     }
 
     public this(ATN atn, PredictionContextCache sharedContextCache)

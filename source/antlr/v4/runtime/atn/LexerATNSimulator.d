@@ -46,6 +46,9 @@ class LexerATNSimulator : ATNSimulator
 
     public static immutable int MIN_DFA_EDGE = 0;
 
+    /**
+     * forces unicode to stay in ATN
+     */
     public static immutable int MAX_DFA_EDGE = 127;
 
     protected Lexer recog;
@@ -197,10 +200,10 @@ class LexerATNSimulator : ATNSimulator
             // A character will take us back to an existing DFA state
             // that already has lots of edges out of it. e.g., .* in comments.
             DFAState target = getExistingTargetState(s, t);
-            if (target is null) {
+            if (!target) {
                 target = computeTargetState(input, s, t);
             }
-            if (target == ERROR) {
+            if (target is ERROR) {
                 break;
             }
             // If this is a consumable input element, make sure to consume before
@@ -290,7 +293,7 @@ class LexerATNSimulator : ATNSimulator
     protected int failOrAccept(SimState prevAccept, CharStream input, ATNConfigSet reach,
                                dchar t)
     {
-        if (prevAccept.dfaState !is null) {
+        if (prevAccept.dfaState) {
             LexerActionExecutor lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
             accept(input, lexerActionExecutor, startIndex,
                    prevAccept.index, prevAccept.line, prevAccept.charPos);
@@ -298,7 +301,7 @@ class LexerATNSimulator : ATNSimulator
         }
         else {
             // if no accept and EOF is first char, return EOF
-            if (t==IntStreamConstant.EOF && input.index() == startIndex) {
+            if (t == IntStreamConstant.EOF && input.index == startIndex) {
                 return TokenConstantDefinition.EOF;
             }
             throw new LexerNoViableAltException(recog, input, startIndex, reach);
@@ -330,9 +333,9 @@ class LexerATNSimulator : ATNSimulator
             for (int ti=0; ti<n; ti++) {               // for each transition
                 Transition trans = c.state.transition(ti);
                 ATNState target = getReachableTarget(trans, t);
-                if (target !is null) {
+                if (target) {
                     LexerActionExecutor lexerActionExecutor = (cast(LexerATNConfig)c).getLexerActionExecutor();
-                    if (lexerActionExecutor !is null) {
+                    if (lexerActionExecutor) {
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index() - startIndex);
                     }
 
@@ -369,7 +372,7 @@ class LexerATNSimulator : ATNSimulator
 
     protected ATNState getReachableTarget(Transition trans, dchar t)
     {
-        if (trans.matches(t, 0, 0xfffe)) {
+        if (trans.matches(t, Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE)) {
             return trans.target;
         }
         return null;
@@ -402,7 +405,7 @@ class LexerATNSimulator : ATNSimulator
                            bool currentAltReachedAcceptState, bool speculative, bool treatEofAsEpsilon)
     {
         debug(LexerATNSimulator)
-            writefln("closure(\"%s\")", config);
+            writefln("closure(%s)", config);
         if (cast(RuleStopState)config.state) {
             debug(LexerATNSimulator)  {
                 if (recog !is null) {
@@ -643,7 +646,7 @@ class LexerATNSimulator : ATNSimulator
         }
 
         debug(LexerATNSimulator) {
-            writefln("EDGE %1$s -> %2$s upon %3$s", p, q, t);
+            writefln("EDGE %1$s -> %2$s upon %3$s", p, q, cast(dchar)t);
         }
 
         synchronized (p) {
@@ -739,7 +742,7 @@ class LexerATNSimulator : ATNSimulator
     {
         if (t == -1) return "EOF";
         //if ( atn.g!=null ) return atn.g.getTokenDisplayName(t);
-        return format("'%s'", t);
+        return format("'%s'", cast(dchar)t);
     }
 
 }

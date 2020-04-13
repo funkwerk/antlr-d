@@ -41,7 +41,8 @@ class DFASerializer
      */
     public override string toString()
     {
-	if (dfa.s0 is null) return null;
+        if (dfa.s0 is null)
+            return null;
         auto buf = appender!string;
         DFAState[] states = dfa.getStates;
         foreach (DFAState s; states) {
@@ -50,7 +51,7 @@ class DFASerializer
                 n = to!uint(s.edges.length);
             for (uint i = 0; i < n; i++) {
                 DFAState t = s.edges[i];
-                if (t !is null && t.stateNumber != uint.max) {
+                if (t && t.stateNumber != int.max) {
                     buf.put(getStateString(s));
                     string label = getEdgeLabel(i);
                     buf.put("-");
@@ -70,12 +71,12 @@ class DFASerializer
 
     public string getEdgeLabel(int i)
     {
-	return vocabulary.getDisplayName(i - 1);
+        return vocabulary.getDisplayName(i - 1);
     }
 
     public string getStateString(DFAState s)
     {
-	int n = s.stateNumber;
+        int n = s.stateNumber;
         string baseStateStr = (s.isAcceptState ? ":" : "") ~ "s" ~ to!string(n) ~
             (s.requiresFullContext ? "^" : "");
         if (s.isAcceptState) {

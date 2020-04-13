@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 module antlr.v4.runtime.NoViableAltException;
 
 import antlr.v4.runtime.RecognitionException;
@@ -19,12 +25,12 @@ class NoViableAltException : RecognitionException
 
     public this(Parser recognizer)
     {
-	this(recognizer,
-             recognizer.getInputStream(),
-             recognizer.getCurrentToken(),
-             recognizer.getCurrentToken(),
-             null,
-             recognizer.ctx_);
+        this(recognizer,
+         recognizer.getInputStream(),
+         recognizer.getCurrentToken(),
+         recognizer.getCurrentToken(),
+         null,
+         recognizer.ctx_);
     }
 
     public this(Parser recognizer, TokenStream input, Token startToken, Token offendingToken,
@@ -38,12 +44,12 @@ class NoViableAltException : RecognitionException
 
     public Token getStartToken()
     {
-	return startToken;
+        return startToken;
     }
 
     public ATNConfigSet getDeadEndConfigs()
     {
-	return deadEndConfigs;
+        return deadEndConfigs;
     }
 
 }

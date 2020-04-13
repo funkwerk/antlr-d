@@ -4,7 +4,11 @@ import std.conv : to;
 writeln(<s>);
 >>
 
-write(s) ::= <<import std.stdio : write; write(<s>);>>
+write(s) ::= <<
+import std.stdio : write;
+import std.variant : Variant;
+write(<s>);
+>>
 
 writeList(s) ::= <<
 import std.stdio : writeln;

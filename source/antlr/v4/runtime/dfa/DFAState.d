@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -159,11 +159,11 @@ class DFAState
         // TODO: what to do when configs==null?
         bool sameSet = ATNConfigSet.equals(this.configs, other.configs);
         debug(DFAState)
-            {
-                import std.stdio;
-                writefln("DFAState.equals: configs %s same %s other.configs %s", configs,
-                         (sameSet?"==":"!="), other.configs);
-            }
+        {
+            import std.stdio;
+            writefln!"DFAState.equals: %s%s%s"(configs,
+                     (sameSet?"==":"!="), other.configs);
+        }
         return sameSet;
     }
 

@@ -51,9 +51,9 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public static immutable int HIDDEN = TokenConstantDefinition.HIDDEN_CHANNEL;
 
-    public static immutable int MIN_CHAR_VALUE = char.min;
+    public static immutable int MIN_CHAR_VALUE = 0;
 
-    public static immutable int MAX_CHAR_VALUE = char.max;
+    public static immutable int MAX_CHAR_VALUE = 0x10FFFF;
 
     public CharStream _input;
 
@@ -457,9 +457,8 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
 
     public void notifyListeners(LexerNoViableAltException e)
     {
-        string text = _input.getText(Interval.of(to!int(_tokenStartCharIndex), to!int(_input.index)));
-        string msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
-
+        auto text = _input.getText(Interval.of(to!int(_tokenStartCharIndex), to!int(_input.index)));
+        auto msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
         ANTLRErrorListener!(int, LexerATNSimulator) listener = getErrorListenerDispatch();
         listener.syntaxError(this, null, _tokenStartLine, _tokenStartCharPositionInLine, msg, e);
     }
@@ -467,13 +466,13 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     public string getErrorDisplay(string s)
     {
         auto buf = appender!string;
-        foreach (char c; s) {
+        foreach (dchar c; s) {
             buf.put(getErrorDisplay(c));
         }
         return buf.data;
     }
 
-    public string getErrorDisplay(int c)
+    public string getErrorDisplay(dchar c)
     {
         string s;
         switch ( c ) {
@@ -490,13 +489,13 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
             s = "\\r";
             break;
         default:
-            s ~= cast(wchar)c;
+            s ~= c;
             break;
         }
         return s;
     }
 
-    public string getCharErrorDisplay(int c)
+    public string getCharErrorDisplay(dchar c)
     {
         string s = getErrorDisplay(c);
         return "'" ~ s ~ "'";

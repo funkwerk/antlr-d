@@ -343,10 +343,10 @@ public class SemPredEvalParserDescriptors {
         @CommentHasStringValue
         public String grammar;
 
-                @Override
-                public boolean ignore(String targetName) {
-                        return !"D".equals(targetName);
-                }
+        @Override
+        public boolean ignore(String targetName) {
+                return !"D".equals(targetName);
+        }
     }
 
     public static class PredTestedEvenWhenUnAmbig_1 extends PredTestedEvenWhenUnAmbig {

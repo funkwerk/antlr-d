@@ -354,17 +354,15 @@ class ATNConfigSet
 
         public static bool equals(Object aObj, Object bObj)
         {
-            if (aObj is null || bObj is null)
-                return false;
+            if (aObj is bObj)
+                return true;
             auto a = cast(ATNConfig) aObj;
             auto b = cast(ATNConfig) bObj;
-            if (a is b)
-                return true;
+            if (a is null || b is null)
+                return false;
             if (a.semanticContext is b.semanticContext)
                 return a.state.stateNumber == b.state.stateNumber
                     && a.alt == b.alt;
-            if (a.semanticContext is null || b.semanticContext is null)
-                return false;
             return a.state.stateNumber == b.state.stateNumber
                 && a.alt == b.alt
                 && a.semanticContext.opEquals(b.semanticContext);

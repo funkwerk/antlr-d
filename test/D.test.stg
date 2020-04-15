@@ -1,6 +1,7 @@
 writeln(s) ::= <<
 import std.stdio : writeln;
 import std.conv : to;
+import std.array: join;
 writeln(<s>);
 >>
 
@@ -88,7 +89,7 @@ ImportListener(X) ::= ""
 
 GetExpectedTokenNames() ::= "getExpectedTokens.toString(VOCABULARY)"
 
-RuleInvocationStack() ::= "getRuleInvocationStack()"
+RuleInvocationStack() ::= "\"[\" ~ getRuleInvocationStack.join(\", \") ~ \"]\""
 
 LL_EXACT_AMBIG_DETECTION() ::= <<_interp.setPredictionMode(PredictionModeConst.LL_EXACT_AMBIG_DETECTION);>>
 

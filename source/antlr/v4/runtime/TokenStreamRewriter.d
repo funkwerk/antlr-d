@@ -221,10 +221,9 @@ class TokenStreamRewriter
     {
         if ( from > to || from<0 || to<0 || to >= tokens_.size ) {
             throw
-                new
-                IllegalArgumentException(
-                                         format("replace: range invalid: %s..%s(size=%s)",
-                                                from, to, tokens_.size));
+                new IllegalArgumentException(
+                    format!"replace: range invalid: %s..%s(size=%s)"
+                           (from, to, tokens_.size));
         }
         RewriteOperation op = new ReplaceOp(from, to, text);
         op.instructionIndex = programs[programName].length;

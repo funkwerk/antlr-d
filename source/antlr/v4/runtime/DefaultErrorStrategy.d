@@ -164,7 +164,7 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
             reportFailedPredicate(recognizer, cast(FailedPredicateException)e);
         }
         else {
-            stderr.writefln("unknown recognition error type: %s", e.stringof);
+            stderr.writefln!"unknown recognition error type: %s"(e.stringof);
             recognizer.notifyErrorListeners(e.getOffendingToken(), e.msg, e);
         }
     }

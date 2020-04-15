@@ -157,7 +157,7 @@ class DFAState
         // compare set of ATN configurations in this set with other
         DFAState other = cast(DFAState)o;
         // TODO: what to do when configs==null?
-        bool sameSet = ATNConfigSet.equals(this.configs, other.configs);
+        bool sameSet = this.configs.configs == other.configs.configs;
         debug(DFAState)
         {
             import std.stdio;

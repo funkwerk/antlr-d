@@ -150,6 +150,8 @@ class LexerATNSimulator : ATNSimulator
     protected int matchATN(CharStream input)
     {
         ATNState startState = atn.modeToStartState[mode];
+        debug(LexerATNSimulator)
+            writefln!"matchATN mode %s start: %s"(mode, startState);
         int old_mode = mode;
         ATNConfigSet s0_closure = computeStartState(input, startState);
         bool suppressEdge = s0_closure.hasSemanticContext;
@@ -168,7 +170,7 @@ class LexerATNSimulator : ATNSimulator
     protected int execATN(CharStream input, DFAState ds0)
     {
         debug(LexerATNSimulator) {
-            writefln("enter exec index %s from %s", input.index, ds0.configs);
+            writefln("start state closure %s from %s", input.index, ds0.configs);
         }
 
         if (ds0.isAcceptState) {
@@ -468,10 +470,6 @@ class LexerATNSimulator : ATNSimulator
     protected LexerATNConfig getEpsilonTarget(CharStream input, LexerATNConfig config, Transition t,
                                               ref ATNConfigSet configs, bool speculative, bool treatEofAsEpsilon)
     {
-        debug(LexerATNSimulator) {
-            import std.stdio;
-            writefln("LexerATNSimulator getEpsilonTarget t = %s, serType = %s", t, t.getSerializationType);
-        }
         LexerATNConfig c = null;
         switch (t.getSerializationType) {
         case TransitionStates.RULE:

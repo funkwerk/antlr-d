@@ -1,7 +1,7 @@
 # Make for antlr-d
 
 EXPORT = /usr/local
-DMD_EXE = ldc2 -g
+DMD_EXE = ldc2
 
 UNAME_M := $(shell uname -m)
 
@@ -125,7 +125,7 @@ prepare_generator : | $(BUILD_DIR)
 		$(TEST_TEMPLATE_DIR)
 	cp test/BaseRuntimeTest.java \
 		$(TEST_DIR)
-	cp test/descriptor/SemPredEvalParserDescriptors.java \
+	cp test/descriptor/*.java \
 	    $(BUILD_DIR)/$(ANTLR)/runtime-testsuite/test/org/antlr/v4/test/runtime/descriptors/
 	mkdir -p $(TEST_TARGET_DIR)
 	cp test/d/*.java \

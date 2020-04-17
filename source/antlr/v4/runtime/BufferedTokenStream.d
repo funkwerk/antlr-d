@@ -518,7 +518,6 @@ class BufferedTokenStream : TokenStream
      */
     public override Variant getText(Interval interval)
     {
-        import std.array : join;
         int start = interval.a;
         int stop = interval.b;
         if (start < 0 || stop < 0) {

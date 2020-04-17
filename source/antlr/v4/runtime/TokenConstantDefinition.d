@@ -9,18 +9,18 @@ import antlr.v4.runtime.IntStreamConstant;
 class TokenConstantDefinition
 {
 
-    public static immutable int INVALID_TYPE = 0;
+    enum int INVALID_TYPE = 0;
 
     /**
      * @uml
      * During lookahead operations, this "token" signifies we hit rule end ATN state
      * and did not follow it despite needing to.
      */
-    public static immutable int EPSILON = -2;
+    enum int EPSILON = -2;
 
-    public static immutable int MIN_USER_TOKEN_TYPE = 1;
+    enum int MIN_USER_TOKEN_TYPE = 1;
 
-    public static immutable int EOF = IntStreamConstant.EOF;
+    enum int EOF = IntStreamConstant.EOF;
 
     /**
      * @uml
@@ -28,14 +28,14 @@ class TokenConstantDefinition
      * on a particular "channel".  The parser tunes to a particular channel
      * so that whitespace etc... can go to the parser on a "hidden" channel.
      */
-    public static immutable int DEFAULT_CHANNEL = 0;
+    enum int DEFAULT_CHANNEL = 0;
 
     /**
      * @uml
      * Anything on different channel than DEFAULT_CHANNEL is not parsed
      * by parser.
      */
-    public static immutable int HIDDEN_CHANNEL = 1;
+    enum int HIDDEN_CHANNEL = 1;
 
     /**
      * @uml
@@ -49,6 +49,6 @@ class TokenConstantDefinition
      *
      *  @see Token#getChannel()
      */
-    public static immutable int MIN_USER_CHANNEL_VALUE = 2;
+    enum int MIN_USER_CHANNEL_VALUE = 2;
 
 }

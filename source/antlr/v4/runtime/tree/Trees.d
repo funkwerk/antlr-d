@@ -55,27 +55,27 @@ class Trees
      */
     public static string toStringTree(Tree t, InterfaceRecognizer recog)
     {
-        string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
-        string[] ruleNamesList = ruleNames !is null ? ruleNames : null;
+        string[] ruleNamesList = recog ? recog.getRuleNames() : null;
         return toStringTree(t, ruleNamesList);
     }
 
     /**
      * @uml
-     * rint out a whole tree in LISP form. {@link #getNodeText} is used on the
+     * Print out a whole tree in LISP form. {@link #getNodeText} is used on the
      * node payloads to get the text for the nodes.
      */
     public static string toStringTree(Tree t, string[] ruleNames)
     {
         string s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
-        if ( t.getChildCount()==0 ) return s;
+        if ( t.getChildCount()==0 )
+            return s;
         auto buf = appender!(string);
         buf.put("(");
-        s = Utils.escapeWhitespace(getNodeText(t, ruleNames), false);
         buf.put(s);
         buf.put(' ');
         for (int i = 0; i<t.getChildCount(); i++) {
-            if ( i>0 ) buf.put(' ');
+            if ( i>0 )
+                buf.put(' ');
             buf.put(toStringTree(t.getChild(i), ruleNames));
         }
         buf.put(")");
@@ -84,10 +84,8 @@ class Trees
 
     public static string getNodeText(Tree t, InterfaceRecognizer recog)
     {
-        string[] ruleNames = recog !is null ? recog.getRuleNames() : null;
-        string[] ruleNamesList = ruleNames !is null ? ruleNames : null;
+        string[] ruleNamesList = recog !is null ? recog.getRuleNames() : null;
         return getNodeText(t, ruleNamesList);
-
     }
 
     public static string getNodeText(Tree t, string[] ruleNames)
@@ -103,7 +101,8 @@ class Trees
                 return ruleName;
             }
             else if (cast(ErrorNode)t) {
-                return "..."; // t.toString();
+                import std.format : format;
+                return format!"%s"(t);
             }
             else if (cast(TerminalNode)t) {
                 Token symbol = (cast(TerminalNode)t).getSymbol();

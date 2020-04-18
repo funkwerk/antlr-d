@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -202,7 +202,7 @@ class ParserRuleContext : RuleContext
      */
     public override ParseTree getChild(int i)
     {
-        return children !is null && i >= 0 &&
+        return children && i >= 0 &&
             i < to!int(children.length) ? children[i] : null;
     }
 
@@ -249,7 +249,7 @@ class ParserRuleContext : RuleContext
     public TerminalNode[] getTokens(int ttype)
     {
         TerminalNode[] emptyList;
-    if (children is null) {
+        if (children is null) {
             return emptyList;
         }
 
@@ -304,7 +304,7 @@ class ParserRuleContext : RuleContext
      */
     public override int getChildCount()
     {
-        return children !is null ? to!int(children.length) : 0;
+        return children ? to!int(children.length) : 0;
     }
 
     /**

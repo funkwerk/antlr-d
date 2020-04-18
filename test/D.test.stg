@@ -201,7 +201,9 @@ protected static class PositionAdjustingLexerATNSimulator : LexerATNSimulator {
 
 BasicListener(X) ::= <<
 @parser::members {
-public static class LeafListener extends TBaseListener {
+import TBaseListener : TBaseListener;
+public static class LeafListener : TBaseListener {
+    override
     public void visitTerminal(TerminalNode node) {
         import std.stdio : writef, writeln;
         writeln(node.getSymbol().getText());
@@ -217,9 +219,9 @@ walker.walk(new LeafListener(), <s>);
 
 TreeNodeWithAltNumField(X) ::= <<
 @parser::members {
-public static class MyRuleNode extends ParserRuleContext {
+public static class MyRuleNode : ParserRuleContext {
     public int altNum;
-    public MyRuleNode(ParserRuleContext parent, int invokingStateNumber) {
+    public this(ParserRuleContext parent, int invokingStateNumber) {
         super(parent, invokingStateNumber);
     }
     override public int getAltNumber() { return altNum; }
@@ -230,7 +232,9 @@ public static class MyRuleNode extends ParserRuleContext {
 
 TokenGetterListener(X) ::= <<
 @parser::members {
-public static class LeafListener extends TBaseListener {
+import TBaseListener : TBaseListener;
+public static class LeafListener : TBaseListener {
+    override
     public void exitA(TParser.AContext ctx) {
         import std.stdio : writef, writeln;
         if (ctx.getChildCount()==2)
@@ -245,12 +249,14 @@ public static class LeafListener extends TBaseListener {
 
 RuleGetterListener(X) ::= <<
 @parser::members {
-public static class LeafListener extends TBaseListener {
+import TBaseListener : TBaseListener;
+public static class LeafListener : TBaseListener {
+    override
     public void exitA(TParser.AContext ctx) {
         import std.stdio : writef, writeln;
         if (ctx.getChildCount()==2) {
             writef("%s %s %s",ctx.b(0).start.getText(),
-                ctx.b(1).start.getText(),ctx.b().get(0).start.getText());
+                ctx.b(1).start.getText(),ctx.b()[0].start.getText());
         } else
             writeln(ctx.b(0).start.getText());
     }
@@ -261,14 +267,16 @@ public static class LeafListener extends TBaseListener {
 
 LRListener(X) ::= <<
 @parser::members {
-public static class LeafListener extends TBaseListener {
+import TBaseListener : TBaseListener;
+public static class LeafListener : TBaseListener {
+    import std.stdio : writef, writeln;
+    override
     public void exitE(TParser.EContext ctx) {
-        import std.stdio : writef, writeln;
         if (ctx.getChildCount()==3) {
-            writef("%s %s %s\n",ctx.e(0).start.getText(),
-                ctx.e(1).start.getText(), ctx.e().get(0).start.getText());
+            writef!"%s %s %s\n"(ctx.e(0).start.getText(),
+                ctx.e(1).start.getText(), ctx.e()[0].start.getText());
         } else
-            writeln(ctx.INT().getSymbol().getText());
+            writeln(ctx.INT.getSymbol.getText);
     }
 }
 }
@@ -276,13 +284,16 @@ public static class LeafListener extends TBaseListener {
 
 LRWithLabelsListener(X) ::= <<
 @parser::members {
-public static class LeafListener extends TBaseListener {
+import TBaseListener : TBaseListener;
+public static class LeafListener : TBaseListener {
+    import std.stdio : writef, writeln;
+    override
     public void exitCall(TParser.CallContext ctx) {
-        import std.stdio : writef, writeln;
-        writef("%s %s",ctx.e().start.getText(),ctx.eList());
+        writef!"%s %s"(ctx.e().start.getText(),ctx.eList());
     }
+    override
     public void exitInt(TParser.IntContext ctx) {
-        writeln(ctx.INT().getSymbol().getText());
+        writeln(ctx.INT.getSymbol.getText);
     }
 }
 }

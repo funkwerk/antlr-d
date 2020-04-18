@@ -357,9 +357,11 @@ class DefaultErrorStrategy : ANTLRErrorStrategy
      */
     protected void reportInputMismatch(Parser recognizer, InputMismatchException e)
     {
-        string msg = format("mismatched input %1$s expecting %2$s",
-                            getTokenErrorDisplay(e.getOffendingToken),
-                            e.getExpectedTokens.toString(recognizer.getVocabulary));
+        string msg = format!"mismatched input %1$s expecting %2$s"
+                            (
+                                getTokenErrorDisplay(e.getOffendingToken),
+                                e.getExpectedTokens.toString(recognizer.getVocabulary)
+                            );
         recognizer.notifyErrorListeners(e.getOffendingToken, msg, e);
     }
 

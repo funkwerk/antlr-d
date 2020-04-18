@@ -40,39 +40,7 @@ import std.string : indexOf;
 class RuntimeMetaData
 {
 
-    /**
-     * A compile-time constant containing the current version of the ANTLR 4
-     * runtime library.
-     *
-     * <p>
-     * This compile-time constant value allows generated parsers and other
-     * libraries to include a literal reference to the version of the ANTLR 4
-     * runtime library the code was compiled against. At each release, we
-     * change this value.</p>
-     *
-     * <p>Version numbers are assumed to have the form
-     *
-     * <em>major</em>.<em>minor</em>.<em>patch</em>.<em>revision</em>-<em>suffix</em>,
-     *
-     * with the individual components defined as follows.</p>
-     *
-     * <ul>
-     * <li><em>major</em> is a required non-negative integer, and is equal to
-     * {@code 4} for ANTLR 4.</li>
-     * <li><em>minor</em> is a required non-negative integer.</li>
-     * <li><em>patch</em> is an optional non-negative integer. When
-     * <em>patch</em> is omitted, the {@code .} (dot) appearing before it is
-     * also omitted.</li>
-     * <li><em>revision</em> is an optional non-negative integer, and may only
-     * be included when <em>patch</em> is also included. When <em>revision</em>
-     * is omitted, the {@code .} (dot) appearing before it is also omitted.</li>
-     * <li><em>suffix</em> is an optional string. When <em>suffix</em> is
-     * omitted, the {@code -} (hyphen-minus) appearing before it is also
-     * omitted.</li>
-     * </ul>
-     * @read
-     */
-    public static immutable string VERSION = "4.7.1";
+    enum string VERSION = "4.7.2";
 
     /**
      * This method provides the ability to detect mismatches between the version

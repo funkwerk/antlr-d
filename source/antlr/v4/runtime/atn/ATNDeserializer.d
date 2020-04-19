@@ -439,11 +439,14 @@ class ATNDeserializer
                     data ~=to!int('[') - 2;
                     continue;
                 }
-                data ~= parseOct(atn, i) -2;
-                i += 7;
-                continue;
+                if (hasSixOct(atn, i))
+                {
+                    data ~= readSixOct(atn, i) -2;
+                    i += 7;
+                    continue;
+                }
             }
-            if (el >1)
+            if (el > 1)
                 data ~= (el - 2) & 0xffff;
             else
                 data ~= (el - 3) & 0xffff;
@@ -549,11 +552,11 @@ class ATNDeserializer
     {
         // RULES
         int nrules = readInt;
+
         if ( atn.grammarType == ATNType.LEXER ) {
             atn.ruleToTokenType = new int[nrules];
         }
-        debug(deserializer)
-            writefln("%s: Number of rules %s", this.p-1 , nrules);
+
         atn.ruleToStartState = new RuleStartState[nrules];
         for (int i=0; i<nrules; i++) {
             int s = readInt;
@@ -605,10 +608,13 @@ class ATNDeserializer
             int arg3 = readInt;
             Transition trans = edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
             debug(deserializer) {
-                writefln("EDGES %1$s %2$s->%3$s %4$s %5$s %6$s %7$s",
+                writefln!"EDGES %1$s %2$s->%3$s %4$s %5$s %6$s %7$s"
+                    (
                          trans.classinfo, src,
-                         trg, Transition.serializationNames[ttype],
-                         arg1, arg2, arg3);
+                         trg,
+                         Transition.serializationNames[ttype],
+                         arg1, arg2, arg3
+                    );
             }
             ATNState srcState = atn.states[src];
             srcState.addTransition(trans);
@@ -728,7 +734,17 @@ class ATNDeserializer
             }
     }
 
-    public int parseOct(wstring data, size_t p)
+    public bool hasSixOct(wstring data, size_t p)
+    {
+        for (auto i = p + 1; i < p + 7; i++) {
+            auto c = to!int(data[i] - 0x30);
+            if (c > 7 || c < 0)
+                return false;
+        }
+        return true;
+    }
+
+    public int readSixOct(wstring data, size_t p)
     {
         int res = 0;
         for (auto i = p + 1; i < p + 7; i++) {
@@ -746,7 +762,7 @@ class ATNDeserializer
             b = b >>> 8;
         }
         long a = readLong;
-        for(int i = 8; i < 16; i++) {
+        for (int i = 8; i < 16; i++) {
             data[i] = a & 0xff;
             a = a >>> 8;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -14,7 +14,10 @@ import antlr.v4.runtime.misc.Interval;
 import std.variant;
 
 /**
- * TODO add interface description
+ * This TokenStream uses the data type Variant for storing text.
+ *
+ * Therefore tabulator based syntax can be used more complex text elements,
+ * i.e. text string in combination with number of tabs.
  */
 interface TokenStream : IntStream
 {

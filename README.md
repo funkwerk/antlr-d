@@ -1,5 +1,5 @@
 # Antlr4DTarget
-The Antlr4DTarget presents an full featured and tested port of ANTLR 4.
+The Antlr4DTarget represents an full featured and tested port of ANTLR 4.
 
 This covers the runtime library, the tool to translate the syntax  into D code and the tests for the runtime library. See also [ANTLR version 4.7.3](http://www.antlr.org/) yet.
 

@@ -556,7 +556,7 @@ public class BaseDTest implements RuntimeTestSupport {
             e.printStackTrace(System.err);
             try {
                 String command[] = { "ls", "-la" };
-                    String output = runCommand(command, runtimePath + "/lib/", "printing library folder content", true);
+                String output = runCommand(command, runtimePath + "/lib/", "printing library folder content", true);
                 System.out.println(output);
             }
             catch (Exception e2) {
@@ -585,7 +585,7 @@ public class BaseDTest implements RuntimeTestSupport {
     public String execModule(String fileName) {
         String runtimePath = locateRuntime();
         String includePath = runtimePath + "/source";
-        System.out.println("runtimePath -> " + runtimePath + "\nincludePath -> "+ includePath);
+        //System.out.println("runtimePath -> " + runtimePath + "\nincludePath -> "+ includePath);
         String binPath = new File(new File(tmpdir), "a.out").getAbsolutePath();
         String inputPath = new File(new File(tmpdir), "input").getAbsolutePath();
 

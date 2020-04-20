@@ -51,6 +51,7 @@ import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
+import std.conv : to;
 
 <parser>
 >>
@@ -713,7 +714,7 @@ TokenPropertyRef_line(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.
 TokenPropertyRef_pos(t) ::= "(<ctx(t)>.<t.label> != null ? <ctx(t)>.<t.label>.getCharPositionInLine: 0)"
 TokenPropertyRef_channel(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getChannel : 0)"
 TokenPropertyRef_index(t) ::= "(<ctx(t)>.<t.label> !is null ? <ctx(t)>.<t.label>.getTokenIndex: 0)"
-TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> !is null ? Integer.valueOf(<ctx(t)>.<t.label>.getText()) : 0)"
+TokenPropertyRef_int(t) ::= "(<ctx(t)>.<t.label> !is null ? to!int(<ctx(t)>.<t.label>.getText.get!string) : 0)"
 
 RulePropertyRef_start(r) ::= "(<ctx(r)>.<r.label>?(<ctx(r)>.<r.label>.start).getText.get!string:null)"
 RulePropertyRef_stop(r)  ::= "(<ctx(r)>.<r.label>?(cast(CommonToken)(<ctx(r)>.<r.label>.stop)).toString:null)"
@@ -731,13 +732,13 @@ NonLocalAttrRef(s)       ::= "((<s.ruleName; format=\"cap\">Context)getInvokingC
 SetNonLocalAttr(s, rhsChunks)     ::=
     "((<s.ruleName; format=\"cap\">Context)getInvokingContext(<s.ruleIndex>)).<s.name> = <rhsChunks>;"
 
-AddToLabelList(a) ::= "<ctx(a.label)>.<a.listName>.add(<labelref(a.label)>);"
+AddToLabelList(a) ::= "<ctx(a.label)>.<a.listName> ~= (<labelref(a.label)>);"
 
 TokenDecl(t) ::= "<TokenLabelType()> <t.name>"
 TokenTypeDecl(t) ::= "int <t.name>;"
-TokenListDecl(t) ::= "<Token>[] <t.name> = new ArrayList\<Token>()"
+TokenListDecl(t) ::= "<Token>[] <t.name>;"
 RuleContextDecl(r) ::= "<r.ctxName> <r.name>"
-RuleContextListDecl(rdecl) ::= "<rdecl.ctxName>[] <rdecl.name> = new ArrayList\<<rdecl.ctxName>>()"
+RuleContextListDecl(rdecl) ::= "<rdecl.ctxName>[] <rdecl.name>;"
 
 ContextTokenGetterDecl(t)      ::=
     "public TerminalNode <t.name>() { return getToken(<parser.name>.<t.name>, 0); }"
@@ -851,7 +852,7 @@ recRuleAltStartAction(ruleName, ctxName, label, isListLabel) ::= <<
 _localctx = new <ctxName>Context(_parentctx, _parentState);
 <if(label)>
 <if(isListLabel)>
-_localctx.<label>.add(_prevctx);
+_localctx.<label> ~= _prevctx;
 <else>
 _localctx.<label> = _prevctx;
 <endif>
@@ -864,7 +865,7 @@ recRuleLabeledAltStartAction(ruleName, currentAltLabel, label, isListLabel) ::= 
 _localctx = new <currentAltLabel; format="cap">Context(new <ruleName; format="cap">Context(_parentctx, _parentState));
 <if(label)>
 <if(isListLabel)>
-(cast(<currentAltLabel; format="cap">Context)_localctx).<label>.add(_prevctx);
+(cast(<currentAltLabel; format="cap">Context)_localctx).<label> ~= (_prevctx);
 <else>
 (cast(<currentAltLabel; format="cap">Context)_localctx).<label> = _prevctx;
 <endif>

@@ -959,9 +959,10 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         for (int d = 0; d < _interp.decisionToDFA.length; d++) {
             DFA dfa = _interp.decisionToDFA[d];
             if (dfa.states.length) {
-                if (seenOne) writeln();
+                if (seenOne)
+                    writeln();
                 writefln!"Decision %1$s:"(dfa.decision);
-                writeln(dfa.toString(getVocabulary()));
+                write(dfa.toString(getVocabulary));
                 seenOne = true;
             }
         }

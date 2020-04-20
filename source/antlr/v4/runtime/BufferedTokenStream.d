@@ -485,7 +485,8 @@ class BufferedTokenStream : TokenStream
         for (auto i=from; i<=to; i++) {
             Token t = tokens[i];
             if (channel == -1) {
-                if (t.getChannel != Lexer.DEFAULT_TOKEN_CHANNEL) hidden ~= t;
+                if (t.getChannel != Lexer.DEFAULT_TOKEN_CHANNEL)
+                    hidden ~= t;
             }
             else {
                 if (t.getChannel == channel)

@@ -184,7 +184,7 @@ class DFA
 
     public string toString(Vocabulary vocabulary)
     {
-        if (s0 is null) {
+        if (!s0) {
             return "";
         }
 

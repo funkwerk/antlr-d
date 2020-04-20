@@ -59,7 +59,7 @@ DumpDFA() ::= "this.dumpDFA();"
 
 Pass() ::= ""
 
-StringList() ::= "List\<String>"
+StringList() ::= "string[]"
 
 BuildParseTrees() ::= "setBuildParseTree(true);"
 

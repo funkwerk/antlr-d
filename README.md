@@ -1,9 +1,10 @@
 # Antlr4DTarget
-The D runtime library for ANTLR 4, mainly an adaption of original Java runtime library.
+The D package presents an full featured and tested release of ANTLR 4.
 
-This Software is under development but tested on different grammars of [ANTLR
-version 4.7.2](http://www.antlr.org/) yet.
-This D version of ANTLR 4 supports UTF-8 character streams.
+This covers the runtime library, the tool to translate the syntax  into D code and the tests for the runtime library. See also [ANTLR version 4.7.3](http://www.antlr.org/) yet.
+
+This D version of ANTLR 4 handle UTF-8 character as input streams.
+
 ## Install
 1. Download or clone the package
 2. Change directory to the root of the package and call __dub__.
@@ -41,6 +42,9 @@ the _-visitor_ option in cli
 
 and additional ExprVisitor.d and ExprBaseVisitor.d sources will be created.
 
+## Externsion to other ANTLR runtime versions
+
+The data type to store text is Variant. This is handy for the rewriting feature on an indent-based syntax like Python. In this case we need a structure representing the text as well as the number of indents.
 
 ## Restrictions
-- ANTLR based tests not finished
+- not ported to the last version of antlr 4.8

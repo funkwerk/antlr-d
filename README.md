@@ -3,7 +3,7 @@ The Antlr4DTarget represents an full featured and tested port of ANTLR 4.
 
 This covers the runtime library, the tool to translate the syntax  into D code and the tests for the runtime library. See also [ANTLR version 4.7.3](http://www.antlr.org/) yet.
 
-This D port of ANTLR 4 handle UTF-8 characters as input stream.
+This D port of ANTLR 4 uses UTF-8 characters as input stream.
 
 ## Install
 1. Download or clone the package

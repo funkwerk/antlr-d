@@ -176,7 +176,7 @@ class DFA
 
     public string toString(string[] tokenNames)
     {
-        if (s0 is null)
+        if (!s0)
             return "";
         DFASerializer serializer = new DFASerializer(this, tokenNames);
         return serializer.toString();

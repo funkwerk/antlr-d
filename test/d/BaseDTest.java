@@ -363,19 +363,6 @@ public class BaseDTest implements RuntimeTestSupport {
         return result;
     }
 
-//  protected String execParser(String grammarFileName,
-//                              String grammarStr,
-//                              String parserName,
-//                              String lexerName,
-//                              String listenerName,
-//                              String visitorName,
-//                              String startRuleName,
-//                              String input,
-//                              boolean debug) {
-//      return execParser(grammarFileName, grammarStr, parserName, lexerName,
-//                        listenerName, visitorName, startRuleName, input, debug);
-//  }
-//
     @Override
     public String execParser(String grammarFileName,
                              String grammarStr,
@@ -1028,105 +1015,5 @@ public class BaseDTest implements RuntimeTestSupport {
     public void assertNotNullOrEmpty(String text) {
         assertNotNull(text);
         assertFalse(text.isEmpty());
-    }
-
-    public static class IntTokenStream implements TokenStream {
-        IntegerList types;
-        int p=0;
-        public IntTokenStream(IntegerList types) { this.types = types; }
-
-        @Override
-        public void consume() { p++; }
-
-        @Override
-        public int LA(int i) { return LT(i).getType(); }
-
-        @Override
-        public int mark() {
-            return index();
-        }
-
-        @Override
-        public int index() { return p; }
-
-        @Override
-        public void release(int marker) {
-            seek(marker);
-        }
-
-        @Override
-        public void seek(int index) {
-            p = index;
-        }
-
-        @Override
-        public int size() {
-            return types.size();
-        }
-
-        @Override
-        public String getSourceName() {
-            return null;
-        }
-
-        @Override
-        public Token LT(int i) {
-            CommonToken t;
-            int rawIndex = p + i - 1;
-            if ( rawIndex>=types.size() ) t = new CommonToken(Token.EOF);
-            else t = new CommonToken(types.get(rawIndex));
-            t.setTokenIndex(rawIndex);
-            return t;
-        }
-
-        @Override
-        public Token get(int i) {
-            return new org.antlr.v4.runtime.CommonToken(types.get(i));
-        }
-
-        @Override
-        public TokenSource getTokenSource() {
-            return null;
-        }
-
-        @Override
-        public String getText() {
-            throw new UnsupportedOperationException("can't give strings");
-        }
-
-        @Override
-        public String getText(Interval interval) {
-            throw new UnsupportedOperationException("can't give strings");
-        }
-
-        @Override
-        public String getText(RuleContext ctx) {
-            throw new UnsupportedOperationException("can't give strings");
-        }
-
-        @Override
-        public String getText(Token start, Token stop) {
-            throw new UnsupportedOperationException("can't give strings");
-        }
-    }
-
-    /** Sort a list */
-    public <T extends Comparable<? super T>> List<T> sort(List<T> data) {
-        List<T> dup = new ArrayList<T>();
-        dup.addAll(data);
-        Collections.sort(dup);
-        return dup;
-    }
-
-    /** Return map sorted by key */
-    public <K extends Comparable<? super K>,V> LinkedHashMap<K,V> sort(Map<K,V> data) {
-        LinkedHashMap<K,V> dup = new LinkedHashMap<K, V>();
-        List<K> keys = new ArrayList<K>();
-        keys.addAll(data.keySet());
-        Collections.sort(keys);
-        for (K k : keys) {
-            dup.put(k, data.get(k));
-        }
-        return dup;
     }
 }

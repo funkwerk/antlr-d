@@ -162,7 +162,6 @@ $(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
 	$(DMD) -shared -relocation-model=pic -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
 		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
 
-
 # some D source files must replace di files
 EXPORT_D_FILES_NAMES = misc/MurmurHash.di \
                  atn/AbstractConfigHashSet.di \

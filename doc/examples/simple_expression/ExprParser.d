@@ -1,4 +1,4 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
+// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.8
 import antlr.v4.runtime.atn.ATN : ATN;
 alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
@@ -11,6 +11,7 @@ import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -24,9 +25,11 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.ParseTreeWalker;
+import std.conv : to;
 
 public class ExprParser : Parser {
-    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -50,20 +53,19 @@ public class ExprParser : Parser {
     /**
      * @deprecated Use {@link #VOCABULARY} instead.
      */
-    public static string[] tokenNames;
+    public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        string[_SYMBOLIC_NAMES.length] tokenNames;
         for (int i = 0; i < tokenNames.length; i++) {
             tokenNames[i] = VOCABULARY.getLiteralName(i);
                 if (tokenNames[i] is null) {
                     tokenNames[i] = VOCABULARY.getSymbolicName(i);
             }
-
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = "<INVALID>";
-                }
+            if (tokenNames[i] is null)
+            {
+                tokenNames[i] = "<INVALID>";
+            }
         }
     }
 
@@ -407,7 +409,7 @@ public class ExprParser : Parser {
             _alt = getInterpreter.adaptivePredict(_input,3, ctx_);
             while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
-                    if ( _parseListeners!=null ) triggerExitRuleEvent();
+                    if (_parseListeners) triggerExitRuleEvent();
                     _prevctx = _localctx;
                     {
                     setState(32);

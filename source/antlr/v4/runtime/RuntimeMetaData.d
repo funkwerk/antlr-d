@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -40,7 +40,7 @@ import std.string : indexOf;
 class RuntimeMetaData
 {
 
-    enum string VERSION = "4.7.2";
+    enum string VERSION = "4.8.0";
 
     /**
      * This method provides the ability to detect mismatches between the version
@@ -166,8 +166,8 @@ version(unittest) {
         @Tags("mt", "reg")
         @("compareMetaDataVersion")
         unittest {
-            "4.7".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
-            RuntimeMetaData.checkVersion("4.7", "4.7.1");
+            "4.8".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
+            RuntimeMetaData.checkVersion("4.8", "4.8.0");
         }
     }
 }

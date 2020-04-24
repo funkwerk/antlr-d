@@ -1,7 +1,7 @@
 # Antlr4DTarget
 The Antlr4DTarget represents an full featured and tested port of ANTLR 4.
 
-This covers the runtime library, the tool to translate the syntax into D code and the tests for the runtime library. See also [ANTLR version 4.8](http://www.antlr.org/) yet.
+This covers the runtime library, the tool to translate the syntax into D code and the tests for the runtime library. See also [ANTLR version 4.8](http://www.antlr.org/).
 
 Like other language ports, this D runtime library uses UTF-8.
 

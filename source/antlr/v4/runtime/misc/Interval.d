@@ -57,10 +57,12 @@ class Interval
     public static Interval of(int a, int b) @safe
     {
         // cache just a..a
-        if (a != b || a < 0 || a > INTERVAL_POOL_MAX_VALUE) {
+        if (a != b || a < 0 || a > INTERVAL_POOL_MAX_VALUE)
+        {
             return new Interval(a, b);
         }
-        if (cache[a] is null) {
+        if (cache[a] is null)
+        {
             cache[a] = new Interval(a, a);
         }
         return cache[a];
@@ -75,7 +77,8 @@ class Interval
      */
     public int length() @safe pure
     {
-        if (b < a) return 0;
+        if (b < a)
+            return 0;
         return b - a + 1;
     }
 
@@ -86,7 +89,7 @@ class Interval
      */
     public bool equals(Object o) @safe pure
     {
-        Interval other = cast(Interval)o;
+        Interval other = cast(Interval) o;
         return this.a == other.a && this.b == other.b;
     }
 
@@ -118,7 +121,7 @@ class Interval
      */
     public bool startsBeforeDisjoint(Interval other) @safe pure
     {
-        return this.a<other.a && this.b<other.a;
+        return this.a < other.a && this.b < other.a;
     }
 
     /**
@@ -129,7 +132,7 @@ class Interval
      */
     public bool startsBeforeNonDisjoint(Interval other) @safe pure
     {
-        return this.a<=other.a && this.b>=other.a;
+        return this.a <= other.a && this.b >= other.a;
     }
 
     /**
@@ -184,7 +187,7 @@ class Interval
      */
     public bool adjacent(Interval other) @safe pure
     {
-        return this.a == other.b+1 || this.b == other.a-1;
+        return this.a == other.b + 1 || this.b == other.a - 1;
     }
 
     unittest
@@ -203,7 +206,7 @@ class Interval
      */
     public bool properlyContains(Interval other) @safe pure
     {
-         return other.a >= this.a && other.b <= this.b;
+        return other.a >= this.a && other.b <= this.b;
     }
 
     /**
@@ -252,14 +255,15 @@ class Interval
     {
         Interval diff = null;
         // other.a to left of this.a (or same)
-        if ( other.startsBeforeNonDisjoint(this) ) {
-                diff = Interval.of(max(this.a, other.b + 1),
-                                                   this.b);
+        if (other.startsBeforeNonDisjoint(this))
+        {
+            diff = Interval.of(max(this.a, other.b + 1), this.b);
         }
 
         // other.a to right of this.a
-        else if ( other.startsAfterNonDisjoint(this) ) {
-                diff = Interval.of(this.a, other.a - 1);
+        else if (other.startsAfterNonDisjoint(this))
+        {
+            diff = Interval.of(this.a, other.a - 1);
         }
         return diff;
     }

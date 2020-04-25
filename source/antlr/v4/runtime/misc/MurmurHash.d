@@ -107,7 +107,7 @@ class MurmurHash
      */
     public static size_t finish(size_t hash, size_t numberOfWords) @safe nothrow
     {
-        hash = hash ^ (cast(size_t)numberOfWords * 4);
+        hash = hash ^ (cast(size_t) numberOfWords * 4);
         hash = hash ^ (hash >>> 16);
         hash = hash * 0x85EBCA6B;
         hash = hash ^ (hash >>> 13);
@@ -128,7 +128,8 @@ class MurmurHash
     public static size_t hashCode(T)(T[] data, size_t seed)
     {
         size_t hash = initialize(seed);
-        foreach (T value; data) {
+        foreach (T value; data)
+        {
             hash = update(hash, value);
         }
         hash = finish(hash, data.length);
@@ -137,26 +138,33 @@ class MurmurHash
 
 }
 
-version(unittest) {
-    import dshould: equal, should;
+version (unittest)
+{
+    import dshould : equal, should;
     import unit_threaded;
+
     @Tags("MurmurHash")
     @("Calculation")
-    unittest {
+    unittest
+    {
         auto hash = MurmurHash.initialize;
         hash.should.equal(0);
         hash = MurmurHash.update(hash, 33);
-        static if (size_t.sizeof == 4) {
+        static if (size_t.sizeof == 4)
+        {
             hash.should.equal(3641358107U);
         }
-        else {
+        else
+        {
             hash.should.equal(6137767987951124103UL);
         }
         hash = MurmurHash.finish(hash, 1);
-        static if (size_t.sizeof == 4) {
+        static if (size_t.sizeof == 4)
+        {
             hash.should.equal(2689861987U);
         }
-        else {
+        else
+        {
             hash.should.equal(4470425249505779227UL);
         }
     }

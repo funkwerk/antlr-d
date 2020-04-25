@@ -30,13 +30,14 @@ class IntegerList
 
     public this(int capacity)
     {
-        if (capacity < 0) {
+        if (capacity < 0)
+        {
             throw new IllegalArgumentException("Capacity can't be a negativ value!");
         }
         if (capacity)
-            {
-                data_.reserve(capacity);
-            }
+        {
+            data_.reserve(capacity);
+        }
     }
 
     public this(IntegerList list)
@@ -47,7 +48,8 @@ class IntegerList
 
     public this(int[] list)
     {
-        foreach (value; list) {
+        foreach (value; list)
+        {
             add(value);
         }
     }
@@ -67,14 +69,16 @@ class IntegerList
      */
     public final void addAll(int[] array)
     {
-        foreach (value; array) {
+        foreach (value; array)
+        {
             add(value);
         }
     }
 
     public void addAll(IntegerList list)
     {
-        foreach (value; list.data) {
+        foreach (value; list.data)
+        {
             add(value);
         }
     }
@@ -100,6 +104,7 @@ class IntegerList
     public final bool contains(int value)
     {
         import std.algorithm.searching : canFind;
+
         return data_.canFind(value);
     }
 
@@ -127,6 +132,7 @@ class IntegerList
     {
         int value = get(index);
         import std.algorithm.mutation : remove;
+
         data_ = remove(data_, index);
         return value;
     }
@@ -144,7 +150,8 @@ class IntegerList
     do
     {
         import std.algorithm.mutation : remove;
-        data_ = remove(data_, tuple(fromIndex, toIndex+1));
+
+        data_ = remove(data_, tuple(fromIndex, toIndex + 1));
     }
 
     /**
@@ -187,7 +194,8 @@ class IntegerList
 
     public void sort()
     {
-        import std.algorithm.sorting: sort;
+        import std.algorithm.sorting : sort;
+
         data_.sort;
     }
 
@@ -213,19 +221,23 @@ class IntegerList
      */
     public override bool opEquals(Object o)
     {
-	if (o is this) {
+        if (o is this)
+        {
             return true;
         }
 
-        if (!cast(IntegerList)o) {
+        if (!cast(IntegerList) o)
+        {
             return false;
         }
 
-        IntegerList other = cast(IntegerList)o;
-        if (data_.length != other.size) {
+        IntegerList other = cast(IntegerList) o;
+        if (data_.length != other.size)
+        {
             return false;
         }
         import std.algorithm.comparison : equal;
+
         return data_.equal(other.data);
     }
 
@@ -245,8 +257,9 @@ class IntegerList
     public override size_t toHash() @safe nothrow
     {
         int hashCode = 1;
-        for (int i = 0; i < data_.length; i++) {
-            hashCode = 31*hashCode + data_[i];
+        for (int i = 0; i < data_.length; i++)
+        {
+            hashCode = 31 * hashCode + data_[i];
         }
         return hashCode;
     }
@@ -268,16 +281,19 @@ class IntegerList
 
 }
 
-version(unittest) {
+version (unittest)
+{
     import dshould : be, equal, not, should;
     import dshould.thrown;
     import unit_threaded;
 
-    class Test {
+    class Test
+    {
 
         @Tags("IntegerList")
         @("TestEmpty")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList;
             il.should.not.be(null);
             il.isEmpty.should.equal(true);
@@ -286,21 +302,21 @@ version(unittest) {
 
         @Tags("IntegerList")
         @("Capacity")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList(20);
             il.should.not.be(null);
             il.addAll([3, 17, 55, 12, 1, 7]);
             il.toArray.should.equal([3, 17, 55, 12, 1, 7]);
             il.toString.should.equal("[3, 17, 55, 12, 1, 7]");
-            (new IntegerList(-3))
-                .should
-                .throwAn!IllegalArgumentException
-                .where.msg.should.equal("Capacity can't be a negativ value!");
+            (new IntegerList(-3)).should.throwAn!IllegalArgumentException.where.msg.should.equal(
+                    "Capacity can't be a negativ value!");
         }
 
         @Tags("IntegerList")
         @("SetGet")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList([7, 2, 5, 15, 40]);
             il.contains(3).should.equal(false);
             il.contains(5).should.equal(true);
@@ -313,7 +329,8 @@ version(unittest) {
 
         @Tags("IntegerList")
         @("Hash")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList([7, 5, 15, 40]);
             auto il1 = new IntegerList;
             il1.addAll(il);
@@ -323,7 +340,8 @@ version(unittest) {
 
         @Tags("IntegerList")
         @("Remove")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList([7, 5, 15, 40]);
             il.toString.should.equal("[7, 5, 15, 40]");
             il.removeAt(2);
@@ -339,7 +357,8 @@ version(unittest) {
 
         @Tags("IntegerList")
         @("Compare")
-        unittest {
+        unittest
+        {
             auto il = new IntegerList([7, 2, 5, 15, 40]);
             il.contains(3).should.equal(false);
             il.contains(5).should.equal(true);
@@ -356,8 +375,10 @@ version(unittest) {
             il.clear;
             il.toString.should.equal("[]");
             il.should.not.equal(il1);
-            class A {
+            class A
+            {
             }
+
             auto a = new A;
             il.should.not.equal(a);
         }

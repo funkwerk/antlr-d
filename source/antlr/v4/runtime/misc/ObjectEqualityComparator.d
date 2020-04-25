@@ -25,7 +25,8 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
      */
     public static size_t hashOf(Object obj) @safe nothrow
     {
-        if (obj is null) {
+        if (obj is null)
+        {
             return 0;
         }
         return obj.toHash >> 3;
@@ -33,7 +34,8 @@ class ObjectEqualityComparator : AbstractEqualityComparator!Object
 
     public static bool opEquals(Object a, Object b)
     {
-	if (a is null) {
+        if (a is null)
+        {
             return b is null;
         }
         return a is b;

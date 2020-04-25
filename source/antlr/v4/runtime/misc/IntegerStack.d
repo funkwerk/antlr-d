@@ -66,8 +66,8 @@ class IntegerStack : IntegerList
      */
     public final int pop()
     {
-        int i = data_[$-1];
-        data_.length --;
+        int i = data_[$ - 1];
+        data_.length--;
         return i;
     }
 
@@ -77,7 +77,7 @@ class IntegerStack : IntegerList
      */
     public final int peek()
     {
-        return data_[$-1];
+        return data_[$ - 1];
     }
 
 }

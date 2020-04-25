@@ -18,24 +18,30 @@ class Utils
     public static size_t rank(T)(T e) @safe nothrow
     {
         foreach (i, member; EnumMembers!T)
-            {
-                if (e == member)
-                    return cast(int)(i);
-            }
+        {
+            if (e == member)
+                return cast(int)(i);
+        }
         assert(0, "Not an enum member");
     }
 
     public static string escapeWhitespace(string s, bool escapeSpaces)
     {
         auto buf = appender!string;
-        foreach (char c; s) {
-			if (c==' ' && escapeSpaces) buf.put('\u00B7');
-			else if ( c=='\t' ) buf.put("\\t");
-			else if ( c=='\n' ) buf.put("\\n");
-			else if ( c=='\r' ) buf.put("\\r");
-			else buf.put(c);
-		}
-		return buf.data;
+        foreach (char c; s)
+        {
+            if (c == ' ' && escapeSpaces)
+                buf.put('\u00B7');
+            else if (c == '\t')
+                buf.put("\\t");
+            else if (c == '\n')
+                buf.put("\\n");
+            else if (c == '\r')
+                buf.put("\\r");
+            else
+                buf.put(c);
+        }
+        return buf.data;
     }
 
 }

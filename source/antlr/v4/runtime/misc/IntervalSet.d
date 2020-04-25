@@ -117,7 +117,7 @@ class IntervalSet : IntSet
     public void add(int a, int b)
     {
         assert(!readonly, "can't alter readonly IntervalSet");
-        add(Interval.of(a ,b));
+        add(Interval.of(a, b));
     }
 
     /**
@@ -128,25 +128,31 @@ class IntervalSet : IntSet
         assert(!readonly, "can't alter readonly IntervalSet");
         debug (IntervalSet)
             writefln("add %1$s to %2$s", addition, intervals_);
-        if (addition.b < addition.a) {
+        if (addition.b < addition.a)
+        {
             return;
         }
         // find position in list
         // Use iterators as we modify list in place
-        foreach (index, ref el; intervals_) {
+        foreach (index, ref el; intervals_)
+        {
             Interval r = el;
-            if (addition.equals(r)) {
+            if (addition.equals(r))
+            {
                 return;
             }
-            if (addition.adjacent(r) || !addition.disjoint(r)) {
+            if (addition.adjacent(r) || !addition.disjoint(r))
+            {
                 // next to each other, make a single larger interval
                 Interval bigger = addition.unionInterval(r);
                 el = bigger;
                 // make sure we didn't just create an interval that
                 // should be merged with next interval in list
-                while (++index < intervals_.length) {
+                while (++index < intervals_.length)
+                {
                     Interval next = intervals_[index];
-                    if (!bigger.adjacent(next) && bigger.disjoint(next)) {
+                    if (!bigger.adjacent(next) && bigger.disjoint(next))
+                    {
                         continue;
                     }
                     // if we bump up against or overlap next, merge
@@ -157,10 +163,10 @@ class IntervalSet : IntSet
                 return;
             }
 
-            if (addition.startsBeforeDisjoint(r)) {
+            if (addition.startsBeforeDisjoint(r))
+            {
                 // insert before r
-                intervals_ = intervals_[0..index] ~ addition ~
-                    intervals_[index..$];
+                intervals_ = intervals_[0 .. index] ~ addition ~ intervals_[index .. $];
                 return;
             }
             // if disjoint and after r, a future iteration will handle it
@@ -172,20 +178,25 @@ class IntervalSet : IntSet
 
     public IntervalSet addAll(IntSet set)
     {
-        if (set is null) {
+        if (set is null)
+        {
             return this;
         }
-        if (typeid(typeof(set)) == typeid(IntervalSet*)) {
-            IntervalSet other = cast(IntervalSet)set;
+        if (typeid(typeof(set)) == typeid(IntervalSet*))
+        {
+            IntervalSet other = cast(IntervalSet) set;
             // walk set and add each interval
             auto n = other.intervals_.length;
-            for (auto i = 0; i < n; i++) {
+            for (auto i = 0; i < n; i++)
+            {
                 Interval I = other.intervals_[i];
-                this.add(I.a,I.b);
+                this.add(I.a, I.b);
             }
         }
-        else {
-            foreach (int value; set.toList) {
+        else
+        {
+            foreach (int value; set.toList)
+            {
                 add(value);
             }
         }
@@ -202,7 +213,8 @@ class IntervalSet : IntSet
      */
     public IntervalSet complement(IntSet vocabulary)
     {
-        if (vocabulary is null || vocabulary.isNil) {
+        if (vocabulary is null || vocabulary.isNil)
+        {
             return null; // nothing in common with null set
         }
         IntervalSet vocabularyIS = new IntervalSet();
@@ -212,7 +224,8 @@ class IntervalSet : IntSet
 
     public IntervalSet complement(IntervalSet vocabulary)
     {
-        if (vocabulary is null || vocabulary.isNil) {
+        if (vocabulary is null || vocabulary.isNil)
+        {
             return null; // nothing in common with null set
         }
         IntervalSet vocabularyIS = vocabulary;
@@ -221,11 +234,13 @@ class IntervalSet : IntSet
 
     public IntervalSet subtract(IntSet a)
     {
-        if (!a) {
+        if (!a)
+        {
             return new IntervalSet(this);
         }
-        if (cast(IntervalSet)a) {
-            return subtract(this, cast(IntervalSet)a);
+        if (cast(IntervalSet) a)
+        {
+            return subtract(this, cast(IntervalSet) a);
         }
 
         IntervalSet other = new IntervalSet;
@@ -243,49 +258,59 @@ class IntervalSet : IntSet
 
     public IntervalSet and(IntSet other)
     {
-        if (other is null ) { //|| !(other instanceof IntervalSet) ) {
+        if (other is null)
+        { //|| !(other instanceof IntervalSet) ) {
             return null; // nothing in common with null set
         }
 
         auto myIntervals = this.intervals_;
-        auto theirIntervals = (cast(IntervalSet)other).intervals_;
+        auto theirIntervals = (cast(IntervalSet) other).intervals_;
         IntervalSet intersection;
         auto mySize = myIntervals.length;
         auto theirSize = theirIntervals.length;
         int i = 0;
         int j = 0;
         // iterate down both interval lists looking for nondisjoint intervals
-        while (i < mySize && j < theirSize) {
+        while (i < mySize && j < theirSize)
+        {
             Interval mine = myIntervals[i];
             Interval theirs = theirIntervals[j];
             //System.out.println("mine="+mine+" and theirs="+theirs);
-            if (mine.startsBeforeDisjoint(theirs) ) {
+            if (mine.startsBeforeDisjoint(theirs))
+            {
                 // move this iterator looking for interval that might overlap
                 i++;
             }
-            else if ( theirs.startsBeforeDisjoint(mine) ) {
+            else if (theirs.startsBeforeDisjoint(mine))
+            {
                 // move other iterator looking for interval that might overlap
                 j++;
             }
-            else if ( mine.properlyContains(theirs) ) {
+            else if (mine.properlyContains(theirs))
+            {
                 // overlap, add intersection, get next theirs
-                if (intersection is null) {
+                if (intersection is null)
+                {
                     intersection = new IntervalSet();
                 }
                 intersection.add(mine.intersection(theirs));
                 j++;
             }
-            else if (theirs.properlyContains(mine)) {
+            else if (theirs.properlyContains(mine))
+            {
                 // overlap, add intersection, get next mine
-                if (intersection is null) {
+                if (intersection is null)
+                {
                     intersection = new IntervalSet();
                 }
                 intersection.add(mine.intersection(theirs));
                 i++;
             }
-            else if ( !mine.disjoint(theirs) ) {
+            else if (!mine.disjoint(theirs))
+            {
                 // overlap, add intersection
-                if (intersection is null) {
+                if (intersection is null)
+                {
                     intersection = new IntervalSet();
                 }
                 intersection.add(mine.intersection(theirs));
@@ -296,15 +321,18 @@ class IntervalSet : IntSet
                 // but not theirs as theirs may collide with the next range
                 // in thisIter.
                 // move both iterators to next ranges
-                if ( mine.startsAfterNonDisjoint(theirs) ) {
+                if (mine.startsAfterNonDisjoint(theirs))
+                {
                     j++;
                 }
-                else if ( theirs.startsAfterNonDisjoint(mine) ) {
+                else if (theirs.startsAfterNonDisjoint(mine))
+                {
                     i++;
                 }
             }
         }
-        if (intersection is null) {
+        if (intersection is null)
+        {
             return new IntervalSet();
         }
         return intersection;
@@ -312,13 +340,16 @@ class IntervalSet : IntSet
 
     public bool contains(int el)
     {
-        foreach (I; intervals_) {
+        foreach (I; intervals_)
+        {
             int a = I.a;
             int b = I.b;
-            if (el < a) {
+            if (el < a)
+            {
                 break; // list is sorted and el is before this interval; not here
             }
-            if (el >= a && el <= b) {
+            if (el >= a && el <= b)
+            {
                 return true; // found in this interval
             }
         }
@@ -332,9 +363,11 @@ class IntervalSet : IntSet
 
     public int getSingleElement()
     {
-        if (intervals_ !is null && intervals_.length == 1 ) {
+        if (intervals_ !is null && intervals_.length == 1)
+        {
             Interval I = intervals_[0];
-            if (I.a == I.b) {
+            if (I.a == I.b)
+            {
                 return I.a;
             }
         }
@@ -349,10 +382,11 @@ class IntervalSet : IntSet
      */
     public int getMaxElement()
     {
-        if (isNil) {
+        if (isNil)
+        {
             return TokenConstantDefinition.INVALID_TYPE;
         }
-        Interval last = intervals_[$-1];
+        Interval last = intervals_[$ - 1];
         return last.b;
     }
 
@@ -364,7 +398,8 @@ class IntervalSet : IntSet
      */
     public int getMinElement()
     {
-        if (isNil) {
+        if (isNil)
+        {
             return TokenConstantDefinition.INVALID_TYPE;
         }
         return intervals_[0].a;
@@ -377,7 +412,8 @@ class IntervalSet : IntSet
     {
         IntervalSet r = new IntervalSet(1);
         r.clear;
-        foreach (IntervalSet s; sets) {
+        foreach (IntervalSet s; sets)
+        {
             r.addAll(s);
         }
         return r;
@@ -390,45 +426,54 @@ class IntervalSet : IntSet
      */
     public IntervalSet subtract(IntervalSet left, IntervalSet right)
     {
-        if (left is null || left.size == 0) {
+        if (left is null || left.size == 0)
+        {
             return new IntervalSet();
         }
         IntervalSet result = new IntervalSet(left);
-        if (right is null || right.isNil) {
+        if (right is null || right.isNil)
+        {
             // right set has no elements; just return the copy of the current set
             return result;
         }
 
         int resultI = 0;
         int rightI = 0;
-        while (resultI < result.intervals_.length && rightI < right.intervals_.length) {
+        while (resultI < result.intervals_.length && rightI < right.intervals_.length)
+        {
             Interval resultInterval = result.intervals_[resultI];
             Interval rightInterval = right.intervals_[rightI];
 
             // operation: (resultInterval - rightInterval) and update indexes
 
-            if (rightInterval.b < resultInterval.a) {
+            if (rightInterval.b < resultInterval.a)
+            {
                 rightI++;
                 continue;
             }
 
-            if (rightInterval.a > resultInterval.b) {
+            if (rightInterval.a > resultInterval.b)
+            {
                 resultI++;
                 continue;
             }
 
             Interval beforeCurrent = null;
             Interval afterCurrent = null;
-            if (rightInterval.a > resultInterval.a) {
+            if (rightInterval.a > resultInterval.a)
+            {
                 beforeCurrent = new Interval(resultInterval.a, rightInterval.a - 1);
             }
 
-            if (rightInterval.b < resultInterval.b) {
+            if (rightInterval.b < resultInterval.b)
+            {
                 afterCurrent = new Interval(rightInterval.b + 1, resultInterval.b);
             }
 
-            if (beforeCurrent !is null) {
-                if (afterCurrent !is null) {
+            if (beforeCurrent !is null)
+            {
+                if (afterCurrent !is null)
+                {
                     // split the current interval into two
                     result.intervals_[resultI] = beforeCurrent;
                     result.intervals_ ~= afterCurrent;
@@ -436,25 +481,29 @@ class IntervalSet : IntSet
                     rightI++;
                     continue;
                 }
-                else {
+                else
+                {
                     // replace the current interval
                     result.intervals_[resultI] = beforeCurrent;
                     resultI++;
                     continue;
                 }
             }
-            else {
-                if (afterCurrent !is null) {
+            else
+            {
+                if (afterCurrent !is null)
+                {
                     // replace the current interval
                     result.intervals_[resultI] = afterCurrent;
                     rightI++;
                     continue;
                 }
-                else {
+                else
+                {
                     // remove the current interval (thus no need to increment resultI)
                     //result.intervals.remove(resultI);
-                    result.intervals_ = result.intervals_[0..resultI].dup ~
-                        result.intervals_[resultI+1..$].dup;
+                    result.intervals_ = result.intervals_[0 .. resultI].dup
+                        ~ result.intervals_[resultI + 1 .. $].dup;
                     continue;
                 }
             }
@@ -467,13 +516,16 @@ class IntervalSet : IntSet
 
     public string elementName(Vocabulary vocabulary, int a)
     {
-        if (a == TokenConstantDefinition.EOF) {
+        if (a == TokenConstantDefinition.EOF)
+        {
             return "<EOF>";
         }
-        else if (a == TokenConstantDefinition.EPSILON) {
+        else if (a == TokenConstantDefinition.EPSILON)
+        {
             return "<EPSILON>";
         }
-        else {
+        else
+        {
             return vocabulary.getDisplayName(a);
         }
     }
@@ -482,11 +534,13 @@ class IntervalSet : IntSet
     {
         int n = 0;
         auto numIntervals = intervals_.length;
-        if (numIntervals == 1) {
+        if (numIntervals == 1)
+        {
             Interval firstInterval = intervals_[0];
             return firstInterval.b - firstInterval.a + 1;
         }
-        for (auto i = 0; i < numIntervals; i++) {
+        for (auto i = 0; i < numIntervals; i++)
+        {
             Interval I = intervals_[i];
             n += (I.b - I.a + 1);
         }
@@ -497,11 +551,13 @@ class IntervalSet : IntSet
     {
         IntegerList values = new IntegerList();
         auto n = intervals_.length;
-        for (auto i = 0; i < n; i++) {
+        for (auto i = 0; i < n; i++)
+        {
             Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
-            for (int v = a; v <= b; v++) {
+            for (int v = a; v <= b; v++)
+            {
                 values.add(v);
             }
         }
@@ -512,11 +568,13 @@ class IntervalSet : IntSet
     {
         int[] values;
         auto n = intervals_.length;
-        for (auto i = 0; i < n; i++) {
+        for (auto i = 0; i < n; i++)
+        {
             Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
-            for (int v = a ; v <= b; v++) {
+            for (int v = a; v <= b; v++)
+            {
                 values ~= v;
             }
         }
@@ -526,10 +584,12 @@ class IntervalSet : IntSet
     public RedBlackTree!int toSet()
     {
         auto s = redBlackTree!int();
-        foreach (Interval I; intervals_) {
+        foreach (Interval I; intervals_)
+        {
             int a = I.a;
             int b = I.b;
-            for (int v=a; v<=b; v++) {
+            for (int v = a; v <= b; v++)
+            {
                 s.insert(v);
             }
         }
@@ -548,12 +608,15 @@ class IntervalSet : IntSet
     {
         auto n = intervals_.length;
         ulong index = 0;
-        for (auto j = 0; j < n; j++) {
+        for (auto j = 0; j < n; j++)
+        {
             Interval I = intervals_[j];
             int a = I.a;
             int b = I.b;
-            for (int v = a; v <= b; v++) {
-                if (to!int(index) == i ) {
+            for (int v = a; v <= b; v++)
+            {
+                if (to!int(index) == i)
+                {
                     return v;
                 }
                 index++;
@@ -571,33 +634,39 @@ class IntervalSet : IntSet
     {
         assert(!readonly, "can't alter readonly IntervalSet");
         auto n = intervals_.length;
-        for (auto i = 0; i < n; i++) {
+        for (auto i = 0; i < n; i++)
+        {
             Interval I = intervals_[i];
             int a = I.a;
             int b = I.b;
-            if (el < a) {
+            if (el < a)
+            {
                 break; // list is sorted and el is before this interval; not here
             }
             // if whole interval x..x, remove i
-            if (el == a && el == b ) {
-                intervals_ = intervals_[0..i] ~ intervals_[i+1..$];
+            if (el == a && el == b)
+            {
+                intervals_ = intervals_[0 .. i] ~ intervals_[i + 1 .. $];
                 break;
             }
             // if on left edge x..b, adjust left
-            if (el == a) {
+            if (el == a)
+            {
                 I.a++;
                 break;
             }
             // if on right edge a..x, adjust right
-            if (el == b) {
+            if (el == b)
+            {
                 I.b--;
                 break;
             }
             // if in middle a..x..b, split interval
-            if (el >a && el < b) { // found in this interval
+            if (el > a && el < b)
+            { // found in this interval
                 int oldb = I.b;
-                I.b = el-1;      // [a..x-1]
-                add(el+1, oldb); // add [x+1..b]
+                I.b = el - 1; // [a..x-1]
+                add(el + 1, oldb); // add [x+1..b]
             }
         }
     }
@@ -629,7 +698,7 @@ class IntervalSet : IntSet
      */
     public override bool opEquals(Object obj)
     {
-        IntervalSet other = cast(IntervalSet)obj;
+        IntervalSet other = cast(IntervalSet) obj;
         return intervals_ == other.intervals_;
     }
 
@@ -645,29 +714,41 @@ class IntervalSet : IntSet
     public string toString(bool elemAreChar)
     {
         auto buf = appender!string;
-        if (intervals_ is null || intervals_.length == 0) {
+        if (intervals_ is null || intervals_.length == 0)
+        {
             return "{}";
         }
-        if (this.size() > 1) {
+        if (this.size() > 1)
+        {
             buf.put("{");
         }
-        foreach (index, I; this.intervals_) {
+        foreach (index, I; this.intervals_)
+        {
             int a = I.a;
             int b = I.b;
-            if (a == b) {
-                if (a == TokenConstantDefinition.EOF) buf.put("<EOF>");
-                else if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'");
-                else buf.put(to!string(a));
+            if (a == b)
+            {
+                if (a == TokenConstantDefinition.EOF)
+                    buf.put("<EOF>");
+                else if (elemAreChar)
+                    buf.put("'" ~ to!string(a) ~ "'");
+                else
+                    buf.put(to!string(a));
             }
-            else {
-                if (elemAreChar) buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
-                else buf.put(to!string(a) ~ ".." ~ to!string(b));
+            else
+            {
+                if (elemAreChar)
+                    buf.put("'" ~ to!string(a) ~ "'..'" ~ to!string(b) ~ "'");
+                else
+                    buf.put(to!string(a) ~ ".." ~ to!string(b));
             }
-            if (index + 1 < intervals_.length) {
+            if (index + 1 < intervals_.length)
+            {
                 buf.put(", "); //  not last element
             }
         }
-        if (this.size() > 1) {
+        if (this.size() > 1)
+        {
             buf.put("}");
         }
         return buf.data;
@@ -677,29 +758,38 @@ class IntervalSet : IntSet
     public string toString(Vocabulary vocabulary)
     {
         auto buf = appender!string;
-        if (intervals_ is null || intervals_.length == 0) {
+        if (intervals_ is null || intervals_.length == 0)
+        {
             return "{}";
         }
-        if (size() > 1) {
+        if (size() > 1)
+        {
             buf.put("{");
         }
-        foreach (index, I; this.intervals_) {
+        foreach (index, I; this.intervals_)
+        {
             int a = I.a;
             int b = I.b;
-            if ( a==b ) {
+            if (a == b)
+            {
                 buf.put(elementName(vocabulary, a));
             }
-            else {
-                for (int i=a; i<=b; i++) {
-                    if ( i>a ) buf.put(", ");
+            else
+            {
+                for (int i = a; i <= b; i++)
+                {
+                    if (i > a)
+                        buf.put(", ");
                     buf.put(elementName(vocabulary, i));
                 }
             }
-            if (index + 1 < intervals_.length) {
+            if (index + 1 < intervals_.length)
+            {
                 buf.put(", ");
             }
         }
-        if (size() > 1) {
+        if (size() > 1)
+        {
             buf.put("}");
         }
         return buf.data;
@@ -717,16 +807,19 @@ class IntervalSet : IntSet
 
 }
 
-version(unittest) {
+version (unittest)
+{
     import dshould : be, equal, not, should;
     import std.typecons : tuple;
     import unit_threaded;
 
-    class Test {
+    class Test
+    {
 
         @Tags("IntervalSet")
         @("Empty")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.should.not.be(null);
             s.intervals.length.should.equal(0);
@@ -735,7 +828,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("One")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30);
             s.intervals.length.should.equal(1);
@@ -747,7 +841,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Two")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30);
             s.add(40);
@@ -760,7 +855,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Range")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30, 41);
             s.intervals.length.should.equal(1);
@@ -772,7 +868,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Distinct1")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30, 32);
             s.add(40, 42);
@@ -785,7 +882,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Distinct2")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(40, 42);
             s.add(30, 32);
@@ -798,7 +896,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Contiguous1")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30, 36);
             s.add(36, 41);
@@ -814,7 +913,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Contiguous2")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(41, 44);
             s.add(36, 41);
@@ -830,7 +930,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Overlapping1")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30, 40);
             s.add(35, 44);
@@ -846,7 +947,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Overlapping2")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(35, 44);
             s.add(31, 36);
@@ -862,7 +964,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Overlapping3")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(30, 32);
             s.add(40, 42);
@@ -887,7 +990,8 @@ version(unittest) {
 
         @Tags("IntervalSet")
         @("Complement")
-        unittest {
+        unittest
+        {
             IntervalSet s = new IntervalSet;
             s.add(10, 21);
             auto c = s.complement(1, 100);

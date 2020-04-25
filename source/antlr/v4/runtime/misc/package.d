@@ -12,4 +12,3 @@ public import antlr.v4.runtime.misc.IntSet;
 public import antlr.v4.runtime.misc.MurmurHash;
 public import antlr.v4.runtime.misc.ObjectEqualityComparator;
 public import antlr.v4.runtime.misc.Utils;
-

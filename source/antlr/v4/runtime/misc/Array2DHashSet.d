@@ -59,19 +59,23 @@ class Array2DHashSet(T)
         this(null, null, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp,
+            bool function(Object a, Object b) opEqualsFp)
     {
         this(hashOfFp, opEqualsFp, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp,
-                int initialCapacity, int initialBucketCapacity)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp,
+            bool function(Object a, Object b) opEqualsFp,
+            int initialCapacity, int initialBucketCapacity)
     {
-	if (hashOfFp is null || opEqualsFp is null) {
+        if (hashOfFp is null || opEqualsFp is null)
+        {
             this.hashOfFp = &ObjectEqualityComparator.hashOf;
             this.opEqualsFp = &ObjectEqualityComparator.opEquals;
         }
-        else {
+        else
+        {
             this.hashOfFp = hashOfFp;
             this.opEqualsFp = opEqualsFp;
         }
@@ -88,7 +92,8 @@ class Array2DHashSet(T)
      */
     public final T getOrAdd(T o)
     {
-        if (n > threshold) {
+        if (n > threshold)
+        {
             expand();
         }
         return getOrAddImpl(o);
@@ -99,7 +104,8 @@ class Array2DHashSet(T)
         auto b = getBucket(o);
         T[] bucket = buckets[b];
         // NEW BUCKET
-        if (bucket is null) {
+        if (bucket is null)
+        {
             bucket = createBucket(initialBucketCapacity);
             bucket[0] = o;
             buckets[b] = bucket;
@@ -108,14 +114,17 @@ class Array2DHashSet(T)
         }
 
         // LOOK FOR IT IN BUCKET
-        for (int i=0; i < bucket.length; i++) {
+        for (int i = 0; i < bucket.length; i++)
+        {
             auto existing = bucket[i];
-            if (!existing) { // empty slot; not there, add.
+            if (!existing)
+            { // empty slot; not there, add.
                 bucket[i] = o;
                 n++;
                 return o;
             }
-            if (opEqualsFp(existing, o)) {
+            if (opEqualsFp(existing, o))
+            {
                 return existing; // found existing, quit
             }
         }
@@ -131,14 +140,15 @@ class Array2DHashSet(T)
 
     public T get(T o)
     {
-	if (o is null)
+        if (o is null)
             return o;
         T nullElement;
         auto b = getBucket(o);
         T[] bucket = buckets[b];
         if (bucket is null)
             return nullElement; // no bucket
-        foreach (e; bucket) {
+        foreach (e; bucket)
+        {
             if (e is null)
                 return nullElement; // empty slot; not there
             if (opEqualsFp(e, o))
@@ -164,11 +174,15 @@ class Array2DHashSet(T)
      */
     public override size_t toHash() @safe nothrow
     {
-	size_t hash = MurmurHash.initialize();
-        foreach (bucket; buckets) {
-            if (bucket is null) continue;
-            foreach (o; bucket) {
-                if (o is null) break;
+        size_t hash = MurmurHash.initialize();
+        foreach (bucket; buckets)
+        {
+            if (bucket is null)
+                continue;
+            foreach (o; bucket)
+            {
+                if (o is null)
+                    break;
                 hash = MurmurHash.update(hash, hashOfFp(o));
             }
         }
@@ -182,45 +196,55 @@ class Array2DHashSet(T)
      */
     public override bool opEquals(Object o)
     {
-	if (o is this) return true;
-        if (o.classinfo != Array2DHashSet.classinfo) return false;
-        Array2DHashSet!T other = cast(Array2DHashSet!T)o;
-        if (other.size() != size()) return false;
+        if (o is this)
+            return true;
+        if (! cast(Array2DHashSet) o)
+            return false;
+        Array2DHashSet!T other = cast(Array2DHashSet!T) o;
+        if (other.size() != size())
+            return false;
         bool same = this.containsAll(other);
         return same;
     }
 
     protected void expand()
     {
-	auto old = buckets;
+        auto old = buckets;
         currentPrime += 4;
         int newCapacity = to!int(buckets.length) * 2;
         auto newTable = createBuckets(newCapacity);
         int[] newBucketLengths = new int[newTable.length];
         buckets = newTable;
         threshold = cast(int)(newCapacity * LOAD_FACTOR);
-        //		System.out.println("new size="+newCapacity+", thres="+threshold);
+        //      System.out.println("new size="+newCapacity+", thres="+threshold);
         // rehash all existing entries
         int oldSize = size();
-        foreach (bucket; old) {
-            if (bucket is null) {
+        foreach (bucket; old)
+        {
+            if (bucket is null)
+            {
                 continue;
             }
-            foreach (o; bucket) {
-                if (o is null) {
+            foreach (o; bucket)
+            {
+                if (o is null)
+                {
                     break;
                 }
                 auto b = getBucket(o);
                 int bucketLength = newBucketLengths[b];
                 T[] newBucket;
-                if (bucketLength == 0) {
+                if (bucketLength == 0)
+                {
                     // new bucket
                     newBucket = createBucket(initialBucketCapacity);
                     newTable[b] = newBucket;
                 }
-                else {
+                else
+                {
                     newBucket = newTable[b];
-                    if (bucketLength == newBucket.length) {
+                    if (bucketLength == newBucket.length)
+                    {
                         // expand
                         newBucket.length = newBucket.length * 2;
                         newTable[b] = newBucket;
@@ -240,7 +264,7 @@ class Array2DHashSet(T)
      */
     public final bool add(T t)
     {
-	T existing = getOrAdd(t);
+        T existing = getOrAdd(t);
         return existing == t;
     }
 
@@ -250,7 +274,7 @@ class Array2DHashSet(T)
      */
     public final int size()
     {
-	return n;
+        return n;
     }
 
     /**
@@ -259,7 +283,7 @@ class Array2DHashSet(T)
      */
     public final bool isEmpty()
     {
-        return n==0;
+        return n == 0;
     }
 
     /**
@@ -273,7 +297,8 @@ class Array2DHashSet(T)
 
     public bool containsFast(T obj)
     {
-	if (obj is null) {
+        if (obj is null)
+        {
             return false;
         }
         return get(obj) !is null;
@@ -281,13 +306,17 @@ class Array2DHashSet(T)
 
     public T[] toArray()
     {
-	T[] a;
-        foreach (bucket; buckets) {
-            if (bucket is null) {
+        T[] a;
+        foreach (bucket; buckets)
+        {
+            if (bucket is null)
+            {
                 continue;
             }
-            foreach (o; bucket) {
-                if (o is null) {
+            foreach (o; bucket)
+            {
+                if (o is null)
+                {
                     break;
                 }
                 a ~= o;
@@ -298,20 +327,25 @@ class Array2DHashSet(T)
 
     public U[] toArray(U)(U[] a)
     {
-	if (a.length < size()) {
+        if (a.length < size())
+        {
             a = Arrays.copyOf(a, size());
         }
         int i = 0;
-        foreach (T[] bucket; buckets) {
-            if ( bucket==null ) {
+        foreach (T[] bucket; buckets)
+        {
+            if (bucket == null)
+            {
                 continue;
             }
-            foreach (T o; bucket) {
-                if (o is null) {
+            foreach (T o; bucket)
+            {
+                if (o is null)
+                {
                     break;
                 }
                 //@SuppressWarnings("unchecked") // array store will check this
-                U targetElement = cast(U)o;
+                U targetElement = cast(U) o;
                 a[i++] = targetElement;
             }
         }
@@ -329,25 +363,30 @@ class Array2DHashSet(T)
 
     public bool removeFast(T obj)
     {
-	if (obj is null) {
+        if (obj is null)
+        {
             return false;
         }
         size_t b = getBucket(obj);
         auto bucket = buckets[b];
-        if (bucket is null) {
+        if (bucket is null)
+        {
             // no bucket
             return false;
         }
-        for (int i=0; i<bucket.length; i++) {
+        for (int i = 0; i < bucket.length; i++)
+        {
             auto e = bucket[i];
-            if (e is null) {
+            if (e is null)
+            {
                 // empty slot; not there
                 return false;
             }
-            if (opEqualsFp(e, obj) ) {  // found it
+            if (opEqualsFp(e, obj))
+            { // found it
                 // shift all elements to the right down one
                 bucket.remove(i);
-                bucket[$-1] = null;
+                bucket[$ - 1] = null;
                 n--;
                 return true;
             }
@@ -357,18 +396,26 @@ class Array2DHashSet(T)
 
     public bool containsAll(Object collection)
     {
-	if (collection.classinfo == Array2DHashSet!T.classinfo) {
+        if (cast(Array2DHashSet!T) collection)
+        {
             Array2DHashSet!T s = to!(Array2DHashSet!T)(collection);
-            foreach (bucket; s.buckets) {
-                if (bucket is null) continue;
-                foreach (o; bucket) {
-                    if (o is null) break;
-                    if (!this.containsFast(o)) return false;
+            foreach (bucket; s.buckets)
+            {
+                if (bucket is null)
+                    continue;
+                foreach (o; bucket)
+                {
+                    if (o is null)
+                        break;
+                    if (!this.containsFast(o))
+                        return false;
                 }
             }
         }
-        else {
-            foreach (o; collection.tupleof) {
+        else
+        {
+            foreach (o; collection.tupleof)
+            {
                 if (!this.containsFast(o))
                     return false;
             }
@@ -379,8 +426,9 @@ class Array2DHashSet(T)
 
     public bool addAll(T[] c)
     {
-	bool changed = false;
-        foreach (o; c) {
+        bool changed = false;
+        foreach (o; c)
+        {
             T existing = getOrAdd(o);
             if (existing != o)
                 changed = true;
@@ -390,31 +438,38 @@ class Array2DHashSet(T)
 
     public bool retainAll(T[] c)
     {
-	int newsize = 0;
-        foreach (bucket; buckets) {
-            if (bucket is null) {
+        int newsize = 0;
+        foreach (bucket; buckets)
+        {
+            if (bucket is null)
+            {
                 continue;
             }
             int i;
             int j;
-            for (i = 0, j = 0; i < bucket.length; i++) {
-                if (bucket[i] is null) {
+            for (i = 0, j = 0; i < bucket.length; i++)
+            {
+                if (bucket[i] is null)
+                {
                     break;
                 }
                 auto bg = bucket[i];
-                if (!c.canFind(bg)) {
+                if (!c.canFind(bg))
+                {
                     // removed
                     continue;
                 }
                 // keep
-                if (i != j) {
+                if (i != j)
+                {
                     bucket[j] = bucket[i];
                 }
                 j++;
                 newsize++;
             }
             newsize += j;
-            while (j < i) {
+            while (j < i)
+            {
                 bucket[j] = null;
                 j++;
             }
@@ -429,7 +484,8 @@ class Array2DHashSet(T)
     public bool removeAll(T[] c)
     {
         bool changed = false;
-        foreach (o; c) {
+        foreach (o; c)
+        {
             changed |= removeFast(o);
         }
         return changed;
@@ -437,7 +493,7 @@ class Array2DHashSet(T)
 
     public void clear()
     {
-	buckets = createBuckets(INITAL_CAPACITY);
+        buckets = createBuckets(INITAL_CAPACITY);
         n = 0;
         threshold = to!int(floor(INITAL_CAPACITY * LOAD_FACTOR));
     }
@@ -448,16 +504,23 @@ class Array2DHashSet(T)
      */
     public override string toString()
     {
-	if (size == 0) return "{}";
+        if (size == 0)
+            return "{}";
         auto buf = appender!string;
         buf.put('{');
         bool first = true;
-        foreach (bucket; buckets) {
-            if (bucket is null) continue;
-            foreach (o; bucket) {
-                if (o is null) break;
-                if ( first ) first=false;
-                else buf.put(", ");
+        foreach (bucket; buckets)
+        {
+            if (bucket is null)
+                continue;
+            foreach (o; bucket)
+            {
+                if (o is null)
+                    break;
+                if (first)
+                    first = false;
+                else
+                    buf.put(", ");
                 buf.put(to!string(o));
             }
         }
@@ -467,21 +530,26 @@ class Array2DHashSet(T)
 
     public string toTableString()
     {
-	auto buf = appender!string;
-        foreach (bucket; buckets) {
-            if (bucket is null) {
+        auto buf = appender!string;
+        foreach (bucket; buckets)
+        {
+            if (bucket is null)
+            {
                 buf.put("null\n");
                 continue;
             }
             buf.put('[');
             bool first = true;
-            foreach (o; bucket) {
+            foreach (o; bucket)
+            {
                 if (first)
                     first = false;
                 else
                     buf.put(" ");
-                if (o is null) buf.put("_");
-                else buf.put(to!string(o));
+                if (o is null)
+                    buf.put("_");
+                else
+                    buf.put(to!string(o));
             }
             buf.put("]\n");
         }
@@ -492,7 +560,8 @@ class Array2DHashSet(T)
     {
         T[][] obj;
         obj.length = capacity;
-        debug {
+        debug
+        {
             writefln("T[][] obj -> %1$s, length -> %2$s", obj, obj.length);
         }
         return obj;

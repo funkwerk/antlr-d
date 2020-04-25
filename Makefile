@@ -69,7 +69,7 @@ GENERATOR = $(BUILD_DIR)/generator/
 GENERATOR_FLAGS = -b
 
 GENERATOR = axmi2d
-ANTLR = antlr4-4.7.2
+ANTLR = antlr4-4.8
 ANTLR_TAR = $(ANTLR).tar.gz
 TARGET = $(BUILD_DIR)/$(ANTLR)/tool/resources/org/antlr/v4/tool/templates/codegen/D/
 
@@ -134,15 +134,15 @@ prepare_generator : | $(BUILD_DIR)
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
 		-Dlanguage=D -visitor -o $(BUILD_DIR) doc/examples/simple_expression/Expr.g4
 	cp $(BUILD_DIR)/doc/examples/simple_expression/*.d doc/examples/simple_expression
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
 		-Dlanguage=D -atn -o $(BUILD_DIR)\
 		doc/examples/ruleTranslator/RuleLexer.g4
 	cp $(BUILD_DIR)/doc/examples/ruleTranslator/RuleLexer.tokens \
 		doc/examples/ruleTranslator/
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR)\
 		doc/examples/ruleTranslator/RuleParser.g4
 	cp $(BUILD_DIR)/doc/examples/ruleTranslator/Rule*.d \
@@ -152,15 +152,15 @@ build_examples : prepare_generator
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.7.2-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/antlr4-4.8-2-SNAPSHOT-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY: build_library
-build_library: $(BUILD_DIR)/libantlr-d.so.4.7
+build_library: $(BUILD_DIR)/libantlr-d.so.4.8
 
-$(BUILD_DIR)/libantlr-d.so.4.7: $(SOURCE_FILES)
+$(BUILD_DIR)/libantlr-d.so.4.8: $(SOURCE_FILES)
 	$(DMD) -shared -relocation-model=pic -op -Hd=$(BUILD_DIR)/di $(SOURCE_FILES) \
-		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.7
+		-od=$(BUILD_DIR) -of=$(BUILD_DIR)/libantlr-d.so.4.8
 
 # some D source files must replace di files
 EXPORT_D_FILES_NAMES = misc/MurmurHash.di \
@@ -173,10 +173,10 @@ NO_EXPORT_DI_FILES := $(patsubst %.di, \
                   $(EXPORT_D_FILES_NAMES))
 
 .PHONY: install
-install: $(BUILD_DIR)/libantlr-d.so.4.7
-	cp $(BUILD_DIR)/libantlr-d.so.4.7 $(EXPORT_LIB)
+install: $(BUILD_DIR)/libantlr-d.so.4.8
+	cp $(BUILD_DIR)/libantlr-d.so.4.8 $(EXPORT_LIB)
 	rm -rf $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
-	ln -s $(EXPORT_LIB)/libantlr-d.so.4.7 $(EXPORT_LIB)/libantlr-d.so.4
+	ln -s $(EXPORT_LIB)/libantlr-d.so.4.8 $(EXPORT_LIB)/libantlr-d.so.4
 	ln -s $(EXPORT_LIB)/libantlr-d.so.4 $(EXPORT_LIB)/libantlr-d.so
 	ldconfig
 	@rm -rf $(EXPORT_INCLUDE)/antlr/*

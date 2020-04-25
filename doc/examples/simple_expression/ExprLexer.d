@@ -1,4 +1,4 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
+// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.8
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -18,7 +18,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class ExprLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -47,20 +47,19 @@ public class ExprLexer : Lexer {
     /**
      * @deprecated Use {@link #VOCABULARY} instead.
      */
-    public static string[] tokenNames;
+    public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        string[_SYMBOLIC_NAMES.length] tokenNames;
         for (int i = 0; i < tokenNames.length; i++) {
             tokenNames[i] = VOCABULARY.getLiteralName(i);
                 if (tokenNames[i] is null) {
                     tokenNames[i] = VOCABULARY.getSymbolicName(i);
             }
-
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = "<INVALID>";
-                }
+            if (tokenNames[i] is null)
+            {
+                tokenNames[i] = "<INVALID>";
+            }
         }
     }
 

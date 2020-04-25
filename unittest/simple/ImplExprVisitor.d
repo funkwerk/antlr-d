@@ -1,4 +1,3 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.7.2
 module ImplExprVisitor;
 
 import ExprBaseVisitor;

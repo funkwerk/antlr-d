@@ -1,13 +1,17 @@
-// Generated from RuleParser.g4 by ANTLR 4.7.2
-import antlr.v4.runtime.atn.ATN;
+// Generated from RuleParser.g4 by ANTLR 4.8
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -21,9 +25,11 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
+import antlr.v4.runtime.tree.ParseTreeWalker;
+import std.conv : to;
 
 public class RuleParser : Parser {
-    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -107,20 +113,19 @@ public class RuleParser : Parser {
     /**
      * @deprecated Use {@link #VOCABULARY} instead.
      */
-    public static string[] tokenNames;
+    public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        string[_SYMBOLIC_NAMES.length] tokenNames;
         for (int i = 0; i < tokenNames.length; i++) {
             tokenNames[i] = VOCABULARY.getLiteralName(i);
                 if (tokenNames[i] is null) {
                     tokenNames[i] = VOCABULARY.getSymbolicName(i);
             }
-
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = "<INVALID>";
-                }
+            if (tokenNames[i] is null)
+            {
+                tokenNames[i] = "<INVALID>";
+            }
         }
     }
 
@@ -142,7 +147,7 @@ public class RuleParser : Parser {
     public wstring getSerializedATN() { return _serializedATN; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     public static bool isTTS;
     public this(TokenStream input) {
@@ -204,7 +209,7 @@ public class RuleParser : Parser {
             setState(166);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,1, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     setState(164);
@@ -373,7 +378,7 @@ public class RuleParser : Parser {
             setState(185);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,5, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -1486,7 +1491,7 @@ public class RuleParser : Parser {
             setState(292);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,18, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -2013,7 +2018,7 @@ public class RuleParser : Parser {
             setState(333);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,23, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -3447,7 +3452,7 @@ public class RuleParser : Parser {
             setState(468);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,38, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -3690,7 +3695,7 @@ public class RuleParser : Parser {
             setState(490);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,41, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -3975,7 +3980,7 @@ public class RuleParser : Parser {
                 setState(510);
                 _errHandler.sync(this);
                 _alt = getInterpreter.adaptivePredict(_input,44, ctx_);
-                while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+                while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                     if ( _alt==1 ) {
                         {
                         {
@@ -4069,7 +4074,7 @@ public class RuleParser : Parser {
             setState(524);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,47, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -4153,7 +4158,7 @@ public class RuleParser : Parser {
             setState(535);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,49, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -4245,7 +4250,7 @@ public class RuleParser : Parser {
             setState(550);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,52, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -4760,7 +4765,7 @@ public class RuleParser : Parser {
             setState(581);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,56, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -4892,7 +4897,7 @@ public class RuleParser : Parser {
             setState(596);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,58, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -5124,7 +5129,7 @@ public class RuleParser : Parser {
             setState(624);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,65, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -5206,7 +5211,7 @@ public class RuleParser : Parser {
             setState(635);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,67, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -5339,7 +5344,7 @@ public class RuleParser : Parser {
                 setState(660);
                 _errHandler.sync(this);
                 _alt = getInterpreter.adaptivePredict(_input,71, ctx_);
-                while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+                while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                     if ( _alt==1 ) {
                         {
                         {
@@ -5411,7 +5416,7 @@ public class RuleParser : Parser {
                 setState(671);
                 _errHandler.sync(this);
                 _alt = getInterpreter.adaptivePredict(_input,73, ctx_);
-                while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+                while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                     if ( _alt==1 ) {
                         {
                         {
@@ -5499,7 +5504,7 @@ public class RuleParser : Parser {
             setState(684);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,76, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -5743,7 +5748,7 @@ public class RuleParser : Parser {
             setState(724);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,82, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
                     {
                     {
@@ -6324,7 +6329,7 @@ public class RuleParser : Parser {
     	"\u0265\u0267\u026b\u0272\u0276\u027d\u0281\u0289\u0292\u0296\u029a"~
     	"\u02a1\u02a5\u02a7\u02ae\u02b2\u02bb\u02ca\u02ce\u02d2\u02d6\u02df"~
     	"\u02e1";
-    public static ATN _ATN;
+    public static ATNType _ATN;
 
     static this() {
         auto atnDeserializer = new ATNDeserializer;

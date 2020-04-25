@@ -1,13 +1,17 @@
-// Generated from Expr.g4 by ANTLR 4.7.2
-import antlr.v4.runtime.atn.ATN;
+// Generated from Expr.g4 by ANTLR 4.8
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.PredictionContextCache;
+import antlr.v4.runtime.atn.PredictionModeConst;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.atn.InterfaceParserATNSimulator;
 import antlr.v4.runtime.dfa.DFA;
+import antlr.v4.runtime.BailErrorStrategy;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Parser;
 import antlr.v4.runtime.Token;
+import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.TokenConstantDefinition;
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -21,10 +25,11 @@ import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
-import std.variant : Variant;
+import antlr.v4.runtime.tree.ParseTreeWalker;
+import std.conv : to;
 
 public class ExprParser : Parser {
-    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -48,20 +53,19 @@ public class ExprParser : Parser {
     /**
      * @deprecated Use {@link #VOCABULARY} instead.
      */
-    public static string[] tokenNames;
+    public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        string[_SYMBOLIC_NAMES.length] tokenNames;
         for (int i = 0; i < tokenNames.length; i++) {
             tokenNames[i] = VOCABULARY.getLiteralName(i);
                 if (tokenNames[i] is null) {
                     tokenNames[i] = VOCABULARY.getSymbolicName(i);
             }
-
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = "<INVALID>";
-                }
+            if (tokenNames[i] is null)
+            {
+                tokenNames[i] = "<INVALID>";
+            }
         }
     }
 
@@ -83,7 +87,7 @@ public class ExprParser : Parser {
     public wstring getSerializedATN() { return _serializedATN; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     public this(TokenStream input) {
         super(input);
@@ -117,6 +121,7 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitProg(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
@@ -168,7 +173,7 @@ public class ExprParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_expr; }
-
+     
         public this() { }
             alias copyFrom = ParserRuleContext.copyFrom;
         public void copyFrom(ExprContext ctx) {
@@ -196,9 +201,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitDiv(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitDiv(this);
@@ -227,9 +232,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitAdd(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitAdd(this);
@@ -258,9 +263,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitSub(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitSub(this);
@@ -289,9 +294,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitMul(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitMul(this);
@@ -317,9 +322,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitBracketExpr(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitBracketExpr(this);
@@ -343,9 +348,9 @@ public class ExprParser : Parser {
             if (cast(ExprListener.ExprListener)listener)
                 (cast(ExprListener)listener).exitInt(this);
         }
+        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import std.variant : Variant;
             import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor)visitor)
                 return (cast(ExprVisitor)visitor).visitInt(this);
@@ -402,9 +407,9 @@ public class ExprParser : Parser {
             setState(34);
             _errHandler.sync(this);
             _alt = getInterpreter.adaptivePredict(_input,3, ctx_);
-            while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
+            while ( _alt!=2 && _alt!=ATNType.INVALID_ALT_NUMBER ) {
                 if ( _alt==1 ) {
-                    if ( _parseListeners!=null ) triggerExitRuleEvent();
+                    if (_parseListeners) triggerExitRuleEvent();
                     _prevctx = _localctx;
                     {
                     setState(32);
@@ -460,7 +465,7 @@ public class ExprParser : Parser {
                         break;
                             default: {}
                     }
-                    }
+                    } 
                 }
                 setState(36);
                 _errHandler.sync(this);
@@ -505,26 +510,26 @@ public class ExprParser : Parser {
 
     public static immutable wstring _serializedATN =
         "\x03\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\x03\n(\x04"~
-        "\x02\t\x02\x04\x03\t\x03\x03\x02\x03\x02\x03\x02\x07\x02\n\n\x02\f"~
-        "\x02\x0e\x02\r\x0b\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03"~
-        "\x03\x05\x03\x15\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03"~
-        "\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03#\n\x03"~
-        "\f\x03\x0e\x03&\x0b\x03\x03\x03\x02\x03\x04\x04\x02\x04\x02\x02\x02"~
-        "+\x02\x0b\x03\x02\x02\x02\x04\x14\x03\x02\x02\x02\x06\x07\x05\x04\x03"~
-        "\x02\x07\b\x07\t\x02\x02\b\n\x03\x02\x02\x02\t\x06\x03\x02\x02\x02"~
-        "\n\r\x03\x02\x02\x02\x0b\t\x03\x02\x02\x02\x0b\f\x03\x02\x02\x02\f"~
-        "\x03\x03\x02\x02\x02\r\x0b\x03\x02\x02\x02\x0e\x0f\b\x03\x01\x02\x0f"~
-        "\x15\x07\n\x02\x02\x10\x11\x07\x07\x02\x02\x11\x12\x05\x04\x03\x02"~
-        "\x12\x13\x07\b\x02\x02\x13\x15\x03\x02\x02\x02\x14\x0e\x03\x02\x02"~
-        "\x02\x14\x10\x03\x02\x02\x02\x15$\x03\x02\x02\x02\x16\x17\f\b\x02\x02"~
-        "\x17\x18\x07\x03\x02\x02\x18#\x05\x04\x03\t\x19\x1a\f\x07\x02\x02\x1a"~
-        "\x1b\x07\x04\x02\x02\x1b#\x05\x04\x03\b\x1c\x1d\f\x06\x02\x02\x1d\x1e"~
-        "\x07\x05\x02\x02\x1e#\x05\x04\x03\x07\x1f \f\x05\x02\x02 !\x07\x06"~
-        "\x02\x02!#\x05\x04\x03\x06\"\x16\x03\x02\x02\x02\"\x19\x03\x02\x02"~
-        "\x02\"\x1c\x03\x02\x02\x02\"\x1f\x03\x02\x02\x02#&\x03\x02\x02\x02"~
-        "$\"\x03\x02\x02\x02$%\x03\x02\x02\x02%\x05\x03\x02\x02\x02&$\x03\x02"~
-        "\x02\x02\x06\x0b\x14\"$";
-    public static ATN _ATN;
+    	"\x02\t\x02\x04\x03\t\x03\x03\x02\x03\x02\x03\x02\x07\x02\n\n\x02\f"~
+    	"\x02\x0e\x02\r\x0b\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03"~
+    	"\x03\x05\x03\x15\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03"~
+    	"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03#\n\x03"~
+    	"\f\x03\x0e\x03&\x0b\x03\x03\x03\x02\x03\x04\x04\x02\x04\x02\x02\x02"~
+    	"+\x02\x0b\x03\x02\x02\x02\x04\x14\x03\x02\x02\x02\x06\x07\x05\x04\x03"~
+    	"\x02\x07\b\x07\t\x02\x02\b\n\x03\x02\x02\x02\t\x06\x03\x02\x02\x02"~
+    	"\n\r\x03\x02\x02\x02\x0b\t\x03\x02\x02\x02\x0b\f\x03\x02\x02\x02\f"~
+    	"\x03\x03\x02\x02\x02\r\x0b\x03\x02\x02\x02\x0e\x0f\b\x03\x01\x02\x0f"~
+    	"\x15\x07\n\x02\x02\x10\x11\x07\x07\x02\x02\x11\x12\x05\x04\x03\x02"~
+    	"\x12\x13\x07\b\x02\x02\x13\x15\x03\x02\x02\x02\x14\x0e\x03\x02\x02"~
+    	"\x02\x14\x10\x03\x02\x02\x02\x15$\x03\x02\x02\x02\x16\x17\f\b\x02\x02"~
+    	"\x17\x18\x07\x03\x02\x02\x18#\x05\x04\x03\t\x19\x1a\f\x07\x02\x02\x1a"~
+    	"\x1b\x07\x04\x02\x02\x1b#\x05\x04\x03\b\x1c\x1d\f\x06\x02\x02\x1d\x1e"~
+    	"\x07\x05\x02\x02\x1e#\x05\x04\x03\x07\x1f \f\x05\x02\x02 !\x07\x06"~
+    	"\x02\x02!#\x05\x04\x03\x06\"\x16\x03\x02\x02\x02\"\x19\x03\x02\x02"~
+    	"\x02\"\x1c\x03\x02\x02\x02\"\x1f\x03\x02\x02\x02#&\x03\x02\x02\x02"~
+    	"$\"\x03\x02\x02\x02$%\x03\x02\x02\x02%\x05\x03\x02\x02\x02&$\x03\x02"~
+    	"\x02\x02\x06\x0b\x14\"$";
+    public static ATNType _ATN;
 
     static this() {
         auto atnDeserializer = new ATNDeserializer;

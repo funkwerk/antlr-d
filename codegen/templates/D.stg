@@ -234,10 +234,10 @@ public class <parser.name> : <superClass; null="Parser"> {
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
     <if(parser.tokens)>
-    public static const int
+    public enum int
         <parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator=",", wrap, anchor>;
     <endif>
-    public static const int
+    public enum int
         <parser.rules:{r | RULE_<r.name> = <r.index>}; separator=",", wrap, anchor>;
     public static const string[] ruleNames = [
         <parser.ruleNames:{r | "<r>"}; separator=",", wrap, anchor>
@@ -296,16 +296,17 @@ public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
 static this() {
     VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-    for (int i = 0; i \< tokenNames.length; i++) {
-        tokenNames[i] = VOCABULARY.getLiteralName(i);
-            if (tokenNames[i] is null) {
-                tokenNames[i] = VOCABULARY.getSymbolicName(i);
-        }
-        if (tokenNames[i] is null)
+    foreach (int i, ref tokenName; tokenNames)
         {
-            tokenNames[i] = "\<INVALID>";
+            tokenName = VOCABULARY.getLiteralName(i);
+                if (!tokenName) {
+                    tokenName = VOCABULARY.getSymbolicName(i);
+            }
+            if (!tokenName)
+            {
+                tokenName = "\<INVALID>";
+            }
         }
-    }
 }
 
 override public string[] getTokenNames() {
@@ -920,12 +921,12 @@ public class <lexer.name> : <superClass; null="Lexer"> {
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
     <if(lexer.tokens)>
-    public static immutable int
+    public enum int
         <lexer.tokens:{k | <k>=<lexer.tokens.(k)>}; separator=",",
     wrap, anchor>;
     <endif>
     <if(lexer.channels)>
-    public static immutable int
+    public enu int
         <lexer.channels:{k | <k>=<lexer.channels.(k)>}; separator=",", wrap, anchor>;
     <endif>
     public static string[] channelNames = [

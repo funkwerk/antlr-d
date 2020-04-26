@@ -109,6 +109,11 @@ unittest : $(BUILD_DIR)/TestRunner | $(BUILD_DIR)
 	-$(BUILD_DIR)/TestRunner $(TESTRUNNER_OPT)
 	@mv ./*.lst $(BUILD_DIR)
 
+.PHONY : test
+test : prepare_generator
+	cd $(BUILD_DIR)/$(ANTLR)/runtime-testsuite && mvn -Dtest=d.* test
+
+
 .PHONY : prepare_generator
 prepare_generator : | $(BUILD_DIR)
 	cd $(BUILD_DIR) && tar -xf ../$(ANTLR_DIR)/$(ANTLR_TAR)

@@ -1,13 +1,15 @@
-// Generated from RuleLexer.g4 by ANTLR 4.7.2
+// Generated from RuleLexer.g4 by ANTLR 4.8
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;
+import antlr.v4.runtime.RuleContext;
 import antlr.v4.runtime.RuntimeMetaData;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.TokenStream;
 import antlr.v4.runtime.Vocabulary;
 import antlr.v4.runtime.VocabularyImpl;
-import antlr.v4.runtime.atn.ATN;
+import antlr.v4.runtime.atn.ATN : ATN;
+alias ATNType = ATN;
 import antlr.v4.runtime.atn.PredictionContextCache;
 import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.LexerATNSimulator;
@@ -16,7 +18,7 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class RuleLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -85,20 +87,19 @@ public class RuleLexer : Lexer {
     /**
      * @deprecated Use {@link #VOCABULARY} instead.
      */
-    public static string[] tokenNames;
+    public static string[_SYMBOLIC_NAMES.length] tokenNames;
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        string[_SYMBOLIC_NAMES.length] tokenNames;
         for (int i = 0; i < tokenNames.length; i++) {
             tokenNames[i] = VOCABULARY.getLiteralName(i);
                 if (tokenNames[i] is null) {
                     tokenNames[i] = VOCABULARY.getSymbolicName(i);
             }
-
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = "<INVALID>";
-                }
+            if (tokenNames[i] is null)
+            {
+                tokenNames[i] = "<INVALID>";
+            }
         }
     }
 
@@ -240,7 +241,7 @@ public class RuleLexer : Lexer {
     public string[] getModeNames() { return modeNames; }
 
     override
-    public ATN getATN() { return _ATN; }
+    public ATNType getATN() { return _ATN; }
 
     override
     public void action(InterfaceRuleContext _localctx, int ruleIndex, int actionIndex) {
@@ -828,7 +829,7 @@ public class RuleLexer : Lexer {
     	"\u026d\u0270\u0278\u027e\u0283\u0286\u028a\u028d\u0291\u02a9\u02b1"~
     	"\u02b5\u02bb\u02ca\u02cd\f\x03\x1a\x02\x03\"\x03\x03#\x04\x03)\x05"~
     	"\x03*\x06\x035\x07\x036\b\b\x02\x02\x07\x03\x02\x06\x02\x02";
-    public static ATN _ATN;
+    public static ATNType _ATN;
 
     static this() {
         auto atnDeserializer = new ATNDeserializer;

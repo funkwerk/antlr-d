@@ -34,9 +34,9 @@ public class ExprParser : Parser {
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
-    public static const int
+    public enum int
         T__0=1,T__1=2,T__2=3,T__3=4,T__4=5,T__5=6,NEWLINE=7,INT=8;
-    public static const int
+    public enum int
         RULE_prog = 0,RULE_expr = 1;
     public static const string[] ruleNames = [
         "prog","expr"

@@ -611,7 +611,8 @@ public class BaseDTest implements RuntimeTestSupport {
         }
 
         try {
-            List<String> command2 = new ArrayList<String>(Arrays.asList("ldc2", "-I", includePath, "-L-lantlr-d", "-of", "a.out"));
+            List<String> command2 = new ArrayList<String>(Arrays.asList("ldc2", "-link-defaultlib-shared",
+                "-I", includePath, "-L-lantlr-d", "-of", "a.out"));
             command2.addAll(allCppFiles(tmpdir));
             if (runCommand(command2.toArray(new String[0]), tmpdir, "building test binary", true) == null) {
                 return null;

@@ -37,12 +37,8 @@ module antlr.v4.runtime.IntStreamConstant;
 class IntStreamConstant
 {
 
-    public static immutable int EOF = -1;
+    enum int EOF = -1;
 
-    /**
-     * The value returned by {@link #getSourceName} when the actual name of the
-     * underlying source is not known.
-     */
-    public static immutable string UNKNOWN_SOURCE_NAME = "<unknown>";
+    enum string UNKNOWN_SOURCE_NAME = "<unknown>";
 
 }

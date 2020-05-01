@@ -41,19 +41,19 @@ alias TokenFactorySourcePair = Tuple!(TokenSource, "a", CharStream, "b");
 abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, InterfaceLexer
 {
 
-    public static immutable int DEFAULT_MODE = 0;
+    enum int DEFAULT_MODE = 0;
 
-    public static immutable int MORE = -2;
+    enum int MORE = -2;
 
-    public static immutable int SKIP = -3;
+    enum int SKIP = -3;
 
-    public static immutable int DEFAULT_TOKEN_CHANNEL = TokenConstantDefinition.DEFAULT_CHANNEL;
+    enum int DEFAULT_TOKEN_CHANNEL = TokenConstantDefinition.DEFAULT_CHANNEL;
 
-    public static immutable int HIDDEN = TokenConstantDefinition.HIDDEN_CHANNEL;
+    enum int HIDDEN = TokenConstantDefinition.HIDDEN_CHANNEL;
 
-    public static immutable int MIN_CHAR_VALUE = 0;
+    enum int MIN_CHAR_VALUE = 0;
 
-    public static immutable int MAX_CHAR_VALUE = 0x10FFFF;
+    enum int MAX_CHAR_VALUE = 0x10FFFF;
 
     public CharStream _input;
 

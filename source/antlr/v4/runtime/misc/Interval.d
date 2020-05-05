@@ -20,7 +20,7 @@ class Interval
 
     public static const Interval INVALID = new Interval(-1, -2);
 
-    private static Interval[] cache = new Interval[INTERVAL_POOL_MAX_VALUE+1];
+    private static Interval[] cache = new Interval[INTERVAL_POOL_MAX_VALUE + 1];
 
     public int a;
 
@@ -192,8 +192,8 @@ class Interval
 
     unittest
     {
-        auto a = new Interval(1 , 2);
-        auto b = new Interval(3 , 10);
+        auto a = new Interval(1, 2);
+        auto b = new Interval(3, 10);
         assert(b.adjacent(a));
         assert(!b.adjacent(new Interval(1, 6)));
         assert(!b.adjacent(new Interval(10, 16)));

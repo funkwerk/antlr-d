@@ -61,7 +61,7 @@ class IntervalSet : IntSet
         addAll(set);
     }
 
-    public this(int[] els ...)
+    public this(int[] els...)
     {
         foreach (int e; els)
             add(e);

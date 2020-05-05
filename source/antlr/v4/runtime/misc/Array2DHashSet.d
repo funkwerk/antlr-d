@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -22,11 +22,11 @@ import antlr.v4.runtime.misc;
 class Array2DHashSet(T)
 {
 
-    public static immutable int INITAL_CAPACITY = 16;
+    enum int INITAL_CAPACITY = 16;
 
-    public static immutable int INITAL_BUCKET_CAPACITY = 8;
+    enum int INITAL_BUCKET_CAPACITY = 8;
 
-    public static immutable double LOAD_FACTOR = 0.75;
+    enum double LOAD_FACTOR = 0.75;
 
     protected size_t function(Object o) @trusted nothrow hashOfFp;
 
@@ -65,9 +65,8 @@ class Array2DHashSet(T)
         this(hashOfFp, opEqualsFp, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(size_t function(Object o) @trusted nothrow hashOfFp,
-            bool function(Object a, Object b) opEqualsFp,
-            int initialCapacity, int initialBucketCapacity)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a,
+            Object b) opEqualsFp, int initialCapacity, int initialBucketCapacity)
     {
         if (hashOfFp is null || opEqualsFp is null)
         {
@@ -198,7 +197,7 @@ class Array2DHashSet(T)
     {
         if (o is this)
             return true;
-        if (! cast(Array2DHashSet) o)
+        if (!cast(Array2DHashSet) o)
             return false;
         Array2DHashSet!T other = cast(Array2DHashSet!T) o;
         if (other.size() != size())

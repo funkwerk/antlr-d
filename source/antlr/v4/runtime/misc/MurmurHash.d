@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The ANTLR Project. All rights reserved.
+ * Copyright (c) 2012-2020 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -16,7 +16,7 @@ import std.stdio;
 class MurmurHash
 {
 
-    public static immutable size_t DEFAULT_SEED = 0;
+    enum size_t DEFAULT_SEED = 0;
 
     /**
      * Initialize the hash using the default seed value.

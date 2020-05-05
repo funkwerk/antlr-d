@@ -49,7 +49,8 @@ struct BitSet
 
     public int nextSetBit(int fromIndex)
     {
-        foreach (i, el; bitSet) {
+        foreach (i, el; bitSet)
+        {
             if (i > fromIndex && el == true)
                 return to!int(i);
         }
@@ -94,7 +95,7 @@ struct BitSet
                     res ~= to!string(j) ~ ", ";
                 }
             }
-            return format!"{%s}"(res[0 .. $-2]);
+            return format!"{%s}"(res[0 .. $ - 2]);
         }
         else
             return "{}";
@@ -134,9 +135,8 @@ struct BitSet
         auto maxLenght = max(this.bitSet.length, bits.bitSet.length);
         if (this.bitSet.length < maxLenght)
             this.bitSet.length = maxLenght;
-        else
-            if (bits.values.length < maxLenght)
-                bits.values.length = maxLenght;
+        else if (bits.values.length < maxLenght)
+            bits.values.length = maxLenght;
         result.bitSet = this.bitSet | bits.bitSet;
         return result;
     }
@@ -145,11 +145,12 @@ struct BitSet
     {
         import std.conv;
         import std.array : join;
+
         string[] res;
         int index;
-        foreach(i, el; bitSet)
+        foreach (i, el; bitSet)
         {
-            if(el)
+            if (el)
                 res ~= to!string(i);
         }
         return "{" ~ join(res, ",") ~ "}";

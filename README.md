@@ -44,5 +44,5 @@ and additional ExprVisitor.d and ExprBaseVisitor.d sources are created.
 
 ## Externsion versus other ANTLR runtime versions
 
-The data type to store text is Variant. This is handy for the rewriting feature on an indent-based syntax like Python. In this case we need a structure representing the text as well as the number of indents.
+The data type to store text is [Variant](https://dlang.org/phobos/std_variant.html). This is handy for the rewriting feature on an indent-based syntax like Python. In this case we need a structure representing the text as well as the number of indents.
 

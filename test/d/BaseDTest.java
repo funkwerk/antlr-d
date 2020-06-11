@@ -576,7 +576,7 @@ public class BaseDTest implements RuntimeTestSupport {
         String binPath = new File(new File(tmpdir), "a.out").getAbsolutePath();
         String inputPath = new File(new File(tmpdir), "input").getAbsolutePath();
 
-        // Build runtime using cmake once.
+        // Build runtime using dub once.
         synchronized (runtimeBuiltOnce) {
             if ( !runtimeBuiltOnce ) {
                 try {

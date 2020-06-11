@@ -34,14 +34,9 @@ abstract class PredictionContext
      */
     public static const EmptyPredictionContext EMPTY = new EmptyPredictionContext;
 
-    /**
-     * Represents {@code $} in an array in full context mode, when {@code $}
-     * doesn't mean wildcard: {@code $ + x = [$,x]}. Here,
-     * {@code $} = {@link #EMPTY_RETURN_STATE}.
-     */
-    public static immutable int EMPTY_RETURN_STATE = int.max;
+    enum int EMPTY_RETURN_STATE = int.max;
 
-    private static immutable int INITIAL_HASH = 1;
+    enum int INITIAL_HASH = 1;
 
     /**
      * @uml

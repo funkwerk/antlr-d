@@ -20,6 +20,8 @@ import std.conv;
 import std.format;
 import std.variant;
 
+enum string DEFAULT_PROGRAM_NAME = "default";
+
 /**
  * Useful for rewriting out a buffered input token stream after doing some
  * augmentation or other manipulations on it.
@@ -93,8 +95,6 @@ import std.variant;
  */
 class TokenStreamRewriter
 {
-
-    enum string DEFAULT_PROGRAM_NAME = "default";
 
     enum int MIN_TOKEN_INDEX = 0;
 

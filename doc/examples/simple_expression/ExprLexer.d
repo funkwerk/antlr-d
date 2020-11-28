@@ -51,16 +51,17 @@ public class ExprLexer : Lexer {
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        for (int i = 0; i < tokenNames.length; i++) {
-            tokenNames[i] = VOCABULARY.getLiteralName(i);
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = VOCABULARY.getSymbolicName(i);
-            }
-            if (tokenNames[i] is null)
+        foreach (i, ref tokenName; tokenNames)
             {
-                tokenNames[i] = "<INVALID>";
+                tokenName = VOCABULARY.getLiteralName(cast(int)i);
+                    if (!tokenName) {
+                        tokenName = VOCABULARY.getSymbolicName(cast(int)i);
+                }
+                if (!tokenName)
+                {
+                    tokenName = "<INVALID>";
+                }
             }
-        }
     }
 
     override public string[] getTokenNames() {

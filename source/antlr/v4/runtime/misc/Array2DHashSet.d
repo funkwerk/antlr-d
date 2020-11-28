@@ -65,8 +65,8 @@ class Array2DHashSet(T)
         this(hashOfFp, opEqualsFp, INITAL_CAPACITY, INITAL_BUCKET_CAPACITY);
     }
 
-    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a,
-            Object b) opEqualsFp, int initialCapacity, int initialBucketCapacity)
+    public this(size_t function(Object o) @trusted nothrow hashOfFp, bool function(Object a, Object b) opEqualsFp,
+                int initialCapacity, int initialBucketCapacity)
     {
         if (hashOfFp is null || opEqualsFp is null)
         {

@@ -155,19 +155,17 @@ class RuntimeMetaData
 
 }
 
-version(unittest) {
+version (AntlrUnittest)
+{
 
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+    import dshould;
+    import unit_threaded : Tags;
+}
 
-    class Test {
-
-        @Tags("mt", "reg")
-        @("compareMetaDataVersion")
-        unittest {
-            "4.8".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
-            RuntimeMetaData.checkVersion("4.8", "4.8.0");
-        }
-    }
+@Tags("mt", "reg")
+@("compareMetaDataVersion")
+unittest
+{
+    "4.8".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
+    RuntimeMetaData.checkVersion("4.8", "4.8.0");
 }

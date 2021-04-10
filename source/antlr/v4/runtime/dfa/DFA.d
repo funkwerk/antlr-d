@@ -201,19 +201,19 @@ class DFA
 
 }
 
-version(unittest) {
-    import dshould : equal, not, be, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
+}
 
-    @Tags("DFA")
-    @("Construction")
-    unittest
-        {
-            import std.stdio;
-            import antlr.v4.runtime.atn.TokensStartState;
-            DecisionState startState = new TokensStartState;
-            DFA dfa = new DFA(startState);
-            dfa.should.not.be(null);
-        }
+@Tags("DFA")
+@("Construction")
+unittest
+{
+    import antlr.v4.runtime.atn.TokensStartState;
+
+    DecisionState startState = new TokensStartState;
+    DFA dfa = new DFA(startState);
+    dfa.should.not.be(null);
 }

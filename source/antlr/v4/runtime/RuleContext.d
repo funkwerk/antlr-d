@@ -284,52 +284,54 @@ class RuleContext : RuleNode, InterfaceRuleContext
 
 }
 
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
+}
 
-    class Test {
-        @Tags("ruleCont", "reg")
-        @("simpleRuleContext")
-        unittest {
-            auto rcp = new RuleContext(null, -1);
-            auto rc = new RuleContext(rcp, -1);
-            rc.should.not.be(null);
-            rcp.depth.should.equal(1);
-            rc.isEmpty.should.equal(true);
-            rc.parent.isEmpty.should.equal(true);
-            rc.getParent.isEmpty.should.equal(true);
-            rc.depth.should.equal(2);
-            rc.toString.should.equal("[]");
-            rc.toStringTree.should.equal("[]");
-            rc.getAltNumber.should.equal(0);
+@Tags("ruleCont", "reg")
+@("simpleRuleContext")
+unittest
+{
+    auto rcp = new RuleContext(null, -1);
+    auto rc = new RuleContext(rcp, -1);
+    rc.should.not.be(null);
+    rcp.depth.should.equal(1);
+    rc.isEmpty.should.equal(true);
+    rc.parent.isEmpty.should.equal(true);
+    rc.getParent.isEmpty.should.equal(true);
+    rc.depth.should.equal(2);
+    rc.toString.should.equal("[]");
+    rc.toStringTree.should.equal("[]");
+    rc.getAltNumber.should.equal(0);
+}
+
+@Tags("ruleContVoc", "reg")
+@("ruleContextWithVocabulary")
+unittest
+{
+    class RuleContextT : RuleContext
+    {
+        public this(RuleContext parent, int invokingState)
+        {
+            super(parent, invokingState);
         }
 
-        @Tags("ruleContVoc", "reg")
-        @("ruleContextWithVocabulary")
-        unittest {
-            class RuleContextT : RuleContext {
-                public this(RuleContext parent, int invokingState)
-                {
-                    super(parent, invokingState);
-                }
-
-                override public size_t getRuleIndex()
-                {
-                    return invokingState;
-                }
-            }
-            auto rcp = new RuleContext(null, 1);
-            auto rc = new RuleContext(rcp, 0);
-            rc.should.not.be(null);
-            rc.toString(["A1", "B1"]).should.equal("[" ~ to!string(size_t.max)
-             ~ " " ~ to!string(size_t.max) ~ "]");
-
-            rcp = new RuleContextT(null, 1);
-            rc = new RuleContextT(rcp, 0);
-            rc.should.not.be(null);
-            rc.toString(["A1", "B1"]).should.equal("[A1 B1]");
+        override public size_t getRuleIndex()
+        {
+            return invokingState;
         }
     }
+
+    auto rcp = new RuleContext(null, 1);
+    auto rc = new RuleContext(rcp, 0);
+    rc.should.not.be(null);
+    rc.toString(["A1", "B1"]).should.equal("[" ~ to!string(size_t.max)
+        ~ " " ~ to!string(size_t.max) ~ "]");
+
+    rcp = new RuleContextT(null, 1);
+    rc = new RuleContextT(rcp, 0);
+    rc.should.not.be(null);
+    rc.toString(["A1", "B1"]).should.equal("[A1 B1]");
 }

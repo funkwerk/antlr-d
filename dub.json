@@ -3,38 +3,44 @@
     "license": "BSD",
     "copyright": "Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.",
     "description": "ANTLR4 runtime library",
-    "dependencies": {
-    },
+    "dependencies": {},
     "authors": [
-    "Egbert Voigt <Egbert.Voigt@funkwerk-itk.com>"
+        "Egbert Voigt <Egbert.Voigt@funkwerk-itk.com>"
     ],
-
-    "configurations":
-    [
-    {
-        "name": "executable",
-            "sourcePaths": ["source"],
+    "configurations": [
+        {
+            "name": "executable",
+            "sourcePaths": [
+                "source"
+            ],
             "targetName": "antlr-d",
             "targetPath": "lib",
             "targetType": "library"
-    },
-    {
+        },
+        {
             "name": "unittest",
-            "sourcePaths": ["unittest/complex",
-                            "unittest/simple",
-                            "unittest/separated_grammar"],
-            "importPaths": ["unittest/complex",
-                            "unittest/simple",
-                            "unittest/separated_grammar"],
-        "targetType": "executable",
-        "dependencies": {
+            "sourcePaths": [
+                "unittest/complex",
+                "unittest/simple",
+                "unittest/separated_grammar"
+            ],
+            "importPaths": [
+                "unittest/complex",
+                "unittest/simple",
+                "unittest/separated_grammar"
+            ],
+            "targetType": "executable",
+            "versions": [
+                "AntlrUnittest"
+            ],
+            "dependencies": {
                 "dshould": ">=1.1.0",
                 "unit-threaded": ">=0.10.4"
-        },
-        "preBuildCommands": [
-        "dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"
-        ],
-        "mainSourceFile": "bin/ut.d"
-    }
+            },
+            "preBuildCommands": [
+                "dub run unit-threaded -c gen_ut_main -- -f bin/ut.d"
+            ],
+            "mainSourceFile": "bin/ut.d"
+        }
     ]
 }

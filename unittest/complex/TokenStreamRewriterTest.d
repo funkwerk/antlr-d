@@ -89,7 +89,8 @@ unittest
 
 @Tags("TokenStreamRewriter")
 @("replace_and_delete")
-unittest {
+unittest
+{
     class InsertTestListenerReplace : RuleTranslatorBaseListener
     {
         TokenStreamRewriter rewriter;

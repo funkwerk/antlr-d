@@ -723,49 +723,49 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("ArrayPredictionContext")
-@("empty")
-unittest
-{
-    auto spcA = new EmptyPredictionContext;
-    spcA.should.not.be(null);
-    auto spcB = new SingletonPredictionContext(new EmptyPredictionContext, 0);
-    spcA.should.not.equal(spcB);
-    spcA.hasEmptyPath.should.equal(true);
-    spcA.isEmpty.should.equal(true);
-    spcB.hasEmptyPath.should.equal(false);
-    spcB.isEmpty.should.equal(false);
-}
+    @Tags("ArrayPredictionContext")
+    @("empty")
+    unittest
+    {
+        auto spcA = new EmptyPredictionContext;
+        spcA.should.not.be(null);
+        auto spcB = new SingletonPredictionContext(new EmptyPredictionContext, 0);
+        spcA.should.not.equal(spcB);
+        spcA.hasEmptyPath.should.equal(true);
+        spcA.isEmpty.should.equal(true);
+        spcB.hasEmptyPath.should.equal(false);
+        spcB.isEmpty.should.equal(false);
+    }
 
-@Tags("ArrayPredictionContext")
-@("mergeArrayContext")
-unittest
-{
-    DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
-    auto spcA = new EmptyPredictionContext;
-    auto apcA = new ArrayPredictionContext(spcA);
-    apcA.should.not.be(null);
-    auto spcB = new EmptyPredictionContext;
-    auto apcB = new ArrayPredictionContext(spcB);
-    apcB.should.not.be(null);
-    auto spcC = new EmptyPredictionContext;
+    @Tags("ArrayPredictionContext")
+    @("mergeArrayContext")
+    unittest
+    {
+        DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache;
+        auto spcA = new EmptyPredictionContext;
+        auto apcA = new ArrayPredictionContext(spcA);
+        apcA.should.not.be(null);
+        auto spcB = new EmptyPredictionContext;
+        auto apcB = new ArrayPredictionContext(spcB);
+        apcB.should.not.be(null);
+        auto spcC = new EmptyPredictionContext;
 
-    PredictionContext[] predA = [apcA, apcB, spcC, apcA]; // not unique
-    predA.length.should.equal(4);
-    PredictionContext.combineCommonParents(predA);
-    predA.length.should.equal(4);
-}
+        PredictionContext[] predA = [apcA, apcB, spcC, apcA]; // not unique
+        predA.length.should.equal(4);
+        PredictionContext.combineCommonParents(predA);
+        predA.length.should.equal(4);
+    }
 
-@Tags("ArrayPredictionContext")
-@("mergeEmptyContext")
-unittest
-{
-    auto spcC = new EmptyPredictionContext;
-    spcC.should.not.be(null);
-    auto spcD = new EmptyPredictionContext;
+    @Tags("ArrayPredictionContext")
+    @("mergeEmptyContext")
+    unittest
+    {
+        auto spcC = new EmptyPredictionContext;
+        spcC.should.not.be(null);
+        auto spcD = new EmptyPredictionContext;
 
-    PredictionContext[] predB = [spcC, spcD];
-    PredictionContext.combineCommonParents(predB);
+        PredictionContext[] predB = [spcC, spcD];
+        PredictionContext.combineCommonParents(predB);
+    }
 }

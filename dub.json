@@ -9,7 +9,7 @@
     ],
     "configurations": [
         {
-            "name": "executable",
+            "name": "runtime",
             "sourcePaths": [
                 "source"
             ],

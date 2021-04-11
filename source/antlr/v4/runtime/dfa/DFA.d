@@ -205,15 +205,15 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("DFA")
-@("Construction")
-unittest
-{
-    import antlr.v4.runtime.atn.TokensStartState;
+    @Tags("DFA")
+    @("Construction")
+    unittest
+    {
+        import antlr.v4.runtime.atn.TokensStartState;
 
-    DecisionState startState = new TokensStartState;
-    DFA dfa = new DFA(startState);
-    dfa.should.not.be(null);
+        DecisionState startState = new TokensStartState;
+        DFA dfa = new DFA(startState);
+        dfa.should.not.be(null);
+    }
 }

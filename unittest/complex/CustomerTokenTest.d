@@ -17,14 +17,13 @@ import antlr.v4.runtime.TokenSource;
 import antlr.v4.runtime.TokenStreamRewriter : TokenStreamRewriter;
 import antlr.v4.runtime.atn.ParserATNSimulator;
 import antlr.v4.runtime.tree.ParseTreeWalker;
-import dshould : be, equal, not, should;
-import dshould.thrown;
+import dshould;
 import std.conv : to;
-import std.stdio : File, writefln;
 import std.file;
-import unit_threaded;
+import std.stdio : File, writefln;
 import std.typecons;
 import std.variant;
+import unit_threaded : Tags;
 
 class ResultTokenFactory : CommonTokenFactory {
     CharStream input;
@@ -142,8 +141,8 @@ public class ResultListener : RuleTranslatorBaseListener {
 
 @Tags("CustomerToken")
 @("add source name")
-unittest {
-
+unittest
+{
     auto expected =
         `
 ruleDelayasDELAYde
@@ -177,4 +176,3 @@ basede.Phrases
     auto str = extractor.rewriter.getText.get!(string);
     str.should.equal(expected);
 }
-

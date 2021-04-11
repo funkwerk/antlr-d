@@ -87,49 +87,49 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("DoubleKeyMap")
-@("construction DoubleKeyMap")
-unittest
-{
-    auto t1 = new DoubleKeyMap!(int, int, int);
-    t1.put(7, 1, 12);
-    t1.put(7, 1, 13);
-    auto x = t1.get(7, 1);
-    x.get.should.equal(13);
-    x = t1.get(7, 2);
-    x.isNull.should.equal(true);
-}
+    @Tags("DoubleKeyMap")
+    @("construction DoubleKeyMap")
+    unittest
+    {
+        auto t1 = new DoubleKeyMap!(int, int, int);
+        t1.put(7, 1, 12);
+        t1.put(7, 1, 13);
+        auto x = t1.get(7, 1);
+        x.get.should.equal(13);
+        x = t1.get(7, 2);
+        x.isNull.should.equal(true);
+    }
 
-@Tags("DoubleKeyMap")
-@("comparing DoubleKeyMaps")
-unittest
-{
-    auto t1 = new DoubleKeyMap!(int, int, int);
-    t1.put(7, 1, 13);
-    auto y = t1.get(7);
-    int[int] c;
-    c[1] = 13;
-    c.should.equal(y);
-    y = t1.get(6);
-    y.length.should.equal(0);
-    t1.put(7, 4, 71);
-    c[4] = 71;
-    y = t1.get(7);
-    c.should.equal(y);
+    @Tags("DoubleKeyMap")
+    @("comparing DoubleKeyMaps")
+    unittest
+    {
+        auto t1 = new DoubleKeyMap!(int, int, int);
+        t1.put(7, 1, 13);
+        auto y = t1.get(7);
+        int[int] c;
+        c[1] = 13;
+        c.should.equal(y);
+        y = t1.get(6);
+        y.length.should.equal(0);
+        t1.put(7, 4, 71);
+        c[4] = 71;
+        y = t1.get(7);
+        c.should.equal(y);
 
-    auto v1 = t1.values(7);
-    v1.should.equal([71, 13]);
-    v1 = t1.values(0);
-    v1.should.equal([]);
+        auto v1 = t1.values(7);
+        v1.should.equal([71, 13]);
+        v1 = t1.values(0);
+        v1.should.equal([]);
 
-    auto kx = t1.keySet;
-    auto kk = [7];
-    kk.should.equal(kx);
+        auto kx = t1.keySet;
+        auto kk = [7];
+        kk.should.equal(kx);
 
-    auto tx = t1.keySet(8);
-    tx.should.equal([]);
-    tx = t1.keySet(7);
-    tx.should.equal([4, 1]);
+        auto tx = t1.keySet(8);
+        tx.should.equal([]);
+        tx = t1.keySet(7);
+        tx.should.equal([4, 1]);
+    }
 }

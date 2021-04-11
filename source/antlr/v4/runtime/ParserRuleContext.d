@@ -360,20 +360,20 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("parserRC")
-@("emptyInstanceParserRuleContext")
-unittest
-{
-    auto rpc = ParserRuleContext.EMPTY;
-    rpc.should.not.be(null);
-    rpc.getChildCount.should.equal(0);
-    auto rpc1 = ParserRuleContext.EMPTY;
-    rpc1.should.not.be(null);
-    rpc1.should.be(rpc);
-    rpc.getStart.should.equal(null);
-    rpc.getStop.should.equal(null);
-    rpc.getSourceInterval.toString.should.equal("-1..-2");
-    rpc.getParent.should.be(null);
+    @Tags("parserRC")
+    @("emptyInstanceParserRuleContext")
+    unittest
+    {
+        auto rpc = ParserRuleContext.EMPTY;
+        rpc.should.not.be(null);
+        rpc.getChildCount.should.equal(0);
+        auto rpc1 = ParserRuleContext.EMPTY;
+        rpc1.should.not.be(null);
+        rpc1.should.be(rpc);
+        rpc.getStart.should.equal(null);
+        rpc.getStop.should.equal(null);
+        rpc.getSourceInterval.toString.should.equal("-1..-2");
+        rpc.getParent.should.be(null);
+    }
 }

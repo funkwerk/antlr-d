@@ -109,37 +109,37 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("SingletonPredictionContext")
-@("Construction")
-unittest
-{
-    PredictionContext spc = SingletonPredictionContext.create(null, 12);
-    spc.should.not.be(null);
-    spc.toString.should.equal("12 $");
-    spc.getReturnState(0).should.equal(12);
-    (cast(PredictionContext)spc.getParent(0)).should.not.be(null);
-    auto emptyPC = SingletonPredictionContext.create(null,
-                                                        PredictionContext.EMPTY_RETURN_STATE);
-    (cast(SingletonPredictionContext)emptyPC).should.not.be(null);
-    spc = SingletonPredictionContext.create(emptyPC, 11);
-    spc.toString.should.equal("11 $");
-    auto spc1 = SingletonPredictionContext.create(spc, 10);
-    spc1.toString.should.equal("10 11 $");
-}
+    @Tags("SingletonPredictionContext")
+    @("Construction")
+    unittest
+    {
+        PredictionContext spc = SingletonPredictionContext.create(null, 12);
+        spc.should.not.be(null);
+        spc.toString.should.equal("12 $");
+        spc.getReturnState(0).should.equal(12);
+        (cast(PredictionContext)spc.getParent(0)).should.not.be(null);
+        auto emptyPC = SingletonPredictionContext.create(null,
+                                                            PredictionContext.EMPTY_RETURN_STATE);
+        (cast(SingletonPredictionContext)emptyPC).should.not.be(null);
+        spc = SingletonPredictionContext.create(emptyPC, 11);
+        spc.toString.should.equal("11 $");
+        auto spc1 = SingletonPredictionContext.create(spc, 10);
+        spc1.toString.should.equal("10 11 $");
+    }
 
-@Tags("SingletonPredictionContext")
-@("Compare")
-unittest
-{
-    auto spc11 = SingletonPredictionContext.create(null, 11);
-    auto spc12 = SingletonPredictionContext.create(null, 12);
-    auto spc = SingletonPredictionContext.create(null, 12);
-    spc.should.equal(spc12);
-    spc11.should.not.equal(spc12);
-    spc12.should.equal(spc12);
-    class A {}
-    auto a = new A;
-    spc11.should.not.equal(a);
+    @Tags("SingletonPredictionContext")
+    @("Compare")
+    unittest
+    {
+        auto spc11 = SingletonPredictionContext.create(null, 11);
+        auto spc12 = SingletonPredictionContext.create(null, 12);
+        auto spc = SingletonPredictionContext.create(null, 12);
+        spc.should.equal(spc12);
+        spc11.should.not.equal(spc12);
+        spc12.should.equal(spc12);
+        class A {}
+        auto a = new A;
+        spc11.should.not.equal(a);
+    }
 }

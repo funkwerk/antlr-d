@@ -457,16 +457,16 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("atnConfigSet")
-@("atnConfigSetTest")
-unittest
-{
-    ATNConfigSet atnConfigSet = new ATNConfigSet;
-    atnConfigSet.should.not.be(null);
-    atnConfigSet.readonly.should.equal(false);
-    atnConfigSet.toString.should.equal("[]");
-    atnConfigSet.isEmpty.should.equal(true);
-    atnConfigSet.toHash.should.equal(0);
+    @Tags("atnConfigSet")
+    @("atnConfigSetTest")
+    unittest
+    {
+        ATNConfigSet atnConfigSet = new ATNConfigSet;
+        atnConfigSet.should.not.be(null);
+        atnConfigSet.readonly.should.equal(false);
+        atnConfigSet.toString.should.equal("[]");
+        atnConfigSet.isEmpty.should.equal(true);
+        atnConfigSet.toHash.should.equal(0);
+    }
 }

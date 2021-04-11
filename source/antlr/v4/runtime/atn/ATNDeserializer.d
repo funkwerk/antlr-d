@@ -1270,12 +1270,12 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("des11")
-@("testEncodingATNDeserialize")
-unittest
-{
-    auto des = new ATNDeserializer;
-    des.should.not.be(null);
+    @Tags("des11")
+    @("testEncodingATNDeserialize")
+    unittest
+    {
+        auto des = new ATNDeserializer;
+        des.should.not.be(null);
+    }
 }

@@ -142,30 +142,30 @@ version (AntlrUnittest)
 {
     import dshould;
     import unit_threaded : Tags;
-}
 
-@Tags("MurmurHash")
-@("Calculation")
-unittest
-{
-    auto hash = MurmurHash.initialize;
-    hash.should.equal(0);
-    hash = MurmurHash.update(hash, 33);
-    static if (size_t.sizeof == 4)
+    @Tags("MurmurHash")
+    @("Calculation")
+    unittest
     {
-        hash.should.equal(3641358107U);
-    }
-    else
-    {
-        hash.should.equal(6137767987951124103UL);
-    }
-    hash = MurmurHash.finish(hash, 1);
-    static if (size_t.sizeof == 4)
-    {
-        hash.should.equal(2689861987U);
-    }
-    else
-    {
-        hash.should.equal(4470425249505779227UL);
+        auto hash = MurmurHash.initialize;
+        hash.should.equal(0);
+        hash = MurmurHash.update(hash, 33);
+        static if (size_t.sizeof == 4)
+        {
+            hash.should.equal(3641358107U);
+        }
+        else
+        {
+            hash.should.equal(6137767987951124103UL);
+        }
+        hash = MurmurHash.finish(hash, 1);
+        static if (size_t.sizeof == 4)
+        {
+            hash.should.equal(2689861987U);
+        }
+        else
+        {
+            hash.should.equal(4470425249505779227UL);
+        }
     }
 }

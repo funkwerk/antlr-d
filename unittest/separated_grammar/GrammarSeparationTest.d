@@ -7,23 +7,21 @@ import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.LexerNoViableAltException;
 import antlr.v4.runtime.Token;
 import antlr.v4.runtime.tree.ParseTreeWalker;
-import dshould : be, equal, not, should;
-import dshould.thrown;
+import antlr.v4.runtime.atn.ParserATNSimulator;
+import dshould;
 import RuleLexer;
 import RuleParser;
 import RuleWriter;
 import RuleParserBaseListener;
-import antlr.v4.runtime.Token;
-import antlr.v4.runtime.atn.ParserATNSimulator;
 import std.conv;
 import std.file;
 import std.stdio;
-import unit_threaded;
+import unit_threaded : Tags;
 
 @Tags("separation")
 @("construct")
-unittest {
-
+unittest
+{
     auto antlrInput =
         new ANTLRInputStream(File("unittest/separated_grammar/declaration.rule", "r"));
     auto lexer = new RuleLexer(antlrInput);

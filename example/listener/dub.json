@@ -1,0 +1,6 @@
+{
+    "name": "expr",
+    "dependencies": {
+        "antlr-d": { "path": "../.." }
+    }
+}

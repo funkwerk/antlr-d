@@ -77,13 +77,14 @@ class ANTLRInputStream : CharStream
 
     public void load(File r)
     {
+        import std.array : array;
+
         name = r.name;
-        data = to!(char[])(name.readText);
+        data = cast(char[]) r.byChunk(4096).joiner.array;
         // set the actual size of the data available;
         cp_in_buffer = data.toUCSindex(data.length);
         debug (ANTLRInputStreamStream)
-            writefln!"name = %s; cp_in_buffer = $s"(
-                     name, cp_in_buffer);
+            writefln!"name = %s; cp_in_buffer = $s"(name, cp_in_buffer);
     }
 
     /**

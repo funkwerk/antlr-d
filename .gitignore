@@ -1,8 +1,11 @@
+.antlr
 antlr4/antlr4-4.7.1/*
 build
 antlr-d
 doc/examples/ruleTranslator/Rule*.tokens
 doc/examples/ruleTranslator/Rule*.d
+example/*/expr
+example/*/src/Expr*
 lib
 bin
 .dub

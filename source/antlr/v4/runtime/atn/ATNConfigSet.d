@@ -16,7 +16,6 @@ import antlr.v4.runtime.atn.PredictionContext;
 import antlr.v4.runtime.atn.SemanticContext;
 import antlr.v4.runtime.misc.AbstractEqualityComparator;
 import antlr.v4.runtime.misc;
-import std.algorithm.comparison : equal, max;
 import std.algorithm.iteration : map, sum;
 import std.array;
 import std.bitmanip;
@@ -214,7 +213,9 @@ class ATNConfigSet
      */
     public bool add(ATNConfig config, DoubleKeyMap!(PredictionContext, PredictionContext, PredictionContext) mergeCache)
     {
-    if (readonly_)
+        import std.algorithm.comparison : max;
+
+        if (readonly_)
             throw new IllegalStateException("This set is readonly");
 
         if (config.semanticContext != SemanticContext.NONE) {
@@ -329,8 +330,9 @@ class ATNConfigSet
      */
     public override bool opEquals(Object o)
     {
+        import std.algorithm.comparison : equal;
 
-    if (o is this) {
+        if (o is this) {
             return true;
         }
         else {
@@ -352,21 +354,21 @@ class ATNConfigSet
             dipsIntoOuterContext == other.dipsIntoOuterContext;
     }
 
-        public static bool equals(Object aObj, Object bObj)
-        {
-            if (aObj is bObj)
-                return true;
-            auto a = cast(ATNConfig) aObj;
-            auto b = cast(ATNConfig) bObj;
-            if (a is null || b is null)
-                return false;
-            if (a.semanticContext is b.semanticContext)
-                return a.state.stateNumber == b.state.stateNumber
-                    && a.alt == b.alt;
+    public static bool equals(Object aObj, Object bObj)
+    {
+        if (aObj is bObj)
+            return true;
+        auto a = cast(ATNConfig) aObj;
+        auto b = cast(ATNConfig) bObj;
+        if (a is null || b is null)
+            return false;
+        if (a.semanticContext is b.semanticContext)
             return a.state.stateNumber == b.state.stateNumber
-                && a.alt == b.alt
-                && a.semanticContext.opEquals(b.semanticContext);
-        }
+                && a.alt == b.alt;
+        return a.state.stateNumber == b.state.stateNumber
+            && a.alt == b.alt
+            && a.semanticContext.opEquals(b.semanticContext);
+    }
 
     /**
      * @uml
@@ -451,19 +453,20 @@ class ATNConfigSet
 
 }
 
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
 
     @Tags("atnConfigSet")
     @("atnConfigSetTest")
-    unittest {
-            ATNConfigSet atnConfigSet = new ATNConfigSet;
-            atnConfigSet.should.not.be(null);
-            atnConfigSet.readonly.should.equal(false);
-            atnConfigSet.toString.should.equal("[]");
-            atnConfigSet.isEmpty.should.equal(true);
-            atnConfigSet.toHash.should.equal(0);
-        }
+    unittest
+    {
+        ATNConfigSet atnConfigSet = new ATNConfigSet;
+        atnConfigSet.should.not.be(null);
+        atnConfigSet.readonly.should.equal(false);
+        atnConfigSet.toString.should.equal("[]");
+        atnConfigSet.isEmpty.should.equal(true);
+        atnConfigSet.toHash.should.equal(0);
+    }
 }

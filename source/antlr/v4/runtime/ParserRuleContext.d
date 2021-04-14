@@ -356,13 +356,15 @@ class ParserRuleContext : RuleContext
 
 }
 
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
+
     @Tags("parserRC")
     @("emptyInstanceParserRuleContext")
-    unittest {
+    unittest
+    {
         auto rpc = ParserRuleContext.EMPTY;
         rpc.should.not.be(null);
         rpc.getChildCount.should.equal(0);

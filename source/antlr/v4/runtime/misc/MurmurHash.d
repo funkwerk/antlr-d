@@ -138,10 +138,10 @@ class MurmurHash
 
 }
 
-version (unittest)
+version (AntlrUnittest)
 {
-    import dshould : equal, should;
-    import unit_threaded;
+    import dshould;
+    import unit_threaded : Tags;
 
     @Tags("MurmurHash")
     @("Calculation")

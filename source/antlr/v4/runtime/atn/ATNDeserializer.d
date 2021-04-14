@@ -1266,14 +1266,15 @@ class ATNDeserializer
 
 }
 
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
 
     @Tags("des11")
     @("testEncodingATNDeserialize")
-    unittest {
+    unittest
+    {
         auto des = new ATNDeserializer;
         des.should.not.be(null);
     }

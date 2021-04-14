@@ -281,106 +281,101 @@ class IntegerList
 
 }
 
-version (unittest)
+version (AntlrUnittest)
 {
-    import dshould : be, equal, not, should;
-    import dshould.thrown;
-    import unit_threaded;
+    import dshould;
+    import unit_threaded : Tags;
 
-    class Test
+    @Tags("IntegerList")
+    @("TestEmpty")
+    unittest
     {
+        auto il = new IntegerList;
+        il.should.not.be(null);
+        il.isEmpty.should.equal(true);
+        il.toArray.should.equal([]);
+    }
 
-        @Tags("IntegerList")
-        @("TestEmpty")
-        unittest
+    @Tags("IntegerList")
+    @("Capacity")
+    unittest
+    {
+        auto il = new IntegerList(20);
+        il.should.not.be(null);
+        il.addAll([3, 17, 55, 12, 1, 7]);
+        il.toArray.should.equal([3, 17, 55, 12, 1, 7]);
+        il.toString.should.equal("[3, 17, 55, 12, 1, 7]");
+        (new IntegerList(-3)).should.throwAn!IllegalArgumentException.where.msg.should.equal(
+                "Capacity can't be a negativ value!");
+    }
+
+    @Tags("IntegerList")
+    @("SetGet")
+    unittest
+    {
+        auto il = new IntegerList([7, 2, 5, 15, 40]);
+        il.contains(3).should.equal(false);
+        il.contains(5).should.equal(true);
+        il.get(2).should.equal(5);
+        il.sort;
+        il.toString.should.equal("[2, 5, 7, 15, 40]");
+        il.set(3, 2);
+        il.toString.should.equal("[2, 5, 7, 2, 40]");
+    }
+
+    @Tags("IntegerList")
+    @("Hash")
+    unittest
+    {
+        auto il = new IntegerList([7, 5, 15, 40]);
+        auto il1 = new IntegerList;
+        il1.addAll(il);
+        il.toHash.should.equal(1137368);
+        il1.toHash.should.equal(1137368);
+    }
+
+    @Tags("IntegerList")
+    @("Remove")
+    unittest
+    {
+        auto il = new IntegerList([7, 5, 15, 40]);
+        il.toString.should.equal("[7, 5, 15, 40]");
+        il.removeAt(2);
+        il.toString.should.equal("[7, 5, 40]");
+        il.removeAt(2);
+        il.toString.should.equal("[7, 5]");
+        il.removeRange(0, 1);
+        il.isEmpty.should.equal(true);
+        il.addAll([4, 2, 1, 33, 22, 11, 13]);
+        il.removeRange(2, 4);
+        il.toString.should.equal("[4, 2, 11, 13]");
+    }
+
+    @Tags("IntegerList")
+    @("Compare")
+    unittest
+    {
+        auto il = new IntegerList([7, 2, 5, 15, 40]);
+        il.contains(3).should.equal(false);
+        il.contains(5).should.equal(true);
+        il.opEquals(il).should.equal(true);
+        il.get(2).should.equal(5);
+        auto il1 = new IntegerList(il);
+        il1.should.not.be(null);
+        il.toString.should.equal("[7, 2, 5, 15, 40]");
+        il1.toString.should.equal("[7, 2, 5, 15, 40]");
+        il.should.equal(il1);
+        il.sort;
+        il.toString.should.equal("[2, 5, 7, 15, 40]");
+        il.should.not.equal(il1);
+        il.clear;
+        il.toString.should.equal("[]");
+        il.should.not.equal(il1);
+        class A
         {
-            auto il = new IntegerList;
-            il.should.not.be(null);
-            il.isEmpty.should.equal(true);
-            il.toArray.should.equal([]);
         }
 
-        @Tags("IntegerList")
-        @("Capacity")
-        unittest
-        {
-            auto il = new IntegerList(20);
-            il.should.not.be(null);
-            il.addAll([3, 17, 55, 12, 1, 7]);
-            il.toArray.should.equal([3, 17, 55, 12, 1, 7]);
-            il.toString.should.equal("[3, 17, 55, 12, 1, 7]");
-            (new IntegerList(-3)).should.throwAn!IllegalArgumentException.where.msg.should.equal(
-                    "Capacity can't be a negativ value!");
-        }
-
-        @Tags("IntegerList")
-        @("SetGet")
-        unittest
-        {
-            auto il = new IntegerList([7, 2, 5, 15, 40]);
-            il.contains(3).should.equal(false);
-            il.contains(5).should.equal(true);
-            il.get(2).should.equal(5);
-            il.sort;
-            il.toString.should.equal("[2, 5, 7, 15, 40]");
-            il.set(3, 2);
-            il.toString.should.equal("[2, 5, 7, 2, 40]");
-        }
-
-        @Tags("IntegerList")
-        @("Hash")
-        unittest
-        {
-            auto il = new IntegerList([7, 5, 15, 40]);
-            auto il1 = new IntegerList;
-            il1.addAll(il);
-            il.toHash.should.equal(1137368);
-            il1.toHash.should.equal(1137368);
-        }
-
-        @Tags("IntegerList")
-        @("Remove")
-        unittest
-        {
-            auto il = new IntegerList([7, 5, 15, 40]);
-            il.toString.should.equal("[7, 5, 15, 40]");
-            il.removeAt(2);
-            il.toString.should.equal("[7, 5, 40]");
-            il.removeAt(2);
-            il.toString.should.equal("[7, 5]");
-            il.removeRange(0, 1);
-            il.isEmpty.should.equal(true);
-            il.addAll([4, 2, 1, 33, 22, 11, 13]);
-            il.removeRange(2, 4);
-            il.toString.should.equal("[4, 2, 11, 13]");
-        }
-
-        @Tags("IntegerList")
-        @("Compare")
-        unittest
-        {
-            auto il = new IntegerList([7, 2, 5, 15, 40]);
-            il.contains(3).should.equal(false);
-            il.contains(5).should.equal(true);
-            il.opEquals(il).should.equal(true);
-            il.get(2).should.equal(5);
-            auto il1 = new IntegerList(il);
-            il1.should.not.be(null);
-            il.toString.should.equal("[7, 2, 5, 15, 40]");
-            il1.toString.should.equal("[7, 2, 5, 15, 40]");
-            il.should.equal(il1);
-            il.sort;
-            il.toString.should.equal("[2, 5, 7, 15, 40]");
-            il.should.not.equal(il1);
-            il.clear;
-            il.toString.should.equal("[]");
-            il.should.not.equal(il1);
-            class A
-            {
-            }
-
-            auto a = new A;
-            il.should.not.equal(a);
-        }
+        auto a = new A;
+        il.should.not.equal(a);
     }
 }

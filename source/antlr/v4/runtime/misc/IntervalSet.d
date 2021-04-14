@@ -807,201 +807,196 @@ class IntervalSet : IntSet
 
 }
 
-version (unittest)
+version (AntlrUnittest)
 {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+    import dshould;
+    import unit_threaded : Tags;
 
-    class Test
+    @Tags("IntervalSet")
+    @("Empty")
+    unittest
     {
+        IntervalSet s = new IntervalSet;
+        s.should.not.be(null);
+        s.intervals.length.should.equal(0);
+        s.isNil.should.equal(true);
+    }
 
-        @Tags("IntervalSet")
-        @("Empty")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.should.not.be(null);
-            s.intervals.length.should.equal(0);
-            s.isNil.should.equal(true);
-        }
+    @Tags("IntervalSet")
+    @("One")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(29).should.equal(false);
+        s.contains(31).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("One")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(29).should.equal(false);
-            s.contains(31).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Two")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30);
+        s.add(40);
+        s.intervals.length.should.equal(2);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(35).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Two")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30);
-            s.add(40);
-            s.intervals.length.should.equal(2);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(35).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Range")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30, 41);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(35).should.equal(true);
+    }
 
-        @Tags("IntervalSet")
-        @("Range")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30, 41);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(35).should.equal(true);
-        }
+    @Tags("IntervalSet")
+    @("Distinct1")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30, 32);
+        s.add(40, 42);
+        s.intervals.length.should.equal(2);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(35).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Distinct1")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30, 32);
-            s.add(40, 42);
-            s.intervals.length.should.equal(2);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(35).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Distinct2")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(40, 42);
+        s.add(30, 32);
+        s.intervals.length.should.equal(2);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(35).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Distinct2")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(40, 42);
-            s.add(30, 32);
-            s.intervals.length.should.equal(2);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(35).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Contiguous1")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30, 36);
+        s.add(36, 41);
+        s.add(41, 44);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(43).should.equal(true);
+        s.contains(44).should.equal(true);
+        s.contains(45).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Contiguous1")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30, 36);
-            s.add(36, 41);
-            s.add(41, 44);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(43).should.equal(true);
-            s.contains(44).should.equal(true);
-            s.contains(45).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Contiguous2")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(41, 44);
+        s.add(36, 41);
+        s.add(30, 36);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(43).should.equal(true);
+        s.contains(44).should.equal(true);
+        s.contains(45).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Contiguous2")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(41, 44);
-            s.add(36, 41);
-            s.add(30, 36);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(43).should.equal(true);
-            s.contains(44).should.equal(true);
-            s.contains(45).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Overlapping1")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30, 40);
+        s.add(35, 44);
+        s.add(31, 36);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(43).should.equal(true);
+        s.contains(44).should.equal(true);
+        s.contains(45).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Overlapping1")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30, 40);
-            s.add(35, 44);
-            s.add(31, 36);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(43).should.equal(true);
-            s.contains(44).should.equal(true);
-            s.contains(45).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Overlapping2")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(35, 44);
+        s.add(31, 36);
+        s.add(30, 40);
+        s.intervals.length.should.equal(1);
+        s.isNil.should.equal(false);
+        s.contains(30).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(43).should.equal(true);
+        s.contains(44).should.equal(true);
+        s.contains(45).should.equal(false);
+    }
 
-        @Tags("IntervalSet")
-        @("Overlapping2")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(35, 44);
-            s.add(31, 36);
-            s.add(30, 40);
-            s.intervals.length.should.equal(1);
-            s.isNil.should.equal(false);
-            s.contains(30).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(43).should.equal(true);
-            s.contains(44).should.equal(true);
-            s.contains(45).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Overlapping3")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(30, 32);
+        s.add(40, 42);
+        s.add(140, 144);
+        s.add(50, 52);
+        s.add(20, 61);
+        s.add(50, 52);
+        s.intervals.length.should.equal(2);
+        s.isNil.should.equal(false);
+        s.contains(20).should.equal(true);
+        s.contains(40).should.equal(true);
+        s.contains(43).should.equal(true);
+        s.contains(61).should.equal(true);
+        s.contains(4).should.equal(false);
+        s.contains(62).should.equal(false);
+        s.contains(139).should.equal(false);
+        s.contains(140).should.equal(true);
+        s.contains(144).should.equal(true);
+        s.contains(145).should.equal(false);
+        s.toString.should.equal("{20..61, 140..144}");
+    }
 
-        @Tags("IntervalSet")
-        @("Overlapping3")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(30, 32);
-            s.add(40, 42);
-            s.add(140, 144);
-            s.add(50, 52);
-            s.add(20, 61);
-            s.add(50, 52);
-            s.intervals.length.should.equal(2);
-            s.isNil.should.equal(false);
-            s.contains(20).should.equal(true);
-            s.contains(40).should.equal(true);
-            s.contains(43).should.equal(true);
-            s.contains(61).should.equal(true);
-            s.contains(4).should.equal(false);
-            s.contains(62).should.equal(false);
-            s.contains(139).should.equal(false);
-            s.contains(140).should.equal(true);
-            s.contains(144).should.equal(true);
-            s.contains(145).should.equal(false);
-            s.toString.should.equal("{20..61, 140..144}");
-        }
-
-        @Tags("IntervalSet")
-        @("Complement")
-        unittest
-        {
-            IntervalSet s = new IntervalSet;
-            s.add(10, 21);
-            auto c = s.complement(1, 100);
-            c.intervals.length.should.equal(2);
-            c.toString.should.equal("{1..9, 22..100}");
-            c.contains(1).should.equal(true);
-            c.contains(40).should.equal(true);
-            c.contains(22).should.equal(true);
-            c.contains(10).should.equal(false);
-            c.contains(20).should.equal(false);
-        }
+    @Tags("IntervalSet")
+    @("Complement")
+    unittest
+    {
+        IntervalSet s = new IntervalSet;
+        s.add(10, 21);
+        auto c = s.complement(1, 100);
+        c.intervals.length.should.equal(2);
+        c.toString.should.equal("{1..9, 22..100}");
+        c.contains(1).should.equal(true);
+        c.contains(40).should.equal(true);
+        c.contains(22).should.equal(true);
+        c.contains(10).should.equal(false);
+        c.contains(20).should.equal(false);
     }
 }

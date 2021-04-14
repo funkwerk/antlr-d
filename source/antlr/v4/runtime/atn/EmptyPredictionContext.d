@@ -77,24 +77,23 @@ class EmptyPredictionContext : SingletonPredictionContext
 
 }
 
-version(unittest) {
-    import dshould : be, equal, not, should;
-    import std.typecons : tuple;
-    import unit_threaded;
+version (AntlrUnittest)
+{
+    import dshould;
+    import unit_threaded : Tags;
 
     @Tags("EmptyPredictionContext")
     @("Construction")
-    unittest {
+    unittest
+    {
         auto spc = new EmptyPredictionContext;
         spc.should.not.be(null);
         spc.isEmpty.should.equal(true);
         spc.getReturnState(0).should.equal(int.max);
         auto spc1 = new EmptyPredictionContext;
         spc1.isEmpty.should.equal(true);
-        if (spc == spc1)
-            assert(true);
-        auto spc2 = SingletonPredictionContext.create(null,
-                                                      PredictionContext.EMPTY_RETURN_STATE);
+        (spc == spc1).should.equal(true);
+        auto spc2 = SingletonPredictionContext.create(null, PredictionContext.EMPTY_RETURN_STATE);
         spc2.isEmpty.should.equal(true);
         spc2.toString.should.equal("$");
         spc2.getReturnState(0).should.equal(int.max);

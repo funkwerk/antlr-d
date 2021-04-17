@@ -1,4 +1,4 @@
-// Generated from RuleLexer.g4 by ANTLR 4.8
+// Generated from RuleLexer.g4 by ANTLR 4.9.2
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -18,12 +18,12 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class RuleLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
-    public static immutable int
+    public enum int
         STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
         AS=10,IF=11,IN=12,ELIF=13,ELSE=14,WHILE=15,FOR=16,OR=17,AND=18,NOT=19,
         TRUE=20,FALSE=21,CONTINUE=22,BREAK=23,BLOCK=24,NEWLINE=25,NAME=26,
@@ -91,16 +91,19 @@ public class RuleLexer : Lexer {
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        for (int i = 0; i < tokenNames.length; i++) {
-            tokenNames[i] = VOCABULARY.getLiteralName(i);
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = VOCABULARY.getSymbolicName(i);
-            }
-            if (tokenNames[i] is null)
+        int index = 0;
+        foreach (ref tokenName; tokenNames)
             {
-                tokenNames[i] = "<INVALID>";
+                tokenName = VOCABULARY.getLiteralName(index);
+                    if (!tokenName) {
+                        tokenName = VOCABULARY.getSymbolicName(index);
+                }
+                if (!tokenName)
+                {
+                    tokenName = "<INVALID>";
+                }
             }
-        }
+            ++index;
     }
 
     override public string[] getTokenNames() {

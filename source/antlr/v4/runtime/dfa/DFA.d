@@ -204,9 +204,7 @@ class DFA
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("DFA")
     @("Construction")
     unittest
     {

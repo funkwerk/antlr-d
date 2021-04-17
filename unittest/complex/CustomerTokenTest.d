@@ -23,7 +23,6 @@ import std.file;
 import std.stdio : File, writefln;
 import std.typecons;
 import std.variant;
-import unit_threaded : Tags;
 
 class ResultTokenFactory : CommonTokenFactory {
     CharStream input;
@@ -139,7 +138,6 @@ public class ResultListener : RuleTranslatorBaseListener {
     }
 }
 
-@Tags("CustomerToken")
 @("add source name")
 unittest
 {

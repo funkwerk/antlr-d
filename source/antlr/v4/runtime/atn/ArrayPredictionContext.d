@@ -143,9 +143,7 @@ class ArrayPredictionContext : PredictionContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("ArrayPredictionContext")
     @("Empty")
     unittest
     {
@@ -172,7 +170,6 @@ version (AntlrUnittest)
         apc.should.equal(apc1);
     }
 
-    @Tags("ArrayPredictionContext")
     @("Flat")
     unittest
     {
@@ -200,7 +197,6 @@ version (AntlrUnittest)
         apc.should.not.equal(apc1);
     }
 
-    @Tags("ArrayPredictionContext")
     @("Deep")
     unittest
     {

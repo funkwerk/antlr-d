@@ -17,9 +17,7 @@ import antlr.v4.runtime.tree.ParseTreeWalker;
 import dshould;
 import std.conv : to;
 import std.file;
-import unit_threaded : Tags;
 
-@Tags("ANTLRInputStream")
 @("input file missing")
 unittest
 {
@@ -30,7 +28,6 @@ unittest
                             "mode `rb' (No such file or directory)");
 }
 
-@Tags("Lexer")
 @("rule")
 unittest
 {
@@ -49,7 +46,6 @@ unittest
     f.close;
 }
 
-@Tags("Parser")
 @("simple_rule")
 unittest
 {
@@ -72,7 +68,6 @@ unittest
     parser.numberOfSyntaxErrors.should.equal(0);
 }
 
-@Tags("Parser")
 @("simple_rule_syntax_error")
 unittest
 {

@@ -359,9 +359,7 @@ class ParserRuleContext : RuleContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("parserRC")
     @("emptyInstanceParserRuleContext")
     unittest
     {

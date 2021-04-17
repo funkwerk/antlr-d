@@ -722,9 +722,7 @@ abstract class PredictionContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("ArrayPredictionContext")
     @("empty")
     unittest
     {
@@ -738,7 +736,6 @@ version (AntlrUnittest)
         spcB.isEmpty.should.equal(false);
     }
 
-    @Tags("ArrayPredictionContext")
     @("mergeArrayContext")
     unittest
     {
@@ -757,7 +754,6 @@ version (AntlrUnittest)
         predA.length.should.equal(4);
     }
 
-    @Tags("ArrayPredictionContext")
     @("mergeEmptyContext")
     unittest
     {

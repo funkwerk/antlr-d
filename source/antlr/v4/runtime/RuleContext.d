@@ -287,9 +287,7 @@ class RuleContext : RuleNode, InterfaceRuleContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("ruleCont", "reg")
     @("simpleRuleContext")
     unittest
     {
@@ -306,7 +304,6 @@ version (AntlrUnittest)
         rc.getAltNumber.should.equal(0);
     }
 
-    @Tags("ruleContVoc", "reg")
     @("ruleContextWithVocabulary")
     unittest
     {

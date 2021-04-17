@@ -8,9 +8,7 @@ import ImplExprVisitor;
 import std.conv;
 import std.file;
 import std.stdio;
-import unit_threaded : Tags;
 
-@Tags("simpleExpr", "reg")
 @("simpleVisistorImplementation")
 unittest
 {

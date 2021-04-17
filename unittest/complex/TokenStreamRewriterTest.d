@@ -18,7 +18,6 @@ import std.array : join;
 import std.conv : to;
 import std.file;
 import std.variant;
-import unit_threaded : Tags;
 
 auto input = [
     `# Text definition DEFAS`,
@@ -41,8 +40,6 @@ string getInput ()
     return(toString(input));
 }
 
-
-@Tags("TokenStreamRewriter")
 @("replaceAll")
 unittest
 {
@@ -86,8 +83,6 @@ unittest
     str.should.equal(expected);
 }
 
-
-@Tags("TokenStreamRewriter")
 @("replace_and_delete")
 unittest
 {
@@ -138,7 +133,6 @@ unittest
     str.should.equal(toString(expected));
 }
 
-@Tags("TokenStreamRewriter")
 @("deleteT")
 unittest
 {
@@ -179,7 +173,6 @@ unittest
     str.should.equal(toString(expected));
 }
 
-@Tags("TokenStreamRewriter")
 @("insert after and before")
 unittest
 {

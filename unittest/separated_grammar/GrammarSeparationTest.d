@@ -16,9 +16,7 @@ import RuleParserBaseListener;
 import std.conv;
 import std.file;
 import std.stdio;
-import unit_threaded : Tags;
 
-@Tags("separation")
 @("construct")
 unittest
 {

@@ -108,9 +108,7 @@ class SingletonPredictionContext : PredictionContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("SingletonPredictionContext")
     @("Construction")
     unittest
     {
@@ -128,7 +126,6 @@ version (AntlrUnittest)
         spc1.toString.should.equal("10 11 $");
     }
 
-    @Tags("SingletonPredictionContext")
     @("Compare")
     unittest
     {

@@ -159,9 +159,7 @@ version (AntlrUnittest)
 {
 
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("mt", "reg")
     @("compareMetaDataVersion")
     unittest
     {

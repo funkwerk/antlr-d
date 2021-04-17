@@ -46,12 +46,12 @@ import antlr.v4.runtime.misc.BitSet;
  * collection of delegate listeners. This reduces the effort required to support multiple
  * listeners.
  */
-class ProxyErrorListener(U, V) : ANTLRErrorListener!(U, V)
+class ProxyErrorListener : ANTLRErrorListener
 {
 
-    public ANTLRErrorListener!(U,V)[] delegates;
+    public ANTLRErrorListener[] delegates;
 
-    public this(ANTLRErrorListener!(U,V)[] delegates)
+    public this(ANTLRErrorListener[] delegates)
     {
 	if (delegates is null) {
             assert(0, "Null pointer exception delegates");

@@ -39,7 +39,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public int[string][string] ruleIndexMapCache;
 
-    public ANTLRErrorListener!(U,V)[] _listeners;
+    public ANTLRErrorListener[] _listeners;
 
     protected V _interp;
 
@@ -47,7 +47,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
 
     public this()
     {
-        _listeners = [ConsoleErrorListener!(U,V).instance];
+        _listeners = [ConsoleErrorListener.instance];
     }
 
     /**
@@ -224,7 +224,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
         return "'" ~ s ~ "'";
     }
 
-    public void addErrorListener(ANTLRErrorListener!(U, V) listener)
+    public void addErrorListener(ANTLRErrorListener listener)
     {
 	if (listener is null) {
             assert(0, "listener cannot be null.");
@@ -233,7 +233,7 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
        	_listeners ~= listener;
     }
 
-    public void removeErrorListener(ANTLRErrorListener!(U, V) listener)
+    public void removeErrorListener(ANTLRErrorListener listener)
     {
         foreach (elementRemoveIndex, el; _listeners) {
             if (listener is el) {
@@ -248,14 +248,14 @@ abstract class Recognizer(U, V) : InterfaceRecognizer
         _listeners.length = 0;
     }
 
-    public ANTLRErrorListener!(U,V)[] getErrorListeners()
+    public ANTLRErrorListener[] getErrorListeners()
     {
         return _listeners;
     }
 
-    public ANTLRErrorListener!(U, V) getErrorListenerDispatch()
+    public ANTLRErrorListener getErrorListenerDispatch()
     {
-        return new ProxyErrorListener!(U, V)(getErrorListeners());
+        return new ProxyErrorListener(getErrorListeners());
     }
 
     /**

@@ -459,7 +459,7 @@ abstract class Lexer : Recognizer!(int, LexerATNSimulator), TokenSource, Interfa
     {
         auto text = _input.getText(Interval.of(to!int(_tokenStartCharIndex), to!int(_input.index)));
         auto msg = "token recognition error at: '" ~ getErrorDisplay(text) ~ "'";
-        ANTLRErrorListener!(int, LexerATNSimulator) listener = getErrorListenerDispatch();
+        ANTLRErrorListener listener = getErrorListenerDispatch();
         listener.syntaxError(this, null, _tokenStartLine, _tokenStartCharPositionInLine, msg, e);
     }
 

@@ -38,7 +38,7 @@ import std.format;
  *
  * @author Sam Harwell
  */
-class DiagnosticErrorListener(U, V) : BaseErrorListener!(U, V)
+class DiagnosticErrorListener : BaseErrorListener
 {
 
     /**

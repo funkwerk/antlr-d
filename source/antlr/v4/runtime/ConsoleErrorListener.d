@@ -14,7 +14,7 @@ import std.stdio;
 /**
  * ConsoleErrorListener
  */
-class ConsoleErrorListener(U, V) : BaseErrorListener!(U, V)
+class ConsoleErrorListener : BaseErrorListener
 {
 
     /**

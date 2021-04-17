@@ -13,7 +13,7 @@ import antlr.v4.runtime.misc.BitSet;
  * default implementation of each method does nothing, but can be overridden as
  * necessary.
  */
-class BaseErrorListener(U, V) : ANTLRErrorListener!(U, V)
+class BaseErrorListener : ANTLRErrorListener
 {
 
     public void syntaxError(InterfaceRecognizer recognizer, Object offendingSymbol, int line,

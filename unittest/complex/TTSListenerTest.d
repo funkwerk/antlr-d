@@ -90,7 +90,7 @@ unittest
     }
     f.close;
     auto parser = new RuleTranslatorParser(cts);
-    parser.addErrorListener(new DiagnosticErrorListener!(Token, ParserATNSimulator));
+    parser.addErrorListener(new DiagnosticErrorListener);
     // Specify entry point
     auto rootContext = parser.file_input;
     parser.numberOfSyntaxErrors.should.equal(2);

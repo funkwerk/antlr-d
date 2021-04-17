@@ -1,6 +1,36 @@
 {
     "name": "expr",
     "dependencies": {
-        "antlr-d": { "path": "../.." }
-    }
+        "antlr-d": {
+            "path": "../..",
+            "version": "*"
+        }
+    },
+    "buildTypes": {
+        "debug": {
+            "buildOptions": ["debugInfo"]
+        },
+        "antlr-debug": {
+            "buildOptions": ["debugMode", "debugInfo"]
+        },
+        "unittest": {
+            "buildOptions": ["unittests", "debugInfo"]
+        }
+    },
+    "configurations": [
+        {
+            "name": "executable",
+            "targetType": "executable"
+        },
+        {
+            "name": "unittest",
+            "dependencies": {
+                "dshould": "~>1.4.3",
+                "silly": "~>1.1.1"
+            },
+            "excludedSourceFiles": [
+                "src/main.d"
+            ]
+        }
+    ]
 }

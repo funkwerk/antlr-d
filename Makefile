@@ -139,15 +139,15 @@ prepare_generator : | $(BUILD_DIR)
 
 .PHONY : build_examples
 build_examples : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -visitor -o $(BUILD_DIR) doc/examples/simple_expression/Expr.g4
 	cp $(BUILD_DIR)/doc/examples/simple_expression/*.d doc/examples/simple_expression
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -atn -o $(BUILD_DIR)\
 		doc/examples/ruleTranslator/RuleLexer.g4
 	cp $(BUILD_DIR)/doc/examples/ruleTranslator/RuleLexer.tokens \
 		doc/examples/ruleTranslator/
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-2-SNAPSHOT-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTLR)-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR)\
 		doc/examples/ruleTranslator/RuleParser.g4
 	cp $(BUILD_DIR)/doc/examples/ruleTranslator/Rule*.d \
@@ -157,7 +157,7 @@ build_examples : prepare_generator
 
 .PHONY: build_xpathlexer
 build_xpathlexer : prepare_generator
-	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTRLR)-SNAPSHOT-complete.jar \
+	java -jar $(BUILD_DIR)/$(ANTLR)/tool/target/$(ANTRLR)-complete.jar \
 		-Dlanguage=D -o $(BUILD_DIR) $(XPATH_LEXER_SRC)
 
 .PHONY: build_library

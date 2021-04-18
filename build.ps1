@@ -78,12 +78,12 @@ $rules = @{
     build_examples    = {
         require $JAVA
 
-        if (!(Test-Path "$BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2-SNAPSHOT-complete.jar")) {
+        if (!(Test-Path "$BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2-complete.jar")) {
             Invoke-Command $rules.prepare_generator
         }
 
-        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2-SNAPSHOT-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/Expr.g4"
-        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2-SNAPSHOT.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/ruleTranslator/RuleTranslator.g4"
+        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2-complete.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/Expr.g4"
+        call "$JAVA -jar $BUILD_DIR/$ANTLR/tool/target/antlr4-4.9.2.jar -Dlanguage=D -atn -o $BUILD_DIR doc/examples/ruleTranslator/RuleTranslator.g4"
     }
 
     docs              = {

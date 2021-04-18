@@ -1,4 +1,4 @@
-// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.8
+// Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
 import antlr.v4.runtime.atn.ATN : ATN;
 alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
@@ -29,7 +29,7 @@ import antlr.v4.runtime.tree.ParseTreeWalker;
 import std.conv : to;
 
 public class ExprParser : Parser {
-    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
@@ -57,17 +57,19 @@ public class ExprParser : Parser {
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        foreach (i, ref tokenName; tokenNames)
+        int index = 0;
+        foreach (ref tokenName; tokenNames)
             {
-                tokenName = VOCABULARY.getLiteralName(cast(int)i);
+                tokenName = VOCABULARY.getLiteralName(index);
                     if (!tokenName) {
-                        tokenName = VOCABULARY.getSymbolicName(cast(int)i);
+                        tokenName = VOCABULARY.getSymbolicName(index);
                 }
                 if (!tokenName)
                 {
                     tokenName = "<INVALID>";
                 }
             }
+            ++index;
     }
 
     override public string[] getTokenNames() {

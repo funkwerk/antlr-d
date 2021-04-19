@@ -8,7 +8,7 @@ import antlr.v4.runtime.atn.LexerATNSimulator;
 /**
  * TODO add class description
  */
-class XPathLexerErrorListener : BaseErrorListener!(int, LexerATNSimulator)
+class XPathLexerErrorListener : BaseErrorListener
 {
 
     /**

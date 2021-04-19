@@ -141,9 +141,7 @@ class MurmurHash
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("MurmurHash")
     @("Calculation")
     unittest
     {

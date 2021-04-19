@@ -4,7 +4,7 @@ build
 antlr-d
 doc/examples/ruleTranslator/Rule*.tokens
 doc/examples/ruleTranslator/Rule*.d
-example/*/expr
+example/*/expr*
 example/*/src/Expr*
 lib
 bin

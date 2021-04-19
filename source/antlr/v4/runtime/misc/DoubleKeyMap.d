@@ -86,9 +86,7 @@ class DoubleKeyMap(K1, K2, V)
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("DoubleKeyMap")
     @("construction DoubleKeyMap")
     unittest
     {
@@ -101,7 +99,6 @@ version (AntlrUnittest)
         x.isNull.should.equal(true);
     }
 
-    @Tags("DoubleKeyMap")
     @("comparing DoubleKeyMaps")
     unittest
     {

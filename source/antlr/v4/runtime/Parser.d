@@ -601,7 +601,7 @@ abstract class Parser : Recognizer!(Token, ParserATNSimulator), InterfaceParser
         numberOfSyntaxErrors_++;
         int line = offendingToken.getLine();
         int charPositionInLine = offendingToken.getCharPositionInLine();
-        ANTLRErrorListener!(Token, ParserATNSimulator) listener = getErrorListenerDispatch();
+        ANTLRErrorListener listener = getErrorListenerDispatch();
         listener.syntaxError(this, cast(Object)offendingToken, line, charPositionInLine, msg, e);
     }
 

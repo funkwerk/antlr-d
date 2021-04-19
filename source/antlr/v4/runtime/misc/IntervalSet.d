@@ -810,9 +810,7 @@ class IntervalSet : IntSet
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("IntervalSet")
     @("Empty")
     unittest
     {
@@ -822,7 +820,6 @@ version (AntlrUnittest)
         s.isNil.should.equal(true);
     }
 
-    @Tags("IntervalSet")
     @("One")
     unittest
     {
@@ -835,7 +832,6 @@ version (AntlrUnittest)
         s.contains(31).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Two")
     unittest
     {
@@ -849,7 +845,6 @@ version (AntlrUnittest)
         s.contains(35).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Range")
     unittest
     {
@@ -862,7 +857,6 @@ version (AntlrUnittest)
         s.contains(35).should.equal(true);
     }
 
-    @Tags("IntervalSet")
     @("Distinct1")
     unittest
     {
@@ -876,7 +870,6 @@ version (AntlrUnittest)
         s.contains(35).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Distinct2")
     unittest
     {
@@ -890,7 +883,6 @@ version (AntlrUnittest)
         s.contains(35).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Contiguous1")
     unittest
     {
@@ -907,7 +899,6 @@ version (AntlrUnittest)
         s.contains(45).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Contiguous2")
     unittest
     {
@@ -924,7 +915,6 @@ version (AntlrUnittest)
         s.contains(45).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Overlapping1")
     unittest
     {
@@ -941,7 +931,6 @@ version (AntlrUnittest)
         s.contains(45).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Overlapping2")
     unittest
     {
@@ -958,7 +947,6 @@ version (AntlrUnittest)
         s.contains(45).should.equal(false);
     }
 
-    @Tags("IntervalSet")
     @("Overlapping3")
     unittest
     {
@@ -984,7 +972,6 @@ version (AntlrUnittest)
         s.toString.should.equal("{20..61, 140..144}");
     }
 
-    @Tags("IntervalSet")
     @("Complement")
     unittest
     {

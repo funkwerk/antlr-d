@@ -6,9 +6,7 @@ import antlr.v4.runtime.atn.ATNDeserializer;
 import antlr.v4.runtime.atn.ATNDeserializationOptions;
 import antlr.v4.runtime.atn.DecisionState;
 import dshould;
-import unit_threaded : Tags;
 
-@Tags("simpleExprT", "reg")
 @("constructATNDeserializationOptions")
 unittest
 {

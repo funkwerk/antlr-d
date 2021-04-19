@@ -5,9 +5,7 @@ import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
 import HelloLexer;
 import dshould;
-import unit_threaded : Tags;
 
-@Tags("simpleHello", "reg")
 @("simpleHelloTestUnknownToken")
 unittest
 {
@@ -30,7 +28,6 @@ unittest
     //           .where.msg.should.be("");
 }
 
-@Tags("simple", "reg")
 @("simpleHelloTestWithString")
 unittest
 {
@@ -51,7 +48,6 @@ unittest
                     "[@1,6:11='egbert',<2>,1:6]");
 }
 
-@Tags("simple", "reg")
 @("simpleHelloTestWithFile")
 unittest
 {

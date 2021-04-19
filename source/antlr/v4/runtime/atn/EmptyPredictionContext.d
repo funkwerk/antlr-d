@@ -80,9 +80,7 @@ class EmptyPredictionContext : SingletonPredictionContext
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("EmptyPredictionContext")
     @("Construction")
     unittest
     {

@@ -284,9 +284,7 @@ class IntegerList
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("IntegerList")
     @("TestEmpty")
     unittest
     {
@@ -296,7 +294,6 @@ version (AntlrUnittest)
         il.toArray.should.equal([]);
     }
 
-    @Tags("IntegerList")
     @("Capacity")
     unittest
     {
@@ -309,7 +306,6 @@ version (AntlrUnittest)
                 "Capacity can't be a negativ value!");
     }
 
-    @Tags("IntegerList")
     @("SetGet")
     unittest
     {
@@ -323,7 +319,6 @@ version (AntlrUnittest)
         il.toString.should.equal("[2, 5, 7, 2, 40]");
     }
 
-    @Tags("IntegerList")
     @("Hash")
     unittest
     {
@@ -334,7 +329,6 @@ version (AntlrUnittest)
         il1.toHash.should.equal(1137368);
     }
 
-    @Tags("IntegerList")
     @("Remove")
     unittest
     {
@@ -351,7 +345,6 @@ version (AntlrUnittest)
         il.toString.should.equal("[4, 2, 11, 13]");
     }
 
-    @Tags("IntegerList")
     @("Compare")
     unittest
     {

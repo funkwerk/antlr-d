@@ -1269,9 +1269,7 @@ class ATNDeserializer
 version (AntlrUnittest)
 {
     import dshould;
-    import unit_threaded : Tags;
 
-    @Tags("des11")
     @("testEncodingATNDeserialize")
     unittest
     {

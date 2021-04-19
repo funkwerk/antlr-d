@@ -1,4 +1,4 @@
-// Generated from RuleParser.g4 by ANTLR 4.8
+// Generated from RuleParser.g4 by ANTLR 4.9.2
 import antlr.v4.runtime.atn.ATN : ATN;
 alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
@@ -29,12 +29,12 @@ import antlr.v4.runtime.tree.ParseTreeWalker;
 import std.conv : to;
 
 public class RuleParser : Parser {
-    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
-    public static const int
+    public enum int
         STRING=1,NUMBER=2,INTEGER=3,FIRST=4,LAST=5,RULE=6,BASE=7,DEF=8,RETURN=9,
         AS=10,IF=11,IN=12,ELIF=13,ELSE=14,WHILE=15,FOR=16,OR=17,AND=18,NOT=19,
         TRUE=20,FALSE=21,CONTINUE=22,BREAK=23,BLOCK=24,NEWLINE=25,NAME=26,
@@ -46,7 +46,7 @@ public class RuleParser : Parser {
         EQUALS=56,GT_EQ=57,LT_EQ=58,NOT_EQ_1=59,NOT_EQ_2=60,ADD_ASSIGN=61,
         SUB_ASSIGN=62,SKIP_=63,UNKNOWN_CHAR=64,OPEN=65,CLOSE=66,SLASH_CLOSE=67,
         SLASH=68,XML_EQUALS=69,XML_STRING=70,Name=71,S=72,INDENT=73,DEDENT=74;
-    public static const int
+    public enum int
         RULE_file_input = 0,RULE_ruledef = 1,RULE_import_stmts = 2,RULE_rule_setting = 3,
         RULE_class_name = 4,RULE_rule_name = 5,RULE_language = 6,RULE_import_stmt = 7,
         RULE_base_rules = 8,RULE_funcdef = 9,RULE_functionName = 10,RULE_parameters = 11,
@@ -117,16 +117,19 @@ public class RuleParser : Parser {
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        for (int i = 0; i < tokenNames.length; i++) {
-            tokenNames[i] = VOCABULARY.getLiteralName(i);
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = VOCABULARY.getSymbolicName(i);
-            }
-            if (tokenNames[i] is null)
+        int index = 0;
+        foreach (ref tokenName; tokenNames)
             {
-                tokenNames[i] = "<INVALID>";
+                tokenName = VOCABULARY.getLiteralName(index);
+                    if (!tokenName) {
+                        tokenName = VOCABULARY.getSymbolicName(index);
+                }
+                if (!tokenName)
+                {
+                    tokenName = "<INVALID>";
+                }
             }
-        }
+            ++index;
     }
 
     override public string[] getTokenNames() {

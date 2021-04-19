@@ -1,4 +1,4 @@
-// Generated from RuleTranslator.g4 by ANTLR 4.8
+// Generated from RuleTranslator.g4 by ANTLR 4.9.2
 
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;

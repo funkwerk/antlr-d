@@ -39,8 +39,7 @@ import std.string : indexOf;
  */
 class RuntimeMetaData
 {
-
-    enum string VERSION = "4.8.0";
+    enum string VERSION = "4.9.2";
 
     /**
      * This method provides the ability to detect mismatches between the version
@@ -152,7 +151,6 @@ class RuntimeMetaData
 
         return antlr_version[0..referenceLength];
     }
-
 }
 
 version (AntlrUnittest)
@@ -163,7 +161,7 @@ version (AntlrUnittest)
     @("compareMetaDataVersion")
     unittest
     {
-        "4.8".should.equal(RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION));
-        RuntimeMetaData.checkVersion("4.8", "4.8.0");
+        RuntimeMetaData.getMajorMinorVersion(RuntimeMetaData.VERSION).should.equal("4.9");
+        RuntimeMetaData.checkVersion("4.9", "4.9.2");
     }
 }

@@ -237,8 +237,10 @@ public class <parser.name> : <superClass; null="Parser"> {
     public enum int
         <parser.tokens:{k | <k>=<parser.tokens.(k)>}; separator=",", wrap, anchor>;
     <endif>
+    <if(parser.rules)>
     public enum int
         <parser.rules:{r | RULE_<r.name> = <r.index>}; separator=",", wrap, anchor>;
+    <endif>
     public static const string[] ruleNames = [
         <parser.ruleNames:{r | "<r>"}; separator=",", wrap, anchor>
     ];

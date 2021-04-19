@@ -1,4 +1,4 @@
-// Generated from Hello.g4 by ANTLR 4.8
+// Generated from Hello.g4 by ANTLR 4.9.2
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;
@@ -18,12 +18,12 @@ import antlr.v4.runtime.LexerNoViableAltException;
 
 public class HelloLexer : Lexer {
     alias recover = Lexer.recover;
-    static this() { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
+    static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
     protected static DFA[] _decisionToDFA;
     protected PredictionContextCache _sharedContextCache =
         new PredictionContextCache();
-    public static immutable int
+    public enum int
         T__0=1,ID=2,WS=3;
     public static string[] channelNames = [
         "DEFAULT_TOKEN_CHANNEL", "HIDDEN"
@@ -51,16 +51,19 @@ public class HelloLexer : Lexer {
 
     static this() {
         VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
-        for (int i = 0; i < tokenNames.length; i++) {
-            tokenNames[i] = VOCABULARY.getLiteralName(i);
-                if (tokenNames[i] is null) {
-                    tokenNames[i] = VOCABULARY.getSymbolicName(i);
-            }
-            if (tokenNames[i] is null)
+        int index = 0;
+        foreach (ref tokenName; tokenNames)
             {
-                tokenNames[i] = "<INVALID>";
+                tokenName = VOCABULARY.getLiteralName(index);
+                    if (!tokenName) {
+                        tokenName = VOCABULARY.getSymbolicName(index);
+                }
+                if (!tokenName)
+                {
+                    tokenName = "<INVALID>";
+                }
             }
-        }
+            ++index;
     }
 
     override public string[] getTokenNames() {

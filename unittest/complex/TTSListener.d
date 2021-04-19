@@ -1,6 +1,6 @@
 module TTSListener;
 
-import RuleTranslatorBaseListener;
+import RuleTranslatorBaseListener : RuleTranslatorBaseListener;
 import RuleTranslatorParser: RuleTranslatorParser;
 import RuleWriter: RuleWriter;
 import antlr.v4.runtime.ParserRuleContext;

@@ -3,9 +3,8 @@ module TTSListenerTest;
 import std.stdio;
 import std.conv;
 
-import RuleTranslatorLexer;
-import RuleTranslatorParser;
-import TTSListener;
+import RuleTranslatorLexer : RuleTranslatorLexer;
+import RuleTranslatorParser : RuleTranslatorParser;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenStream;

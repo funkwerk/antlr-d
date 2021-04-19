@@ -2,9 +2,9 @@ import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.Token;
 import dshould;
-import ExprLexer;
-import ExprParser;
-import ImplExprVisitor;
+import ExprLexer : ExprLexer;
+import ExprParser : ExprParser;
+import PrintExprVisitor : PrintExprVisitor;
 import std.conv;
 import std.file;
 import std.stdio;
@@ -20,7 +20,7 @@ unittest
     auto parser = new ExprParser(cts);
     // Specify entry point
     auto rootContext = parser.prog;
-    auto pev = new ImplExprVisitor.PrintExprVisitor;
+    auto pev = new PrintExprVisitor;
     auto res = pev.visit(rootContext);
     //res.get!(int).should.be(23);
     auto xx = res.get!(string);

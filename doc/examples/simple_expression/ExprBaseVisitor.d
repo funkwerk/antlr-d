@@ -1,7 +1,7 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import std.variant : Variant;
-import ExprVisitor;
+import ExprVisitor : ExprVisitor;
 import ExprParser : ExprParser;
 
 /**

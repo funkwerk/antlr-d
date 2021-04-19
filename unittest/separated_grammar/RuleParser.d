@@ -27,6 +27,7 @@ import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
 import std.conv : to;
+import RuleParserListener : RuleParserListener;
 
 public class RuleParser : Parser {
     static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
@@ -183,17 +184,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_file_input; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFile_input(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFile_input(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFile_input(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFile_input(this);
         }
     }
 
@@ -298,17 +297,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_ruledef; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterRuledef(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterRuledef(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitRuledef(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitRuledef(this);
         }
     }
 
@@ -357,17 +354,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_import_stmts; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterImport_stmts(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterImport_stmts(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitImport_stmts(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitImport_stmts(this);
         }
     }
 
@@ -427,17 +422,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_rule_setting; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterRule_setting(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterRule_setting(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitRule_setting(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitRule_setting(this);
         }
     }
 
@@ -500,17 +493,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_class_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterClass_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterClass_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitClass_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitClass_name(this);
         }
     }
 
@@ -541,17 +532,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_rule_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterRule_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterRule_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitRule_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitRule_name(this);
         }
     }
 
@@ -582,17 +571,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_language; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterLanguage(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterLanguage(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitLanguage(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitLanguage(this);
         }
     }
 
@@ -634,17 +621,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_import_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterImport_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterImport_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitImport_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitImport_stmt(this);
         }
     }
 
@@ -704,17 +689,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_base_rules; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterBase_rules(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterBase_rules(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitBase_rules(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitBase_rules(this);
         }
     }
 
@@ -755,17 +738,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_funcdef; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFuncdef(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFuncdef(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFuncdef(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFuncdef(this);
         }
     }
 
@@ -804,17 +785,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_functionName; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFunctionName(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFunctionName(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFunctionName(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFunctionName(this);
         }
     }
 
@@ -849,17 +828,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_parameters; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterParameters(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterParameters(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitParameters(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitParameters(this);
         }
     }
 
@@ -912,17 +889,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_typedargslist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTypedargslist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTypedargslist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTypedargslist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTypedargslist(this);
         }
     }
 
@@ -980,17 +955,15 @@ public class RuleParser : Parser {
         public TerminalNode NUMBER() { return getToken(RuleParser.NUMBER, 0); }
             alias copyFrom = TfpdefContext.copyFrom;
         public this(TfpdefContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTfpdef_number(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTfpdef_number(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTfpdef_number(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTfpdef_number(this);
         }
     }
     public static class Tfpdef_funct_stmContext : TfpdefContext {
@@ -999,34 +972,30 @@ public class RuleParser : Parser {
         }
             alias copyFrom = TfpdefContext.copyFrom;
         public this(TfpdefContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTfpdef_funct_stm(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTfpdef_funct_stm(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTfpdef_funct_stm(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTfpdef_funct_stm(this);
         }
     }
     public static class Tfpdef_stringContext : TfpdefContext {
         public TerminalNode STRING() { return getToken(RuleParser.STRING, 0); }
             alias copyFrom = TfpdefContext.copyFrom;
         public this(TfpdefContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTfpdef_string(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTfpdef_string(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTfpdef_string(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTfpdef_string(this);
         }
     }
     public static class Tfpdef_nameContext : TfpdefContext {
@@ -1035,17 +1004,15 @@ public class RuleParser : Parser {
         }
             alias copyFrom = TfpdefContext.copyFrom;
         public this(TfpdefContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTfpdef_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTfpdef_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTfpdef_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTfpdef_name(this);
         }
     }
 
@@ -1125,17 +1092,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSuite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSuite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSuite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSuite(this);
         }
     }
 
@@ -1209,17 +1174,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterStmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterStmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitStmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitStmt(this);
         }
     }
 
@@ -1282,17 +1245,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_simple_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSimple_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSimple_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSimple_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSimple_stmt(this);
         }
     }
 
@@ -1346,17 +1307,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_small_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSmall_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSmall_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSmall_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSmall_stmt(this);
         }
     }
 
@@ -1408,17 +1367,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_string_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterString_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterString_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitString_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitString_stmt(this);
         }
     }
 
@@ -1466,17 +1423,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_funct_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFunct_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFunct_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFunct_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFunct_stmt(this);
         }
     }
 
@@ -1528,17 +1483,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_funct_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFunct_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFunct_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFunct_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFunct_name(this);
         }
     }
 
@@ -1569,17 +1522,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dot_e; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDot_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDot_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDot_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDot_e(this);
         }
     }
 
@@ -1612,17 +1563,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_funct_parameters; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFunct_parameters(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFunct_parameters(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFunct_parameters(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFunct_parameters(this);
         }
     }
 
@@ -1661,17 +1610,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_var_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterVar_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterVar_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitVar_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitVar_stmt(this);
         }
     }
 
@@ -1720,17 +1667,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_flow_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFlow_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFlow_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFlow_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFlow_stmt(this);
         }
     }
 
@@ -1776,17 +1721,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_break_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterBreak_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterBreak_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitBreak_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitBreak_stmt(this);
         }
     }
 
@@ -1817,17 +1760,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_continue_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterContinue_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterContinue_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitContinue_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitContinue_stmt(this);
         }
     }
 
@@ -1862,17 +1803,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dotted_as_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDotted_as_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDotted_as_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDotted_as_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDotted_as_name(this);
         }
     }
 
@@ -1925,17 +1864,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dotted_as_names; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDotted_as_names(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDotted_as_names(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDotted_as_names(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDotted_as_names(this);
         }
     }
 
@@ -1995,17 +1932,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dotted_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDotted_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDotted_name(this);
         }
     }
 
@@ -2063,17 +1998,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dotted_name_first_part; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDotted_name_first_part(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDotted_name_first_part(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDotted_name_first_part(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDotted_name_first_part(this);
         }
     }
 
@@ -2125,17 +2058,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dotted_name_part; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDotted_name_part(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDotted_name_part(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDotted_name_part(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDotted_name_part(this);
         }
     }
 
@@ -2181,17 +2112,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_first_part_of_dotted_name; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFirst_part_of_dotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFirst_part_of_dotted_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFirst_part_of_dotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFirst_part_of_dotted_name(this);
         }
     }
 
@@ -2230,17 +2159,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_compound_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterCompound_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterCompound_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitCompound_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitCompound_stmt(this);
         }
     }
 
@@ -2304,17 +2231,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_if_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterIf_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterIf_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitIf_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitIf_stmt(this);
         }
     }
 
@@ -2373,17 +2298,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_if_condition_and_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterIf_condition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterIf_condition_and_suite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitIf_condition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitIf_condition_and_suite(this);
         }
     }
 
@@ -2421,17 +2344,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_elif_condition_and_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterElif_condition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterElif_condition_and_suite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitElif_condition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitElif_condition_and_suite(this);
         }
     }
 
@@ -2470,17 +2391,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_else_and_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterElse_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterElse_and_suite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitElse_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitElse_and_suite(this);
         }
     }
 
@@ -2521,17 +2440,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_condition_and_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterCondition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterCondition_and_suite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitCondition_and_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitCondition_and_suite(this);
         }
     }
 
@@ -2587,17 +2504,15 @@ public class RuleParser : Parser {
         }
             alias copyFrom = ConditionContext.copyFrom;
         public this(ConditionContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterCondition_without_value(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterCondition_without_value(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitCondition_without_value(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitCondition_without_value(this);
         }
     }
     public static class Condition_onlyContext : ConditionContext {
@@ -2606,17 +2521,15 @@ public class RuleParser : Parser {
         }
             alias copyFrom = ConditionContext.copyFrom;
         public this(ConditionContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterCondition_only(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterCondition_only(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitCondition_only(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitCondition_only(this);
         }
     }
     public static class Condition_with_valueContext : ConditionContext {
@@ -2637,17 +2550,15 @@ public class RuleParser : Parser {
         }
             alias copyFrom = ConditionContext.copyFrom;
         public this(ConditionContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterCondition_with_value(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterCondition_with_value(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitCondition_with_value(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitCondition_with_value(this);
         }
     }
 
@@ -2727,17 +2638,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_open_paren; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterOpen_paren(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterOpen_paren(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitOpen_paren(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitOpen_paren(this);
         }
     }
 
@@ -2768,17 +2677,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_close_paren; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterClose_paren(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterClose_paren(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitClose_paren(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitClose_paren(this);
         }
     }
 
@@ -2819,17 +2726,15 @@ public class RuleParser : Parser {
         public TerminalNode EQUALS() { return getToken(RuleParser.EQUALS, 0); }
             alias copyFrom = Reduced_comperatorContext.copyFrom;
         public this(Reduced_comperatorContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterR_equals(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterR_equals(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitR_equals(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitR_equals(this);
         }
     }
     public static class R_not_equalContext : Reduced_comperatorContext {
@@ -2837,17 +2742,15 @@ public class RuleParser : Parser {
         public TerminalNode NOT_EQ_2() { return getToken(RuleParser.NOT_EQ_2, 0); }
             alias copyFrom = Reduced_comperatorContext.copyFrom;
         public this(Reduced_comperatorContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterR_not_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterR_not_equal(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitR_not_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitR_not_equal(this);
         }
     }
 
@@ -2903,17 +2806,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_elif_e; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterElif_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterElif_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitElif_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitElif_e(this);
         }
     }
 
@@ -2944,17 +2845,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_else_e; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterElse_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterElse_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitElse_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitElse_e(this);
         }
     }
 
@@ -3003,17 +2902,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_for_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFor_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFor_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFor_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFor_stmt(this);
         }
     }
 
@@ -3071,17 +2968,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_for_testlist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFor_testlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFor_testlist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFor_testlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFor_testlist(this);
         }
     }
 
@@ -3114,17 +3009,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_for_exprlist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFor_exprlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFor_exprlist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFor_exprlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFor_exprlist(this);
         }
     }
 
@@ -3159,17 +3052,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_block_stmt; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterBlock_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterBlock_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitBlock_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitBlock_stmt(this);
         }
     }
 
@@ -3215,17 +3106,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_block_suite; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterBlock_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterBlock_suite(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitBlock_suite(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitBlock_suite(this);
         }
     }
 
@@ -3304,17 +3193,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_test; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTest(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTest(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTest(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTest(this);
         }
     }
 
@@ -3372,17 +3259,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_or_e; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterOr_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterOr_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitOr_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitOr_e(this);
         }
     }
 
@@ -3428,17 +3313,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_and_test; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAnd_test(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAnd_test(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAnd_test(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAnd_test(this);
         }
     }
 
@@ -3499,17 +3382,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_and_e; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAnd_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAnd_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAnd_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAnd_e(this);
         }
     }
 
@@ -3548,17 +3429,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_not_test; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterNot_test(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterNot_test(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitNot_test(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitNot_test(this);
         }
     }
 
@@ -3615,17 +3494,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_not; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterNot(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterNot(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitNot(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitNot(this);
         }
     }
 
@@ -3671,17 +3548,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_comparison; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterComparison(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterComparison(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitComparison(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitComparison(this);
         }
     }
 
@@ -3753,102 +3628,90 @@ public class RuleParser : Parser {
         public TerminalNode NOT_EQ_2() { return getToken(RuleParser.NOT_EQ_2, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterNot_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterNot_equal(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitNot_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitNot_equal(this);
         }
     }
     public static class Greater_thanContext : Comp_opContext {
         public TerminalNode GREATER_THAN() { return getToken(RuleParser.GREATER_THAN, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterGreater_than(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterGreater_than(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitGreater_than(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitGreater_than(this);
         }
     }
     public static class Less_thanContext : Comp_opContext {
         public TerminalNode LESS_THAN() { return getToken(RuleParser.LESS_THAN, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterLess_than(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterLess_than(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitLess_than(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitLess_than(this);
         }
     }
     public static class EqualsContext : Comp_opContext {
         public TerminalNode EQUALS() { return getToken(RuleParser.EQUALS, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterEquals(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterEquals(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitEquals(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitEquals(this);
         }
     }
     public static class Greater_equalContext : Comp_opContext {
         public TerminalNode GT_EQ() { return getToken(RuleParser.GT_EQ, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterGreater_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterGreater_equal(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitGreater_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitGreater_equal(this);
         }
     }
     public static class Less_equalContext : Comp_opContext {
         public TerminalNode LT_EQ() { return getToken(RuleParser.LT_EQ, 0); }
             alias copyFrom = Comp_opContext.copyFrom;
         public this(Comp_opContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterLess_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterLess_equal(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitLess_equal(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitLess_equal(this);
         }
     }
 
@@ -3952,17 +3815,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_expr; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterExpr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterExpr(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitExpr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitExpr(this);
         }
     }
 
@@ -4050,17 +3911,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_xor_expr; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterXor_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterXor_expr(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitXor_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitXor_expr(this);
         }
     }
 
@@ -4134,17 +3993,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_and_expr; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAnd_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAnd_expr(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAnd_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAnd_expr(this);
         }
     }
 
@@ -4226,17 +4083,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_arith_expr; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterArith_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterArith_expr(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitArith_expr(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitArith_expr(this);
         }
     }
 
@@ -4321,17 +4176,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_factor; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFactor(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFactor(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFactor(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFactor(this);
         }
     }
 
@@ -4421,119 +4274,105 @@ public class RuleParser : Parser {
         }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAtom_dotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAtom_dotted_name(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAtom_dotted_name(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAtom_dotted_name(this);
         }
     }
     public static class Number_eContext : AtomContext {
         public TerminalNode NUMBER() { return getToken(RuleParser.NUMBER, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterNumber_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterNumber_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitNumber_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitNumber_e(this);
         }
     }
     public static class False_eContext : AtomContext {
         public TerminalNode FALSE() { return getToken(RuleParser.FALSE, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFalse_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFalse_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFalse_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFalse_e(this);
         }
     }
     public static class First_eContext : AtomContext {
         public TerminalNode FIRST() { return getToken(RuleParser.FIRST, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterFirst_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterFirst_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitFirst_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitFirst_e(this);
         }
     }
     public static class Last_eContext : AtomContext {
         public TerminalNode LAST() { return getToken(RuleParser.LAST, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterLast_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterLast_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitLast_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitLast_e(this);
         }
     }
     public static class String_eContext : AtomContext {
         public TerminalNode STRING() { return getToken(RuleParser.STRING, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterString_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterString_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitString_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitString_e(this);
         }
     }
     public static class True_eContext : AtomContext {
         public TerminalNode TRUE() { return getToken(RuleParser.TRUE, 0); }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTrue_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTrue_e(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTrue_e(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTrue_e(this);
         }
     }
     public static class Atom_funct_stmtContext : AtomContext {
@@ -4542,17 +4381,15 @@ public class RuleParser : Parser {
         }
             alias copyFrom = AtomContext.copyFrom;
         public this(AtomContext ctx) { copyFrom(ctx); }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAtom_funct_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAtom_funct_stmt(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAtom_funct_stmt(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAtom_funct_stmt(this);
         }
     }
 
@@ -4647,17 +4484,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_add; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterAdd(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterAdd(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitAdd(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitAdd(this);
         }
     }
 
@@ -4688,17 +4523,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_minus; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterMinus(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterMinus(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitMinus(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitMinus(this);
         }
     }
 
@@ -4738,17 +4571,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_testlist_comp; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTestlist_comp(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTestlist_comp(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTestlist_comp(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTestlist_comp(this);
         }
     }
 
@@ -4819,17 +4650,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_trailer; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTrailer(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTrailer(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTrailer(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTrailer(this);
         }
     }
 
@@ -4873,17 +4702,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_subscriptlist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSubscriptlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSubscriptlist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSubscriptlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSubscriptlist(this);
         }
     }
 
@@ -4953,17 +4780,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_subscript; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSubscript(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSubscript(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSubscript(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSubscript(this);
         }
     }
 
@@ -5042,17 +4867,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_sliceop; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterSliceop(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterSliceop(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitSliceop(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitSliceop(this);
         }
     }
 
@@ -5103,17 +4926,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_exprlist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterExprlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterExprlist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitExprlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitExprlist(this);
         }
     }
 
@@ -5187,17 +5008,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_testlist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTestlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTestlist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTestlist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTestlist(this);
         }
     }
 
@@ -5281,17 +5100,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_dictorsetmaker; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterDictorsetmaker(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterDictorsetmaker(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitDictorsetmaker(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitDictorsetmaker(this);
         }
     }
 
@@ -5480,17 +5297,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_arglist; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterArglist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterArglist(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitArglist(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitArglist(this);
         }
     }
 
@@ -5553,17 +5368,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_argument; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterArgument(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterArgument(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitArgument(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitArgument(this);
         }
     }
 
@@ -5616,17 +5429,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_element; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterElement(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterElement(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitElement(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitElement(this);
         }
     }
 
@@ -5727,17 +5538,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_content; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterContent(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterContent(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitContent(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitContent(this);
         }
     }
 
@@ -5801,17 +5610,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_xml_attribute; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterXml_attribute(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterXml_attribute(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitXml_attribute(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitXml_attribute(this);
         }
     }
 
@@ -5856,17 +5663,15 @@ public class RuleParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_templatesBegin; }
-        import RuleParserListener;
         override
         public void enterRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).enterTemplatesBegin(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).enterTemplatesBegin(this);
         }
-        import RuleParserListener;
         override
         public void exitRule(ParseTreeListener listener) {
-            if (cast(RuleParserListener.RuleParserListener)listener)
-                (cast(RuleParserListener)listener).exitTemplatesBegin(this);
+            if (cast(RuleParserListener) listener)
+                (cast(RuleParserListener) listener).exitTemplatesBegin(this);
         }
     }
 

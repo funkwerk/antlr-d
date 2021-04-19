@@ -3,7 +3,7 @@ import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.CommonTokenStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.LexerNoViableAltException;
-import HelloLexer;
+import HelloLexer : HelloLexer;
 import dshould;
 
 @("simpleHelloTestUnknownToken")

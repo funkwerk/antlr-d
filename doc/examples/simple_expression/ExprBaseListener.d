@@ -1,10 +1,11 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprBaseListener;
 
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
 import ExprListener : ExprListener;
-import ExprParser: ExprParser;
+import ExprParser : ExprParser;
 
 /**
  * This class provides an empty implementation of {@link ExprListener},

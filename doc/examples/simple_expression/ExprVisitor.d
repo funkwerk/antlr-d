@@ -1,7 +1,9 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprVisitor;
+
 import antlr.v4.runtime.tree.ParseTreeVisitor;
-import std.variant : Variant;
 import ExprParser : ExprParser;
+import std.variant : Variant;
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced

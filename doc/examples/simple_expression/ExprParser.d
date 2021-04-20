@@ -1,4 +1,6 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprParser;
+
 import antlr.v4.runtime.atn.ATN : ATN;
 alias ATNType = ATN;
 import antlr.v4.runtime.atn.ATNDeserializer;
@@ -26,9 +28,10 @@ import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
+import ExprListener : ExprListener;
+import ExprVisitor : ExprVisitor;
 import std.conv : to;
 import std.variant : Variant;
-import ExprListener : ExprListener;
 
 public class ExprParser : Parser {
     static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
@@ -126,7 +129,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitProg(this);
             else
@@ -203,7 +205,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitDiv(this);
             else
@@ -231,7 +232,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitAdd(this);
             else
@@ -259,7 +259,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitSub(this);
             else
@@ -287,7 +286,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitMul(this);
             else
@@ -312,7 +310,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitBracketExpr(this);
             else
@@ -335,7 +332,6 @@ public class ExprParser : Parser {
         }
         override
         public Variant accept(ParseTreeVisitor visitor) {
-            import ExprVisitor : ExprVisitor;
             if (cast(ExprVisitor) visitor)
                 return (cast(ExprVisitor) visitor).visitInt(this);
             else

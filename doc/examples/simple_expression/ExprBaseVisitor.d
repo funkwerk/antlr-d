@@ -2,9 +2,9 @@
 module ExprBaseVisitor;
 
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-import std.variant : Variant;
 import ExprParser : ExprParser;
 import ExprVisitor : ExprVisitor;
+import std.variant : Variant;
 
 /**
  * This class provides an empty implementation of {@link ExprVisitor},

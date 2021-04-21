@@ -20,11 +20,7 @@ dTypeInitMap ::= [
 
 ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-module <file.genPackage>.<file.grammarName>Parser;
-<else>
-module <file.grammarName>Parser;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Parser")>;
 
 <namedActions.header>
 import antlr.v4.runtime.atn.ATN : ATN;
@@ -55,18 +51,10 @@ import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
 <if(file.genListener)>
-<if(file.genPackage)>
-import <file.genPackage>.<file.grammarName>Listener;
-<else>
-import <file.grammarName>Listener : <file.grammarName>Listener;
-<endif>
+<safeImport(file.genPackage, file.grammarName, "Listener")>
 <endif>
 <if(file.genVisitor)>
-<if(file.genPackage)>
-import <file.genPackage>.<file.grammarName>Visitor;
-<else>
-import <file.grammarName>Visitor : <file.grammarName>Visitor;
-<endif>
+<safeImport(file.genPackage, file.grammarName, "Visitor")>
 <endif>
 import std.conv : to;
 <if(file.genVisitor)>
@@ -78,19 +66,11 @@ import std.variant : Variant;
 
 ListenerFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-module <file.genPackage>.<file.grammarName>Listener;
-<else>
-module <file.grammarName>Listener;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Listener")>;
 
 <header>
 import antlr.v4.runtime.tree.ParseTreeListener;
-<if(file.genPackage)>
-import <file.genPackage>.<file.parserName>;
-<else>
-import <file.parserName> : <file.parserName>;
-<endif>
+<safeImport(file.genPackage, file.parserName, "")>
 
 /**
  * This interface defines a complete listener for a parse tree produced by
@@ -123,23 +103,14 @@ void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ct
 
 BaseListenerFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-module <file.genPackage>.<file.grammarName>BaseListener;
-<else>
-module <file.grammarName>BaseListener;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "BaseListener")>;
 
 <header>
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-<if(file.genPackage)>
-import <file.genPackage>.<file.grammarName>Listener;
-import <file.genPackage>.<file.parserName>;
-<else>
-import <file.grammarName>Listener : <file.grammarName>Listener;
-import <file.parserName> : <file.parserName>;
-<endif>
+<safeImport(file.genPackage, file.grammarName, "Listener")>
+<safeImport(file.genPackage, file.parserName, "")>
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Listener},
@@ -190,19 +161,11 @@ override public void exit<lname; format="cap">(<file.parserName>.<lname; format=
 
 VisitorFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-module <file.genPackage>.<file.grammarName>Visitor;
-<else>
-module <file.grammarName>Visitor;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Visitor")>;
 
 <header>
 import antlr.v4.runtime.tree.ParseTreeVisitor;
-<if(file.genPackage)>
-import <file.genPackage>.<file.grammarName>Parser;
-<else>
-import <file.grammarName>Parser : <file.grammarName>Parser;
-<endif>
+<safeImport(file.genPackage, file.grammarName, "Parser")>
 import std.variant : Variant;
 
 /**
@@ -230,22 +193,13 @@ public Variant visit<lname; format="cap">(<file.parserName>.<lname; format="cap"
 
 BaseVisitorFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-module <file.genPackage>.<file.grammarName>BaseVisitor;
-<else>
-module <file.grammarName>BaseVisitor;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "BaseVisitor")>;
 
 <header>
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+<safeImport(file.genPackage, file.grammarName, "Parser")>
+<safeImport(file.genPackage, file.grammarName, "Visitor")>
 import std.variant : Variant;
-<if(file.genPackage)>
-import <file.genPackage>.<file.grammarName>Parser;
-import <file.genPackage>.<file.grammarName>Visitor;
-<else>
-import <file.grammarName>Parser : <file.grammarName>Parser;
-import <file.grammarName>Visitor : <file.grammarName>Visitor;
-<endif>
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Visitor},
@@ -938,11 +892,7 @@ _prevctx = _localctx;
 
 LexerFile(lexerFile, lexer, namedActions) ::= <<
 <fileHeader(lexerFile.grammarFileName, lexerFile.ANTLRVersion)>
-<if(lexerFile.genPackage)>
-module <lexerFile.genPackage>.<lexerFile.lexer.grammarName>;
-<else>
-module <lexerFile.lexer.grammarName>;
-<endif>
+module <fqn(lexerFile.genPackage, lexerFile.lexer.grammarName, "")>;
 
 <namedActions.header>
 import antlr.v4.runtime.Lexer;
@@ -1063,3 +1013,11 @@ initValue(typeName) ::= <<
 >>
 
 codeFileExtension() ::= ".d"
+
+safeImport(genPackage, grammarName, name) ::= <<
+import <fqn(genPackage, grammarName, name)><if(!genPackage)> : <grammarName><name><endif>;
+>>
+
+fqn(genPackage, grammarName, name) ::= <<
+<if(genPackage)><genPackage>.<endif><grammarName><name>
+>>

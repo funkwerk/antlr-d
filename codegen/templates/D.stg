@@ -20,9 +20,8 @@ dTypeInitMap ::= [
 
 ParserFile(file, parser, namedActions, contextSuperClass) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-package <file.genPackage>;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Parser")>;
+
 <namedActions.header>
 import antlr.v4.runtime.atn.ATN : ATN;
 alias ATNType = ATN;
@@ -51,19 +50,27 @@ import antlr.v4.runtime.tree.ParseTreeListener;
 import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
+<if(file.genListener)>
+<safeImport(file.genPackage, file.grammarName, "Listener")>
+<endif>
+<if(file.genVisitor)>
+<safeImport(file.genPackage, file.grammarName, "Visitor")>
+<endif>
 import std.conv : to;
+<if(file.genVisitor)>
+import std.variant : Variant;
+<endif>
 
 <parser>
 >>
 
 ListenerFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-package <file.genPackage>;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Listener")>;
+
 <header>
 import antlr.v4.runtime.tree.ParseTreeListener;
-import <file.parserName> : <file.parserName>;
+<safeImport(file.genPackage, file.parserName, "")>
 
 /**
  * This interface defines a complete listener for a parse tree produced by
@@ -96,16 +103,14 @@ void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ct
 
 BaseListenerFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-package <file.genPackage>;
-<endif>
-<header>
+module <fqn(file.genPackage, file.grammarName, "BaseListener")>;
 
+<header>
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-import <file.grammarName>Listener;
-import <file.parserName>: <file.parserName>;
+<safeImport(file.genPackage, file.grammarName, "Listener")>
+<safeImport(file.genPackage, file.parserName, "")>
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Listener},
@@ -156,13 +161,12 @@ override public void exit<lname; format="cap">(<file.parserName>.<lname; format=
 
 VisitorFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-package <file.genPackage>;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "Visitor")>;
+
 <header>
 import antlr.v4.runtime.tree.ParseTreeVisitor;
+<safeImport(file.genPackage, file.grammarName, "Parser")>
 import std.variant : Variant;
-import <file.grammarName>Parser : <file.grammarName>Parser;
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced
@@ -189,14 +193,13 @@ public Variant visit<lname; format="cap">(<file.parserName>.<lname; format="cap"
 
 BaseVisitorFile(file, header, namedActions) ::= <<
 <fileHeader(file.grammarFileName, file.ANTLRVersion)>
-<if(file.genPackage)>
-package <file.genPackage>;
-<endif>
+module <fqn(file.genPackage, file.grammarName, "BaseVisitor")>;
+
 <header>
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+<safeImport(file.genPackage, file.grammarName, "Parser")>
+<safeImport(file.genPackage, file.grammarName, "Visitor")>
 import std.variant : Variant;
-import <file.grammarName>Visitor;
-import <file.grammarName>Parser : <file.grammarName>Parser;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Visitor},
@@ -655,7 +658,7 @@ setState(<m.stateNumber>);
 <if(m.labels)><m.labels:{l | <labelref(l)> = }>_input.LT(1);<endif>
 <capture>
 if ( <if(invert)><m.varName> \<= 0 || <else>!<endif>(<expr>) ) {
-    <if(m.labels)><m.labels:{l | <labelref(l)> = cast(Token)}><endif>_errHandler.recoverInline(this);
+    <if(m.labels)><m.labels:{l | <labelref(l)> = cast(Token) }><endif>_errHandler.recoverInline(this);
 }
 else {
     if (_input.LA(1) == TokenConstantDefinition.EOF)
@@ -820,21 +823,18 @@ public static class <struct.name> : <currentRule.name; format="cap">Context {
 >>
 
 ListenerDispatchMethod(method) ::= <<
-import <parser.grammarName>Listener;
 override
 public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
-    if (cast(<parser.grammarName>Listener.<parser.grammarName>Listener)listener)
-        (cast(<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
+    if (cast(<parser.grammarName>Listener) listener)
+        (cast(<parser.grammarName>Listener) listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
 }
 >>
 
 VisitorDispatchMethod(method) ::= <<
-import std.variant : Variant;
 override
 public Variant accept(ParseTreeVisitor visitor) {
-    import <file.grammarName>Visitor : <file.grammarName>Visitor;
-    if (cast(<parser.grammarName>Visitor)visitor)
-        return (cast(<parser.grammarName>Visitor)visitor).visit<struct.derivedFromName; format="cap">(this);
+    if (cast(<parser.grammarName>Visitor) visitor)
+        return (cast(<parser.grammarName>Visitor) visitor).visit<struct.derivedFromName; format="cap">(this);
     else
         return visitor.visitChildren(this);
 }
@@ -843,10 +843,10 @@ public Variant accept(ParseTreeVisitor visitor) {
 AttributeDecl(d) ::= "<d.type> <d.name><if(d.initValue)> = <d.initValue><endif>"
 
 /** If we don't know location of label def x, use this template */
-labelref(x) ::= "<if(!x.isLocal)>(cast(<x.ctx.name>)_localctx).<endif><x.name>"
+labelref(x) ::= "<if(!x.isLocal)>(cast(<x.ctx.name>) _localctx).<endif><x.name>"
 
 /** For any action chunk, what is correctly-typed context struct ptr? */
-ctx(actionChunk) ::= "(cast(<actionChunk.ctx.name>)_localctx)"
+ctx(actionChunk) ::= "(cast(<actionChunk.ctx.name>) _localctx)"
 
 // used for left-recursive rules
 recRuleAltPredicate(ruleName,opPrec)  ::= "precpred(ctx_, <opPrec>)"
@@ -870,9 +870,9 @@ recRuleLabeledAltStartAction(ruleName, currentAltLabel, label, isListLabel) ::= 
 _localctx = new <currentAltLabel; format="cap">Context(new <ruleName; format="cap">Context(_parentctx, _parentState));
 <if(label)>
 <if(isListLabel)>
-(cast(<currentAltLabel; format="cap">Context)_localctx).<label> ~= (_prevctx);
+(cast(<currentAltLabel; format="cap">Context) _localctx).<label> ~= (_prevctx);
 <else>
-(cast(<currentAltLabel; format="cap">Context)_localctx).<label> = _prevctx;
+(cast(<currentAltLabel; format="cap">Context) _localctx).<label> = _prevctx;
 <endif>
 <endif>
 pushNewRecursionContext(_localctx, _startState, RULE_<ruleName>);
@@ -892,9 +892,8 @@ _prevctx = _localctx;
 
 LexerFile(lexerFile, lexer, namedActions) ::= <<
 <fileHeader(lexerFile.grammarFileName, lexerFile.ANTLRVersion)>
-<if(lexerFile.genPackage)>
-package <lexerFile.genPackage>;
-<endif>
+module <fqn(lexerFile.genPackage, lexerFile.lexer.grammarName, "")>;
+
 <namedActions.header>
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
@@ -1014,3 +1013,11 @@ initValue(typeName) ::= <<
 >>
 
 codeFileExtension() ::= ".d"
+
+safeImport(genPackage, grammarName, name) ::= <<
+import <fqn(genPackage, grammarName, name)><if(!genPackage)> : <grammarName><name><endif>;
+>>
+
+fqn(genPackage, grammarName, name) ::= <<
+<if(genPackage)><genPackage>.<endif><grammarName><name>
+>>

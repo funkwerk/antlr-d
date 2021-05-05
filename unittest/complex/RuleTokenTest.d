@@ -1,8 +1,8 @@
 module RuleTokenTest;
 
-import RuleTranslatorLexer;
+import RuleTranslatorBaseListener : RuleTranslatorBaseListener;
+import RuleTranslatorLexer : RuleTranslatorLexer;
 import RuleTranslatorParser: RuleTranslatorParser;
-import RuleTranslatorBaseListener;
 import antlr.v4.runtime.ANTLRInputStream;
 import antlr.v4.runtime.CommonToken;
 import antlr.v4.runtime.CommonTokenFactory;

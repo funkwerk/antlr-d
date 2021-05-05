@@ -3,9 +3,9 @@
     "license": "BSD",
     "copyright": "Copyright (c) 2012-2019 The ANTLR Project. All rights reserved.",
     "description": "ANTLR4 runtime library",
-    "dependencies": {},
     "authors": [
-        "Egbert Voigt <Egbert.Voigt@funkwerk-itk.com>"
+        "Egbert Voigt <Egbert.Voigt@funkwerk-itk.com>",
+        "Mario Kröplin"
     ],
     "buildTypes": {
         "debug": {

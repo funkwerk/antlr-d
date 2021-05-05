@@ -1,4 +1,6 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprLexer;
+
 import antlr.v4.runtime.Lexer;
 import antlr.v4.runtime.CharStream;
 import antlr.v4.runtime.InterfaceRuleContext;

@@ -72,35 +72,16 @@ import static org.junit.Assert.assertTrue;
 
 public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupport {
 
-    public String tmpDir = null;
-
-    /** If error during parser execution, store stderr here; can't return
-     *  stdout and stderr.  This doesn't trap errors from running antlr.
+    /**
+     * If error during parser execution, store stderr here; can't return
+     * stdout and stderr.  This doesn't trap errors from running antlr.
      */
     protected String stderrDuringParse;
-
-    /** Errors found while running antlr */
-    protected StringBuilder antlrToolErrors;
 
 	@Override
 	protected String getPropertyPrefix() {
 		return "antrl4-d";
 	}
-
-    @Override
-    public void testSetUp() throws Exception {
-        // new output dir for each test
-        String propName = getPropertyPrefix() + "-test-dir";
-        String prop = System.getProperty(propName);
-        if(prop!=null && prop.length()>0) {
-            tmpDir = prop;
-        }
-        else {
-            tmpDir = new File(System.getProperty("java.io.tmpdir"),
-                              getClass().getSimpleName()+"-"+Thread.currentThread().getName()+"-"+System.currentTimeMillis()).getAbsolutePath();
-        }
-        antlrToolErrors = new StringBuilder();
-    }
 
     @Override
     public void testTearDown() throws Exception {
@@ -111,31 +92,23 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         return stderrDuringParse;
     }
 
-    @Override
-    public String getANTLRToolErrors() {
-        if ( antlrToolErrors.length()==0 ) {
-            return null;
-        }
-        return antlrToolErrors.toString();
-    }
-
     protected org.antlr.v4.Tool newTool(String[] args) {
         Tool tool = new Tool(args);
         return tool;
     }
 
     protected Tool newTool() {
-        org.antlr.v4.Tool tool = new Tool(new String[] {"-o", tmpDir});
+        org.antlr.v4.Tool tool = new Tool(new String[] {"-o", getTempDirPath()});
         return tool;
     }
 
     protected ATN createATN(Grammar g, boolean useSerializer) {
-        if ( g.atn==null ) {
+        if (g.atn == null) {
             semanticProcess(g);
             assertEquals(0, g.tool.getNumErrors());
 
             ParserATNFactory f;
-            if ( g.isLexer() ) {
+            if (g.isLexer()) {
                 f = new LexerATNFactory((LexerGrammar)g);
             }
             else {
@@ -156,12 +129,12 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
     }
 
     protected void semanticProcess(Grammar g) {
-        if ( g.ast!=null && !g.ast.hasErrors ) {
+        if (g.ast != null && !g.ast.hasErrors) {
             System.out.println(g.ast.toStringTree());
             Tool antlr = new Tool();
             SemanticPipeline sem = new SemanticPipeline(g);
             sem.process();
-            if ( g.getImportedGrammars()!=null ) { // process imported grammars (if any)
+            if (g.getImportedGrammars() != null) { // process imported grammars (if any)
                 for (Grammar imp : g.getImportedGrammars()) {
                     antlr.processNonCombinedGrammar(imp, false);
                 }
@@ -185,7 +158,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
 
     IntegerList getTypesFromString(Grammar g, String expecting) {
         IntegerList expectingTokenTypes = new IntegerList();
-        if ( expecting!=null && !expecting.trim().isEmpty() ) {
+        if (expecting != null && !expecting.trim().isEmpty()) {
             for (String tname : expecting.replace(" ", "").split(",")) {
                 int ttype = g.getTokenType(tname);
                 expectingTokenTypes.add(ttype);
@@ -201,7 +174,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         do {
             ttype = lexerATN.match(in, Lexer.DEFAULT_MODE);
             tokenTypes.add(ttype);
-        } while ( ttype!= Token.EOF );
+        } while (ttype != Token.EOF);
         return tokenTypes;
     }
 
@@ -214,23 +187,23 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         int ttype;
         boolean hitEOF = false;
         do {
-            if ( hitEOF ) {
+            if (hitEOF) {
                 tokenTypes.add("EOF");
                 break;
             }
             int t = input.LA(1);
             ttype = interp.match(input, Lexer.DEFAULT_MODE);
-            if ( ttype == Token.EOF ) {
+            if (ttype == Token.EOF) {
                 tokenTypes.add("EOF");
             }
             else {
                 tokenTypes.add(lg.typeToTokenList.get(ttype));
             }
 
-            if ( t== IntStream.EOF ) {
+            if (t == IntStream.EOF) {
                 hitEOF = true;
             }
-        } while ( ttype!=Token.EOF );
+        } while (ttype != Token.EOF);
         return tokenTypes;
     }
 
@@ -241,12 +214,12 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         Grammar g = new Grammar(gtext, equeue);
         ATN atn = createATN(g, false);
         ATNState s = atn.ruleToStartState[g.getRule(ruleName).index];
-        if ( s==null ) {
+        if (s == null) {
             System.err.println("no such rule: "+ruleName);
             return null;
         }
         ATNState t = s.transition(0).target;
-        if ( !(t instanceof DecisionState) ) {
+        if (!(t instanceof DecisionState)) {
             System.out.println(ruleName+" has no decision");
             return null;
         }
@@ -271,7 +244,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
     {
         DFA dfa = createDFA(g, blk);
         String result = null;
-        if ( dfa!=null ) result = dfa.toString();
+        if (dfa != null) result = dfa.toString();
         assertEquals(expecting, result);
     }
 
@@ -323,7 +296,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                                                         null,
                                                         lexerName,"-no-listener");
         assertTrue(success);
-        writeFile(tmpDir, "input", input);
+        writeFile(getTempDirPath(), "input", input);
         writeLexerTestFile(lexerName, showDFA);
         String output = execModule("Test.d");
         return output;
@@ -365,7 +338,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                                                         lexerName,
                                                         "-visitor");
         assertTrue(success);
-        writeFile(tmpDir, "input", input);
+        writeFile(getTempDirPath(), "input", input);
         rawBuildRecognizerTestFile(parserName,
                                    lexerName,
                                    listenerName,
@@ -395,16 +368,16 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                                                     String... extraOptions)
     {
         ErrorQueue equeue =
-            antlrOnString(tmpDir, "D", grammarFileName, grammarStr, defaultListener, extraOptions);
+            antlrOnString(getTempDirPath(), "D", grammarFileName, grammarStr, defaultListener, extraOptions);
         if (!equeue.errors.isEmpty()) {
             return false;
         }
 
         List<String> files = new ArrayList<String>();
-        if ( lexerName!=null ) {
+        if (lexerName != null) {
             files.add(lexerName+".d");
         }
-        if ( parserName!=null ) {
+        if (parserName != null) {
             files.add(parserName+".d");
             Set<String> optionsSet = new HashSet<String>(Arrays.asList(extraOptions));
             if (!optionsSet.contains("-no-listener")) {
@@ -426,7 +399,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                                               boolean trace)
     {
         this.stderrDuringParse = null;
-        if ( parserName==null ) {
+        if (parserName == null) {
             writeLexerTestFile(lexerName, false);
         }
         else {
@@ -488,13 +461,13 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         stdoutVacuum.join();
         stderrVacuum.join();
         String output = stdoutVacuum.toString();
-        if ( stderrVacuum.toString().length()>0 ) {
+        if (stderrVacuum.toString().length() > 0) {
             this.stderrDuringParse = stderrVacuum.toString();
-            if ( showStderr ) System.err.println(this.stderrDuringParse);
+            if (showStderr) System.err.println(this.stderrDuringParse);
         }
         if (errcode != 0) {
             String err = "execution of '"+description+"' failed with error code: "+errcode;
-            if ( this.stderrDuringParse!=null ) {
+            if (this.stderrDuringParse != null) {
                 this.stderrDuringParse += err;
             }
             else {
@@ -518,7 +491,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         System.out.println("Building ANTLR4 D runtime (if necessary) at "+ runtimePath);
 
         try {
-            String command[] = { "dub", "--build=release" };
+            String command[] = { "dub", "--build=release", "--compiler=ldc2" };
             if (runCommand(command, runtimePath, "can't compile antlr d runtime", false) == null) {
                 return false;
             }
@@ -558,15 +531,15 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         String runtimePath = locateRuntime();
         String includePath = runtimePath + "/source";
         //System.out.println("runtimePath -> " + runtimePath + "\nincludePath -> "+ includePath);
-        String binPath = new File(new File(tmpDir), "a.out").getAbsolutePath();
-        String inputPath = new File(new File(tmpDir), "input").getAbsolutePath();
+        String binPath = new File(new File(getTempDirPath()), "test").getAbsolutePath();
+        String inputPath = new File(new File(getTempDirPath()), "input").getAbsolutePath();
 
         // Build runtime using dub once.
         synchronized (runtimeBuiltOnce) {
-            if ( !runtimeBuiltOnce ) {
+            if (!runtimeBuiltOnce) {
                 try {
                     String command[] = {"ldc2", "--version"};
-                    String output = runCommand(command, tmpDir, "printing compiler version", false);
+                    String output = runCommand(command, getTempDirPath(), "printing compiler version", false);
                     System.out.println("Compiler version is: "+output);
                 }
                 catch (Exception e) {
@@ -574,7 +547,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                 }
 
                 runtimeBuiltOnce = true;
-                if ( !buildRuntime() ) {
+                if (!buildRuntime()) {
                     System.out.println("D runtime build failed\n");
                     return null;
                 }
@@ -582,24 +555,27 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
             }
         }
 
-        // Create symlink to the runtime. Currently only used on OSX.
-        String libExtension = (getOS().equals("mac")) ? "dylib" : "so";
-        try {
-            String command[] = { "ln", "-s", runtimePath + "/lib/libantlr-d." + libExtension };
-            if (runCommand(command, tmpDir, "sym linking D runtime", true) == null)
+        String libExtension = ("mac".equals(getOS())) ? "dylib" : "so";
+
+        // Create sym link to the runtime. Currently only used on OSX.
+        if ("mac".equals(getOS())) {
+            try {
+                String command[] = { "ln", "-s", runtimePath + "/lib/libantlr-d." + libExtension };
+                if (runCommand(command, getTempDirPath(), "sym linking D runtime", true) == null)
+                    return null;
+            }
+            catch (Exception e) {
+                System.err.println("can't create link to " + runtimePath + "/lib/libantlr-d." + libExtension);
+                e.printStackTrace(System.err);
                 return null;
-        }
-        catch (Exception e) {
-            System.err.println("can't create link to " + runtimePath + "/lib/libantlr-d." + libExtension);
-            e.printStackTrace(System.err);
-            return null;
+            }
         }
 
         try {
             List<String> command2 = new ArrayList<String>(Arrays.asList("ldc2", "-link-defaultlib-shared",
-                "-I", includePath, "-L-lantlr-d", "-of", "a.out"));
-            command2.addAll(allCppFiles(tmpDir));
-            if (runCommand(command2.toArray(new String[0]), tmpDir, "building test binary", true) == null) {
+                "-I", includePath, "-L-L" + runtimePath + "/lib", "-L-lantlr-d", "-of", "test"));
+            command2.addAll(allCppFiles(getTempDirPath()));
+            if (runCommand(command2.toArray(new String[0]), getTempDirPath(), "building test binary", true) == null) {
                 return null;
             }
         }
@@ -613,12 +589,13 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         this.stderrDuringParse = null;
         try {
             ProcessBuilder builder = new ProcessBuilder(binPath, inputPath, "-v");
-            builder.directory(new File(tmpDir));
+            builder.directory(new File(getTempDirPath()));
             Map<String, String> env = builder.environment();
-            env.put("LD_PRELOAD", runtimePath + "/lib/libantlr-d." + libExtension);
+            // env.put("LD_PRELOAD", runtimePath + "/lib/libantlr-d." + libExtension);
+            env.put("LD_LIBRARY_PATH", runtimePath + "/lib");
             String output = runProcess(builder, "running test binary", false);
 
-            if ( output.length()==0 ) {
+            if (output.length()==0) {
                 output = null;
             }
 
@@ -658,7 +635,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
     List<ANTLRMessage> getMessagesOfType(List<ANTLRMessage> msgs, Class<? extends ANTLRMessage> c) {
         List<ANTLRMessage> filtered = new ArrayList<ANTLRMessage>();
         for (ANTLRMessage m : msgs) {
-            if ( m.getClass() == c ) filtered.add(m);
+            if (m.getClass() == c) filtered.add(m);
         }
         return filtered;
     }
@@ -688,12 +665,12 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         String grammar = st.render();
         ErrorQueue equeue = new ErrorQueue();
         Grammar g = new Grammar(grammar, equeue);
-        if ( g.ast!=null && !g.ast.hasErrors ) {
+        if (g.ast != null && !g.ast.hasErrors) {
             SemanticPipeline sem = new SemanticPipeline(g);
             sem.process();
 
             ATNFactory factory = new ParserATNFactory(g);
-            if ( g.isLexer() ) factory = new LexerATNFactory((LexerGrammar)g);
+            if (g.isLexer()) factory = new LexerATNFactory((LexerGrammar)g);
             g.atn = factory.createATN();
 
             CodeGenerator gen = new CodeGenerator(g);
@@ -707,7 +684,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
             String snippet = output.substring(start+b.length(),end);
             assertEquals(expected, snippet);
         }
-        if ( equeue.size()>0 ) {
+        if (equeue.size() > 0) {
             System.err.println(equeue.toString());
         }
     }
@@ -727,7 +704,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         assertTrue("error is not a GrammarSemanticsMessage",
                    foundMsg instanceof GrammarSemanticsMessage);
         assertEquals(Arrays.toString(expectedMessage.getArgs()), Arrays.toString(foundMsg.getArgs()));
-        if ( equeue.size()!=1 ) {
+        if (equeue.size() != 1) {
             System.err.println(equeue);
         }
     }
@@ -747,7 +724,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         assertTrue("error is not a GrammarSemanticsMessage",
                    foundMsg instanceof GrammarSemanticsMessage);
         assertEquals(Arrays.toString(expectedMessage.getArgs()), Arrays.toString(foundMsg.getArgs()));
-        if ( equeue.size()!=1 ) {
+        if (equeue.size() != 1) {
             System.err.println(equeue);
         }
     }
@@ -784,7 +761,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
             }
 
             Token t = get(i);
-            if ( hide.contains(t.getType()) ) {
+            if (hide.contains(t.getType())) {
                 ((WritableToken)t).setChannel(Token.HIDDEN_CHANNEL);
             }
 
@@ -821,8 +798,8 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                 + "import antlr.v4.runtime.tree.TerminalNode;\n"
                 + "import antlr.v4.runtime.tree.ErrorNode;\n"
                 + "import antlr.v4.runtime.tree.ParseTreeWalker;\n"
-                + "import <lexerName>;\n"
-                + "import <parserName>;\n"
+                + "import <lexerName> : <lexerName>;\n"
+                + "import <parserName> : <parserName>;\n"
                 + "\n"
                 + "class TreeShapeListener : ParseTreeListener {\n"
                 + "public override\n"
@@ -860,7 +837,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
 
         String stSource = "  auto parser = new <parserName>(tokens);\n";
         if(debug) {
-            stSource += "  auto errorListener = new DiagnosticErrorListener!(Token, ParserATNSimulator)();\n";
+            stSource += "  auto errorListener = new DiagnosticErrorListener();\n";
             stSource += "  parser.addErrorListener(errorListener);\n";
         }
         if(trace)
@@ -872,7 +849,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         outputFileST.add("listenerName", listenerName);
         outputFileST.add("visitorName", visitorName);
         outputFileST.add("parserStartRuleName", parserStartRuleName);
-        writeFile(tmpDir, "Test.d", outputFileST.render());
+        writeFile(getTempDirPath(), "Test.d", outputFileST.render());
     }
 
     protected void writeLexerTestFile(String lexerName, boolean showDFA) {
@@ -884,7 +861,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                 + "import antlr.v4.runtime.CommonTokenStream;\n"
                 + "import antlr.v4.runtime.Lexer;\n"
                 + "import antlr.v4.runtime.atn.LexerATNSimulator;\n"
-                + "import <lexerName>;\n"
+                + "import <lexerName> : <lexerName>;\n"
                 + "\n"
                 + "int main(string[] args) {\n"
                 + "  auto antlrInput =\n"
@@ -898,13 +875,13 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
                 + "  return 0;\n"
                 + "}\n");
         outputFileST.add("lexerName", lexerName);
-        writeFile(tmpDir, "Test.d", outputFileST.render());
+        writeFile(getTempDirPath(), "Test.d", outputFileST.render());
     }
 
     public void writeRecognizer(String parserName, String lexerName,
                                 String listenerName, String visitorName,
                                 String parserStartRuleName, boolean debug, boolean trace) {
-        if ( parserName==null ) {
+        if (parserName == null) {
             writeLexerTestFile(lexerName, debug);
         }
         else {
@@ -920,11 +897,11 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
 
 
     protected void eraseFiles(final String filesEndingWith) {
-        File tmpDirF = new File(tmpDir);
+        File tmpDirF = new File(getTempDirPath());
         String[] files = tmpDirF.list();
         for(int i = 0; files!=null && i < files.length; i++) {
-            if ( files[i].endsWith(filesEndingWith) ) {
-                new File(tmpDir+"/"+files[i]).delete();
+            if (files[i].endsWith(filesEndingWith)) {
+                new File(getTempDirPath()+"/"+files[i]).delete();
             }
         }
     }
@@ -944,8 +921,8 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
         if(prop!=null && prop.length()>0)
             doErase = Boolean.getBoolean(prop);
         if(doErase) {
-            File tmpDirF = new File(tmpDir);
-            if ( tmpDirF.exists() ) {
+            File tmpDirF = new File(getTempDirPath());
+            if (tmpDirF.exists()) {
                 eraseFiles(tmpDirF);
                 tmpDirF.delete();
             }
@@ -953,7 +930,7 @@ public class BaseDTest extends BaseRuntimeTestSupport implements RuntimeTestSupp
     }
 
     public String getFirstLineOfException() {
-        if ( this.stderrDuringParse ==null ) {
+        if (this.stderrDuringParse == null) {
             return null;
         }
         String[] lines = this.stderrDuringParse.split("\n");

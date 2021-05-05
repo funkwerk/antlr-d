@@ -32,8 +32,14 @@ Apply the corresponding changes in:
     test
 
 (Most of the changes are in `test`.
-Major rework is needed here as a follow-up.)
+The test is apparently a ported test for the C++ target.)
 
 ## Regenerate checked in Generated Code
 
 In `unittest` use the new `antlr4` to regenerate the D source code.
+
+## Run Tests
+
+While in principle any D compiler can be used, testing the runtime requires LDC.
+
+    make test

@@ -1,4 +1,6 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprListener;
+
 import antlr.v4.runtime.tree.ParseTreeListener;
 import ExprParser : ExprParser;
 

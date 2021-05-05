@@ -1,8 +1,10 @@
 // Generated from doc/examples/simple_expression/Expr.g4 by ANTLR 4.9.2
+module ExprBaseVisitor;
+
 import antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-import std.variant : Variant;
-import ExprVisitor;
 import ExprParser : ExprParser;
+import ExprVisitor : ExprVisitor;
+import std.variant : Variant;
 
 /**
  * This class provides an empty implementation of {@link ExprVisitor},

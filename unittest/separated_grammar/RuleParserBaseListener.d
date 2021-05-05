@@ -3,7 +3,7 @@
 import antlr.v4.runtime.ParserRuleContext;
 import antlr.v4.runtime.tree.ErrorNode;
 import antlr.v4.runtime.tree.TerminalNode;
-import RuleParserListener;
+import RuleParserListener : RuleParserListener;
 import RuleParser: RuleParser;
 
 /**

@@ -27,6 +27,7 @@ import antlr.v4.runtime.tree.ParseTreeVisitor;
 import antlr.v4.runtime.tree.TerminalNode;
 import antlr.v4.runtime.tree.ParseTreeWalker;
 import std.conv : to;
+import std.variant : Variant;
 
 public class ExprParser : Parser {
     static this() { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
@@ -112,12 +113,11 @@ public class ExprParser : Parser {
             super(parent, invokingState);
         }
         override public size_t getRuleIndex() { return RULE_prog; }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitProg(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitProg(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -180,12 +180,11 @@ public class ExprParser : Parser {
         }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitDiv(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitDiv(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -199,12 +198,11 @@ public class ExprParser : Parser {
         }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitAdd(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitAdd(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -218,12 +216,11 @@ public class ExprParser : Parser {
         }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitSub(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitSub(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -237,12 +234,11 @@ public class ExprParser : Parser {
         }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitMul(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitMul(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -253,12 +249,11 @@ public class ExprParser : Parser {
         }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitBracketExpr(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitBracketExpr(this);
             else
                 return visitor.visitChildren(this);
         }
@@ -267,12 +262,11 @@ public class ExprParser : Parser {
         public TerminalNode INT() { return getToken(ExprParser.INT, 0); }
             alias copyFrom = ExprContext.copyFrom;
         public this(ExprContext ctx) { copyFrom(ctx); }
-        import std.variant : Variant;
         override
         public Variant accept(ParseTreeVisitor visitor) {
             import ExprVisitor : ExprVisitor;
-            if (cast(ExprVisitor)visitor)
-                return (cast(ExprVisitor)visitor).visitInt(this);
+            if (cast(ExprVisitor) visitor)
+                return (cast(ExprVisitor) visitor).visitInt(this);
             else
                 return visitor.visitChildren(this);
         }

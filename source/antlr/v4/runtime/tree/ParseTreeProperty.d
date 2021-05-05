@@ -21,27 +21,25 @@ import antlr.v4.runtime.tree.ParseTree;
  */
 class ParseTreeProperty(V)
 {
-
-    public V[ParseTree] annotations;
+    public V[ParseTree*] annotations;
 
     public V get(ParseTree node)
     {
-        V Null;
-        return (node in annotations) ?  annotations[node] : Null;
+        return annotations.get(cast(ParseTree*) node, V.init);
     }
 
     public void put(ParseTree node, V value)
     {
-        annotations[node] = value;
+        annotations[cast(ParseTree*) node] = value;
     }
 
     public V removeFrom(ParseTree node)
     {
-        auto n = annotations[node];
-        if (annotations.remove(node)) {
-            return n;
+        if (auto value = cast(ParseTree*) node in annotations)
+        {
+            annotations.remove(&node);
+            return *value;
         }
-        assert (false, "ParseTreeProperty object contains unknown element!");
+        return V.init;
     }
-
 }

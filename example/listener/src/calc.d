@@ -1,5 +1,7 @@
 module calc;
 
+import antlr.v4.runtime.tree.ParseTree;
+import antlr.v4.runtime.tree.ParseTreeProperty;
 import antlr.v4.runtime.tree.ParseTreeWalker;
 import ExprBaseListener : BaseListener = ExprBaseListener;
 import ExprLexer : Lexer = ExprLexer;
@@ -18,7 +20,7 @@ void eval(File file)
         if (parser.numberOfSyntaxErrors == 0)
         {
             walker.walk(listener, ctx);
-            writeln(listener.result);
+            writeln(listener.getValue(ctx));
         }
     }
 }
@@ -48,40 +50,50 @@ struct Setup
 
 class Listener : BaseListener
 {
-    int[] stack;
+    ParseTreeProperty!int values;
+
+    this()
+    {
+        values = new ParseTreeProperty!int;
+    }
 
     override void exitLiteral(Parser.LiteralContext ctx)
     {
         import std.conv : to;
 
-        stack ~= ctx.INT.getText.get!string.to!int;
+        putValue(ctx, ctx.INT.getText.get!string.to!int);
+    }
+
+    override void exitParens(Parser.ParensContext ctx)
+    {
+        putValue(ctx, getValue(ctx.expr));
     }
 
     override void exitBinaryExpr(Parser.BinaryExprContext ctx)
     {
-        const rhs = result;
-
-        stack.popBack;
-
-        const lhs = result;
-
-        stack.popBack;
+        const lhs = getValue(ctx.lhs);
+        const rhs = getValue(ctx.rhs);
 
         if (ctx.op.getText == "+")
-            stack ~= lhs + rhs;
+            putValue(ctx, lhs + rhs);
         else if (ctx.op.getText == "-")
-            stack ~= lhs - rhs;
+            putValue(ctx, lhs - rhs);
         else if (ctx.op.getText == "*")
-            stack ~= lhs * rhs;
+            putValue(ctx, lhs * rhs);
         else if (ctx.op.getText == "/")
-            stack ~= lhs / rhs;
+            putValue(ctx, lhs / rhs);
         else
             assert(0);
     }
 
-    int result() const
+    void putValue(ParseTree node, int value)
     {
-        return stack.back;
+        values.put(node, value);
+    }
+
+    int getValue(ParseTree node)
+    {
+        return values.get(node);
     }
 }
 
@@ -94,7 +106,7 @@ unittest
 
         parser.numberOfSyntaxErrors.should.equal(0);
         walker.walk(listener, ctx);
-        listener.result.should.equal(7);
+        listener.getValue(ctx).should.equal(7);
     }
 }
 
@@ -107,7 +119,7 @@ unittest
 
         parser.numberOfSyntaxErrors.should.equal(0);
         walker.walk(listener, ctx);
-        listener.result.should.equal(9);
+        listener.getValue(ctx).should.equal(9);
     }
 }
 

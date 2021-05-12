@@ -27,14 +27,25 @@ public class DTarget extends Target {
     private static final ThreadLocal<STGroup> targetTemplates = new ThreadLocal<STGroup>();
 
     protected static final String[] dKeywords = {
-        "abstract", "assert", "bool", "break", "byte", "case", "catch",
-        "char", "class", "const", "continue", "default", "do", "double", "else",
-        "enum", "extends", "false", "final", "finally", "float", "for", "goto",
-        "if", "implements", "import", "instanceof", "in", "int", "interface",
-        "long", "native", "new", "null", "out", "package", "private", "protected",
-        "public", "return", "short", "static", "super", "switch",
-        "synchronized", "template", "this", "throw", "throws", "transient",
-                "true", "try", "void", "volatile", "while"
+        "abstract", "alias", "align", "asm", "assert", "auto",
+        "body", "bool", "break", "byte",
+        "case", "cast", "catch", "cdouble", "cent", "cfloat", "char", "class", "const", "continue", "creal",
+        "dchar", "debug", "default", "delegate", "delete", "deprecated", "do", "double",
+        "else", "enum", "export", "extern",
+        "false", "final", "finally", "float", "for", "foreach", "foreach_reverse", "function",
+        "goto",
+        "idouble", "if", "ifloat", "immutable", "import", "in", "inout", "int", "interface", "invariant", "ireal", "is",
+        "lazy", "long",
+        "macro", "mixin", "module",
+        "new", "nothrow", "null",
+        "out", "override",
+        "package", "pragma", "private", "protected", "public", "pure",
+        "real", "ref", "return",
+        "scope", "shared", "short", "static", "struct", "super", "switch", "synchronized",
+        "template", "this", "throw", "true", "try", "typeid", "typeof",
+        "ubyte", "ucent", "uint", "ulong", "union", "unittest", "ushort",
+        "version", "void",
+        "wchar", "while", "with"
     };
 
     /** Avoid grammar symbols in this set to prevent conflicts in gen'd code. */
